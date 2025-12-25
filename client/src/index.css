@@ -43,39 +43,48 @@
 }
 
 :root {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-600);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
-  --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.235 0.015 65);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.235 0.015 65);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.235 0.015 65);
-  --secondary: oklch(0.98 0.001 286.375);
-  --secondary-foreground: oklch(0.4 0.015 65);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.141 0.005 285.823);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.623 0.214 259.815);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.235 0.015 65);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.623 0.214 259.815);
+  /* YETO Brand Colors */
+  --yeto-navy: #103050;
+  --yeto-dark-navy: #0B1F33;
+  --yeto-green: #107040;
+  --yeto-gold: #C0A030;
+  --yeto-light-bg: #F6F8FB;
+  --yeto-border: #E6EAF0;
+  
+  /* Design Tokens */
+  --primary: var(--yeto-navy);
+  --primary-foreground: #FFFFFF;
+  --sidebar-primary: var(--yeto-navy);
+  --sidebar-primary-foreground: #FFFFFF;
+  --chart-1: var(--yeto-green);
+  --chart-2: var(--yeto-gold);
+  --chart-3: var(--yeto-navy);
+  --chart-4: #2A5080;
+  --chart-5: #1A4060;
+  --radius: 0.5rem;
+  --background: #FFFFFF;
+  --foreground: var(--yeto-dark-navy);
+  --card: #FFFFFF;
+  --card-foreground: var(--yeto-dark-navy);
+  --popover: #FFFFFF;
+  --popover-foreground: var(--yeto-dark-navy);
+  --secondary: var(--yeto-light-bg);
+  --secondary-foreground: var(--yeto-navy);
+  --muted: var(--yeto-light-bg);
+  --muted-foreground: #6B7280;
+  --accent: var(--yeto-green);
+  --accent-foreground: #FFFFFF;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --border: var(--yeto-border);
+  --input: var(--yeto-border);
+  --ring: var(--yeto-navy);
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: var(--yeto-dark-navy);
+  --sidebar-accent: var(--yeto-light-bg);
+  --sidebar-accent-foreground: var(--yeto-navy);
+  --sidebar-border: var(--yeto-border);
+  --sidebar-ring: var(--yeto-navy);
 }
 
 .dark {
@@ -119,6 +128,10 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+  body[dir="rtl"] {
+    font-family: 'Cairo', sans-serif;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
