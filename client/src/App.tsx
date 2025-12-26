@@ -42,6 +42,8 @@ import Entities from "./pages/Entities";
 import EntityDetail from "./pages/EntityDetail";
 import Corrections from "./pages/Corrections";
 import Publications from "./pages/Publications";
+import CoverageScorecard from "./pages/CoverageScorecard";
+import Compliance from "./pages/Compliance";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -81,6 +83,8 @@ function Router() {
       <Route path={"/entities/:id"} component={EntityDetail} />
       <Route path={"/corrections"} component={Corrections} />
       <Route path={"/publications"} component={Publications} />
+      <Route path={"/coverage"} component={CoverageScorecard} />
+      <Route path={"/compliance"} component={Compliance} />
       <Route path={"/legal/privacy"} component={Legal} />
       <Route path={"/legal/terms"} component={Legal} />
       <Route path={"/legal/data-license"} component={Legal} />
