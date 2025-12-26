@@ -300,3 +300,178 @@ export const stakeholders = mysqlTable("stakeholders", {
 
 export type Stakeholder = typeof stakeholders.$inferSelect;
 export type InsertStakeholder = typeof stakeholders.$inferInsert;
+
+
+// ============================================================================
+// PARTNER SUBMISSIONS
+// ============================================================================
+
+export const partnerSubmissions = mysqlTable("partner_submissions", {
+  id: int("id").autoincrement().primaryKey(),
+  partnerId: int("partnerId").notNull().references(() => users.id),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  indicatorCode: varchar("indicatorCode", { length: 100 }),
+  regimeTag: mysqlEnum("regimeTag", ["aden_irg", "sanaa_defacto", "mixed", "unknown"]),
+  dataType: mysqlEnum("dataType", ["time_series", "geospatial", "document", "report"]).notNull(),
+  fileKey: varchar("fileKey", { length: 255 }), // S3 key if file upload
+  fileUrl: text("fileUrl"),
+  rawData: json("rawData"), // JSON data if direct submission
+  sourceDescription: text("sourceDescription").notNull(),
+  methodology: text("methodology"),
+  confidenceRating: mysqlEnum("confidenceRating", ["A", "B", "C", "D"]),
+  status: mysqlEnum("status", ["pending", "under_review", "approved", "rejected", "needs_revision"]).default("pending").notNull(),
+  reviewNotes: text("reviewNotes"),
+  reviewedBy: int("reviewedBy").references(() => users.id),
+  reviewedAt: timestamp("reviewedAt"),
+  submittedAt: timestamp("submittedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  partnerIdx: index("partner_idx").on(table.partnerId),
+  statusIdx: index("status_idx").on(table.status),
+  submittedAtIdx: index("submitted_at_idx").on(table.submittedAt),
+}));
+
+export type PartnerSubmission = typeof partnerSubmissions.$inferSelect;
+export type InsertPartnerSubmission = typeof partnerSubmissions.$inferInsert;
+
+// ============================================================================
+// SUBSCRIPTIONS & BILLING
+// ============================================================================
+
+export const subscriptions = mysqlTable("subscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  tier: mysqlEnum("tier", ["free", "professional", "enterprise"]).default("free").notNull(),
+  status: mysqlEnum("status", ["active", "cancelled", "expired", "trial"]).default("active").notNull(),
+  startDate: timestamp("startDate").defaultNow().notNull(),
+  endDate: timestamp("endDate"),
+  stripeCustomerId: varchar("stripeCustomerId", { length: 255 }),
+  stripeSubscriptionId: varchar("stripeSubscriptionId", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_idx").on(table.userId),
+  statusIdx: index("status_idx").on(table.status),
+}));
+
+export type Subscription = typeof subscriptions.$inferSelect;
+export type InsertSubscription = typeof subscriptions.$inferInsert;
+
+// ============================================================================
+// API ACCESS LOGS
+// ============================================================================
+
+export const apiAccessLogs = mysqlTable("api_access_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").references(() => users.id),
+  endpoint: varchar("endpoint", { length: 255 }).notNull(),
+  method: varchar("method", { length: 10 }).notNull(),
+  statusCode: int("statusCode"),
+  responseTimeMs: int("responseTimeMs"),
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: text("userAgent"),
+  requestedAt: timestamp("requestedAt").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_idx").on(table.userId),
+  endpointIdx: index("endpoint_idx").on(table.endpoint),
+  requestedAtIdx: index("requested_at_idx").on(table.requestedAt),
+}));
+
+export type ApiAccessLog = typeof apiAccessLogs.$inferSelect;
+export type InsertApiAccessLog = typeof apiAccessLogs.$inferInsert;
+
+// ============================================================================
+// AI QUERY LOGS (for One Brain)
+// ============================================================================
+
+export const aiQueryLogs = mysqlTable("ai_query_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").references(() => users.id),
+  query: text("query").notNull(),
+  response: text("response"),
+  confidenceLevel: mysqlEnum("confidenceLevel", ["high", "medium", "low"]),
+  sourcesUsed: json("sourcesUsed").$type<number[]>(), // IDs of sources referenced
+  indicatorsUsed: json("indicatorsUsed").$type<string[]>(), // Indicator codes referenced
+  feedback: mysqlEnum("feedback", ["positive", "negative"]),
+  feedbackNotes: text("feedbackNotes"),
+  processingTimeMs: int("processingTimeMs"),
+  queriedAt: timestamp("queriedAt").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_idx").on(table.userId),
+  queriedAtIdx: index("queried_at_idx").on(table.queriedAt),
+}));
+
+export type AiQueryLog = typeof aiQueryLogs.$inferSelect;
+export type InsertAiQueryLog = typeof aiQueryLogs.$inferInsert;
+
+// ============================================================================
+// SAVED REPORTS
+// ============================================================================
+
+export const savedReports = mysqlTable("saved_reports", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  reportConfig: json("reportConfig").notNull(), // JSON config for report builder
+  generatedFileKey: varchar("generatedFileKey", { length: 255 }), // S3 key if PDF generated
+  generatedFileUrl: text("generatedFileUrl"),
+  isPublic: boolean("isPublic").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_idx").on(table.userId),
+  isPublicIdx: index("is_public_idx").on(table.isPublic),
+}));
+
+export type SavedReport = typeof savedReports.$inferSelect;
+export type InsertSavedReport = typeof savedReports.$inferInsert;
+
+// ============================================================================
+// INDICATOR DEFINITIONS
+// ============================================================================
+
+export const indicators = mysqlTable("indicators", {
+  id: int("id").autoincrement().primaryKey(),
+  code: varchar("code", { length: 100 }).notNull().unique(), // e.g., "inflation_cpi_aden"
+  nameEn: varchar("nameEn", { length: 255 }).notNull(),
+  nameAr: varchar("nameAr", { length: 255 }).notNull(),
+  descriptionEn: text("descriptionEn"),
+  descriptionAr: text("descriptionAr"),
+  unit: varchar("unit", { length: 50 }).notNull(),
+  sector: varchar("sector", { length: 100 }).notNull(), // e.g., "banking", "trade", "prices"
+  frequency: mysqlEnum("frequency", ["daily", "weekly", "monthly", "quarterly", "annual"]).notNull(),
+  methodology: text("methodology"),
+  primarySourceId: int("primarySourceId").references(() => sources.id),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  codeIdx: index("code_idx").on(table.code),
+  sectorIdx: index("sector_idx").on(table.sector),
+}));
+
+export type Indicator = typeof indicators.$inferSelect;
+export type InsertIndicator = typeof indicators.$inferInsert;
+
+// ============================================================================
+// EVENT-INDICATOR LINKS
+// ============================================================================
+
+export const eventIndicatorLinks = mysqlTable("event_indicator_links", {
+  id: int("id").autoincrement().primaryKey(),
+  eventId: int("eventId").notNull().references(() => economicEvents.id),
+  indicatorCode: varchar("indicatorCode", { length: 100 }).notNull(),
+  impactDescription: text("impactDescription"),
+  impactDirection: mysqlEnum("impactDirection", ["positive", "negative", "neutral", "mixed"]),
+  lagDays: int("lagDays"), // How many days after event the impact was observed
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  eventIdx: index("event_idx").on(table.eventId),
+  indicatorIdx: index("indicator_idx").on(table.indicatorCode),
+}));
+
+export type EventIndicatorLink = typeof eventIndicatorLinks.$inferSelect;
+export type InsertEventIndicatorLink = typeof eventIndicatorLinks.$inferInsert;

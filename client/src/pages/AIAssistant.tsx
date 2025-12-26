@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Brain, 
   Send,
@@ -12,95 +13,228 @@ import {
   FileText,
   Database,
   MessageSquare,
-  Lightbulb
+  Lightbulb,
+  ExternalLink,
+  Download,
+  Copy,
+  ThumbsUp,
+  ThumbsDown,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  BookOpen,
+  BarChart3,
+  Link2
 } from "lucide-react";
+
+interface Message {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  timestamp: Date;
+  evidencePack?: EvidencePack;
+  confidence?: "high" | "medium" | "low";
+}
+
+interface EvidencePack {
+  sources: Array<{
+    title: string;
+    type: string;
+    date: string;
+    confidence: string;
+    url?: string;
+  }>;
+  indicators: Array<{
+    name: string;
+    value: string;
+    trend: "up" | "down" | "stable";
+    regime?: string;
+  }>;
+  methodology?: string;
+  caveats?: string[];
+}
 
 export default function AIAssistant() {
   const { language } = useLanguage();
   const [query, setQuery] = useState("");
-  const [messages, setMessages] = useState<Array<{role: string, content: string}>>([
+  const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("chat");
+  
+  const [messages, setMessages] = useState<Message[]>([
     {
+      id: "1",
       role: "assistant",
       content: language === "ar" 
-        ? "مرحباً! أنا \"العقل الواحد\" - مساعدك الذكي للبيانات الاقتصادية اليمنية. يمكنني مساعدتك في تحليل البيانات، الإجابة على الأسئلة، وتقديم رؤى حول الاقتصاد اليمني. كيف يمكنني مساعدتك اليوم؟"
-        : "Hello! I'm \"One Brain\" - your intelligent assistant for Yemen economic data. I can help you analyze data, answer questions, and provide insights about the Yemeni economy. How can I help you today?"
+        ? "مرحباً! أنا \"العقل الواحد\" - مساعدك الذكي للبيانات الاقتصادية اليمنية. يمكنني مساعدتك في:\n\n• تحليل البيانات الاقتصادية وتقديم رؤى موثقة\n• الإجابة على الأسئلة مع ذكر المصادر والمراجع\n• مقارنة المؤشرات بين الأنظمة المختلفة (عدن/صنعاء)\n• إنشاء تقارير مخصصة\n\nكيف يمكنني مساعدتك اليوم؟"
+        : "Hello! I'm \"One Brain\" - your intelligent assistant for Yemen economic data. I can help you with:\n\n• Analyzing economic data and providing documented insights\n• Answering questions with sources and references\n• Comparing indicators between different regimes (Aden/Sana'a)\n• Creating custom reports\n\nHow can I help you today?",
+      timestamp: new Date(),
+      confidence: "high"
     }
   ]);
 
   const suggestedQuestions = [
     {
-      en: "What is the current liquidity ratio in Aden's banking sector?",
-      ar: "ما هي نسبة السيولة الحالية في القطاع المصرفي في عدن؟"
+      en: "What is the current exchange rate spread between Aden and Sana'a?",
+      ar: "ما هي الفجوة الحالية في سعر الصرف بين عدن وصنعاء؟",
+      category: "currency"
     },
     {
-      en: "Compare poverty rates between Aden and Sana'a governorates",
-      ar: "قارن معدلات الفقر بين محافظتي عدن وصنعاء"
+      en: "How many people are facing acute food insecurity (IPC 3+)?",
+      ar: "كم عدد الأشخاص الذين يواجهون انعدام الأمن الغذائي الحاد (IPC 3+)؟",
+      category: "humanitarian"
     },
     {
-      en: "Show me the trend of import volumes over the last 6 months",
-      ar: "أظهر لي اتجاه أحجام الاستيراد خلال الأشهر الستة الماضية"
+      en: "What is the trend in humanitarian funding over the past 3 years?",
+      ar: "ما هو اتجاه التمويل الإنساني خلال السنوات الثلاث الماضية؟",
+      category: "aid"
     },
     {
-      en: "Which banks are currently under international sanctions?",
-      ar: "ما هي البنوك الخاضعة حالياً للعقوبات الدولية؟"
+      en: "Compare fuel prices between IRG and DFA controlled areas",
+      ar: "قارن أسعار الوقود بين مناطق الشرعية ومناطق الأمر الواقع",
+      category: "energy"
+    },
+    {
+      en: "What are the main challenges facing Yemen's banking sector?",
+      ar: "ما هي التحديات الرئيسية التي تواجه القطاع المصرفي اليمني؟",
+      category: "banking"
+    },
+    {
+      en: "Show me the timeline of major economic events since 2019",
+      ar: "أظهر لي الجدول الزمني للأحداث الاقتصادية الرئيسية منذ 2019",
+      category: "timeline"
     },
   ];
 
   const capabilities = [
     {
       icon: Database,
-      titleEn: "Data Analysis",
-      titleAr: "تحليل البيانات",
-      descEn: "Query and analyze economic datasets with natural language",
-      descAr: "استعلام وتحليل مجموعات البيانات الاقتصادية باللغة الطبيعية"
+      titleEn: "Data Retrieval",
+      titleAr: "استرجاع البيانات",
+      descEn: "Access verified economic datasets with full provenance",
+      descAr: "الوصول إلى مجموعات البيانات الاقتصادية الموثقة مع تتبع المصدر الكامل"
     },
     {
       icon: TrendingUp,
-      titleEn: "Trend Identification",
-      titleAr: "تحديد الاتجاهات",
-      descEn: "Identify patterns and trends in economic indicators",
-      descAr: "تحديد الأنماط والاتجاهات في المؤشرات الاقتصادية"
+      titleEn: "Trend Analysis",
+      titleAr: "تحليل الاتجاهات",
+      descEn: "Identify patterns and forecast economic indicators",
+      descAr: "تحديد الأنماط والتنبؤ بالمؤشرات الاقتصادية"
+    },
+    {
+      icon: BarChart3,
+      titleEn: "Regime Comparison",
+      titleAr: "مقارنة الأنظمة",
+      descEn: "Compare data between IRG and DFA controlled areas",
+      descAr: "مقارنة البيانات بين مناطق الشرعية ومناطق الأمر الواقع"
     },
     {
       icon: FileText,
-      titleEn: "Report Generation",
-      titleAr: "إنشاء التقارير",
-      descEn: "Generate custom reports based on your queries",
-      descAr: "إنشاء تقارير مخصصة بناءً على استفساراتك"
+      titleEn: "Evidence Packs",
+      titleAr: "حزم الأدلة",
+      descEn: "Every answer includes sources, confidence levels, and caveats",
+      descAr: "كل إجابة تتضمن المصادر ومستويات الثقة والتحفظات"
     },
     {
       icon: Lightbulb,
-      titleEn: "Insights & Recommendations",
-      titleAr: "رؤى وتوصيات",
-      descEn: "Get AI-powered insights and policy recommendations",
-      descAr: "احصل على رؤى وتوصيات سياسية مدعومة بالذكاء الاصطناعي"
+      titleEn: "Policy Insights",
+      titleAr: "رؤى السياسات",
+      descEn: "Get AI-powered analysis and policy recommendations",
+      descAr: "احصل على تحليلات وتوصيات سياسية مدعومة بالذكاء الاصطناعي"
+    },
+    {
+      icon: Link2,
+      titleEn: "Cross-Reference",
+      titleAr: "الربط المتقاطع",
+      descEn: "Link indicators to events and understand causality",
+      descAr: "ربط المؤشرات بالأحداث وفهم العلاقات السببية"
     },
   ];
 
-  const handleSendMessage = () => {
+  // Simulated RAG response with evidence pack
+  const generateResponse = (userQuery: string): Message => {
+    // This would be replaced with actual RAG/LLM integration
+    const sampleEvidencePack: EvidencePack = {
+      sources: [
+        { title: "Central Bank of Yemen - Aden Monthly Report", type: "Official", date: "Dec 2024", confidence: "A" },
+        { title: "Market Survey - Exchange Bureaus", type: "Field Data", date: "Dec 2024", confidence: "B" },
+        { title: "Sana'a Center Economic Analysis", type: "Research", date: "Nov 2024", confidence: "A" },
+      ],
+      indicators: [
+        { name: "Exchange Rate (Aden)", value: "2,320 YER/$", trend: "up", regime: "IRG" },
+        { name: "Exchange Rate (Sana'a)", value: "562 YER/$", trend: "stable", regime: "DFA" },
+        { name: "North-South Spread", value: "313%", trend: "up" },
+      ],
+      methodology: "Exchange rates are collected from official CBY sources and verified against market surveys from 50+ exchange bureaus across both territories.",
+      caveats: [
+        "Sana'a rates reflect old banknote values only",
+        "Black market rates may vary by 5-10%",
+        "Data as of December 2024"
+      ]
+    };
+
+    const responseContent = language === "ar"
+      ? `بناءً على تحليل البيانات المتاحة:\n\n**الفجوة الحالية في سعر الصرف:**\n\nسعر الصرف في عدن (السوق الموازي): 2,320 ريال/دولار\nسعر الصرف في صنعاء (السوق الموازي): 562 ريال/دولار\n\n**الفجوة: 313%**\n\nهذه الفجوة الكبيرة ناتجة عن انقسام النظام النقدي منذ 2019، حيث تحظر سلطات صنعاء الأوراق النقدية الجديدة المطبوعة بعد 2016.\n\n📊 انظر حزمة الأدلة أدناه للمصادر والتفاصيل الكاملة.`
+      : `Based on available data analysis:\n\n**Current Exchange Rate Spread:**\n\nAden Rate (Parallel Market): 2,320 YER/$\nSana'a Rate (Parallel Market): 562 YER/$\n\n**Spread: 313%**\n\nThis significant divergence results from the monetary system split since 2019, where Sana'a authorities ban new banknotes printed after 2016.\n\n📊 See the evidence pack below for sources and full details.`;
+
+    return {
+      id: Date.now().toString(),
+      role: "assistant",
+      content: responseContent,
+      timestamp: new Date(),
+      evidencePack: sampleEvidencePack,
+      confidence: "high"
+    };
+  };
+
+  const handleSendMessage = async () => {
     if (!query.trim()) return;
 
-    // Add user message
-    setMessages([...messages, { role: "user", content: query }]);
-    
-    // Simulate AI response (will be replaced with actual AI integration)
-    setTimeout(() => {
-      setMessages(prev => [...prev, {
-        role: "assistant",
-        content: language === "ar"
-          ? "أنا أعمل على تحليل استفسارك وجمع البيانات ذات الصلة من مستودعنا. سأقدم لك إجابة شاملة مع المصادر والمراجع قريباً."
-          : "I'm analyzing your query and gathering relevant data from our repository. I'll provide you with a comprehensive answer with sources and references shortly."
-      }]);
-    }, 1000);
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: "user",
+      content: query,
+      timestamp: new Date()
+    };
 
+    setMessages(prev => [...prev, userMessage]);
     setQuery("");
+    setIsLoading(true);
+
+    // Simulate API delay
+    setTimeout(() => {
+      const response = generateResponse(query);
+      setMessages(prev => [...prev, response]);
+      setIsLoading(false);
+    }, 1500);
+  };
+
+  const getConfidenceBadge = (confidence?: string) => {
+    switch (confidence) {
+      case "high":
+        return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+          <CheckCircle className="h-3 w-3 mr-1" />
+          {language === "ar" ? "ثقة عالية" : "High Confidence"}
+        </Badge>;
+      case "medium":
+        return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
+          <AlertCircle className="h-3 w-3 mr-1" />
+          {language === "ar" ? "ثقة متوسطة" : "Medium Confidence"}
+        </Badge>;
+      case "low":
+        return <Badge className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
+          <AlertCircle className="h-3 w-3 mr-1" />
+          {language === "ar" ? "ثقة منخفضة" : "Low Confidence"}
+        </Badge>;
+      default:
+        return null;
+    }
   };
 
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-purple-900/20 via-primary/10 to-purple-900/20 border-b">
-        <div className="container py-16">
+        <div className="container py-12">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-16 h-16 rounded-full bg-purple-500/10 flex items-center justify-center">
@@ -108,18 +242,18 @@ export default function AIAssistant() {
               </div>
               <Badge variant="outline" className="text-sm gap-1">
                 <Sparkles className="h-3 w-3" />
-                {language === "ar" ? "مساعد الذكاء الاصطناعي" : "AI Assistant"}
+                {language === "ar" ? "مدعوم بالذكاء الاصطناعي" : "AI-Powered"}
               </Badge>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               {language === "ar" 
-                ? "العقل الواحد - المساعد الذكي"
-                : "One Brain - AI Assistant"}
+                ? "العقل الواحد"
+                : "One Brain"}
             </h1>
             <p className="text-xl text-muted-foreground mb-6">
               {language === "ar"
-                ? "اطرح أسئلتك حول الاقتصاد اليمني واحصل على إجابات ذكية مدعومة بالبيانات الموثقة"
-                : "Ask questions about Yemen's economy and get intelligent answers backed by verified data"}
+                ? "مساعدك الذكي للبيانات الاقتصادية اليمنية - كل إجابة موثقة بالمصادر والأدلة"
+                : "Your intelligent assistant for Yemen economic data - every answer backed by sources and evidence"}
             </p>
           </div>
         </div>
@@ -129,56 +263,185 @@ export default function AIAssistant() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Chat Interface */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Chat Messages */}
-            <Card className="h-[500px] flex flex-col">
-              <CardHeader className="border-b">
-                <CardTitle className="flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5" />
-                  {language === "ar" ? "المحادثة" : "Conversation"}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="flex-1 overflow-y-auto p-6 space-y-4">
-                {messages.map((message, index) => (
-                  <div
-                    key={index}
-                    className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                  >
-                    <div
-                      className={`max-w-[80%] rounded-lg p-4 ${
-                        message.role === "user"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted"
-                      }`}
-                    >
-                      {message.role === "assistant" && (
-                        <div className="flex items-center gap-2 mb-2">
-                          <Brain className="h-4 w-4" />
-                          <span className="text-sm font-medium">
-                            {language === "ar" ? "العقل الواحد" : "One Brain"}
-                          </span>
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="chat" className="gap-2">
+                  <MessageSquare className="h-4 w-4" />
+                  {language === "ar" ? "المحادثة" : "Chat"}
+                </TabsTrigger>
+                <TabsTrigger value="history" className="gap-2">
+                  <Clock className="h-4 w-4" />
+                  {language === "ar" ? "السجل" : "History"}
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="chat">
+                {/* Chat Messages */}
+                <Card className="h-[600px] flex flex-col">
+                  <CardContent className="flex-1 overflow-y-auto p-6 space-y-6">
+                    {messages.map((message) => (
+                      <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+                        <div className={`max-w-[90%] ${message.role === "user" ? "" : "w-full"}`}>
+                          <div className={`rounded-lg p-4 ${
+                            message.role === "user"
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-muted"
+                          }`}>
+                            {message.role === "assistant" && (
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-2">
+                                  <Brain className="h-4 w-4" />
+                                  <span className="text-sm font-medium">
+                                    {language === "ar" ? "العقل الواحد" : "One Brain"}
+                                  </span>
+                                </div>
+                                {getConfidenceBadge(message.confidence)}
+                              </div>
+                            )}
+                            <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                            
+                            {/* Evidence Pack */}
+                            {message.evidencePack && (
+                              <div className="mt-4 pt-4 border-t border-border/50">
+                                <div className="flex items-center gap-2 mb-3">
+                                  <BookOpen className="h-4 w-4" />
+                                  <span className="text-sm font-semibold">
+                                    {language === "ar" ? "حزمة الأدلة" : "Evidence Pack"}
+                                  </span>
+                                </div>
+                                
+                                {/* Sources */}
+                                <div className="mb-3">
+                                  <div className="text-xs font-medium text-muted-foreground mb-2">
+                                    {language === "ar" ? "المصادر" : "Sources"}
+                                  </div>
+                                  <div className="space-y-1">
+                                    {message.evidencePack.sources.map((source, i) => (
+                                      <div key={i} className="flex items-center justify-between text-xs p-2 bg-background/50 rounded">
+                                        <span>{source.title}</span>
+                                        <div className="flex items-center gap-2">
+                                          <Badge variant="outline" className="text-xs">{source.type}</Badge>
+                                          <Badge variant="secondary" className="text-xs">{source.confidence}</Badge>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                                
+                                {/* Indicators */}
+                                <div className="mb-3">
+                                  <div className="text-xs font-medium text-muted-foreground mb-2">
+                                    {language === "ar" ? "المؤشرات" : "Indicators"}
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    {message.evidencePack.indicators.map((ind, i) => (
+                                      <div key={i} className="text-xs p-2 bg-background/50 rounded">
+                                        <div className="flex items-center justify-between">
+                                          <span className="text-muted-foreground">{ind.name}</span>
+                                          {ind.regime && <Badge variant="outline" className="text-xs">{ind.regime}</Badge>}
+                                        </div>
+                                        <div className="flex items-center gap-1 mt-1">
+                                          <span className="font-semibold">{ind.value}</span>
+                                          {ind.trend === "up" && <TrendingUp className="h-3 w-3 text-red-500" />}
+                                          {ind.trend === "down" && <TrendingUp className="h-3 w-3 text-green-500 rotate-180" />}
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                                
+                                {/* Caveats */}
+                                {message.evidencePack.caveats && (
+                                  <div className="text-xs p-2 bg-yellow-50 dark:bg-yellow-950/20 rounded border border-yellow-200 dark:border-yellow-900">
+                                    <div className="flex items-center gap-1 text-yellow-700 dark:text-yellow-300 font-medium mb-1">
+                                      <AlertCircle className="h-3 w-3" />
+                                      {language === "ar" ? "تحفظات" : "Caveats"}
+                                    </div>
+                                    <ul className="list-disc list-inside text-yellow-600 dark:text-yellow-400">
+                                      {message.evidencePack.caveats.map((caveat, i) => (
+                                        <li key={i}>{caveat}</li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          
+                          {/* Message Actions */}
+                          {message.role === "assistant" && (
+                            <div className="flex items-center gap-2 mt-2">
+                              <Button variant="ghost" size="sm" className="h-7 text-xs gap-1">
+                                <Copy className="h-3 w-3" />
+                                {language === "ar" ? "نسخ" : "Copy"}
+                              </Button>
+                              <Button variant="ghost" size="sm" className="h-7 text-xs gap-1">
+                                <Download className="h-3 w-3" />
+                                {language === "ar" ? "تصدير" : "Export"}
+                              </Button>
+                              <div className="flex-1" />
+                              <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                                <ThumbsUp className="h-3 w-3" />
+                              </Button>
+                              <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                                <ThumbsDown className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          )}
                         </div>
-                      )}
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      </div>
+                    ))}
+                    
+                    {isLoading && (
+                      <div className="flex justify-start">
+                        <div className="bg-muted rounded-lg p-4">
+                          <div className="flex items-center gap-2">
+                            <Brain className="h-4 w-4 animate-pulse" />
+                            <span className="text-sm">
+                              {language === "ar" ? "جاري التحليل..." : "Analyzing..."}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                  
+                  <div className="border-t p-4">
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder={language === "ar" ? "اطرح سؤالاً عن الاقتصاد اليمني..." : "Ask a question about Yemen's economy..."}
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        onKeyPress={(e) => e.key === "Enter" && !isLoading && handleSendMessage()}
+                        className="flex-1"
+                        disabled={isLoading}
+                      />
+                      <Button onClick={handleSendMessage} className="gap-2" disabled={isLoading}>
+                        <Send className="h-4 w-4" />
+                        {language === "ar" ? "إرسال" : "Send"}
+                      </Button>
                     </div>
                   </div>
-                ))}
-              </CardContent>
-              <div className="border-t p-4">
-                <div className="flex gap-2">
-                  <Input
-                    placeholder={language === "ar" ? "اطرح سؤالاً..." : "Ask a question..."}
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                    className="flex-1"
-                  />
-                  <Button onClick={handleSendMessage} className="gap-2">
-                    <Send className="h-4 w-4" />
-                    {language === "ar" ? "إرسال" : "Send"}
-                  </Button>
-                </div>
-              </div>
-            </Card>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="history">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{language === "ar" ? "سجل المحادثات" : "Conversation History"}</CardTitle>
+                    <CardDescription>
+                      {language === "ar" ? "المحادثات السابقة والتقارير المحفوظة" : "Previous conversations and saved reports"}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Clock className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>{language === "ar" ? "لا توجد محادثات محفوظة" : "No saved conversations yet"}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
 
             {/* Suggested Questions */}
             <Card>
@@ -187,20 +450,25 @@ export default function AIAssistant() {
                   {language === "ar" ? "أسئلة مقترحة" : "Suggested Questions"}
                 </CardTitle>
                 <CardDescription>
-                  {language === "ar"
-                    ? "جرب هذه الأسئلة للبدء"
-                    : "Try these questions to get started"}
+                  {language === "ar" ? "انقر على سؤال للبدء" : "Click a question to get started"}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-3">
+                <div className="grid md:grid-cols-2 gap-3">
                   {suggestedQuestions.map((question, index) => (
                     <button
                       key={index}
                       onClick={() => setQuery(language === "ar" ? question.ar : question.en)}
-                      className="p-3 text-left border rounded-lg hover:bg-muted/50 transition-colors text-sm"
+                      className="p-3 text-left border rounded-lg hover:bg-muted/50 transition-colors text-sm group"
                     >
-                      {language === "ar" ? question.ar : question.en}
+                      <div className="flex items-start gap-2">
+                        <Badge variant="outline" className="text-xs flex-shrink-0">
+                          {question.category}
+                        </Badge>
+                        <span className="group-hover:text-primary transition-colors">
+                          {language === "ar" ? question.ar : question.en}
+                        </span>
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -208,7 +476,7 @@ export default function AIAssistant() {
             </Card>
           </div>
 
-          {/* Sidebar - Capabilities */}
+          {/* Sidebar */}
           <div className="space-y-6">
             <Card>
               <CardHeader>
@@ -240,6 +508,40 @@ export default function AIAssistant() {
               </CardContent>
             </Card>
 
+            <Card className="border-purple-200 dark:border-purple-900 bg-purple-50 dark:bg-purple-950/20">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-purple-600" />
+                  {language === "ar" ? "حزم الأدلة" : "Evidence Packs"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  {language === "ar"
+                    ? "كل إجابة تتضمن حزمة أدلة كاملة مع:"
+                    : "Every answer includes a complete evidence pack with:"}
+                </p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    {language === "ar" ? "المصادر الأصلية" : "Original sources"}
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    {language === "ar" ? "مستويات الثقة" : "Confidence levels"}
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    {language === "ar" ? "المؤشرات ذات الصلة" : "Related indicators"}
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    {language === "ar" ? "التحفظات والقيود" : "Caveats and limitations"}
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">
@@ -252,51 +554,35 @@ export default function AIAssistant() {
                     <span className="text-primary">•</span>
                     <span>
                       {language === "ar"
-                        ? "كن محدداً في أسئلتك للحصول على إجابات أفضل"
-                        : "Be specific in your questions for better answers"}
+                        ? "كن محدداً في أسئلتك للحصول على إجابات أدق"
+                        : "Be specific in your questions for more precise answers"}
                     </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-primary">•</span>
                     <span>
                       {language === "ar"
-                        ? "يمكنك طلب المقارنات بين الأنظمة المختلفة"
-                        : "You can request comparisons between different regimes"}
+                        ? "حدد النظام (عدن/صنعاء) عند المقارنة"
+                        : "Specify the regime (Aden/Sana'a) when comparing"}
                     </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-primary">•</span>
                     <span>
                       {language === "ar"
-                        ? "اطلب المصادر والمراجع لأي بيانات"
-                        : "Ask for sources and references for any data"}
+                        ? "راجع حزمة الأدلة للتحقق من المصادر"
+                        : "Review the evidence pack to verify sources"}
                     </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-primary">•</span>
                     <span>
                       {language === "ar"
-                        ? "يمكنك طلب تصدير النتائج كتقرير"
-                        : "You can request to export results as a report"}
+                        ? "يمكنك تصدير الإجابات كتقارير PDF"
+                        : "You can export answers as PDF reports"}
                     </span>
                   </li>
                 </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950/20">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-blue-600" />
-                  {language === "ar" ? "ميزة جديدة" : "New Feature"}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  {language === "ar"
-                    ? "الآن يمكنك طلب تحليلات متقدمة وتوصيات سياسية مدعومة بالذكاء الاصطناعي!"
-                    : "Now you can request advanced analytics and AI-powered policy recommendations!"}
-                </p>
               </CardContent>
             </Card>
           </div>

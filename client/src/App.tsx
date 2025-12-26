@@ -16,11 +16,22 @@ import Research from "./pages/Research";
 import Banking from "./pages/sectors/Banking";
 import Trade from "./pages/sectors/Trade";
 import Poverty from "./pages/sectors/Poverty";
+import Macroeconomy from "./pages/sectors/Macroeconomy";
+import Prices from "./pages/sectors/Prices";
+import Currency from "./pages/sectors/Currency";
+import PublicFinance from "./pages/sectors/PublicFinance";
+import Energy from "./pages/sectors/Energy";
+import FoodSecurity from "./pages/sectors/FoodSecurity";
+import AidFlows from "./pages/sectors/AidFlows";
 import DataRepository from "./pages/DataRepository";
 import AdminPortal from "./pages/AdminPortal";
 import PartnerPortal from "./pages/PartnerPortal";
 import AIAssistant from "./pages/AIAssistant";
 import ScenarioSimulator from "./pages/ScenarioSimulator";
+import Timeline from "./pages/Timeline";
+import Methodology from "./pages/Methodology";
+import ReportBuilder from "./pages/ReportBuilder";
+import Pricing from "./pages/Pricing";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -38,7 +49,18 @@ function Router() {
       <Route path={"/sectors/banking"} component={Banking} />
       <Route path={"/sectors/trade"} component={Trade} />
       <Route path={"/sectors/poverty"} component={Poverty} />
+      <Route path={"/sectors/macroeconomy"} component={Macroeconomy} />
+      <Route path={"/sectors/prices"} component={Prices} />
+      <Route path={"/sectors/currency"} component={Currency} />
+      <Route path={"/sectors/public-finance"} component={PublicFinance} />
+      <Route path={"/sectors/energy"} component={Energy} />
+      <Route path={"/sectors/food-security"} component={FoodSecurity} />
+      <Route path={"/sectors/aid-flows"} component={AidFlows} />
       <Route path={"/data-repository"} component={DataRepository} />
+      <Route path={"/timeline"} component={Timeline} />
+      <Route path={"/methodology"} component={Methodology} />
+      <Route path={"/report-builder"} component={ReportBuilder} />
+      <Route path={"/pricing"} component={Pricing} />
       <Route path={"/admin"} component={AdminPortal} />
       <Route path={"/partner"} component={PartnerPortal} />
       <Route path={"/ai-assistant"} component={AIAssistant} />
