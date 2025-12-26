@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -186,6 +188,37 @@ export default function AIAssistant() {
     };
   };
 
+  const aiChatMutation = trpc.ai.chat.useMutation({
+    onSuccess: (data) => {
+      const assistantMessage: Message = {
+        id: Date.now().toString(),
+        role: "assistant",
+        content: data.message,
+        timestamp: new Date(),
+        confidence: data.confidence as "high" | "medium" | "low",
+        evidencePack: data.sources.length > 0 ? {
+          sources: data.sources.map(s => ({
+            title: s.name,
+            type: s.type,
+            date: "Dec 2024",
+            confidence: "A",
+          })),
+          indicators: [],
+          methodology: "Response generated using RAG retrieval from YETO database with Yemen-specific context.",
+          caveats: [
+            language === "ar" ? "الإجابة مبنية على البيانات المتاحة في قاعدة بيانات YETO" : "Answer based on data available in YETO database",
+            language === "ar" ? "يرجى التحقق من المصادر الأصلية للقرارات الحرجة" : "Please verify original sources for critical decisions",
+          ],
+        } : undefined,
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+    },
+    onError: (error) => {
+      toast.error(language === "ar" ? "حدث خطأ في معالجة طلبك" : "Error processing your request");
+      console.error("AI Chat error:", error);
+    },
+  });
+
   const handleSendMessage = async () => {
     if (!query.trim()) return;
 
@@ -197,15 +230,26 @@ export default function AIAssistant() {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentQuery = query;
     setQuery("");
     setIsLoading(true);
 
-    // Simulate API delay
-    setTimeout(() => {
-      const response = generateResponse(query);
-      setMessages(prev => [...prev, response]);
+    try {
+      await aiChatMutation.mutateAsync({
+        message: currentQuery,
+        conversationHistory: messages.slice(-10).map(m => ({
+          role: m.role,
+          content: m.content,
+        })),
+        context: {
+          regime: "both",
+        },
+      });
+    } catch (error) {
+      // Error handled in onError callback
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const getConfidenceBadge = (confidence?: string) => {

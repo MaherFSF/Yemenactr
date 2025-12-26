@@ -38,6 +38,10 @@ import Methodology from "./pages/Methodology";
 import ReportBuilder from "./pages/ReportBuilder";
 import Pricing from "./pages/Pricing";
 import Legal from "./pages/Legal";
+import Entities from "./pages/Entities";
+import EntityDetail from "./pages/EntityDetail";
+import Corrections from "./pages/Corrections";
+import Publications from "./pages/Publications";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -73,6 +77,10 @@ function Router() {
       <Route path={"/report-builder"} component={ReportBuilder} />
       <Route path={"/pricing"} component={Pricing} />
       <Route path={"/legal"} component={Legal} />
+      <Route path={"/entities"} component={Entities} />
+      <Route path={"/entities/:id"} component={EntityDetail} />
+      <Route path={"/corrections"} component={Corrections} />
+      <Route path={"/publications"} component={Publications} />
       <Route path={"/legal/privacy"} component={Legal} />
       <Route path={"/legal/terms"} component={Legal} />
       <Route path={"/legal/data-license"} component={Legal} />

@@ -1,682 +1,607 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
   TrendingUp, 
   TrendingDown, 
-  DollarSign, 
-  BarChart3, 
-  Users, 
-  AlertCircle,
   Download,
-  Filter,
   Calendar,
-  Zap,
-  Wheat,
-  Ship,
-  Building2,
-  ArrowRight,
-  RefreshCw,
-  Info,
   AlertTriangle,
-  CheckCircle2
+  AlertCircle,
+  Eye,
+  ChevronDown,
+  Info
 } from "lucide-react";
 import { useState } from "react";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, ComposedChart } from 'recharts';
 import { Link } from "wouter";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function Dashboard() {
   const { language } = useLanguage();
   const [regimeTag, setRegimeTag] = useState<"aden" | "sanaa" | "both">("both");
+  const [granularity, setGranularity] = useState<"annual" | "quarterly" | "monthly">("annual");
+  const [selectedIndicator, setSelectedIndicator] = useState("gdp");
 
-  // Sample data for demonstration
-  const keyMetrics = {
-    aden: {
-      fxRate: { value: 2070, change: 15.2, date: "Dec 2024" },
-      inflation: { value: 35.2, change: 2.1, date: "Nov 2024" },
-      gdp: { value: 21.5, change: -2.3, date: "2023" },
-      poverty: { value: 80, change: 5, date: "2024" },
-      fuelPrice: { value: 1250, change: 8.5, date: "Dec 2024" },
-      foodIndex: { value: 285, change: 12.3, date: "Dec 2024" },
+  // GDP Time Series Data (2010-2024) matching mockup
+  const gdpData = [
+    { year: "2010", aden: 50000, sanaa: 48000, unified: 49000 },
+    { year: "2011", aden: 45000, sanaa: 44000, unified: 44500 },
+    { year: "2012", aden: 52000, sanaa: 50000, unified: 51000 },
+    { year: "2013", aden: 55000, sanaa: 53000, unified: 54000 },
+    { year: "2014", aden: 58000, sanaa: 56000, unified: 57000 },
+    { year: "2015", aden: 40000, sanaa: 38000, unified: 39000 },
+    { year: "2016", aden: 35000, sanaa: 32000, unified: null },
+    { year: "2017", aden: 38000, sanaa: 35000, unified: null },
+    { year: "2018", aden: 42000, sanaa: 40000, unified: null },
+    { year: "2019", aden: 48000, sanaa: 45000, unified: null },
+    { year: "2020", aden: 52000, sanaa: 48000, unified: null },
+    { year: "2021", aden: 65000, sanaa: 55000, unified: null },
+    { year: "2022", aden: 78000, sanaa: 58000, unified: null },
+    { year: "2023", aden: 85000, sanaa: 60200, unified: null },
+    { year: "2024", aden: 92000, sanaa: 65000, unified: null },
+  ];
+
+  // Quick Stats matching mockup
+  const quickStats = [
+    {
+      labelEn: "Annual Inflation Rate (Aden)",
+      labelAr: "معدل التضخم السنوي (عدن)",
+      value: "25.0%",
+      trend: "up",
+      sparkline: [15, 18, 20, 22, 24, 25]
     },
-    sanaa: {
-      fxRate: { value: 535, change: 0.5, date: "Dec 2024" },
-      inflation: { value: 12.5, change: -1.2, date: "Nov 2024" },
-      gdp: { value: null, change: null, date: "N/A" },
-      poverty: { value: 78, change: 3, date: "2024" },
-      fuelPrice: { value: 850, change: 5.2, date: "Dec 2024" },
-      foodIndex: { value: 245, change: 8.7, date: "Dec 2024" },
-    }
+    {
+      labelEn: "Annual Inflation Rate (Sana'a)",
+      labelAr: "معدل التضخم السنوي (صنعاء)",
+      value: "18.3%",
+      trend: "up",
+      sparkline: [12, 14, 15, 16, 17, 18.3]
+    },
+    {
+      labelEn: "Unemployment Rate",
+      labelAr: "نسبة البطالة",
+      value: "38.2%",
+      trend: "warning",
+      sparkline: [30, 32, 34, 35, 37, 38.2]
+    },
+  ];
+
+  // Alerts matching mockup
+  const alerts = [
+    {
+      type: "warning",
+      titleEn: "Important Update: Exchange rate change",
+      titleAr: "تحديث هام: تغيير في سعر الصرف",
+      timeEn: "Yesterday, 10:00 AM",
+      timeAr: "أمس، 10:00 ص"
+    },
+    {
+      type: "error",
+      titleEn: "Warning: Sharp decline in currency reserves",
+      titleAr: "تحذير: انخفاض حاد في احتياطيات العملة",
+      timeEn: "2 days ago, 3:30 PM",
+      timeAr: "قبل يومين، 3:30 م"
+    },
+  ];
+
+  // Watchlist matching mockup
+  const watchlist = [
+    { labelEn: "USD Exchange Rate (Aden)", labelAr: "سعر صرف الدولار (عدن)", value: "1500 ريال" },
+    { labelEn: "Crude Oil Prices", labelAr: "أسعار النفط الخام", value: "82.3 دولار/برميل" },
+    { labelEn: "Consumer Price Index", labelAr: "مؤشر أسعار المستهلكين", value: "154.6 نقطة" },
+  ];
+
+  // Data table matching mockup
+  const dataTable = [
+    { year: "2023", value: "85,000 مليار", regime: "عدن", source: "وزارة التخطيط - عدن", quality: "عالية" },
+    { year: "2023", value: "60,200 مليار", regime: "صنعاء", source: "البنك المركزي - صنعاء", quality: "متوسطة" },
+    { year: "2012", value: "30,500 مليار", regime: "عدن", source: "البنك المركزي - صنعاء", quality: "عالية" },
+    { year: "2018", value: "20,000 مليار", regime: "صنعاء", source: "البنك المركزي - صنعاء", quality: "عالية" },
+  ];
+
+  // Simple sparkline component
+  const MiniSparkline = ({ data, color = "#107040" }: { data: number[], color?: string }) => {
+    const max = Math.max(...data);
+    const min = Math.min(...data);
+    const range = max - min || 1;
+    const width = 80;
+    const height = 24;
+    const points = data.map((val, i) => {
+      const x = (i / (data.length - 1)) * width;
+      const y = height - ((val - min) / range) * height;
+      return `${x},${y}`;
+    }).join(' ');
+
+    return (
+      <svg width={width} height={height} className="inline-block">
+        <polyline fill="none" stroke={color} strokeWidth="2" points={points} />
+      </svg>
+    );
   };
 
-  // Exchange rate comparison data
-  const fxComparisonData = [
-    { month: "Jul", aden: 1850, sanaa: 530 },
-    { month: "Aug", aden: 1920, sanaa: 532 },
-    { month: "Sep", aden: 1980, sanaa: 533 },
-    { month: "Oct", aden: 2010, sanaa: 534 },
-    { month: "Nov", aden: 2045, sanaa: 535 },
-    { month: "Dec", aden: 2070, sanaa: 535 },
-  ];
-
-  // Inflation comparison data
-  const inflationData = [
-    { month: "Jul", aden: 32.1, sanaa: 14.2 },
-    { month: "Aug", aden: 33.5, sanaa: 13.8 },
-    { month: "Sep", aden: 34.2, sanaa: 13.2 },
-    { month: "Oct", aden: 34.8, sanaa: 12.9 },
-    { month: "Nov", aden: 35.2, sanaa: 12.5 },
-    { month: "Dec", aden: 35.8, sanaa: 12.3 },
-  ];
-
-  // Sector breakdown data
-  const sectorData = [
-    { name: language === "ar" ? "الزراعة" : "Agriculture", value: 20, color: "#107040" },
-    { name: language === "ar" ? "الخدمات" : "Services", value: 45, color: "#C0A030" },
-    { name: language === "ar" ? "الصناعة" : "Industry", value: 15, color: "#103050" },
-    { name: language === "ar" ? "النفط والغاز" : "Oil & Gas", value: 10, color: "#4A90E2" },
-    { name: language === "ar" ? "أخرى" : "Other", value: 10, color: "#9CA3AF" },
-  ];
-
-  // Recent events
-  const recentEvents = [
-    {
-      id: 1,
-      titleEn: "CBY-Aden Announces New Monetary Policy Measures",
-      titleAr: "البنك المركزي في عدن يعلن عن إجراءات نقدية جديدة",
-      dateEn: "Dec 20, 2024",
-      dateAr: "20 ديسمبر 2024",
-      impact: "high",
-      sector: "banking"
-    },
-    {
-      id: 2,
-      titleEn: "Fuel Prices Increase in Southern Governorates",
-      titleAr: "ارتفاع أسعار الوقود في المحافظات الجنوبية",
-      dateEn: "Dec 18, 2024",
-      dateAr: "18 ديسمبر 2024",
-      impact: "medium",
-      sector: "energy"
-    },
-    {
-      id: 3,
-      titleEn: "WFP Reports Food Security Deterioration",
-      titleAr: "برنامج الغذاء العالمي يرصد تدهور الأمن الغذائي",
-      dateEn: "Dec 15, 2024",
-      dateAr: "15 ديسمبر 2024",
-      impact: "critical",
-      sector: "food"
-    },
-    {
-      id: 4,
-      titleEn: "Trade Volume Through Aden Port Increases",
-      titleAr: "زيادة حجم التجارة عبر ميناء عدن",
-      dateEn: "Dec 12, 2024",
-      dateAr: "12 ديسمبر 2024",
-      impact: "low",
-      sector: "trade"
-    },
-  ];
-
-  // Data quality indicators
-  const dataQuality = [
-    { labelEn: "Verified Sources", labelAr: "مصادر موثقة", value: 127, icon: CheckCircle2, color: "text-green-600" },
-    { labelEn: "Pending Review", labelAr: "قيد المراجعة", value: 23, icon: RefreshCw, color: "text-yellow-600" },
-    { labelEn: "Data Gaps", labelAr: "فجوات البيانات", value: 8, icon: AlertTriangle, color: "text-red-600" },
-  ];
-
-  const MetricCard = ({ 
-    title, 
-    value, 
-    unit, 
-    change, 
-    date, 
-    icon: Icon, 
-    confidence = "B",
-    regime
-  }: {
-    title: string;
-    value: string | number;
-    unit?: string;
-    change?: number;
-    date: string;
-    icon: any;
-    confidence?: string;
-    regime?: string;
-  }) => (
-    <Card className="relative overflow-hidden">
-      <div className={`absolute top-0 left-0 w-1 h-full ${
-        regime === "aden" ? "bg-blue-500" : 
-        regime === "sanaa" ? "bg-red-500" : "bg-[#107040]"
-      }`}></div>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
-          {title}
-        </CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground" />
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-baseline gap-1">
-          <span className="text-2xl font-bold">{value}</span>
-          {unit && <span className="text-sm text-muted-foreground">{unit}</span>}
-        </div>
-        <div className="flex items-center justify-between mt-2">
-          <div className="flex items-center gap-2">
-            {change !== undefined && (
-              <span className={`text-xs flex items-center ${
-                change > 0 ? "text-red-600" : change < 0 ? "text-green-600" : "text-gray-600"
-              }`}>
-                {change > 0 ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
-                {Math.abs(change)}%
-              </span>
-            )}
-            <span className="text-xs text-muted-foreground">{date}</span>
-          </div>
-          <Badge variant="outline" className="text-xs">
-            {confidence}
-          </Badge>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
   return (
-    <div className="flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Header */}
-      <section className="bg-gradient-to-r from-[#103050] to-[#0B1F33] text-white">
-        <div className="container py-8">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div>
-              <Badge className="mb-3 bg-white/10 text-white border-white/20">
-                {language === "ar" ? "تحديث مباشر" : "Live Updates"}
-              </Badge>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">
-                {language === "ar" ? "لوحة المعلومات الاقتصادية" : "Economic Dashboard"}
-              </h1>
-              <p className="text-white/70">
-                {language === "ar" 
-                  ? "مؤشرات اقتصادية في الوقت الفعلي مع تتبع كامل للمصادر"
-                  : "Real-time economic indicators with complete provenance tracking"}
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" className="gap-2 bg-white/10 border-white/20 text-white hover:bg-white/20">
-                <Filter className="h-4 w-4" />
-                {language === "ar" ? "تصفية" : "Filter"}
-              </Button>
-              <Button variant="outline" className="gap-2 bg-white/10 border-white/20 text-white hover:bg-white/20">
-                <Download className="h-4 w-4" />
-                {language === "ar" ? "تصدير" : "Export"}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Regime Selector */}
-      <section className="bg-background border-b sticky top-16 z-40">
-        <div className="container py-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <Tabs value={regimeTag} onValueChange={(v) => setRegimeTag(v as typeof regimeTag)}>
-              <TabsList className="grid w-full max-w-lg grid-cols-3">
-                <TabsTrigger value="both" className="gap-2">
-                  {language === "ar" ? "مقارنة" : "Compare"}
-                </TabsTrigger>
-                <TabsTrigger value="aden" className="gap-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                  {language === "ar" ? "عدن" : "Aden"}
-                </TabsTrigger>
-                <TabsTrigger value="sanaa" className="gap-2">
-                  <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                  {language === "ar" ? "صنعاء" : "Sana'a"}
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-            
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-2">
-                <RefreshCw className="h-4 w-4" />
-                {language === "ar" ? "آخر تحديث: منذ 2 ساعة" : "Last updated: 2 hours ago"}
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div className="container py-8">
-        {/* Data Quality Banner */}
-        <div className="flex flex-wrap gap-4 mb-8 p-4 bg-muted/50 rounded-lg">
-          {dataQuality.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <div key={index} className="flex items-center gap-2">
-                <Icon className={`h-4 w-4 ${item.color}`} />
-                <span className="text-sm">
-                  <span className="font-semibold">{item.value}</span>{" "}
-                  <span className="text-muted-foreground">
-                    {language === "ar" ? item.labelAr : item.labelEn}
-                  </span>
-                </span>
-              </div>
-            );
-          })}
-          <Link href="/methodology" className="ml-auto">
-            <Button variant="ghost" size="sm" className="gap-1 text-[#107040]">
-              <Info className="h-4 w-4" />
-              {language === "ar" ? "منهجية البيانات" : "Data Methodology"}
-            </Button>
-          </Link>
-        </div>
-
-        {/* Key Metrics - Comparison View */}
-        {regimeTag === "both" && (
-          <>
-            <h2 className="text-xl font-semibold mb-4">
-              {language === "ar" ? "مقارنة المؤشرات الرئيسية" : "Key Indicators Comparison"}
-            </h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {/* Exchange Rate Comparison */}
-              <Card className="col-span-full lg:col-span-1">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <DollarSign className="h-5 w-5 text-[#C0A030]" />
-                    {language === "ar" ? "سعر الصرف (YER/USD)" : "Exchange Rate (YER/USD)"}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                        <span className="text-sm text-muted-foreground">{language === "ar" ? "عدن" : "Aden"}</span>
-                      </div>
-                      <div className="text-2xl font-bold">{keyMetrics.aden.fxRate.value.toLocaleString()}</div>
-                      <div className="text-xs text-red-600 flex items-center">
-                        <TrendingUp className="h-3 w-3 mr-1" />
-                        +{keyMetrics.aden.fxRate.change}%
-                      </div>
-                    </div>
-                    <div className="p-3 bg-red-50 dark:bg-red-950/20 rounded-lg">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                        <span className="text-sm text-muted-foreground">{language === "ar" ? "صنعاء" : "Sana'a"}</span>
-                      </div>
-                      <div className="text-2xl font-bold">{keyMetrics.sanaa.fxRate.value.toLocaleString()}</div>
-                      <div className="text-xs text-gray-600 flex items-center">
-                        <TrendingUp className="h-3 w-3 mr-1" />
-                        +{keyMetrics.sanaa.fxRate.change}%
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-center p-2 bg-[#C0A030]/10 rounded">
-                    <span className="text-sm font-medium text-[#C0A030]">
-                      {language === "ar" ? "فجوة ~287%" : "~287% Gap"}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Inflation Comparison */}
-              <Card className="col-span-full lg:col-span-1">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <TrendingUp className="h-5 w-5 text-red-500" />
-                    {language === "ar" ? "معدل التضخم" : "Inflation Rate"}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                        <span className="text-sm text-muted-foreground">{language === "ar" ? "عدن" : "Aden"}</span>
-                      </div>
-                      <div className="text-2xl font-bold">{keyMetrics.aden.inflation.value}%</div>
-                      <div className="text-xs text-red-600 flex items-center">
-                        <TrendingUp className="h-3 w-3 mr-1" />
-                        +{keyMetrics.aden.inflation.change}%
-                      </div>
-                    </div>
-                    <div className="p-3 bg-red-50 dark:bg-red-950/20 rounded-lg">
-                      <div className="flex items-center gap-2 mb-1">
-                        <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                        <span className="text-sm text-muted-foreground">{language === "ar" ? "صنعاء" : "Sana'a"}</span>
-                      </div>
-                      <div className="text-2xl font-bold">{keyMetrics.sanaa.inflation.value}%</div>
-                      <div className="text-xs text-green-600 flex items-center">
-                        <TrendingDown className="h-3 w-3 mr-1" />
-                        {keyMetrics.sanaa.inflation.change}%
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-center p-2 bg-red-50 dark:bg-red-950/20 rounded">
-                    <span className="text-sm font-medium text-red-600">
-                      {language === "ar" ? "عدن أعلى بـ 22.7 نقطة" : "Aden 22.7pts higher"}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Poverty Rate */}
-              <Card className="col-span-full lg:col-span-1">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <Users className="h-5 w-5 text-purple-500" />
-                    {language === "ar" ? "معدل الفقر" : "Poverty Rate"}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center mb-4">
-                    <div className="text-4xl font-bold text-[#103050]">~80%</div>
-                    <p className="text-sm text-muted-foreground">
-                      {language === "ar" ? "من السكان تحت خط الفقر" : "of population below poverty line"}
-                    </p>
-                  </div>
-                  <div className="p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
-                    <p className="text-sm text-muted-foreground">
-                      {language === "ar" 
-                        ? "تقديرات البنك الدولي وبرنامج الأمم المتحدة الإنمائي 2024"
-                        : "World Bank & UNDP estimates 2024"}
-                    </p>
-                    <Badge variant="outline" className="mt-2">
-                      {language === "ar" ? "الثقة: C" : "Confidence: C"}
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </>
-        )}
-
-        {/* Single Regime View */}
-        {(regimeTag === "aden" || regimeTag === "sanaa") && (
-          <>
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <div className={`w-3 h-3 rounded-full ${regimeTag === "aden" ? "bg-blue-500" : "bg-red-500"}`}></div>
+      <div className="bg-white dark:bg-gray-900 border-b">
+        <div className="container py-6">
+          <div className={`${language === 'ar' ? 'text-right' : ''}`}>
+            <h1 className="text-2xl md:text-3xl font-bold text-[#103050] dark:text-white mb-2">
+              {language === "ar" ? "لوحة المؤشرات الاقتصادية" : "Economic Indicators Dashboard"}
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
               {language === "ar" 
-                ? `مؤشرات ${regimeTag === "aden" ? "عدن" : "صنعاء"}`
-                : `${regimeTag === "aden" ? "Aden" : "Sana'a"} Indicators`}
-            </h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
-              <MetricCard
-                title={language === "ar" ? "سعر الصرف" : "Exchange Rate"}
-                value={keyMetrics[regimeTag].fxRate.value.toLocaleString()}
-                unit="YER/USD"
-                change={keyMetrics[regimeTag].fxRate.change}
-                date={keyMetrics[regimeTag].fxRate.date}
-                icon={DollarSign}
-                regime={regimeTag}
-              />
-              <MetricCard
-                title={language === "ar" ? "التضخم" : "Inflation"}
-                value={keyMetrics[regimeTag].inflation.value}
-                unit="%"
-                change={keyMetrics[regimeTag].inflation.change}
-                date={keyMetrics[regimeTag].inflation.date}
-                icon={TrendingUp}
-                regime={regimeTag}
-              />
-              <MetricCard
-                title={language === "ar" ? "سعر الوقود" : "Fuel Price"}
-                value={keyMetrics[regimeTag].fuelPrice.value.toLocaleString()}
-                unit="YER/L"
-                change={keyMetrics[regimeTag].fuelPrice.change}
-                date={keyMetrics[regimeTag].fuelPrice.date}
-                icon={Zap}
-                regime={regimeTag}
-              />
-              <MetricCard
-                title={language === "ar" ? "مؤشر الغذاء" : "Food Index"}
-                value={keyMetrics[regimeTag].foodIndex.value}
-                change={keyMetrics[regimeTag].foodIndex.change}
-                date={keyMetrics[regimeTag].foodIndex.date}
-                icon={Wheat}
-                regime={regimeTag}
-              />
+                ? "بيانات موثقة ومحدثة عن الاقتصاد اليمني"
+                : "Verified and updated data on the Yemeni economy"}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Filters Bar - Matching mockup */}
+      <div className="bg-white dark:bg-gray-900 border-b py-4">
+        <div className="container">
+          <div className={`flex flex-wrap items-center gap-4 ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
+            {/* Indicator Selector */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {language === "ar" ? "اختر المؤشر" : "Select Indicator"}
+              </span>
+              <Select value={selectedIndicator} onValueChange={setSelectedIndicator}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="gdp">{language === "ar" ? "الناتج المحلي الإجمالي" : "GDP"}</SelectItem>
+                  <SelectItem value="inflation">{language === "ar" ? "التضخم" : "Inflation"}</SelectItem>
+                  <SelectItem value="fx">{language === "ar" ? "سعر الصرف" : "Exchange Rate"}</SelectItem>
+                  <SelectItem value="trade">{language === "ar" ? "الميزان التجاري" : "Trade Balance"}</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-          </>
-        )}
 
-        {/* Charts Section */}
-        <div className="grid lg:grid-cols-2 gap-6 mb-8">
-          {/* Exchange Rate Trend */}
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {language === "ar" ? "اتجاه سعر الصرف" : "Exchange Rate Trend"}
-              </CardTitle>
-              <CardDescription>
-                {language === "ar" ? "آخر 6 أشهر (YER/USD)" : "Last 6 months (YER/USD)"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={fxComparisonData}>
-                  <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                  <XAxis dataKey="month" />
-                  <YAxis yAxisId="left" orientation="left" domain={[1800, 2200]} />
-                  <YAxis yAxisId="right" orientation="right" domain={[500, 600]} />
-                  <Tooltip />
-                  <Legend />
-                  <Line 
-                    yAxisId="left"
-                    type="monotone" 
-                    dataKey="aden" 
-                    stroke="#3B82F6" 
-                    strokeWidth={2}
-                    name={language === "ar" ? "عدن" : "Aden"}
-                    dot={{ fill: "#3B82F6" }}
-                  />
-                  <Line 
-                    yAxisId="right"
-                    type="monotone" 
-                    dataKey="sanaa" 
-                    stroke="#EF4444" 
-                    strokeWidth={2}
-                    name={language === "ar" ? "صنعاء" : "Sana'a"}
-                    dot={{ fill: "#EF4444" }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+            {/* Time Period */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {language === "ar" ? "الفترة الزمنية" : "Time Period"}
+              </span>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Calendar className="h-4 w-4" />
+                2024/11/20 - 2024/11/31
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </div>
 
-          {/* Inflation Trend */}
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {language === "ar" ? "اتجاه التضخم" : "Inflation Trend"}
-              </CardTitle>
-              <CardDescription>
-                {language === "ar" ? "آخر 6 أشهر (%)" : "Last 6 months (%)"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={inflationData}>
-                  <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                  <XAxis dataKey="month" />
-                  <YAxis domain={[0, 40]} />
-                  <Tooltip />
-                  <Legend />
-                  <Area 
-                    type="monotone" 
-                    dataKey="aden" 
-                    stroke="#3B82F6" 
-                    fill="#3B82F6"
-                    fillOpacity={0.2}
-                    strokeWidth={2}
-                    name={language === "ar" ? "عدن" : "Aden"}
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="sanaa" 
-                    stroke="#EF4444" 
-                    fill="#EF4444"
-                    fillOpacity={0.2}
-                    strokeWidth={2}
-                    name={language === "ar" ? "صنعاء" : "Sana'a"}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Sector Breakdown & Recent Events */}
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* GDP Sector Breakdown */}
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {language === "ar" ? "توزيع الناتج المحلي" : "GDP Breakdown"}
-              </CardTitle>
-              <CardDescription>
-                {language === "ar" ? "حسب القطاع (تقديرات 2023)" : "By sector (2023 estimates)"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie
-                    data={sectorData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={40}
-                    outerRadius={80}
-                    paddingAngle={2}
-                    dataKey="value"
-                  >
-                    {sectorData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="grid grid-cols-2 gap-2 mt-4">
-                {sectorData.map((sector, index) => (
-                  <div key={index} className="flex items-center gap-2 text-sm">
-                    <div className="w-3 h-3 rounded" style={{ backgroundColor: sector.color }}></div>
-                    <span className="text-muted-foreground">{sector.name}</span>
-                    <span className="font-medium ml-auto">{sector.value}%</span>
-                  </div>
-                ))}
+            {/* Regime Toggle - Matching mockup exactly */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {language === "ar" ? "النظام" : "Regime"}
+              </span>
+              <div className="flex rounded-lg border overflow-hidden">
+                <button
+                  onClick={() => setRegimeTag("both")}
+                  className={`px-4 py-2 text-sm font-medium transition-colors ${
+                    regimeTag === "both" 
+                      ? "bg-[#103050] text-white" 
+                      : "bg-white text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  {language === "ar" ? "كلاهما" : "Both"}
+                </button>
+                <button
+                  onClick={() => setRegimeTag("sanaa")}
+                  className={`px-4 py-2 text-sm font-medium transition-colors border-x ${
+                    regimeTag === "sanaa" 
+                      ? "bg-[#103050] text-white" 
+                      : "bg-white text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  {language === "ar" ? "صنعاء" : "Sana'a"}
+                </button>
+                <button
+                  onClick={() => setRegimeTag("aden")}
+                  className={`px-4 py-2 text-sm font-medium transition-colors ${
+                    regimeTag === "aden" 
+                      ? "bg-[#103050] text-white" 
+                      : "bg-white text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  {language === "ar" ? "عدن" : "Aden"}
+                </button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          {/* Recent Events */}
-          <Card className="lg:col-span-2">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>
-                  {language === "ar" ? "الأحداث الاقتصادية الأخيرة" : "Recent Economic Events"}
+            {/* Granularity */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {language === "ar" ? "التفصيل" : "Granularity"}
+              </span>
+              <div className="flex rounded-lg border overflow-hidden">
+                <button
+                  onClick={() => setGranularity("annual")}
+                  className={`px-3 py-2 text-sm font-medium transition-colors ${
+                    granularity === "annual" 
+                      ? "bg-[#103050] text-white" 
+                      : "bg-white text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  {language === "ar" ? "سنوي" : "Annual"}
+                </button>
+                <button
+                  onClick={() => setGranularity("quarterly")}
+                  className={`px-3 py-2 text-sm font-medium transition-colors border-x ${
+                    granularity === "quarterly" 
+                      ? "bg-[#103050] text-white" 
+                      : "bg-white text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  {language === "ar" ? "ربع سنوي" : "Quarterly"}
+                </button>
+                <button
+                  onClick={() => setGranularity("monthly")}
+                  className={`px-3 py-2 text-sm font-medium transition-colors ${
+                    granularity === "monthly" 
+                      ? "bg-[#103050] text-white" 
+                      : "bg-white text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  {language === "ar" ? "شهري" : "Monthly"}
+                </button>
+              </div>
+            </div>
+
+            {/* Export Button */}
+            <Button variant="outline" size="sm" className="gap-2 bg-[#107040] text-white hover:bg-[#0D5A34] border-[#107040]">
+              <Download className="h-4 w-4" />
+              {language === "ar" ? "تصدير البيانات" : "Export Data"}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content - 3 Column Layout matching mockup */}
+      <div className="container py-6">
+        <div className="grid lg:grid-cols-[280px_1fr_280px] gap-6">
+          
+          {/* Left Sidebar */}
+          <div className={`space-y-6 ${language === 'ar' ? 'lg:order-3' : ''}`}>
+            {/* Quick Stats */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">
+                  {language === "ar" ? "إحصائيات سريعة" : "Quick Stats"}
                 </CardTitle>
-                <CardDescription>
-                  {language === "ar" ? "أحدث التطورات والسياسات" : "Latest developments and policies"}
-                </CardDescription>
-              </div>
-              <Link href="/timeline">
-                <Button variant="ghost" size="sm" className="gap-1">
-                  {language === "ar" ? "عرض الكل" : "View All"}
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recentEvents.map((event) => (
-                  <div key={event.id} className="flex gap-4 pb-4 border-b last:border-0 last:pb-0">
-                    <div className="flex-shrink-0">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                        event.impact === "critical" ? "bg-red-100 text-red-600" :
-                        event.impact === "high" ? "bg-orange-100 text-orange-600" :
-                        event.impact === "medium" ? "bg-yellow-100 text-yellow-600" :
-                        "bg-green-100 text-green-600"
-                      }`}>
-                        <Calendar className="h-5 w-5" />
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {quickStats.map((stat, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <div>
+                      <div className="text-xs text-gray-500 mb-1">
+                        {language === "ar" ? stat.labelAr : stat.labelEn}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {stat.trend === "up" && <TrendingUp className="h-4 w-4 text-red-500" />}
+                        {stat.trend === "warning" && <AlertTriangle className="h-4 w-4 text-amber-500" />}
+                        <span className="font-bold text-[#103050] dark:text-white">{stat.value}</span>
                       </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-foreground mb-1 line-clamp-1">
-                        {language === "ar" ? event.titleAr : event.titleEn}
-                      </h4>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <span>{language === "ar" ? event.dateAr : event.dateEn}</span>
-                        <Badge variant="outline" className={`text-xs ${
-                          event.impact === "critical" ? "border-red-200 text-red-600" :
-                          event.impact === "high" ? "border-orange-200 text-orange-600" :
-                          event.impact === "medium" ? "border-yellow-200 text-yellow-600" :
-                          "border-green-200 text-green-600"
-                        }`}>
-                          {event.impact}
-                        </Badge>
+                    <MiniSparkline data={stat.sparkline} color={stat.trend === "warning" ? "#F59E0B" : "#EF4444"} />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Alerts */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">
+                  {language === "ar" ? "التنبيهات" : "Alerts"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {alerts.map((alert, index) => (
+                  <div 
+                    key={index} 
+                    className={`p-3 rounded-lg border-l-4 ${
+                      alert.type === "warning" 
+                        ? "bg-amber-50 border-amber-500 dark:bg-amber-900/20" 
+                        : "bg-red-50 border-red-500 dark:bg-red-900/20"
+                    }`}
+                  >
+                    <div className="flex items-start gap-2">
+                      {alert.type === "warning" 
+                        ? <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5" />
+                        : <AlertCircle className="h-4 w-4 text-red-500 mt-0.5" />
+                      }
+                      <div>
+                        <div className="text-sm font-medium text-gray-800 dark:text-white">
+                          {language === "ar" ? alert.titleAr : alert.titleEn}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {language === "ar" ? alert.timeAr : alert.timeEn}
+                        </div>
                       </div>
                     </div>
                   </div>
                 ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
 
-        {/* Quick Links */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-          <Link href="/sectors/banking">
-            <Card className="hover:shadow-md transition-shadow cursor-pointer group">
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Building2 className="h-5 w-5" />
+            {/* Watchlist */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">
+                  {language === "ar" ? "قائمة المتابعة" : "Watchlist"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {watchlist.map((item, index) => (
+                  <div key={index} className="flex items-center justify-between py-2 border-b last:border-0">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {language === "ar" ? item.labelAr : item.labelEn}
+                    </span>
+                    <span className="font-medium text-[#103050] dark:text-white">{item.value}</span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Data Source Info */}
+            <Card className="bg-gray-50 dark:bg-gray-800">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">
+                  {language === "ar" ? "مصدر البيانات" : "Data Source"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                  {language === "ar" 
+                    ? "يتم جمع البيانات ومعالجتها من مصادر رسمية وغير رسمية متعددة في جميع أنحاء اليمن، بما في ذلك المؤسسات الحكومية، المنظمات الدولية، ومراكز الأبحاث المستقلة، مع تطبيق منهجية صارمة للتحقق والتوثيق."
+                    : "Data is collected and processed from multiple official and unofficial sources across Yemen, including government institutions, international organizations, and independent research centers, with rigorous verification methodology."}
+                </p>
+                <Button variant="link" className="text-[#107040] p-0 h-auto mt-2">
+                  {language === "ar" ? "عرض حزمة الأدلة" : "View Evidence Pack"}
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Main Chart Area */}
+          <div className={`${language === 'ar' ? 'lg:order-2' : ''}`}>
+            <Card className="h-full">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>
+                    {language === "ar" ? "الناتج المحلي الإجمالي 2010-2024" : "GDP 2010-2024"}
+                  </CardTitle>
+                  <div className="flex items-center gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-0.5 bg-[#107040]"></div>
+                      <span className="text-gray-600">{language === "ar" ? "نظام عدن" : "Aden Regime"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-0.5 bg-[#103050] border-dashed border-t-2 border-[#103050]"></div>
+                      <span className="text-gray-600">{language === "ar" ? "نظام صنعاء" : "Sana'a Regime"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-[#107040]/20 rounded"></div>
+                      <span className="text-gray-600">{language === "ar" ? "مجال الثقة (95%)" : "Confidence Band (95%)"}</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-medium">{language === "ar" ? "القطاع المصرفي" : "Banking Sector"}</h4>
-                  <p className="text-xs text-muted-foreground">{language === "ar" ? "عرض التفاصيل" : "View details"}</p>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[400px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <ComposedChart data={gdpData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                      <XAxis dataKey="year" tick={{ fontSize: 12 }} />
+                      <YAxis 
+                        tick={{ fontSize: 12 }} 
+                        tickFormatter={(value) => `${(value / 1000).toFixed(0)}K`}
+                        label={{ 
+                          value: language === "ar" ? "مليار ريال يمني" : "YER Billions", 
+                          angle: -90, 
+                          position: 'insideLeft',
+                          style: { fontSize: 12 }
+                        }}
+                      />
+                      <Tooltip 
+                        formatter={(value: number, name: string) => [
+                          `${(value / 1000).toFixed(1)}K ${language === "ar" ? "مليار ريال" : "Billion YER"}`,
+                          name === "aden" ? (language === "ar" ? "عدن" : "Aden") : (language === "ar" ? "صنعاء" : "Sana'a")
+                        ]}
+                        labelFormatter={(label) => `${language === "ar" ? "السنة:" : "Year:"} ${label}`}
+                        contentStyle={{ 
+                          backgroundColor: 'white', 
+                          border: '1px solid #E5E7EB',
+                          borderRadius: '8px',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                        }}
+                      />
+                      <Legend />
+                      
+                      {/* Confidence band for Aden */}
+                      <Area 
+                        type="monotone" 
+                        dataKey="aden" 
+                        fill="#107040" 
+                        fillOpacity={0.1} 
+                        stroke="none"
+                      />
+                      
+                      {/* Aden line */}
+                      {(regimeTag === "both" || regimeTag === "aden") && (
+                        <Line 
+                          type="monotone" 
+                          dataKey="aden" 
+                          stroke="#107040" 
+                          strokeWidth={2}
+                          dot={{ fill: "#107040", strokeWidth: 2, r: 4 }}
+                          activeDot={{ r: 6, fill: "#107040" }}
+                          name={language === "ar" ? "عدن" : "Aden"}
+                        />
+                      )}
+                      
+                      {/* Sana'a line */}
+                      {(regimeTag === "both" || regimeTag === "sanaa") && (
+                        <Line 
+                          type="monotone" 
+                          dataKey="sanaa" 
+                          stroke="#103050" 
+                          strokeWidth={2}
+                          strokeDasharray="5 5"
+                          dot={{ fill: "#103050", strokeWidth: 2, r: 4 }}
+                          activeDot={{ r: 6, fill: "#103050" }}
+                          name={language === "ar" ? "صنعاء" : "Sana'a"}
+                        />
+                      )}
+                    </ComposedChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Data Table */}
+                <div className="mt-6 border rounded-lg overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50 dark:bg-gray-800">
+                      <tr>
+                        <th className="px-4 py-3 text-right font-medium text-gray-600 dark:text-gray-400">
+                          {language === "ar" ? "السنة" : "Year"}
+                        </th>
+                        <th className="px-4 py-3 text-right font-medium text-gray-600 dark:text-gray-400">
+                          {language === "ar" ? "القيمة" : "Value"}
+                        </th>
+                        <th className="px-4 py-3 text-right font-medium text-gray-600 dark:text-gray-400">
+                          {language === "ar" ? "النظام" : "Regime"}
+                        </th>
+                        <th className="px-4 py-3 text-right font-medium text-gray-600 dark:text-gray-400">
+                          {language === "ar" ? "المصدر" : "Source"}
+                        </th>
+                        <th className="px-4 py-3 text-right font-medium text-gray-600 dark:text-gray-400">
+                          {language === "ar" ? "جودة البيانات" : "Data Quality"}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y">
+                      {dataTable.map((row, index) => (
+                        <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                          <td className="px-4 py-3 text-right">{row.year}</td>
+                          <td className="px-4 py-3 text-right font-medium">{row.value}</td>
+                          <td className="px-4 py-3 text-right">
+                            <Badge variant="outline" className={
+                              row.regime === "عدن" 
+                                ? "bg-green-50 text-green-700 border-green-200" 
+                                : "bg-blue-50 text-blue-700 border-blue-200"
+                            }>
+                              {row.regime}
+                            </Badge>
+                          </td>
+                          <td className="px-4 py-3 text-right text-gray-600">{row.source}</td>
+                          <td className="px-4 py-3 text-right">
+                            <Badge variant="outline" className={
+                              row.quality === "عالية" 
+                                ? "bg-green-50 text-green-700 border-green-200" 
+                                : "bg-amber-50 text-amber-700 border-amber-200"
+                            }>
+                              {row.quality}
+                            </Badge>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </CardContent>
             </Card>
-          </Link>
-          <Link href="/sectors/trade">
-            <Card className="hover:shadow-md transition-shadow cursor-pointer group">
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-cyan-100 text-cyan-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Ship className="h-5 w-5" />
-                </div>
-                <div>
-                  <h4 className="font-medium">{language === "ar" ? "التجارة" : "Trade"}</h4>
-                  <p className="text-xs text-muted-foreground">{language === "ar" ? "عرض التفاصيل" : "View details"}</p>
-                </div>
+          </div>
+
+          {/* Right Sidebar - Empty for now, can add more widgets */}
+          <div className={`space-y-6 ${language === 'ar' ? 'lg:order-1' : ''}`}>
+            {/* Sector Quick Links */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">
+                  {language === "ar" ? "القطاعات" : "Sectors"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {[
+                  { nameEn: "Banking & Finance", nameAr: "القطاع المصرفي", href: "/sectors/banking" },
+                  { nameEn: "Trade & Commerce", nameAr: "التجارة", href: "/sectors/trade" },
+                  { nameEn: "Energy & Fuel", nameAr: "الطاقة والوقود", href: "/sectors/energy" },
+                  { nameEn: "Food Security", nameAr: "الأمن الغذائي", href: "/sectors/food-security" },
+                  { nameEn: "Aid Flows", nameAr: "تدفقات المساعدات", href: "/sectors/aid-flows" },
+                ].map((sector, index) => (
+                  <Link key={index} href={sector.href}>
+                    <Button variant="ghost" className="w-full justify-start text-sm hover:bg-gray-100">
+                      {language === "ar" ? sector.nameAr : sector.nameEn}
+                    </Button>
+                  </Link>
+                ))}
+                <Link href="/sectors">
+                  <Button variant="link" className="text-[#107040] w-full justify-start">
+                    {language === "ar" ? "عرض جميع القطاعات" : "View All Sectors"}
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
-          </Link>
-          <Link href="/sectors/food-security">
-            <Card className="hover:shadow-md transition-shadow cursor-pointer group">
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-lime-100 text-lime-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Wheat className="h-5 w-5" />
-                </div>
-                <div>
-                  <h4 className="font-medium">{language === "ar" ? "الأمن الغذائي" : "Food Security"}</h4>
-                  <p className="text-xs text-muted-foreground">{language === "ar" ? "عرض التفاصيل" : "View details"}</p>
-                </div>
+
+            {/* Tools Quick Links */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">
+                  {language === "ar" ? "الأدوات" : "Tools"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <Link href="/ai-assistant">
+                  <Button variant="outline" className="w-full justify-start text-sm gap-2">
+                    <Eye className="h-4 w-4" />
+                    {language === "ar" ? "المساعد الذكي" : "AI Assistant"}
+                  </Button>
+                </Link>
+                <Link href="/scenario-simulator">
+                  <Button variant="outline" className="w-full justify-start text-sm gap-2">
+                    <TrendingUp className="h-4 w-4" />
+                    {language === "ar" ? "محاكي السيناريوهات" : "Scenario Simulator"}
+                  </Button>
+                </Link>
+                <Link href="/report-builder">
+                  <Button variant="outline" className="w-full justify-start text-sm gap-2">
+                    <Download className="h-4 w-4" />
+                    {language === "ar" ? "منشئ التقارير" : "Report Builder"}
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
-          </Link>
-          <Link href="/ai-assistant">
-            <Card className="hover:shadow-md transition-shadow cursor-pointer group bg-gradient-to-r from-[#107040]/5 to-[#107040]/10">
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-[#107040] text-white flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <BarChart3 className="h-5 w-5" />
-                </div>
-                <div>
-                  <h4 className="font-medium">{language === "ar" ? "اسأل المساعد الذكي" : "Ask AI Assistant"}</h4>
-                  <p className="text-xs text-muted-foreground">{language === "ar" ? "تحليل مخصص" : "Custom analysis"}</p>
-                </div>
+
+            {/* Help Card */}
+            <Card className="bg-[#103050] text-white">
+              <CardContent className="pt-6">
+                <Info className="h-8 w-8 mb-3 text-[#C0A030]" />
+                <h3 className="font-semibold mb-2">
+                  {language === "ar" ? "هل تحتاج مساعدة؟" : "Need Help?"}
+                </h3>
+                <p className="text-sm text-white/80 mb-4">
+                  {language === "ar" 
+                    ? "اسأل المساعد الذكي أي سؤال عن الاقتصاد اليمني"
+                    : "Ask our AI assistant any question about Yemen's economy"}
+                </p>
+                <Link href="/ai-assistant">
+                  <Button size="sm" className="bg-[#107040] hover:bg-[#0D5A34] text-white w-full">
+                    {language === "ar" ? "اسأل الآن" : "Ask Now"}
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
-          </Link>
+          </div>
         </div>
       </div>
     </div>

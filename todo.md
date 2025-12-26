@@ -179,9 +179,10 @@
 ## Phase 21: AI Assistant Integration
 - [x] Connect AI Assistant to invokeLLM helper
 - [x] Implement context-aware prompting for Yemen economy
-- [ ] Implement RAG retrieval from database (future enhancement)
-- [ ] Add evidence pack generation for responses
-- [ ] Implement confidence scoring for AI outputs
+- [x] Connect frontend to tRPC AI mutation
+- [x] Add evidence pack generation for responses
+- [x] Implement confidence scoring for AI outputs
+- [ ] Implement full RAG retrieval from database (future enhancement)
 
 ## Phase 22: Data Seeding
 - [x] Create seed script for economic indicators
@@ -202,3 +203,67 @@
 - [x] Create ARCHITECTURE.md with system design
 - [ ] Create API documentation (future enhancement)
 - [ ] Update README with setup instructions (future enhancement)
+
+
+## Phase 25: Control Pack Documentation (from upgraded prompt)
+- [x] Create /docs/0_START_HERE.md - Operator guide with 10-command cheat sheet
+- [x] Create /docs/WORKPLAN.md - Phase-by-phase plan
+- [x] Create /docs/REQ_INDEX.md - Atomic requirements with IDs
+- [x] Create /docs/RTM.csv - Requirements Traceability Matrix
+- [ ] Create /docs/REQ_TRACEABILITY.md - Implementation to test mapping
+- [x] Create /docs/MOCKUP_MAP.md - Mockup to component mapping
+- [ ] Create /docs/ATTACHMENTS_INDEX.md - File inventory
+- [x] Create /docs/DATA_SOURCE_REGISTER.md - Data source inventory
+- [x] Create /docs/BLOCKERS_AND_INPUTS.md - Blocked items and inputs needed
+- [ ] Create /docs/USER_JOURNEYS.md - End-to-end user journeys
+- [ ] Create /docs/DEMO_SCRIPT.md - Demo paths for donors/partners
+- [x] Create /docs/MASTER_INDEX.md - Navigation map for all docs
+- [x] Update /STATUS.md - Current status
+- [x] Create /docs/MOCKUP_ANALYSIS.md - Design reference from mockups
+
+## Phase 26: Mockup Alignment
+- [x] Access iCloud mockups and download to /assets/mockups/external/
+- [x] Extract 83 mockup images from iCloud
+- [x] Map each mockup to route/page/components
+- [ ] Verify UI matches mockup design exactly
+- [ ] Document any deviations with rationale
+
+## Phase 27: Enhanced Data Governance
+- [ ] Implement provenance ledger with W3C PROV concepts
+- [ ] Add vintages system for "what was known when"
+- [ ] Implement contradiction detector
+- [x] Add Evidence Pack system to all KPIs/charts
+- [x] Create EvidencePack component with dialog/popover variants
+
+## Phase 28: Entity Profiles Module
+- [x] Create /entities route with entity profiles
+- [x] Seed HSA Group (Hayel Saeed Anam & Co.) profile
+- [x] Add major banks, telecoms, ports/logistics profiles
+- [x] Create entity detail page with tabs (Overview, Indicators, Risks, Timeline, Sources)
+- [x] Implement Evidence Pack display on entity profiles
+- [ ] Implement entity relationships and ownership structures (future enhancement)
+
+## Phase 29: Corrections Workflow
+- [x] Add "Report an issue" button on corrections page
+- [x] Create corrections ticket submission dialog
+- [ ] Build admin corrections review workflow
+- [x] Create public /corrections log page with filtering
+
+## Phase 30: Publications Engine
+- [x] Create Publications page with publication types
+- [x] Implement Daily Economic Signals Digest display
+- [x] Implement Weekly Market & FX Monitor display
+- [x] Implement Monthly Macro-Fiscal Brief display
+- [x] Add Special Reports section
+- [x] Build publication filtering and search
+- [x] Add bilingual output for all publications
+- [ ] Implement auto-draft generation backend (future enhancement)
+- [ ] Build admin approval workflow for publications (future enhancement)
+
+## Phase 31: Final Documentation
+- [ ] Create /docs/ADMIN_MANUAL.md
+- [ ] Create /docs/SUBSCRIBER_MANUAL.md
+- [ ] Create /docs/PARTNER_MANUAL.md
+- [ ] Create /docs/DATA_GOVERNANCE.md
+- [ ] Create /docs/API_REFERENCE.md
+- [ ] Create /docs/FINAL_SELF_AUDIT.md
