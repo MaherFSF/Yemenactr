@@ -13,6 +13,14 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Glossary from "./pages/Glossary";
 import Research from "./pages/Research";
+import Banking from "./pages/sectors/Banking";
+import Trade from "./pages/sectors/Trade";
+import Poverty from "./pages/sectors/Poverty";
+import DataRepository from "./pages/DataRepository";
+import AdminPortal from "./pages/AdminPortal";
+import PartnerPortal from "./pages/PartnerPortal";
+import AIAssistant from "./pages/AIAssistant";
+import ScenarioSimulator from "./pages/ScenarioSimulator";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -27,6 +35,14 @@ function Router() {
       <Route path={"/contact"} component={Contact} />
       <Route path={"/glossary"} component={Glossary} />
       <Route path={"/research"} component={Research} />
+      <Route path={"/sectors/banking"} component={Banking} />
+      <Route path={"/sectors/trade"} component={Trade} />
+      <Route path={"/sectors/poverty"} component={Poverty} />
+      <Route path={"/data-repository"} component={DataRepository} />
+      <Route path={"/admin"} component={AdminPortal} />
+      <Route path={"/partner"} component={PartnerPortal} />
+      <Route path={"/ai-assistant"} component={AIAssistant} />
+      <Route path={"/scenario-simulator"} component={ScenarioSimulator} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
