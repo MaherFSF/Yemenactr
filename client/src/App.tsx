@@ -37,6 +37,7 @@ import Timeline from "./pages/Timeline";
 import Methodology from "./pages/Methodology";
 import ReportBuilder from "./pages/ReportBuilder";
 import Pricing from "./pages/Pricing";
+import Legal from "./pages/Legal";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -71,6 +72,11 @@ function Router() {
       <Route path={"/methodology"} component={Methodology} />
       <Route path={"/report-builder"} component={ReportBuilder} />
       <Route path={"/pricing"} component={Pricing} />
+      <Route path={"/legal"} component={Legal} />
+      <Route path={"/legal/privacy"} component={Legal} />
+      <Route path={"/legal/terms"} component={Legal} />
+      <Route path={"/legal/data-license"} component={Legal} />
+      <Route path={"/legal/accessibility"} component={Legal} />
       <Route path={"/admin"} component={AdminPortal} />
       <Route path={"/partner"} component={PartnerPortal} />
       <Route path={"/ai-assistant"} component={AIAssistant} />

@@ -565,3 +565,136 @@ export async function prepareDataExport(options: ExportOptions): Promise<any[]> 
   // For now, return sample data structure
   return [];
 }
+
+
+// ============================================================================
+// DATA EXPORT FUNCTIONS (Extended)
+// ============================================================================
+
+export interface ExtendedExportOptions {
+  indicatorCode?: string;
+  regimeTag?: "aden_irg" | "sanaa_defacto" | "mixed" | "unknown";
+  startDate?: Date;
+  endDate?: Date;
+  sector?: string;
+}
+
+export async function getExportData(options: ExtendedExportOptions): Promise<{
+  timeSeries: Array<{
+    date: string;
+    indicatorCode: string;
+    indicatorName: string;
+    value: string;
+    unit: string;
+    regime: string;
+    confidence: string;
+    source: string;
+  }>;
+  metadata: {
+    exportDate: string;
+    totalRecords: number;
+    dateRange: { start: string; end: string };
+    indicators: string[];
+  };
+}> {
+  const db = await getDb();
+  if (!db) {
+    return {
+      timeSeries: [],
+      metadata: {
+        exportDate: new Date().toISOString(),
+        totalRecords: 0,
+        dateRange: { start: "", end: "" },
+        indicators: [],
+      },
+    };
+  }
+
+  // Fetch time series data
+  let results = await db
+    .select({
+      date: timeSeries.date,
+      indicatorCode: timeSeries.indicatorCode,
+      value: timeSeries.value,
+      regimeTag: timeSeries.regimeTag,
+      confidenceRating: timeSeries.confidenceRating,
+    })
+    .from(timeSeries)
+    .orderBy(desc(timeSeries.date))
+    .limit(10000);
+
+  // Apply filters in memory for simplicity
+  if (options.indicatorCode) {
+    results = results.filter(r => r.indicatorCode === options.indicatorCode);
+  }
+  
+  if (options.regimeTag) {
+    results = results.filter(r => r.regimeTag === options.regimeTag);
+  }
+  
+  if (options.startDate) {
+    results = results.filter(r => r.date && r.date >= options.startDate!);
+  }
+  
+  if (options.endDate) {
+    results = results.filter(r => r.date && r.date <= options.endDate!);
+  }
+
+  // Transform results for export
+  const exportData = results.map((row) => ({
+    date: row.date ? row.date.toISOString().split("T")[0] : "",
+    indicatorCode: row.indicatorCode,
+    indicatorName: row.indicatorCode, // Would be joined from indicators table
+    value: row.value || "",
+    unit: "", // Would be joined from indicators table
+    regime: row.regimeTag,
+    confidence: row.confidenceRating || "C",
+    source: "", // Would be joined from sources table
+  }));
+
+  // Calculate metadata
+  const dates = exportData.map((d) => d.date).filter(Boolean);
+  const indicatorSet = new Set(exportData.map((d) => d.indicatorCode));
+  const indicators = Array.from(indicatorSet);
+
+  return {
+    timeSeries: exportData,
+    metadata: {
+      exportDate: new Date().toISOString(),
+      totalRecords: exportData.length,
+      dateRange: {
+        start: dates.length > 0 ? dates[dates.length - 1] : "",
+        end: dates.length > 0 ? dates[0] : "",
+      },
+      indicators,
+    },
+  };
+}
+
+export function convertToCSV(data: Array<Record<string, unknown>>): string {
+  if (data.length === 0) return "";
+
+  const headers = Object.keys(data[0]);
+  const csvRows = [
+    headers.join(","),
+    ...data.map((row) =>
+      headers
+        .map((header) => {
+          const value = row[header];
+          // Escape quotes and wrap in quotes if contains comma
+          const stringValue = String(value ?? "");
+          if (stringValue.includes(",") || stringValue.includes('"') || stringValue.includes("\n")) {
+            return `"${stringValue.replace(/"/g, '""')}"`;
+          }
+          return stringValue;
+        })
+        .join(",")
+    ),
+  ];
+
+  return csvRows.join("\n");
+}
+
+export function convertToJSON(data: unknown): string {
+  return JSON.stringify(data, null, 2);
+}

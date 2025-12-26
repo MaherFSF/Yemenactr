@@ -161,3 +161,44 @@
 - [x] Create tRPC procedures for platform statistics
 - [ ] Implement data export endpoints (CSV, XLSX, JSON)
 - [ ] Connect AI Assistant to LLM service
+
+
+## Phase 19: Glossary & Legal Pages
+- [x] Build Glossary page with bilingual economic terms
+- [x] Build Privacy Policy page
+- [x] Build Terms of Service page
+- [x] Build Data License & Reuse page
+- [x] Build Accessibility Statement page
+
+## Phase 20: Research Library Enhancement
+- [x] Add document cards with metadata display
+- [x] Implement filtering by category, date, source
+- [x] Add search functionality for documents
+- [x] Display source attribution and licensing
+
+## Phase 21: AI Assistant Integration
+- [x] Connect AI Assistant to invokeLLM helper
+- [x] Implement context-aware prompting for Yemen economy
+- [ ] Implement RAG retrieval from database (future enhancement)
+- [ ] Add evidence pack generation for responses
+- [ ] Implement confidence scoring for AI outputs
+
+## Phase 22: Data Seeding
+- [x] Create seed script for economic indicators
+- [x] Seed sample time series data (FX rates, inflation, etc.)
+- [x] Seed sample economic events
+- [x] Seed sample sources and documents
+- [x] Seed glossary terms
+- [x] Seed stakeholders
+
+## Phase 23: Data Export
+- [x] Implement CSV export function
+- [x] Implement JSON export function
+- [x] Create getExportData function for time series
+- [ ] Add export buttons to Dashboard and sector pages (UI enhancement)
+
+## Phase 24: Documentation
+- [x] Create DECISIONS.md with architecture choices
+- [x] Create ARCHITECTURE.md with system design
+- [ ] Create API documentation (future enhancement)
+- [ ] Update README with setup instructions (future enhancement)

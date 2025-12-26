@@ -3,6 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
+import { invokeLLM } from "./_core/llm";
 import {
   getTimeSeriesByIndicator,
   getLatestTimeSeriesValue,
@@ -272,6 +273,160 @@ export const appRouter = router({
     getStats: publicProcedure
       .query(async () => {
         return await getPlatformStats();
+      }),
+  }),
+
+  // ============================================================================
+  // AI ASSISTANT
+  // ============================================================================
+
+  ai: router({
+    chat: protectedProcedure
+      .input(z.object({
+        message: z.string().min(1).max(2000),
+        conversationHistory: z.array(z.object({
+          role: z.enum(["user", "assistant"]),
+          content: z.string(),
+        })).optional(),
+        context: z.object({
+          sector: z.string().optional(),
+          regime: z.enum(["aden_irg", "sanaa_defacto", "both"]).optional(),
+          timeRange: z.object({
+            start: z.string().optional(),
+            end: z.string().optional(),
+          }).optional(),
+        }).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        // Build system prompt with Yemen economic context
+        const systemPrompt = `You are the YETO AI Assistant ("One Brain"), an expert economic analyst specializing in Yemen's economy. You have deep knowledge of:
+
+1. **Dual Authority Context**: Yemen operates under two competing authorities:
+   - IRG (Internationally Recognized Government) based in Aden
+   - DFA (De Facto Authority/Ansar Allah) based in Sana'a
+   Each has separate central banks, fiscal policies, and economic indicators.
+
+2. **Key Economic Sectors**: Banking & Finance, Trade & Commerce, Prices & Inflation, Currency & Exchange Rates, Public Finance, Energy & Fuel, Food Security, Aid Flows, Labor Market, Conflict Economy, Infrastructure.
+
+3. **Data Sources**: World Bank, IMF, UN agencies (WFP, OCHA, UNDP), Central Bank of Yemen (both Aden and Sana'a), FAO, IPC, Sana'a Center for Strategic Studies, and local market surveys.
+
+4. **Current Challenges**: Currency bifurcation, banking sector fragmentation, import dependency, humanitarian crisis, fuel shortages, remittance disruptions.
+
+When answering:
+- Always specify which authority/region data refers to (Aden/IRG vs Sana'a/DFA)
+- Cite confidence levels for data (A=verified official, B=credible estimate, C=proxy/modeled, D=unverified)
+- Acknowledge data gaps and uncertainties
+- Provide context on how conflict affects economic indicators
+- Use both English and Arabic terms where relevant
+
+Current context: ${input.context?.sector ? `Sector: ${input.context.sector}` : 'General'}, ${input.context?.regime ? `Focus: ${input.context.regime}` : 'Both authorities'}`;
+
+        // Build messages array
+        const messages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
+          { role: "system", content: systemPrompt },
+        ];
+
+        // Add conversation history
+        if (input.conversationHistory) {
+          for (const msg of input.conversationHistory.slice(-10)) {
+            messages.push({
+              role: msg.role as "user" | "assistant",
+              content: msg.content,
+            });
+          }
+        }
+
+        // Add current message
+        messages.push({ role: "user", content: input.message });
+
+        try {
+          const response = await invokeLLM({ messages });
+          
+          const rawContent = response.choices[0]?.message?.content;
+          const assistantMessage = typeof rawContent === 'string' 
+            ? rawContent 
+            : "I apologize, but I couldn't generate a response. Please try again.";
+
+          // Extract potential citations/sources mentioned
+          const sources: Array<{ name: string; type: string }> = [];
+          const sourcePatterns = [
+            /World Bank/gi,
+            /IMF/gi,
+            /WFP/gi,
+            /OCHA/gi,
+            /Central Bank of Yemen/gi,
+            /CBY/gi,
+            /IPC/gi,
+            /Sana'a Center/gi,
+            /UN Comtrade/gi,
+          ];
+          
+          for (const pattern of sourcePatterns) {
+            if (pattern.test(assistantMessage)) {
+              const match = assistantMessage.match(pattern);
+              if (match) {
+                sources.push({
+                  name: match[0],
+                  type: "reference",
+                });
+              }
+            }
+          }
+
+          // Deduplicate sources
+          const uniqueSources = sources.filter((source, index, self) =>
+            index === self.findIndex((s) => s.name === source.name)
+          );
+
+          return {
+            message: assistantMessage,
+            sources: uniqueSources,
+            confidence: "B" as const,
+            timestamp: new Date().toISOString(),
+          };
+        } catch (error) {
+          console.error("AI Assistant error:", error);
+          return {
+            message: "I apologize, but I encountered an error processing your request. Please try again or rephrase your question.",
+            sources: [],
+            confidence: "D" as const,
+            timestamp: new Date().toISOString(),
+          };
+        }
+      }),
+
+    suggestQueries: publicProcedure
+      .input(z.object({
+        sector: z.string().optional(),
+      }))
+      .query(({ input }) => {
+        const generalQueries = [
+          { en: "What is the current exchange rate difference between Aden and Sana'a?", ar: "ما هو الفرق الحالي في سعر الصرف بين عدن وصنعاء؟" },
+          { en: "How has inflation affected food prices in Yemen?", ar: "كيف أثر التضخم على أسعار الغذاء في اليمن؟" },
+          { en: "What are the main sources of government revenue for each authority?", ar: "ما هي المصادر الرئيسية لإيرادات الحكومة لكل سلطة؟" },
+          { en: "How has the banking sector been affected by the conflict?", ar: "كيف تأثر القطاع المصرفي بالصراع؟" },
+        ];
+
+        const sectorQueries: Record<string, Array<{ en: string; ar: string }>> = {
+          banking: [
+            { en: "What is the status of correspondent banking relationships?", ar: "ما هو وضع علاقات المراسلة المصرفية؟" },
+            { en: "How do the two central banks differ in monetary policy?", ar: "كيف يختلف البنكان المركزيان في السياسة النقدية؟" },
+          ],
+          trade: [
+            { en: "What are Yemen's main import commodities?", ar: "ما هي السلع الرئيسية المستوردة لليمن؟" },
+            { en: "How has port access affected trade flows?", ar: "كيف أثر الوصول إلى الموانئ على التدفقات التجارية؟" },
+          ],
+          prices: [
+            { en: "What is the current cost of the minimum food basket?", ar: "ما هي التكلفة الحالية للحد الأدنى لسلة الغذاء؟" },
+            { en: "How do fuel prices compare between regions?", ar: "كيف تقارن أسعار الوقود بين المناطق؟" },
+          ],
+        };
+
+        const queries = input.sector && sectorQueries[input.sector]
+          ? [...sectorQueries[input.sector], ...generalQueries.slice(0, 2)]
+          : generalQueries;
+
+        return queries;
       }),
   }),
 });
