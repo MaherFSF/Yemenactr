@@ -23,6 +23,11 @@ import PublicFinance from "./pages/sectors/PublicFinance";
 import Energy from "./pages/sectors/Energy";
 import FoodSecurity from "./pages/sectors/FoodSecurity";
 import AidFlows from "./pages/sectors/AidFlows";
+import LaborMarket from "./pages/sectors/LaborMarket";
+import ConflictEconomy from "./pages/sectors/ConflictEconomy";
+import Infrastructure from "./pages/sectors/Infrastructure";
+import Agriculture from "./pages/sectors/Agriculture";
+import Investment from "./pages/sectors/Investment";
 import DataRepository from "./pages/DataRepository";
 import AdminPortal from "./pages/AdminPortal";
 import PartnerPortal from "./pages/PartnerPortal";
@@ -56,6 +61,11 @@ function Router() {
       <Route path={"/sectors/energy"} component={Energy} />
       <Route path={"/sectors/food-security"} component={FoodSecurity} />
       <Route path={"/sectors/aid-flows"} component={AidFlows} />
+      <Route path={"/sectors/labor-market"} component={LaborMarket} />
+      <Route path={"/sectors/conflict-economy"} component={ConflictEconomy} />
+      <Route path={"/sectors/infrastructure"} component={Infrastructure} />
+      <Route path={"/sectors/agriculture"} component={Agriculture} />
+      <Route path={"/sectors/investment"} component={Investment} />
       <Route path={"/data-repository"} component={DataRepository} />
       <Route path={"/timeline"} component={Timeline} />
       <Route path={"/methodology"} component={Methodology} />

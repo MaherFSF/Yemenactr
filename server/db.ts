@@ -401,3 +401,167 @@ export async function getStakeholders(
     .from(stakeholders)
     .orderBy(asc(stakeholders.name));
 }
+
+
+// ============================================================================
+// SECTOR ANALYTICS
+// ============================================================================
+
+export interface SectorMetrics {
+  sectorCode: string;
+  sectorName: string;
+  sectorNameAr: string;
+  indicatorCount: number;
+  latestUpdate: Date | null;
+  dataQuality: "high" | "medium" | "low";
+}
+
+export async function getSectorMetrics(): Promise<SectorMetrics[]> {
+  // Return sample sector metrics for now
+  // In production, this would aggregate from the database
+  return [
+    { sectorCode: "banking", sectorName: "Banking & Finance", sectorNameAr: "القطاع المصرفي", indicatorCount: 45, latestUpdate: new Date(), dataQuality: "high" },
+    { sectorCode: "trade", sectorName: "Trade & Commerce", sectorNameAr: "التجارة", indicatorCount: 38, latestUpdate: new Date(), dataQuality: "medium" },
+    { sectorCode: "macroeconomy", sectorName: "Macroeconomy", sectorNameAr: "الاقتصاد الكلي", indicatorCount: 52, latestUpdate: new Date(), dataQuality: "high" },
+    { sectorCode: "prices", sectorName: "Prices & Inflation", sectorNameAr: "الأسعار والتضخم", indicatorCount: 67, latestUpdate: new Date(), dataQuality: "high" },
+    { sectorCode: "currency", sectorName: "Currency & Exchange", sectorNameAr: "العملة والصرف", indicatorCount: 28, latestUpdate: new Date(), dataQuality: "high" },
+    { sectorCode: "public_finance", sectorName: "Public Finance", sectorNameAr: "المالية العامة", indicatorCount: 35, latestUpdate: new Date(), dataQuality: "low" },
+    { sectorCode: "energy", sectorName: "Energy & Fuel", sectorNameAr: "الطاقة والوقود", indicatorCount: 42, latestUpdate: new Date(), dataQuality: "medium" },
+    { sectorCode: "food_security", sectorName: "Food Security", sectorNameAr: "الأمن الغذائي", indicatorCount: 58, latestUpdate: new Date(), dataQuality: "high" },
+    { sectorCode: "aid_flows", sectorName: "Aid Flows", sectorNameAr: "تدفقات المساعدات", indicatorCount: 31, latestUpdate: new Date(), dataQuality: "high" },
+    { sectorCode: "labor", sectorName: "Labor Market", sectorNameAr: "سوق العمل", indicatorCount: 24, latestUpdate: new Date(), dataQuality: "low" },
+    { sectorCode: "conflict", sectorName: "Conflict Economy", sectorNameAr: "اقتصاد الصراع", indicatorCount: 19, latestUpdate: new Date(), dataQuality: "medium" },
+    { sectorCode: "infrastructure", sectorName: "Infrastructure", sectorNameAr: "البنية التحتية", indicatorCount: 33, latestUpdate: new Date(), dataQuality: "low" },
+    { sectorCode: "agriculture", sectorName: "Agriculture", sectorNameAr: "الزراعة", indicatorCount: 41, latestUpdate: new Date(), dataQuality: "medium" },
+    { sectorCode: "investment", sectorName: "Investment", sectorNameAr: "الاستثمار", indicatorCount: 22, latestUpdate: new Date(), dataQuality: "low" },
+    { sectorCode: "poverty", sectorName: "Poverty & Development", sectorNameAr: "الفقر والتنمية", indicatorCount: 47, latestUpdate: new Date(), dataQuality: "medium" },
+  ];
+}
+
+// ============================================================================
+// COMPARISON DATA
+// ============================================================================
+
+export interface RegimeComparison {
+  indicatorCode: string;
+  indicatorName: string;
+  indicatorNameAr: string;
+  adenValue: number | null;
+  sanaaValue: number | null;
+  adenDate: Date | null;
+  sanaaDate: Date | null;
+  unit: string;
+  gap: number | null;
+  gapPercentage: number | null;
+}
+
+export async function getRegimeComparison(indicatorCodes: string[]): Promise<RegimeComparison[]> {
+  // Sample comparison data - in production this would query the database
+  const comparisons: RegimeComparison[] = [
+    {
+      indicatorCode: "fx_rate_usd",
+      indicatorName: "Exchange Rate (USD)",
+      indicatorNameAr: "سعر الصرف (دولار)",
+      adenValue: 2070,
+      sanaaValue: 535,
+      adenDate: new Date(),
+      sanaaDate: new Date(),
+      unit: "YER/USD",
+      gap: 1535,
+      gapPercentage: 287
+    },
+    {
+      indicatorCode: "inflation_cpi",
+      indicatorName: "Inflation Rate",
+      indicatorNameAr: "معدل التضخم",
+      adenValue: 35.2,
+      sanaaValue: 12.5,
+      adenDate: new Date(),
+      sanaaDate: new Date(),
+      unit: "%",
+      gap: 22.7,
+      gapPercentage: 182
+    },
+    {
+      indicatorCode: "fuel_price_petrol",
+      indicatorName: "Petrol Price",
+      indicatorNameAr: "سعر البنزين",
+      adenValue: 1250,
+      sanaaValue: 850,
+      adenDate: new Date(),
+      sanaaDate: new Date(),
+      unit: "YER/L",
+      gap: 400,
+      gapPercentage: 47
+    },
+    {
+      indicatorCode: "food_basket_cost",
+      indicatorName: "Food Basket Cost",
+      indicatorNameAr: "تكلفة سلة الغذاء",
+      adenValue: 285000,
+      sanaaValue: 245000,
+      adenDate: new Date(),
+      sanaaDate: new Date(),
+      unit: "YER/month",
+      gap: 40000,
+      gapPercentage: 16
+    },
+  ];
+
+  if (indicatorCodes.length > 0) {
+    return comparisons.filter(c => indicatorCodes.includes(c.indicatorCode));
+  }
+  return comparisons;
+}
+
+// ============================================================================
+// PLATFORM STATISTICS
+// ============================================================================
+
+export interface PlatformStats {
+  totalIndicators: number;
+  totalSources: number;
+  totalDocuments: number;
+  totalEvents: number;
+  coverageStartYear: number;
+  coverageEndYear: number;
+  lastUpdated: Date;
+  dataPointsCount: number;
+}
+
+export async function getPlatformStats(): Promise<PlatformStats> {
+  const db = await getDb();
+  
+  // Return sample stats - in production this would aggregate from the database
+  return {
+    totalIndicators: 500,
+    totalSources: 100,
+    totalDocuments: 250,
+    totalEvents: 180,
+    coverageStartYear: 2014,
+    coverageEndYear: new Date().getFullYear(),
+    lastUpdated: new Date(),
+    dataPointsCount: 15000,
+  };
+}
+
+// ============================================================================
+// DATA EXPORT
+// ============================================================================
+
+export interface ExportOptions {
+  format: "csv" | "xlsx" | "json";
+  indicatorCodes?: string[];
+  regimeTag?: "aden_irg" | "sanaa_defacto" | "both";
+  startDate?: Date;
+  endDate?: Date;
+}
+
+export async function prepareDataExport(options: ExportOptions): Promise<any[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  // In production, this would query and format the data based on options
+  // For now, return sample data structure
+  return [];
+}

@@ -18,6 +18,9 @@ import {
   searchGlossaryTerms,
   getDataGapTickets,
   getStakeholders,
+  getSectorMetrics,
+  getRegimeComparison,
+  getPlatformStats,
 } from "./db";
 
 export const appRouter = router({
@@ -233,6 +236,42 @@ export const appRouter = router({
           gdp,
           poverty,
         };
+      }),
+  }),
+
+  // ============================================================================
+  // SECTOR ANALYTICS
+  // ============================================================================
+
+  sectors: router({
+    getMetrics: publicProcedure
+      .query(async () => {
+        return await getSectorMetrics();
+      }),
+  }),
+
+  // ============================================================================
+  // REGIME COMPARISON
+  // ============================================================================
+
+  comparison: router({
+    getIndicators: publicProcedure
+      .input(z.object({
+        indicatorCodes: z.array(z.string()).optional(),
+      }))
+      .query(async ({ input }) => {
+        return await getRegimeComparison(input.indicatorCodes || []);
+      }),
+  }),
+
+  // ============================================================================
+  // PLATFORM STATISTICS
+  // ============================================================================
+
+  platform: router({
+    getStats: publicProcedure
+      .query(async () => {
+        return await getPlatformStats();
       }),
   }),
 });

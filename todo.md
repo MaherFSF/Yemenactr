@@ -93,13 +93,13 @@
 - [x] Currency & Exchange Rates sector page
 - [x] Public Finance & Governance sector page
 - [x] Energy & Fuel sector page
-- [ ] Labor Market & Wages sector page
+- [x] Labor Market & Wages sector page
 - [x] Food Security & Markets sector page
 - [x] Aid Flows & Accountability sector page
-- [ ] Conflict Economy & Political Economy sector page
-- [ ] Infrastructure & Services sector page
-- [ ] Agriculture & Rural Development sector page
-- [ ] Investment & Private Sector sector page
+- [x] Conflict Economy & Political Economy sector page
+- [x] Infrastructure & Services sector page
+- [x] Agriculture & Rural Development sector page
+- [x] Investment & Private Sector sector page
 
 ## Phase 10: Timeline & Events
 - [x] Build Timeline page with 2010→present events
@@ -136,3 +136,28 @@
 - [ ] Create Data Governance Manual
 - [ ] Create API Manual
 - [ ] Create Contributor Manual
+
+
+## Phase 16: UI Refinement to Match Mockups
+- [x] Update color scheme to exact design tokens (Navy #103050, Green #107040, Gold #C0A030)
+- [x] Refine Home page hero section with proper gradient and typography
+- [x] Add sector dropdown menu in header navigation
+- [x] Update Dashboard with key metrics cards matching mockup style
+- [x] Ensure all cards have proper shadows and borders
+- [x] Add contextual Yemen imagery where appropriate
+
+## Phase 17: Remaining Sector Pages
+- [x] Labor Market & Wages sector page
+- [x] Conflict Economy & Political Economy sector page
+- [x] Infrastructure & Services sector page
+- [x] Agriculture & Rural Development sector page
+- [x] Investment & Private Sector sector page
+
+## Phase 18: Dynamic Data Integration
+- [x] Create tRPC procedures for fetching time series data
+- [x] Create tRPC procedures for fetching geospatial data
+- [x] Create tRPC procedures for sector analytics
+- [x] Create tRPC procedures for regime comparison
+- [x] Create tRPC procedures for platform statistics
+- [ ] Implement data export endpoints (CSV, XLSX, JSON)
+- [ ] Connect AI Assistant to LLM service
