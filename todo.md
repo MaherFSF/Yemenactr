@@ -74,3 +74,60 @@
 - [ ] Conduct security audit
 - [ ] Deploy to production (yeto.causewaygrp.com)
 - [ ] Create final checkpoint
+
+
+## Phase 8: GitHub Integration & Deployment
+- [ ] Create GitHub repository for YETO platform
+- [ ] Push all code to GitHub
+- [ ] Set up branch protection rules
+- [ ] Configure CI/CD with GitHub Actions
+
+## Phase 9: Additional Sector Pages
+- [ ] Macroeconomy & Growth sector page
+- [ ] Prices & Cost of Living sector page
+- [ ] Currency & Exchange Rates sector page
+- [ ] Public Finance & Governance sector page
+- [ ] Energy & Fuel sector page
+- [ ] Labor Market & Wages sector page
+- [ ] Food Security & Markets sector page
+- [ ] Aid Flows & Accountability sector page
+- [ ] Conflict Economy & Political Economy sector page
+- [ ] Infrastructure & Services sector page
+- [ ] Agriculture & Rural Development sector page
+- [ ] Investment & Private Sector sector page
+
+## Phase 10: Timeline & Events
+- [ ] Build Timeline page with 2010→present events
+- [ ] Implement event filtering by actor/location/theme
+- [ ] Link events to indicators with before/after comparison
+
+## Phase 11: Methodology & Transparency
+- [ ] Build Methodology page with data QA rules
+- [ ] Build Transparency & Accountability page
+- [ ] Implement corrections policy workflow
+- [ ] Create changelog page
+
+## Phase 12: Enhanced AI & Reports
+- [ ] Enhance AI Assistant with RAG structure
+- [ ] Implement evidence packs for high-stakes outputs
+- [ ] Build Custom Report Builder wizard
+- [ ] Implement export pipeline (CSV/XLSX/PDF/PNG/SVG/JSON)
+
+## Phase 13: Subscriptions & Premium Features
+- [ ] Implement subscription tiers (Public/Registered/Pro/Institutional)
+- [ ] Build premium workspaces
+- [ ] Implement API key management
+- [ ] Build saved dashboards/searches feature
+
+## Phase 14: Database Enhancements
+- [ ] Implement provenance ledger tables
+- [ ] Build source registry with review queue
+- [ ] Implement gap tickets system
+- [ ] Build coverage scorecard
+
+## Phase 15: Documentation & Testing
+- [ ] Write comprehensive vitest test suite
+- [ ] Create Administrator Manual
+- [ ] Create Data Governance Manual
+- [ ] Create API Manual
+- [ ] Create Contributor Manual
