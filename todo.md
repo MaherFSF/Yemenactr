@@ -715,3 +715,31 @@
 - [ ] Report Builder with visualization grid
 - [ ] One Brain AI with full LLM integration
 
+
+
+## Phase 54: Section 7 - Data Scope (2010→Present, Continuous)
+
+### Indicator Catalog (10 Families)
+- [ ] 1. Macro & Real Economy indicators
+- [ ] 2. Prices & Cost of Living (governorate-level)
+- [ ] 3. Monetary & Financial System (split system)
+- [ ] 4. Public Finance & Governance
+- [ ] 5. Trade & External Sector (ports/fuel)
+- [ ] 6. Humanitarian & Social Outcomes
+- [ ] 7. Aid, Projects, Accountability
+- [ ] 8. Conflict & Political Economy Linkages
+- [ ] 9. Private Sector & Firms (documented only)
+- [ ] 10. Sanctions/Restrictions Context (informational only)
+
+### Time Travel Requirement
+- [ ] Date range selector (month/day granularity)
+- [ ] Timeline navigation to any year
+- [ ] "What happened" view with events/documents/indicators
+- [ ] Citations for all data points
+
+### Indicator Catalog Page
+- [ ] Search functionality
+- [ ] Filter by family/sector
+- [ ] Filter by time period
+- [ ] Filter by geography
+- [ ] Indicator detail view with methodology
