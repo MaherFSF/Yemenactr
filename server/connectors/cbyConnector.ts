@@ -45,7 +45,7 @@ export interface CBYIngestionResult {
 // CBY Indicators
 // ============================================
 
-const CBY_INDICATORS = [
+export const CBY_INDICATORS = [
   { code: "FX_OFFICIAL", name: "Official exchange rate", nameAr: "سعر الصرف الرسمي", unit: "YER/USD" },
   { code: "FX_PARALLEL", name: "Parallel market exchange rate", nameAr: "سعر الصرف في السوق الموازية", unit: "YER/USD" },
   { code: "M0", name: "Monetary base (M0)", nameAr: "القاعدة النقدية", unit: "YER billions" },

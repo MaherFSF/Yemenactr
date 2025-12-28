@@ -1504,9 +1504,7 @@ export async function runAllConnectors(): Promise<{
 // ============================================
 
 // UNHCR Refugee Data Connector
-export { ingestUNHCRData, getLatestUNHCRStats } from "./unhcrConnector";
-import unhcrConnectorModule from "./unhcrConnector";
-export const UNHCR_INDICATORS = unhcrConnectorModule.UNHCR_INDICATORS;
+export { ingestUNHCRData, getLatestUNHCRStats, UNHCR_INDICATORS } from "./unhcrConnector";
 
 // WHO Health Indicators Connector
 export { ingestWHOData, getLatestWHOStats } from "./whoConnector";
@@ -1534,9 +1532,7 @@ import iatiConnectorModule from "./iatiConnector";
 export const IATI_INDICATORS = iatiConnectorModule.IATI_INDICATORS;
 
 // Central Bank of Yemen Connector (Aden & Sana'a)
-export { ingestCBYData, getLatestCBYStats } from "./cbyConnector";
-import cbyConnectorModule from "./cbyConnector";
-export const CBY_INDICATORS = cbyConnectorModule.CBY_INDICATORS;
+export { ingestCBYData, getLatestCBYStats, CBY_INDICATORS } from "./cbyConnector";
 
 // Historical Backfill System
 export { 
