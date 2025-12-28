@@ -5,6 +5,13 @@ import { publicProcedure, protectedProcedure, adminProcedure, analystProcedure, 
 import { z } from "zod";
 import { invokeLLM } from "./_core/llm";
 import {
+  ingestionService,
+  fetchWorldBankIndicator,
+  fetchReliefWebReports,
+  getDataSourceStatus,
+} from './ingestion';
+import { WorldBankConnector, HDXConnector, OCHAFTSConnector, ReliefWebConnector } from './connectors';
+import {
   getTimeSeriesByIndicator,
   getLatestTimeSeriesValue,
   getAllIndicators,
@@ -675,6 +682,219 @@ Current context: ${input.context?.sector ? `Sector: ${input.context.sector}` : '
           success: true,
           downloadUrl: `/api/exports/dataset-${input.datasetId}.${input.format}`,
           expiresAt: new Date(Date.now() + 3600000).toISOString(),
+        };
+      }),
+  }),
+
+  // ============================================================================
+  // DATA INGESTION (Real Data Sources)
+  // ============================================================================
+
+  ingestion: router({
+    // Get status of all data sources
+    getSourceStatus: publicProcedure
+      .query(async () => {
+        return getDataSourceStatus();
+      }),
+
+    // Fetch World Bank indicator data
+    fetchWorldBank: publicProcedure
+      .input(z.object({
+        indicatorCode: z.string(),
+      }))
+      .query(async ({ input }) => {
+        const connector = new WorldBankConnector();
+        try {
+          const rawData = await connector.fetchIndicator(input.indicatorCode);
+          const series = await connector.normalize(rawData);
+          return {
+            success: true,
+            data: series[0] || null,
+            source: 'World Bank Development Indicators',
+            retrievedAt: new Date().toISOString(),
+          };
+        } catch (error) {
+          return {
+            success: false,
+            data: null,
+            error: error instanceof Error ? error.message : 'Unknown error',
+            source: 'World Bank Development Indicators',
+            retrievedAt: new Date().toISOString(),
+          };
+        }
+      }),
+
+    // Fetch HDX humanitarian data
+    fetchHDX: publicProcedure
+      .input(z.object({
+        dataType: z.enum(['population', 'food-security', 'humanitarian-needs']),
+      }))
+      .query(async ({ input }) => {
+        const connector = new HDXConnector();
+        try {
+          let rawData;
+          switch (input.dataType) {
+            case 'population':
+              rawData = await connector.fetchPopulation();
+              break;
+            case 'food-security':
+              rawData = await connector.fetchFoodSecurity();
+              break;
+            case 'humanitarian-needs':
+              rawData = await connector.fetchHumanitarianNeeds();
+              break;
+          }
+          
+          const series = rawData ? await connector.normalize(rawData) : [];
+          return {
+            success: true,
+            data: series,
+            source: 'HDX Humanitarian API',
+            retrievedAt: new Date().toISOString(),
+          };
+        } catch (error) {
+          return {
+            success: false,
+            data: [],
+            error: error instanceof Error ? error.message : 'Unknown error',
+            source: 'HDX Humanitarian API',
+            retrievedAt: new Date().toISOString(),
+          };
+        }
+      }),
+
+    // Fetch OCHA FTS funding data
+    fetchOCHAFunding: publicProcedure
+      .input(z.object({
+        year: z.number().min(2015).max(2025).default(2024),
+      }))
+      .query(async ({ input }) => {
+        const connector = new OCHAFTSConnector();
+        try {
+          const rawData = await connector.fetchFundingFlows(input.year);
+          const series = rawData ? await connector.normalize(rawData) : [];
+          return {
+            success: true,
+            data: series,
+            source: 'OCHA Financial Tracking Service',
+            retrievedAt: new Date().toISOString(),
+          };
+        } catch (error) {
+          return {
+            success: false,
+            data: [],
+            error: error instanceof Error ? error.message : 'Unknown error',
+            source: 'OCHA Financial Tracking Service',
+            retrievedAt: new Date().toISOString(),
+          };
+        }
+      }),
+
+    // Fetch ReliefWeb reports
+    fetchReliefWeb: publicProcedure
+      .input(z.object({
+        query: z.string().optional(),
+        limit: z.number().min(1).max(100).default(20),
+      }))
+      .query(async ({ input }) => {
+        const connector = new ReliefWebConnector();
+        try {
+          const rawData = input.query 
+            ? await connector.searchReports(input.query, input.limit)
+            : await connector.fetchReports(input.limit);
+          
+          // Return raw reports for display
+          const reports = rawData?.data?.map((item: any) => ({
+            id: item.id,
+            title: item.fields?.title || 'Untitled',
+            url: item.fields?.url_alias ? `https://reliefweb.int${item.fields.url_alias}` : null,
+            date: item.fields?.date?.created,
+            source: item.fields?.source?.[0]?.name || 'Unknown',
+            format: item.fields?.format?.[0]?.name || 'Report',
+            theme: item.fields?.theme?.map((t: any) => t.name) || [],
+          })) || [];
+          
+          return {
+            success: true,
+            data: reports,
+            total: rawData?.totalCount || reports.length,
+            source: 'ReliefWeb',
+            retrievedAt: new Date().toISOString(),
+          };
+        } catch (error) {
+          return {
+            success: false,
+            data: [],
+            total: 0,
+            error: error instanceof Error ? error.message : 'Unknown error',
+            source: 'ReliefWeb',
+            retrievedAt: new Date().toISOString(),
+          };
+        }
+      }),
+
+    // Run full ingestion (admin only)
+    runFullIngestion: adminProcedure
+      .mutation(async () => {
+        const summary = await ingestionService.runFullIngestion();
+        return {
+          success: summary.failedSources === 0,
+          summary,
+        };
+      }),
+
+    // Get cached data from last ingestion
+    getCachedData: publicProcedure
+      .input(z.object({
+        sourceId: z.string().optional(),
+        indicatorCode: z.string().optional(),
+      }))
+      .query(async ({ input }) => {
+        if (input.sourceId) {
+          return ingestionService.getCachedSeries(input.sourceId, input.indicatorCode);
+        }
+        return ingestionService.getAllCachedSeries();
+      }),
+
+    // Get key Yemen economic indicators from World Bank
+    getKeyIndicators: publicProcedure
+      .query(async () => {
+        const connector = new WorldBankConnector();
+        const indicators = [
+          { code: 'NY.GDP.MKTP.CD', name: 'GDP (current US$)' },
+          { code: 'FP.CPI.TOTL.ZG', name: 'Inflation Rate (%)' },
+          { code: 'PA.NUS.FCRF', name: 'Exchange Rate (YER/USD)' },
+          { code: 'SP.POP.TOTL', name: 'Population' },
+          { code: 'SL.UEM.TOTL.ZS', name: 'Unemployment (%)' },
+        ];
+        
+        const results = [];
+        for (const indicator of indicators) {
+          try {
+            const rawData = await connector.fetchIndicator(indicator.code);
+            const series = await connector.normalize(rawData);
+            if (series[0]) {
+              const latestObs = series[0].observations[series[0].observations.length - 1];
+              results.push({
+                code: indicator.code,
+                name: indicator.name,
+                value: latestObs?.value,
+                date: latestObs?.date,
+                unit: series[0].unit,
+                source: 'World Bank',
+                confidence: series[0].confidence,
+              });
+            }
+            // Rate limiting
+            await new Promise(resolve => setTimeout(resolve, 300));
+          } catch (error) {
+            console.error(`Failed to fetch ${indicator.code}:`, error);
+          }
+        }
+        
+        return {
+          indicators: results,
+          retrievedAt: new Date().toISOString(),
         };
       }),
   }),

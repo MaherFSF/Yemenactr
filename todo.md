@@ -458,3 +458,37 @@
 - [ ] Create E2E tests for authenticated flows
 - [ ] Create E2E tests for admin console
 - [ ] Add E2E tests to CI pipeline
+
+
+## Phase 43: Real Data Source Integration (from Master Prompt)
+
+### Core Open APIs (P0 - Must Work End-to-End)
+- [x] World Bank Indicators API connector
+- [x] OCHA FTS (HPC Tools) funding flows connector
+- [x] HDX HAPI connector
+- [ ] IATI datastore connector
+- [x] ReliefWeb documents connector
+- [ ] UCDP conflict events connector
+
+### Yemen-Specific Sources
+- [ ] Central Bank of Yemen (Aden) publications connector
+- [ ] WFP market price surveys connector
+- [ ] Humanitarian indicators connector
+
+### Data Transformation Layer
+- [x] Create unified ingestion framework with connector interface
+- [x] Implement discover(), fetch_raw(), normalize(), validate(), load(), index(), publish() methods
+- [x] Create source_runs tracking with provenance ledger entries
+- [x] Implement QA/validation checks (schema, units, currency, continuity, duplicates, outliers)
+
+### Data Quality Monitoring
+- [x] Implement contradiction detector for conflicting sources
+- [x] Create data gap system with "Not available yet" UI
+- [x] Add DEV/SYNTHETIC labels to placeholder data
+- [x] Implement confidence rating A-D system
+
+### Scheduling & Automation
+- [ ] Set up scheduled data ingestion (daily/weekly cadence)
+- [ ] Implement SLO monitoring for pipelines
+- [ ] Create ingestion health dashboard
+
