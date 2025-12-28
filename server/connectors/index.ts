@@ -1497,3 +1497,201 @@ export async function runAllConnectors(): Promise<{
     results,
   };
 }
+
+
+// ============================================
+// New Connector Exports (Phase 58)
+// ============================================
+
+// UNHCR Refugee Data Connector
+export { ingestUNHCRData, getLatestUNHCRStats } from "./unhcrConnector";
+import unhcrConnectorModule from "./unhcrConnector";
+export const UNHCR_INDICATORS = unhcrConnectorModule.UNHCR_INDICATORS;
+
+// WHO Health Indicators Connector
+export { ingestWHOData, getLatestWHOStats } from "./whoConnector";
+import whoConnectorModule from "./whoConnector";
+export const WHO_INDICATORS = whoConnectorModule.YEMEN_HEALTH_INDICATORS;
+
+// UNICEF Child Welfare Connector
+export { ingestUNICEFData, getLatestUNICEFStats } from "./unicefConnector";
+import unicefConnectorModule from "./unicefConnector";
+export const UNICEF_INDICATORS = unicefConnectorModule.UNICEF_INDICATORS;
+
+// WFP Food Security Connector
+export { ingestWFPData, getLatestWFPStats } from "./wfpConnector";
+import wfpConnectorModule from "./wfpConnector";
+export const WFP_INDICATORS = wfpConnectorModule.WFP_INDICATORS;
+
+// UNDP Human Development Connector
+export { ingestUNDPData, getLatestUNDPStats } from "./undpConnector";
+import undpConnector from "./undpConnector";
+export const UNDP_INDICATORS = undpConnector.UNDP_INDICATORS;
+
+// IATI Aid Transparency Connector
+export { ingestIATIData, getLatestIATIStats } from "./iatiConnector";
+import iatiConnectorModule from "./iatiConnector";
+export const IATI_INDICATORS = iatiConnectorModule.IATI_INDICATORS;
+
+// Central Bank of Yemen Connector (Aden & Sana'a)
+export { ingestCBYData, getLatestCBYStats } from "./cbyConnector";
+import cbyConnectorModule from "./cbyConnector";
+export const CBY_INDICATORS = cbyConnectorModule.CBY_INDICATORS;
+
+// Historical Backfill System
+export { 
+  runFullBackfill, 
+  backfillConnector, 
+  getBackfillStatus, 
+  getBackfillProgress
+} from "../scheduler/historicalBackfill";
+import backfillModule from "../scheduler/historicalBackfill";
+export const CONNECTOR_REGISTRY = backfillModule.CONNECTOR_REGISTRY;
+
+// ============================================
+// Extended Connector Registry
+// ============================================
+
+export const EXTENDED_CONNECTORS: DataSource[] = [
+  {
+    id: "unhcr",
+    name: "UNHCR Refugee Data",
+    type: "api",
+    url: "https://data.unhcr.org/",
+    cadence: "monthly",
+    status: "active",
+    requiresKey: false,
+  },
+  {
+    id: "who",
+    name: "WHO Health Indicators",
+    type: "api",
+    url: "https://www.who.int/data/gho",
+    cadence: "annual",
+    status: "active",
+    requiresKey: false,
+  },
+  {
+    id: "unicef",
+    name: "UNICEF Child Welfare",
+    type: "api",
+    url: "https://data.unicef.org/",
+    cadence: "annual",
+    status: "active",
+    requiresKey: false,
+  },
+  {
+    id: "wfp",
+    name: "WFP Food Security",
+    type: "api",
+    url: "https://dataviz.vam.wfp.org/",
+    cadence: "monthly",
+    status: "active",
+    requiresKey: false,
+  },
+  {
+    id: "undp",
+    name: "UNDP Human Development",
+    type: "api",
+    url: "https://hdr.undp.org/",
+    cadence: "annual",
+    status: "active",
+    requiresKey: false,
+  },
+  {
+    id: "iati",
+    name: "IATI Aid Transparency",
+    type: "api",
+    url: "https://iatistandard.org/",
+    cadence: "quarterly",
+    status: "active",
+    requiresKey: false,
+  },
+  {
+    id: "cby-aden",
+    name: "Central Bank of Yemen (Aden)",
+    type: "api",
+    url: "https://www.centralbank.gov.ye/",
+    cadence: "monthly",
+    status: "active",
+    requiresKey: false,
+  },
+  {
+    id: "cby-sanaa",
+    name: "Central Bank of Yemen (Sana'a)",
+    type: "api",
+    url: "https://www.cby-ye.com/",
+    cadence: "monthly",
+    status: "active",
+    requiresKey: false,
+  },
+];
+
+// Merge with existing connectors
+export function getAllConnectors(): DataSource[] {
+  return [...DATA_SOURCES, ...EXTENDED_CONNECTORS];
+}
+
+// ============================================
+// Comprehensive Ingestion Runner
+// ============================================
+
+export async function runComprehensiveIngestion(): Promise<{
+  success: boolean;
+  results: {
+    connector: string;
+    records: number;
+    errors: string[];
+  }[];
+  totalRecords: number;
+}> {
+  const results: { connector: string; records: number; errors: string[] }[] = [];
+  let totalRecords = 0;
+  
+  // Import connector functions
+  const { ingestUNHCRData } = await import("./unhcrConnector");
+  const { ingestWHOData } = await import("./whoConnector");
+  const { ingestUNICEFData } = await import("./unicefConnector");
+  const { ingestWFPData } = await import("./wfpConnector");
+  const { ingestUNDPData } = await import("./undpConnector");
+  const { ingestIATIData } = await import("./iatiConnector");
+  const { ingestCBYData } = await import("./cbyConnector");
+  
+  const connectorFunctions = [
+    { name: "UNHCR", fn: ingestUNHCRData },
+    { name: "WHO", fn: ingestWHOData },
+    { name: "UNICEF", fn: ingestUNICEFData },
+    { name: "WFP", fn: ingestWFPData },
+    { name: "UNDP", fn: ingestUNDPData },
+    { name: "IATI", fn: ingestIATIData },
+    { name: "CBY", fn: ingestCBYData },
+  ];
+  
+  for (const { name, fn } of connectorFunctions) {
+    try {
+      console.log(`[Ingestion] Running ${name} connector...`);
+      const result = await fn();
+      results.push({
+        connector: name,
+        records: result.recordsIngested,
+        errors: result.errors,
+      });
+      totalRecords += result.recordsIngested;
+    } catch (error) {
+      results.push({
+        connector: name,
+        records: 0,
+        errors: [`Fatal error: ${error}`],
+      });
+    }
+    
+    // Rate limiting
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+  
+  return {
+    success: results.every(r => r.errors.length === 0),
+    results,
+    totalRecords,
+  };
+}

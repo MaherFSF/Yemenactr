@@ -979,3 +979,35 @@
 - [x] List pending API keys and credentials needed
 - [x] Add deployment instructions
 - [x] Update architecture documentation
+
+
+## Phase 58: Comprehensive API Connectors & Historical Backfill (December 28, 2024)
+
+### New API Connectors
+- [x] UNHCR Refugee Data Connector (unhcrConnector.ts)
+- [x] WHO Health Indicators Connector (whoConnector.ts)
+- [x] UNICEF Child Welfare Connector (unicefConnector.ts)
+- [x] WFP Food Security Connector (wfpConnector.ts)
+- [x] UNDP Development Connector (undpConnector.ts)
+- [x] IATI Aid Transparency Connector (iatiConnector.ts)
+- [x] Central Bank of Yemen (Aden) Connector (cbyConnector.ts)
+- [x] Central Bank of Yemen (Sana'a) Connector (cbyConnector.ts)
+- [ ] EU Aid Connector (ECHO, development assistance) - future
+- [ ] ILO Labor Statistics Connector - future
+- [ ] UNESCO Education Connector - future
+- [ ] UNCTAD Trade Connector - future
+
+### Historical Data Backfill System
+- [x] Create backfill orchestrator service (historicalBackfill.ts)
+- [x] Implement year-by-year ingestion (2010-2024)
+- [x] Add data availability detection per source
+- [x] Create progress tracking and logging
+- [x] Implement incremental backfill (skip existing data)
+- [x] Add data validation for historical records
+- [x] Create backfill status dashboard data
+
+### Connector Registry Updates
+- [x] Update connector index with all new connectors
+- [x] Add connector tests for new sources
+- [x] Update README with new connector documentation
+- [x] Update COVERAGE_SCORECARD with new connectors
