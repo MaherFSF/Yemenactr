@@ -281,3 +281,242 @@ pnpm db:push
 
 *Last Updated: December 2024*
 *Version: 1.0*
+
+
+---
+
+## Extended Operations Guide
+
+### Daily Operations Checklist
+
+| Time | Task | Priority |
+|------|------|----------|
+| 08:00 | Review overnight alerts | High |
+| 08:30 | Check data ingestion status | High |
+| 09:00 | Review pending submissions | Medium |
+| 12:00 | Check system health | Medium |
+| 17:00 | Review daily metrics | Low |
+| 17:30 | Clear resolved alerts | Low |
+
+### Weekly Operations Checklist
+
+| Day | Task |
+|-----|------|
+| Monday | Review weekly metrics report |
+| Tuesday | Process pending corrections |
+| Wednesday | Review data quality scores |
+| Thursday | Check backup verification |
+| Friday | Security audit review |
+
+### Monthly Operations Checklist
+
+- [ ] Review user access and permissions
+- [ ] Rotate API keys if needed
+- [ ] Review and archive old logs
+- [ ] Update documentation
+- [ ] Conduct DR test
+- [ ] Review capacity planning
+
+---
+
+## Advanced Data Operations
+
+### Bulk Data Import
+
+```bash
+# Prepare CSV with required columns
+# indicator_code, date, value, source_id, regime_tag, confidence
+
+# Validate format
+pnpm validate:csv /path/to/data.csv
+
+# Import with dry run
+pnpm import:data /path/to/data.csv --dry-run
+
+# Import for real
+pnpm import:data /path/to/data.csv
+```
+
+### Data Reconciliation
+
+When sources conflict:
+
+1. **Identify Discrepancy**
+   - Navigate to Quality > Contradictions
+   - Review conflicting values
+
+2. **Investigate**
+   - Check original source documents
+   - Verify methodology differences
+   - Contact source if needed
+
+3. **Resolve**
+   - Document decision rationale
+   - Update preferred value
+   - Flag alternative in provenance
+
+4. **Communicate**
+   - Add to public changelog
+   - Update confidence rating
+   - Notify affected users
+
+### Historical Data Backfill
+
+```bash
+# Backfill World Bank data
+pnpm backfill:worldbank --start=2010 --end=2024
+
+# Backfill IMF data
+pnpm backfill:imf --start=2010 --end=2024
+
+# Verify backfill
+pnpm verify:backfill --report
+```
+
+---
+
+## Advanced Monitoring
+
+### Performance Metrics
+
+| Metric | Target | Alert Threshold |
+|--------|--------|-----------------|
+| API Response Time | < 200ms | > 500ms |
+| Database Query Time | < 50ms | > 200ms |
+| Page Load Time | < 2s | > 5s |
+| Error Rate | < 0.1% | > 1% |
+
+### Custom Dashboards
+
+Create custom monitoring dashboards:
+
+1. Navigate to Admin > Monitoring > Dashboards
+2. Click "New Dashboard"
+3. Add widgets:
+   - Time series charts
+   - Gauges
+   - Tables
+   - Alerts list
+4. Configure refresh interval
+5. Save and share
+
+### Log Analysis
+
+```bash
+# Search logs for errors
+docker compose logs web | grep ERROR
+
+# Search for specific user
+docker compose logs web | grep "user_id=abc123"
+
+# Export logs for analysis
+docker compose logs --since="2024-12-01" > logs.txt
+```
+
+---
+
+## Incident Response
+
+### Severity Levels
+
+| Level | Description | Response Time |
+|-------|-------------|---------------|
+| P1 | Service down | 15 minutes |
+| P2 | Major feature broken | 1 hour |
+| P3 | Minor issue | 4 hours |
+| P4 | Enhancement | Next sprint |
+
+### Incident Workflow
+
+1. **Detection**
+   - Alert triggered or user report
+   - Create incident ticket
+
+2. **Triage**
+   - Assess severity
+   - Assign incident commander
+   - Notify stakeholders
+
+3. **Investigation**
+   - Gather logs and metrics
+   - Identify root cause
+   - Document findings
+
+4. **Resolution**
+   - Implement fix
+   - Verify resolution
+   - Update status page
+
+5. **Post-Mortem**
+   - Document timeline
+   - Identify improvements
+   - Schedule follow-ups
+
+### Communication Templates
+
+**Incident Started**:
+```
+[YETO] Incident: {TITLE}
+Status: Investigating
+Impact: {DESCRIPTION}
+We are aware of the issue and investigating.
+Updates will follow.
+```
+
+**Incident Resolved**:
+```
+[YETO] Resolved: {TITLE}
+Status: Resolved
+Duration: {DURATION}
+Root Cause: {CAUSE}
+All services are operating normally.
+```
+
+---
+
+## Compliance & Audit
+
+### Audit Trail
+
+All administrative actions are logged:
+- User management changes
+- Data modifications
+- Configuration changes
+- Access attempts
+
+### Generating Audit Reports
+
+1. Navigate to Admin > Security > Audit
+2. Set date range
+3. Filter by action type
+4. Export report (CSV/PDF)
+
+### Compliance Checklist
+
+- [ ] User access reviewed quarterly
+- [ ] Security patches applied monthly
+- [ ] Backup restoration tested monthly
+- [ ] Penetration test annually
+- [ ] Privacy policy reviewed annually
+
+---
+
+## Keyboard Shortcuts Reference
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+K` | Global search |
+| `Ctrl+L` | View logs |
+| `Ctrl+S` | Save current form |
+| `Ctrl+Shift+D` | Toggle debug mode |
+| `Esc` | Close modal/dialog |
+| `?` | Show help |
+| `G then D` | Go to Dashboard |
+| `G then U` | Go to Users |
+| `G then S` | Go to Sources |
+| `G then Q` | Go to Quality |
+
+---
+
+*Extended Operations Guide - Version 1.0*
+*Last Updated: December 28, 2024*
