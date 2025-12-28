@@ -268,3 +268,34 @@
 - [x] Create /docs/DATA_GOVERNANCE.md
 - [x] Create /docs/API_REFERENCE.md
 - [ ] Create /docs/FINAL_SELF_AUDIT.md
+
+
+## Phase 32: User Dashboard & Personalization
+- [x] Build user dashboard page with personalized content
+- [x] Implement saved searches functionality
+- [x] Create indicator watchlist feature
+- [x] Add recent activity feed
+- [x] Build custom report history
+
+## Phase 33: Export Enhancements
+- [x] Add export buttons to Dashboard page
+- [x] Create reusable ExportButton component
+- [x] Implement export format selection (CSV/JSON/XLSX)
+- [ ] Add export buttons to all sector pages
+- [ ] Implement bulk export functionality
+
+## Phase 34: Additional Documentation
+- [x] Create /docs/SUBSCRIBER_MANUAL.md
+- [x] Create /docs/PARTNER_MANUAL.md
+- [x] Create /docs/USER_JOURNEYS.md
+- [ ] Create /docs/DEMO_SCRIPT.md
+
+## Phase 35: Changelog & Status
+- [x] Create /changelog page with version history
+- [x] Update STATUS.md with current progress
+- [ ] Create /docs/FINAL_SELF_AUDIT.md
+
+## ## Phase 36: API Key Management
+- [x] Build API key generation interface
+- [x] Add usage tracking and rate limiting display
+- [ ] Implement API key validation middleware (backend)ing per tier

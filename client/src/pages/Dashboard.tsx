@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ExportButton } from "@/components/ExportButton";
 
 export default function Dashboard() {
   const { language } = useLanguage();
@@ -258,10 +259,18 @@ export default function Dashboard() {
             </div>
 
             {/* Export Button */}
-            <Button variant="outline" size="sm" className="gap-2 bg-[#107040] text-white hover:bg-[#0D5A34] border-[#107040]">
-              <Download className="h-4 w-4" />
-              {language === "ar" ? "تصدير البيانات" : "Export Data"}
-            </Button>
+            <ExportButton 
+              data={gdpData.map(d => ({
+                year: d.year,
+                aden: d.aden,
+                sanaa: d.sanaa,
+                unified: d.unified
+              }))}
+              filename="yeto_economic_data"
+              title={language === "ar" ? "تصدير البيانات" : "Export Data"}
+              variant="default"
+              size="sm"
+            />
           </div>
         </div>
       </div>

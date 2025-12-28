@@ -44,6 +44,9 @@ import Corrections from "./pages/Corrections";
 import Publications from "./pages/Publications";
 import CoverageScorecard from "./pages/CoverageScorecard";
 import Compliance from "./pages/Compliance";
+import UserDashboard from "./pages/UserDashboard";
+import Changelog from "./pages/Changelog";
+import APIKeys from "./pages/APIKeys";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -85,6 +88,9 @@ function Router() {
       <Route path={"/publications"} component={Publications} />
       <Route path={"/coverage"} component={CoverageScorecard} />
       <Route path={"/compliance"} component={Compliance} />
+      <Route path={"/my-dashboard"} component={UserDashboard} />
+      <Route path={"/changelog"} component={Changelog} />
+      <Route path={"/api-keys"} component={APIKeys} />
       <Route path={"/legal/privacy"} component={Legal} />
       <Route path={"/legal/terms"} component={Legal} />
       <Route path={"/legal/data-license"} component={Legal} />
