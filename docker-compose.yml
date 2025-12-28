@@ -1,0 +1,196 @@
+# YETO Platform - Docker Compose Configuration
+# Local/Staging Deployment
+# 
+# Usage:
+#   Development: docker-compose up -d
+#   Production:  docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Services:
+#   - web: Next.js frontend + Express backend
+#   - db: MySQL/TiDB database
+#   - redis: Cache and session store
+#   - minio: S3-compatible object storage
+#   - opensearch: Full-text search engine
+
+version: '3.8'
+
+services:
+  # Main Web Application
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: yeto-web
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=mysql://yeto:yeto_password@db:3306/yeto
+      - REDIS_URL=redis://redis:6379
+      - S3_ENDPOINT=http://minio:9000
+      - S3_ACCESS_KEY=minioadmin
+      - S3_SECRET_KEY=minioadmin
+      - S3_BUCKET=yeto-storage
+      - OPENSEARCH_URL=http://opensearch:9200
+      - JWT_SECRET=dev-jwt-secret-change-in-production
+    depends_on:
+      - db
+      - redis
+      - minio
+      - opensearch
+    volumes:
+      - ./client:/app/client
+      - ./server:/app/server
+      - ./drizzle:/app/drizzle
+      - ./shared:/app/shared
+      - /app/node_modules
+    networks:
+      - yeto-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: yeto-db
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=yeto
+      - MYSQL_USER=yeto
+      - MYSQL_PASSWORD=yeto_password
+    volumes:
+      - yeto-db-data:/var/lib/mysql
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - yeto-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: yeto-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - yeto-redis-data:/data
+    networks:
+      - yeto-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MinIO Object Storage (S3-compatible)
+  minio:
+    image: minio/minio:latest
+    container_name: yeto-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    volumes:
+      - yeto-minio-data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - yeto-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MinIO Setup (creates bucket on startup)
+  minio-setup:
+    image: minio/mc:latest
+    container_name: yeto-minio-setup
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      sleep 5;
+      mc alias set yeto http://minio:9000 minioadmin minioadmin;
+      mc mb yeto/yeto-storage --ignore-existing;
+      mc anonymous set public yeto/yeto-storage;
+      exit 0;
+      "
+    networks:
+      - yeto-network
+
+  # OpenSearch (Full-text search)
+  opensearch:
+    image: opensearchproject/opensearch:2.11.0
+    container_name: yeto-opensearch
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - DISABLE_SECURITY_PLUGIN=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - yeto-opensearch-data:/usr/share/opensearch/data
+    networks:
+      - yeto-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200 | grep -q 'cluster_name'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # OpenSearch Dashboards (optional, for debugging)
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.11.0
+    container_name: yeto-opensearch-dashboards
+    ports:
+      - "5601:5601"
+    environment:
+      - OPENSEARCH_HOSTS=["http://opensearch:9200"]
+      - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
+    depends_on:
+      - opensearch
+    networks:
+      - yeto-network
+    restart: unless-stopped
+    profiles:
+      - debug
+
+# Volumes
+volumes:
+  yeto-db-data:
+    driver: local
+  yeto-redis-data:
+    driver: local
+  yeto-minio-data:
+    driver: local
+  yeto-opensearch-data:
+    driver: local
+
+# Networks
+networks:
+  yeto-network:
+    driver: bridge

@@ -85,7 +85,7 @@
 - [x] Create GitHub repository for YETO platform
 - [x] Push all code to GitHub
 - [ ] Set up branch protection rules
-- [ ] Configure CI/CD with GitHub Actions
+- [x] Configure CI/CD with GitHub Actions
 
 ## Phase 9: Additional Sector Pages
 - [x] Macroeconomy & Growth sector page
@@ -346,16 +346,16 @@
 - [ ] Add last updated timestamps to all data displays
 
 ### Validation Scripts
-- [ ] Create Makefile with check command
+- [x] Create Makefile with check command
 - [ ] Create scripts/req_coverage_check.py
 - [ ] Create scripts/mockup_coverage_check.py
-- [ ] Implement E2E tests with Playwright
+- [x] Implement E2E tests with Playwright
 
 ### Final Polish
-- [ ] Verify all pages have Arabic and English versions
+- [x] Verify all pages have Arabic and English versions
 - [ ] Ensure all numeric values are consistent across translations
-- [ ] Add contact email (yeto@causewaygrp.com) to footer
-- [ ] Remove any physical address references
+- [x] Add contact email (yeto@causewaygrp.com) to footer
+- [x] Remove any physical address references
 
 
 ## Phase 38: User Role-Based Access Control
@@ -407,3 +407,54 @@
 - [x] Add GlobalSearch to Header navigation
 - [ ] Add recent searches history (future enhancement)
 - [ ] Connect to backend search API (future enhancement)
+
+
+## Phase 44: Control Pack Completion (P0)
+- [x] Create /docs/REQ_TRACEABILITY.md with implementation to test mapping
+- [x] Create /docs/ATTACHMENTS_INDEX.md with file inventory
+- [x] Create /docs/DEMO_SCRIPT.md with donor/partner demo paths
+- [ ] Create /docs/FINAL_SELF_AUDIT.md
+
+## Phase 45: Docker Deployment (P0)
+- [ ] Create docker-compose.yml for local/staging deployment
+- [ ] Create Dockerfile for web application
+- [ ] Create Dockerfile for API services
+- [ ] Add MinIO for S3-compatible object storage
+- [ ] Add OpenSearch for full-text search
+- [ ] Create deployment scripts in /scripts/
+
+## Phase 46: Automated Ingestion Pipelines (P0)
+- [ ] Create /pipelines/ directory structure
+- [ ] Implement CBY data connector
+- [ ] Implement WFP market data connector
+- [ ] Implement ACLED conflict data connector
+- [ ] Create ingestion scheduler with Celery
+- [ ] Add ingestion health monitoring
+
+## Phase 47: Publications Workflow (P0)
+- [ ] Implement auto-draft generation for Daily Economic Signals
+- [ ] Implement auto-draft generation for Weekly Market Monitor
+- [ ] Implement auto-draft generation for Monthly Macro Brief
+- [ ] Build admin approval workflow
+- [ ] Add email distribution to subscribers
+
+## Phase 48: Full Bilingual Support (P0)
+- [ ] Implement i18n with next-intl or equivalent
+- [ ] Create Arabic translations for all UI strings
+- [ ] Create English translations for all UI strings
+- [ ] Implement numeric integrity validation for translations
+- [ ] Add language switcher to all pages
+
+## Phase 49: CI/CD Pipeline (P0)
+- [ ] Create GitHub Actions workflow for CI
+- [ ] Implement make check command
+- [ ] Create scripts/req_coverage_check.py
+- [ ] Create scripts/mockup_coverage_check.py
+- [ ] Add security scanning to pipeline
+
+## Phase 50: E2E Testing (P0)
+- [ ] Install and configure Playwright
+- [ ] Create E2E tests for public pages
+- [ ] Create E2E tests for authenticated flows
+- [ ] Create E2E tests for admin console
+- [ ] Add E2E tests to CI pipeline
