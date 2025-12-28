@@ -37,6 +37,7 @@ import {
   Shield
 } from "lucide-react";
 import { useState } from "react";
+import GlobalSearch from "@/components/GlobalSearch";
 
 export default function Header() {
   const { language, setLanguage, t } = useLanguage();
@@ -234,6 +235,11 @@ export default function Header() {
 
         {/* Right Side Actions */}
         <div className="flex items-center gap-2">
+          {/* Global Search */}
+          <div className="hidden md:block">
+            <GlobalSearch />
+          </div>
+
           {/* Language Switcher */}
           <Button
             variant="ghost"

@@ -20,7 +20,7 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["user", "admin", "partner_contributor"]).default("user").notNull(),
+  role: mysqlEnum("role", ["user", "admin", "analyst", "partner_contributor"]).default("user").notNull(),
   subscriptionTier: mysqlEnum("subscriptionTier", ["free", "researcher", "institutional"]).default("free").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -475,3 +475,155 @@ export const eventIndicatorLinks = mysqlTable("event_indicator_links", {
 
 export type EventIndicatorLink = typeof eventIndicatorLinks.$inferSelect;
 export type InsertEventIndicatorLink = typeof eventIndicatorLinks.$inferInsert;
+
+
+// ============================================================================
+// NOTIFICATION PREFERENCES
+// ============================================================================
+
+export const notificationPreferences = mysqlTable("notification_preferences", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  emailDailyDigest: boolean("emailDailyDigest").default(false).notNull(),
+  emailWeeklyMonitor: boolean("emailWeeklyMonitor").default(true).notNull(),
+  emailMonthlyBrief: boolean("emailMonthlyBrief").default(true).notNull(),
+  emailSpecialReports: boolean("emailSpecialReports").default(true).notNull(),
+  emailDataAlerts: boolean("emailDataAlerts").default(false).notNull(),
+  emailCorrectionNotices: boolean("emailCorrectionNotices").default(true).notNull(),
+  watchlistAlerts: boolean("watchlistAlerts").default(true).notNull(),
+  preferredLanguage: mysqlEnum("preferredLanguage", ["en", "ar", "both"]).default("both").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_idx").on(table.userId),
+}));
+
+export type NotificationPreference = typeof notificationPreferences.$inferSelect;
+export type InsertNotificationPreference = typeof notificationPreferences.$inferInsert;
+
+// ============================================================================
+// EMAIL SUBSCRIPTIONS (for non-registered users)
+// ============================================================================
+
+export const emailSubscriptions = mysqlTable("email_subscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  nameEn: varchar("nameEn", { length: 255 }),
+  nameAr: varchar("nameAr", { length: 255 }),
+  organization: varchar("organization", { length: 255 }),
+  subscribedToDaily: boolean("subscribedToDaily").default(false).notNull(),
+  subscribedToWeekly: boolean("subscribedToWeekly").default(true).notNull(),
+  subscribedToMonthly: boolean("subscribedToMonthly").default(true).notNull(),
+  subscribedToSpecial: boolean("subscribedToSpecial").default(true).notNull(),
+  preferredLanguage: mysqlEnum("preferredLanguage", ["en", "ar", "both"]).default("both").notNull(),
+  isVerified: boolean("isVerified").default(false).notNull(),
+  verificationToken: varchar("verificationToken", { length: 64 }),
+  unsubscribeToken: varchar("unsubscribeToken", { length: 64 }).notNull(),
+  subscribedAt: timestamp("subscribedAt").defaultNow().notNull(),
+  verifiedAt: timestamp("verifiedAt"),
+  lastEmailSentAt: timestamp("lastEmailSentAt"),
+}, (table) => ({
+  emailIdx: index("email_idx").on(table.email),
+  verificationTokenIdx: index("verification_token_idx").on(table.verificationToken),
+}));
+
+export type EmailSubscription = typeof emailSubscriptions.$inferSelect;
+export type InsertEmailSubscription = typeof emailSubscriptions.$inferInsert;
+
+// ============================================================================
+// USER WATCHLIST
+// ============================================================================
+
+export const userWatchlist = mysqlTable("user_watchlist", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  indicatorCode: varchar("indicatorCode", { length: 100 }).notNull(),
+  alertThreshold: decimal("alertThreshold", { precision: 20, scale: 6 }),
+  alertDirection: mysqlEnum("alertDirection", ["above", "below", "any_change"]).default("any_change").notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_idx").on(table.userId),
+  indicatorIdx: index("indicator_idx").on(table.indicatorCode),
+}));
+
+export type UserWatchlistItem = typeof userWatchlist.$inferSelect;
+export type InsertUserWatchlistItem = typeof userWatchlist.$inferInsert;
+
+// ============================================================================
+// SAVED SEARCHES
+// ============================================================================
+
+export const savedSearches = mysqlTable("saved_searches", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  name: varchar("name", { length: 255 }).notNull(),
+  searchQuery: text("searchQuery").notNull(),
+  filters: json("filters").$type<Record<string, any>>(),
+  resultCount: int("resultCount"),
+  lastRunAt: timestamp("lastRunAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_idx").on(table.userId),
+}));
+
+export type SavedSearch = typeof savedSearches.$inferSelect;
+export type InsertSavedSearch = typeof savedSearches.$inferInsert;
+
+// ============================================================================
+// PUBLICATION DRAFTS
+// ============================================================================
+
+export const publicationDrafts = mysqlTable("publication_drafts", {
+  id: int("id").autoincrement().primaryKey(),
+  type: mysqlEnum("type", ["daily_digest", "weekly_monitor", "monthly_brief", "special_report"]).notNull(),
+  titleEn: varchar("titleEn", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }).notNull(),
+  contentEn: text("contentEn").notNull(),
+  contentAr: text("contentAr").notNull(),
+  status: mysqlEnum("status", ["draft", "pending_review", "approved", "published", "archived"]).default("draft").notNull(),
+  scheduledFor: timestamp("scheduledFor"),
+  publishedAt: timestamp("publishedAt"),
+  createdBy: int("createdBy").references(() => users.id),
+  approvedBy: int("approvedBy").references(() => users.id),
+  indicatorsIncluded: json("indicatorsIncluded").$type<string[]>(),
+  eventsIncluded: json("eventsIncluded").$type<number[]>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  typeIdx: index("type_idx").on(table.type),
+  statusIdx: index("status_idx").on(table.status),
+  scheduledForIdx: index("scheduled_for_idx").on(table.scheduledFor),
+}));
+
+export type PublicationDraft = typeof publicationDrafts.$inferSelect;
+export type InsertPublicationDraft = typeof publicationDrafts.$inferInsert;
+
+// ============================================================================
+// SENT EMAILS LOG
+// ============================================================================
+
+export const sentEmails = mysqlTable("sent_emails", {
+  id: int("id").autoincrement().primaryKey(),
+  recipientEmail: varchar("recipientEmail", { length: 320 }).notNull(),
+  recipientUserId: int("recipientUserId").references(() => users.id),
+  emailType: mysqlEnum("emailType", ["daily_digest", "weekly_monitor", "monthly_brief", "special_report", "alert", "correction_notice"]).notNull(),
+  subject: varchar("subject", { length: 500 }).notNull(),
+  publicationDraftId: int("publicationDraftId").references(() => publicationDrafts.id),
+  status: mysqlEnum("status", ["queued", "sent", "delivered", "bounced", "failed"]).default("queued").notNull(),
+  externalId: varchar("externalId", { length: 255 }), // SendGrid/Mailchimp message ID
+  sentAt: timestamp("sentAt"),
+  deliveredAt: timestamp("deliveredAt"),
+  openedAt: timestamp("openedAt"),
+  clickedAt: timestamp("clickedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  recipientIdx: index("recipient_idx").on(table.recipientEmail),
+  emailTypeIdx: index("email_type_idx").on(table.emailType),
+  statusIdx: index("status_idx").on(table.status),
+  sentAtIdx: index("sent_at_idx").on(table.sentAt),
+}));
+
+export type SentEmail = typeof sentEmails.$inferSelect;
+export type InsertSentEmail = typeof sentEmails.$inferInsert;

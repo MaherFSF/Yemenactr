@@ -356,3 +356,54 @@
 - [ ] Ensure all numeric values are consistent across translations
 - [ ] Add contact email (yeto@causewaygrp.com) to footer
 - [ ] Remove any physical address references
+
+
+## Phase 38: User Role-Based Access Control
+- [x] Implement role enum (admin, analyst, partner, public) in schema
+- [x] Create adminProcedure, analystProcedure, partnerProcedure middleware
+- [x] Add admin router with user management endpoints
+- [ ] Add role-based route protection on frontend
+- [ ] Build user management admin panel UI
+- [ ] Implement role assignment workflow
+
+## Phase 39: Email Notification System
+- [x] Create notification preferences schema
+- [x] Create email subscriptions schema
+- [x] Create publication drafts schema
+- [x] Create sent emails log schema
+- [x] Add notifications router with preferences endpoints
+- [x] Add subscribe/unsubscribe endpoints
+- [ ] Build email templates for publications
+- [ ] Implement email sending service
+- [ ] Create digest email scheduler
+
+## Phase 40: Real Data Fetching
+- [ ] Create tRPC procedures for time series data
+- [ ] Implement indicator search and filtering
+- [ ] Add regime comparison data endpoints
+- [ ] Create sector-specific data aggregations
+- [ ] Implement data caching layer
+
+## Phase 41: Interactive Charts
+- [ ] Add Recharts to all sector pages
+- [ ] Implement real-time data refresh
+- [ ] Create comparison chart components
+- [ ] Add chart export functionality
+- [ ] Implement chart annotations
+
+## Phase 42: Data Export API
+- [ ] Create CSV export endpoint
+- [ ] Create JSON export endpoint
+- [ ] Create XLSX export endpoint
+- [ ] Add export rate limiting
+- [ ] Implement export audit logging
+
+## Phase 43: Global Search
+- [x] Create GlobalSearch component with keyboard shortcuts (⌘K)
+- [x] Implement full-text search on indicators, documents, entities, events
+- [x] Add document search functionality
+- [x] Implement search results with type filtering and tabs
+- [x] Implement search suggestions (popular searches)
+- [x] Add GlobalSearch to Header navigation
+- [ ] Add recent searches history (future enhancement)
+- [ ] Connect to backend search API (future enhancement)

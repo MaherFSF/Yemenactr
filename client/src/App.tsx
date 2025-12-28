@@ -47,6 +47,7 @@ import Compliance from "./pages/Compliance";
 import UserDashboard from "./pages/UserDashboard";
 import Changelog from "./pages/Changelog";
 import APIKeys from "./pages/APIKeys";
+import NotificationSettings from "./pages/NotificationSettings";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -91,6 +92,7 @@ function Router() {
       <Route path={"/my-dashboard"} component={UserDashboard} />
       <Route path={"/changelog"} component={Changelog} />
       <Route path={"/api-keys"} component={APIKeys} />
+      <Route path={"/notifications"} component={NotificationSettings} />
       <Route path={"/legal/privacy"} component={Legal} />
       <Route path={"/legal/terms"} component={Legal} />
       <Route path={"/legal/data-license"} component={Legal} />

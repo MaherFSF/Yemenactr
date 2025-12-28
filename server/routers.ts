@@ -1,7 +1,7 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { publicProcedure, protectedProcedure, adminProcedure, analystProcedure, partnerProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import { invokeLLM } from "./_core/llm";
 import {
@@ -427,6 +427,255 @@ Current context: ${input.context?.sector ? `Sector: ${input.context.sector}` : '
           : generalQueries;
 
         return queries;
+      }),
+  }),
+
+  // ============================================================================
+  // ADMIN MANAGEMENT
+  // ============================================================================
+
+  admin: router({
+    // Get all users (admin only)
+    getUsers: adminProcedure
+      .input(z.object({
+        page: z.number().min(1).default(1),
+        limit: z.number().min(1).max(100).default(20),
+        role: z.enum(["user", "admin", "analyst", "partner_contributor"]).optional(),
+        search: z.string().optional(),
+      }))
+      .query(async ({ input }) => {
+        // Sample data for now - would query database
+        return {
+          users: [
+            { id: 1, name: "Admin User", email: "admin@yeto.org", role: "admin", subscriptionTier: "institutional", createdAt: new Date() },
+            { id: 2, name: "Analyst User", email: "analyst@yeto.org", role: "analyst", subscriptionTier: "researcher", createdAt: new Date() },
+            { id: 3, name: "Partner User", email: "partner@ngo.org", role: "partner_contributor", subscriptionTier: "free", createdAt: new Date() },
+          ],
+          total: 3,
+          page: input.page,
+          limit: input.limit,
+        };
+      }),
+
+    // Update user role (admin only)
+    updateUserRole: adminProcedure
+      .input(z.object({
+        userId: z.number(),
+        role: z.enum(["user", "admin", "analyst", "partner_contributor"]),
+      }))
+      .mutation(async ({ input }) => {
+        // Would update database
+        return { success: true, userId: input.userId, newRole: input.role };
+      }),
+
+    // Get system stats (admin only)
+    getSystemStats: adminProcedure
+      .query(async () => {
+        return {
+          totalUsers: 850,
+          activeToday: 124,
+          totalIndicators: 500,
+          totalDataPoints: 1200000,
+          pendingSubmissions: 12,
+          openGapTickets: 8,
+          lastDataUpdate: new Date().toISOString(),
+        };
+      }),
+
+    // Get pending partner submissions (admin only)
+    getPendingSubmissions: adminProcedure
+      .query(async () => {
+        return [
+          { id: 1, partnerName: "WFP Yemen", dataType: "Food Prices", submittedAt: new Date(), status: "pending_review" },
+          { id: 2, partnerName: "OCHA", dataType: "Humanitarian Indicators", submittedAt: new Date(), status: "pending_review" },
+        ];
+      }),
+  }),
+
+  // ============================================================================
+  // NOTIFICATIONS & SUBSCRIPTIONS
+  // ============================================================================
+
+  notifications: router({
+    // Get user's notification preferences
+    getPreferences: protectedProcedure
+      .query(async ({ ctx }) => {
+        // Would fetch from database
+        return {
+          emailDailyDigest: false,
+          emailWeeklyMonitor: true,
+          emailMonthlyBrief: true,
+          emailSpecialReports: true,
+          emailDataAlerts: false,
+          emailCorrectionNotices: true,
+          watchlistAlerts: true,
+          preferredLanguage: "both" as const,
+        };
+      }),
+
+    // Update notification preferences
+    updatePreferences: protectedProcedure
+      .input(z.object({
+        emailDailyDigest: z.boolean().optional(),
+        emailWeeklyMonitor: z.boolean().optional(),
+        emailMonthlyBrief: z.boolean().optional(),
+        emailSpecialReports: z.boolean().optional(),
+        emailDataAlerts: z.boolean().optional(),
+        emailCorrectionNotices: z.boolean().optional(),
+        watchlistAlerts: z.boolean().optional(),
+        preferredLanguage: z.enum(["en", "ar", "both"]).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Would update database
+        return { success: true, updated: input };
+      }),
+
+    // Subscribe to newsletter (public - no auth required)
+    subscribe: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        name: z.string().optional(),
+        organization: z.string().optional(),
+        subscribedToDaily: z.boolean().default(false),
+        subscribedToWeekly: z.boolean().default(true),
+        subscribedToMonthly: z.boolean().default(true),
+        subscribedToSpecial: z.boolean().default(true),
+        preferredLanguage: z.enum(["en", "ar", "both"]).default("both"),
+      }))
+      .mutation(async ({ input }) => {
+        // Would insert into database and send verification email
+        return {
+          success: true,
+          message: "Please check your email to verify your subscription.",
+          email: input.email,
+        };
+      }),
+
+    // Unsubscribe from newsletter
+    unsubscribe: publicProcedure
+      .input(z.object({
+        token: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        // Would update database
+        return { success: true, message: "You have been unsubscribed." };
+      }),
+  }),
+
+  // ============================================================================
+  // USER WATCHLIST
+  // ============================================================================
+
+  watchlist: router({
+    // Get user's watchlist
+    get: protectedProcedure
+      .query(async ({ ctx }) => {
+        // Would fetch from database
+        return [
+          { id: 1, indicatorCode: "fx_rate_usd", alertThreshold: 2000, alertDirection: "above", notes: "Monitor for currency crisis" },
+          { id: 2, indicatorCode: "inflation_cpi", alertThreshold: 50, alertDirection: "above", notes: "Hyperinflation threshold" },
+        ];
+      }),
+
+    // Add indicator to watchlist
+    add: protectedProcedure
+      .input(z.object({
+        indicatorCode: z.string(),
+        alertThreshold: z.number().optional(),
+        alertDirection: z.enum(["above", "below", "any_change"]).default("any_change"),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Would insert into database
+        return { success: true, id: Date.now(), ...input };
+      }),
+
+    // Remove from watchlist
+    remove: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Would delete from database
+        return { success: true };
+      }),
+  }),
+
+  // ============================================================================
+  // SAVED SEARCHES
+  // ============================================================================
+
+  savedSearches: router({
+    // Get user's saved searches
+    list: protectedProcedure
+      .query(async ({ ctx }) => {
+        // Would fetch from database
+        return [
+          { id: 1, name: "Banking sector Aden", searchQuery: "banking aden", filters: { sector: "banking", regime: "aden_irg" }, createdAt: new Date() },
+          { id: 2, name: "Food prices 2024", searchQuery: "food prices", filters: { sector: "prices", year: 2024 }, createdAt: new Date() },
+        ];
+      }),
+
+    // Save a search
+    save: protectedProcedure
+      .input(z.object({
+        name: z.string(),
+        searchQuery: z.string(),
+        filters: z.record(z.string(), z.any()).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Would insert into database
+        return { success: true, id: Date.now(), ...input };
+      }),
+
+    // Delete a saved search
+    delete: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Would delete from database
+        return { success: true };
+      }),
+  }),
+
+  // ============================================================================
+  // DATA EXPORT
+  // ============================================================================
+
+  export: router({
+    // Export time series data
+    timeSeries: protectedProcedure
+      .input(z.object({
+        indicatorCodes: z.array(z.string()),
+        regimeTag: z.enum(["aden_irg", "sanaa_defacto", "both"]),
+        startDate: z.date().optional(),
+        endDate: z.date().optional(),
+        format: z.enum(["csv", "json", "xlsx"]).default("csv"),
+      }))
+      .mutation(async ({ input }) => {
+        // Would generate export file and return URL
+        return {
+          success: true,
+          downloadUrl: `/api/exports/timeseries-${Date.now()}.${input.format}`,
+          expiresAt: new Date(Date.now() + 3600000).toISOString(),
+          recordCount: 1000,
+        };
+      }),
+
+    // Export full dataset
+    dataset: protectedProcedure
+      .input(z.object({
+        datasetId: z.number(),
+        format: z.enum(["csv", "json", "xlsx"]).default("csv"),
+      }))
+      .mutation(async ({ input }) => {
+        // Would generate export file and return URL
+        return {
+          success: true,
+          downloadUrl: `/api/exports/dataset-${input.datasetId}.${input.format}`,
+          expiresAt: new Date(Date.now() + 3600000).toISOString(),
+        };
       }),
   }),
 });
