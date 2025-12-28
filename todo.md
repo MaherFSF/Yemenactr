@@ -1,5 +1,11 @@
 # YETO Platform TODO
 
+## Latest Update: December 28, 2024
+- Added IATI and UCDP data connectors
+- Added SectorExportButtons component to Trade, Banking, Poverty pages
+- All 39 unit tests passing
+- Pushed to GitHub repository
+
 ## Phase 1: Project Foundation & Documentation
 - [x] Create STATUS.md with current phase tracking
 - [x] Create docs/DECISIONS.md for architecture decisions
