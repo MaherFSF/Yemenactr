@@ -654,3 +654,58 @@
 - [ ] Update README with current status
 - [ ] Verify CI/CD pipeline passes
 
+
+
+## Phase 53: Complete Data Pipeline Architecture
+
+### Data Pipeline Layer 1 - Data Sources
+- [ ] APIs (World Bank, IMF, OCHA FTS) - already done
+- [ ] Partner Submissions (CBY, Banks) portal
+- [ ] Web Scraping (News, Markets) service
+- [ ] Manual Entry interface
+- [ ] File Uploads handler
+
+### Data Pipeline Layer 2 - Ingestion Layer
+- [ ] Source Registry with metadata
+- [ ] Ingestion Jobs scheduler
+- [ ] Rate Limiting service
+- [ ] Error Handling with retry logic
+- [ ] Staging Storage (S3)
+
+### Data Pipeline Layer 3 - Processing & Validation
+- [ ] Schema Validation service
+- [ ] Data Quality Checks
+- [ ] Outlier Detection algorithm
+- [ ] Contradiction Detection
+- [ ] Transformation Engine
+- [ ] Regime Tagging (Aden/Sana'a)
+- [ ] Provenance Tracking
+
+### Data Pipeline Layer 4 - Storage & Indexing
+- [ ] Primary Database (already using TiDB)
+- [ ] Time Series Store
+- [ ] Search Index (Elasticsearch-like)
+- [ ] Cache Layer (in-memory)
+- [ ] Object Storage (S3)
+
+### Data Pipeline Layer 5 - Serving Layer
+- [ ] REST API endpoints
+- [ ] GraphQL API (optional)
+- [ ] Web Application (done)
+- [ ] Scheduled Reports
+- [ ] Data Exports
+
+### Supporting Services
+- [ ] ML Models - Forecasting
+- [ ] ML Models - Anomaly Detection
+- [ ] Notification Service
+- [ ] Audit Log
+- [ ] Backup & Recovery
+- [ ] Monitoring & Alerts
+
+### UI Components to Match Mockups
+- [ ] Admin Console matching mockup design
+- [ ] Partner Contributor Portal
+- [ ] Report Builder with visualization grid
+- [ ] One Brain AI with full LLM integration
+
