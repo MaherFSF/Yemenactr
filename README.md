@@ -490,10 +490,13 @@ server/
 
 | Category | Tests | Description |
 |----------|-------|-------------|
+| Core Platform | 21 | YETO core functionality |
 | Governance | 15 | Provenance, confidence, contradictions, vintages, changelog |
 | Hardening | 42 | Monitoring, backup, performance, security |
-| Integration | 7 | Cross-module integration tests |
-| Bilingual | 2 | Arabic/English support tests |
+| Integration | 35 | R0/R1/R2 compliance, authorization, connectors |
+| Connectors | 17 | API connector validation |
+| Auth | 1 | Authentication flows |
+| **Total** | **131** | All tests passing ✅ |
 
 ---
 
@@ -557,17 +560,37 @@ This software is proprietary and confidential. Unauthorized copying, distributio
 
 ## Acknowledgments
 
-### Data Sources
+### Data Sources & API Connectors
 
 YETO aggregates data from the following authoritative sources:
 
-- World Bank Open Data
-- UN OCHA Financial Tracking Service
-- International Monetary Fund
-- Central Bank of Yemen (Aden & Sana'a)
-- Yemen Ministry of Planning
-- Humanitarian Data Exchange (HDX)
-- And 40+ additional sources
+#### ✅ Working Connectors (No API Key Required)
+
+| Connector | Data Types | Update Frequency |
+|-----------|------------|------------------|
+| World Bank Open Data | GDP, Development, Trade, Poverty | Annual |
+| IMF Data Services | IFS, WEO, Exchange Rates, BoP | Monthly |
+| OCHA FTS | Humanitarian Funding Flows | Daily |
+| FAO/FAOSTAT | Agriculture, Food Security | Annual |
+| IOM DTM | Displacement, Migration | Monthly |
+| ReliefWeb | Humanitarian Reports | Daily |
+| WHO GHO | Health Statistics | Annual |
+
+#### ⚠️ Connectors Requiring API Keys
+
+| Connector | Data Types | How to Obtain Key |
+|-----------|------------|-------------------|
+| HDX HAPI | Humanitarian Data | [hapi.humdata.org](https://hapi.humdata.org/) |
+| ACLED | Armed Conflict Events | [acleddata.com/access-data](https://acleddata.com/access-data/) |
+
+#### 📋 Planned Connectors
+
+| Connector | Data Types | Priority |
+|-----------|------------|----------|
+| UNHCR Data Portal | Refugee Statistics | P2 |
+| UNICEF Data | Child Welfare | P3 |
+| Central Bank of Yemen (Aden) | Exchange Rates | P1 |
+| WFP Market Monitoring | Food Prices | P2 |
 
 ### Technology Partners
 
