@@ -48,6 +48,7 @@ import UserDashboard from "./pages/UserDashboard";
 import Changelog from "./pages/Changelog";
 import APIKeys from "./pages/APIKeys";
 import NotificationSettings from "./pages/NotificationSettings";
+import ComparisonTool from "./pages/ComparisonTool";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -101,6 +102,7 @@ function Router() {
       <Route path={"/partner"} component={PartnerPortal} />
       <Route path={"/ai-assistant"} component={AIAssistant} />
       <Route path={"/scenario-simulator"} component={ScenarioSimulator} />
+      <Route path={"/comparison"} component={ComparisonTool} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

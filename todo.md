@@ -582,3 +582,69 @@
 - [ ] Validate numeric consistency across languages
 - [ ] Test language switcher on all pages
 
+
+
+## Phase 52: Comprehensive Platform Upgrade (Mockup Alignment)
+
+### Unique AI Avatar
+- [ ] Create unique One Brain AI avatar (not AI-generated)
+- [ ] Integrate avatar into AI Assistant page
+- [ ] Add avatar to chat interface
+
+### Standardized Chart Design
+- [ ] Create chart theme with Navy/Green/Gold colors
+- [ ] Apply consistent colors across all charts
+- [ ] Standardize chart styles (line, bar, area, pie)
+- [ ] Add proper legends and labels
+
+### Report Builder Upgrade
+- [ ] Match mockup 4-step wizard design
+- [ ] Add visualization selection grid
+- [ ] Add report settings panel with logo
+- [ ] Add color scheme selector
+- [ ] Add language toggle (English/Arabic)
+
+### Interactive Timeline Upgrade
+- [ ] Convert to vertical timeline design
+- [ ] Add color-coded event categories
+- [ ] Add event icons matching mockup
+- [ ] Add year markers on left side
+
+### Trade Page Upgrade
+- [ ] Add port operations map (Aden, Hodeidah, Mukalla)
+- [ ] Add export composition donut chart
+- [ ] Add import categories bar chart
+- [ ] Add trade agreements list
+- [ ] Add sanctions impact section
+
+### Poverty Page Upgrade
+- [ ] Add SDG alignment section
+- [ ] Add humanitarian response timeline
+- [ ] Add poverty intensity map
+- [ ] Add access to services indicators
+
+### Scenario Simulator
+- [ ] Create transmission pathway visualization
+- [ ] Add shock parameter sliders
+- [ ] Add confidence bands to projections
+- [ ] Add assumptions & evidence panel
+
+### Comparison Tool
+- [ ] Create comparative analysis page
+- [ ] Add GDP comparison chart
+- [ ] Add inflation comparison chart
+- [ ] Add unemployment comparison chart
+- [ ] Add trade balance comparison
+
+### Data Source Connections
+- [ ] Connect ACLED conflict data API
+- [ ] Connect IMF WEO data API
+- [ ] Connect UN OCHA data API
+- [ ] Connect FAO food price data API
+- [ ] Implement automated data refresh
+
+### GitHub Push
+- [ ] Push all changes to GitHub repository
+- [ ] Update README with current status
+- [ ] Verify CI/CD pipeline passes
+

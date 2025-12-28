@@ -1,408 +1,492 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   FileText,
   Download,
-  Plus,
-  Trash2,
-  GripVertical,
+  ChevronLeft,
+  ChevronRight,
+  Check,
+  LineChart,
   BarChart3,
+  PieChart,
   Table,
-  Type,
+  Map,
+  Calendar,
+  TrendingUp,
+  Grid3X3,
   Image,
-  Settings,
-  Eye,
-  Save,
-  Share2,
-  Lock
+  Upload
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { YETO_COLORS } from "@/lib/chartTheme";
 
-interface ReportSection {
-  id: string;
-  type: "text" | "chart" | "table" | "indicator";
-  title: string;
-  content?: string;
-  indicator?: string;
-  chartType?: string;
-}
+// Visualization types matching the mockup
+const visualizations = [
+  { id: 'line', icon: LineChart, labelEn: 'Line Chart', labelAr: 'رسم بياني خطي' },
+  { id: 'bar', icon: BarChart3, labelEn: 'Bar Chart', labelAr: 'رسم بياني شريطي' },
+  { id: 'area', icon: TrendingUp, labelEn: 'Stacked Area Chart', labelAr: 'رسم بياني مساحي' },
+  { id: 'scatter', icon: Grid3X3, labelEn: 'Scatter Plot', labelAr: 'مخطط مبعثر' },
+  { id: 'table', icon: Table, labelEn: 'Table View', labelAr: 'عرض جدولي' },
+  { id: 'heatmap', icon: Map, labelEn: 'Heat Map', labelAr: 'خريطة حرارية' },
+  { id: 'infographic', icon: Image, labelEn: 'Infographic', labelAr: 'إنفوجرافيك' },
+  { id: 'timeline', icon: Calendar, labelEn: 'Timeline', labelAr: 'خط زمني' },
+];
+
+// Data categories
+const dataCategories = [
+  { id: 'fx', labelEn: 'Exchange Rates', labelAr: 'أسعار الصرف' },
+  { id: 'inflation', labelEn: 'Inflation & Prices', labelAr: 'التضخم والأسعار' },
+  { id: 'trade', labelEn: 'Trade & Commerce', labelAr: 'التجارة' },
+  { id: 'banking', labelEn: 'Banking & Finance', labelAr: 'البنوك والمالية' },
+  { id: 'humanitarian', labelEn: 'Humanitarian', labelAr: 'الإنساني' },
+  { id: 'energy', labelEn: 'Energy & Fuel', labelAr: 'الطاقة والوقود' },
+  { id: 'food', labelEn: 'Food Security', labelAr: 'الأمن الغذائي' },
+  { id: 'conflict', labelEn: 'Conflict Economy', labelAr: 'اقتصاد الصراع' },
+];
+
+// Color schemes
+const colorSchemes = [
+  { id: 'default', name: 'Default Green/Navy/Gold', colors: [YETO_COLORS.navy, YETO_COLORS.green, YETO_COLORS.gold] },
+  { id: 'green', name: 'Green Palette', colors: ['#107040', '#15a060', '#2dd4bf'] },
+  { id: 'navy', name: 'Navy Palette', colors: ['#103050', '#1a4a6e', '#3b82f6'] },
+  { id: 'warm', name: 'Warm Palette', colors: ['#C0A030', '#f59e0b', '#ef4444'] },
+];
 
 export default function ReportBuilder() {
-  const { language } = useLanguage();
-  // Using sonner toast
-  const [reportTitle, setReportTitle] = useState("");
-  const [reportDescription, setReportDescription] = useState("");
-  const [sections, setSections] = useState<ReportSection[]>([]);
-  const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
-  const [dateRange, setDateRange] = useState({ start: "2024-01", end: "2024-12" });
+  const { language, t } = useLanguage();
+  const isRTL = language === 'ar';
+  
+  // Wizard state
+  const [currentStep, setCurrentStep] = useState(1);
+  const [selectedData, setSelectedData] = useState<string[]>([]);
+  const [selectedVisualizations, setSelectedVisualizations] = useState<string[]>(['line', 'area', 'table', 'heatmap']);
+  const [reportSettings, setReportSettings] = useState({
+    title: '',
+    author: '',
+    dateStart: '2023-01-01',
+    dateEnd: '2023-12-31',
+    colorScheme: 'default',
+    language: 'en',
+    logo: '/yeto-logo.svg',
+  });
+  const [layoutSections, setLayoutSections] = useState<{ id: string; type: string; title: string }[]>([]);
 
-  const sectors = [
-    { value: "banking", labelEn: "Banking & Finance", labelAr: "البنوك والمالية" },
-    { value: "trade", labelEn: "Trade & Commerce", labelAr: "التجارة" },
-    { value: "currency", labelEn: "Currency & FX", labelAr: "العملة والصرف" },
-    { value: "prices", labelEn: "Prices & Inflation", labelAr: "الأسعار والتضخم" },
-    { value: "energy", labelEn: "Energy & Fuel", labelAr: "الطاقة والوقود" },
-    { value: "food", labelEn: "Food Security", labelAr: "الأمن الغذائي" },
-    { value: "aid", labelEn: "Aid Flows", labelAr: "تدفقات المساعدات" },
-    { value: "public", labelEn: "Public Finance", labelAr: "المالية العامة" },
+  const steps = [
+    { id: 1, labelEn: 'Select Data', labelAr: 'اختر البيانات' },
+    { id: 2, labelEn: 'Choose Visualizations', labelAr: 'اختر الرسوم البيانية' },
+    { id: 3, labelEn: 'Customize Layout', labelAr: 'تخصيص التخطيط' },
+    { id: 4, labelEn: 'Export', labelAr: 'تصدير' },
   ];
 
-  const indicators = [
-    { value: "fx_aden", label: "Exchange Rate - Aden" },
-    { value: "fx_sanaa", label: "Exchange Rate - Sana'a" },
-    { value: "cpi", label: "Consumer Price Index" },
-    { value: "food_basket", label: "Food Basket Cost" },
-    { value: "fuel_diesel", label: "Diesel Price" },
-    { value: "fuel_petrol", label: "Petrol Price" },
-    { value: "ipc_phase3", label: "IPC Phase 3+ Population" },
-    { value: "aid_funding", label: "Humanitarian Funding" },
-  ];
+  const toggleDataSelection = (id: string) => {
+    setSelectedData(prev => 
+      prev.includes(id) ? prev.filter(d => d !== id) : [...prev, id]
+    );
+  };
 
-  const addSection = (type: ReportSection["type"]) => {
-    const newSection: ReportSection = {
+  const toggleVisualization = (id: string) => {
+    setSelectedVisualizations(prev => 
+      prev.includes(id) ? prev.filter(v => v !== id) : [...prev, id]
+    );
+  };
+
+  const handleNext = () => {
+    if (currentStep < 4) setCurrentStep(currentStep + 1);
+  };
+
+  const handleBack = () => {
+    if (currentStep > 1) setCurrentStep(currentStep - 1);
+  };
+
+  const handleExport = (format: string) => {
+    toast.success(
+      language === 'ar' 
+        ? `جاري تصدير التقرير بصيغة ${format}...`
+        : `Exporting report as ${format}...`
+    );
+  };
+
+  const addToReport = () => {
+    const newSection = {
       id: Date.now().toString(),
-      type,
-      title: type === "text" ? "Text Section" : type === "chart" ? "Chart" : type === "table" ? "Data Table" : "Indicator",
+      type: selectedVisualizations[0] || 'line',
+      title: language === 'ar' ? 'قسم جديد' : 'New Section',
     };
-    setSections([...sections, newSection]);
-  };
-
-  const removeSection = (id: string) => {
-    setSections(sections.filter(s => s.id !== id));
-  };
-
-  const updateSection = (id: string, updates: Partial<ReportSection>) => {
-    setSections(sections.map(s => s.id === id ? { ...s, ...updates } : s));
-  };
-
-  const handleGenerateReport = () => {
-    if (!reportTitle) {
-      toast.error(language === "ar" ? "يرجى إدخال عنوان التقرير" : "Please enter a report title");
-      return;
-    }
-    toast.success(language === "ar" ? "سيكون التقرير جاهزاً للتحميل قريباً" : "Your report will be ready for download shortly");
+    setLayoutSections([...layoutSections, newSection]);
+    toast.success(language === 'ar' ? 'تمت الإضافة إلى التقرير' : 'Added to report');
   };
 
   return (
-    <div className="flex flex-col">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 border-b">
-        <div className="container py-12">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <FileText className="h-6 w-6 text-primary" />
-              </div>
-            </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-              {language === "ar" 
-                ? "منشئ التقارير المخصصة"
-                : "Custom Report Builder"}
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              {language === "ar"
-                ? "أنشئ تقارير مخصصة بالمؤشرات والرسوم البيانية التي تحتاجها"
-                : "Create custom reports with the indicators and charts you need"}
-            </p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white" dir={isRTL ? 'rtl' : 'ltr'}>
+      {/* Header */}
+      <div className="bg-white border-b shadow-sm">
+        <div className="container py-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-center mb-2" style={{ color: YETO_COLORS.navy }}>
+            {language === 'ar' ? 'إنشاء تقرير مخصص' : 'Generate Custom Report'}
+          </h1>
         </div>
-      </section>
+      </div>
 
+      {/* Wizard Container */}
       <div className="container py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Panel - Report Settings */}
-          <div className="lg:col-span-1 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Settings className="h-5 w-5" />
-                  {language === "ar" ? "إعدادات التقرير" : "Report Settings"}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+        <Card className="max-w-5xl mx-auto shadow-xl border-0">
+          <CardContent className="p-0">
+            {/* Step Indicator */}
+            <div className="flex items-center justify-between p-6 border-b bg-gray-50">
+              {steps.map((step, index) => (
+                <div key={step.id} className="flex items-center">
+                  <div 
+                    className={cn(
+                      "flex items-center gap-2 px-4 py-2 rounded-full transition-all",
+                      currentStep === step.id 
+                        ? "bg-[#107040] text-white" 
+                        : currentStep > step.id 
+                          ? "bg-[#107040]/20 text-[#107040]"
+                          : "bg-gray-200 text-gray-500"
+                    )}
+                  >
+                    {currentStep > step.id ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <span className="w-4 text-center">{step.id}</span>
+                    )}
+                    <span className="font-medium text-sm">
+                      {language === 'ar' ? step.labelAr : step.labelEn}
+                    </span>
+                  </div>
+                  {index < steps.length - 1 && (
+                    <div className={cn(
+                      "w-12 h-0.5 mx-2",
+                      currentStep > step.id ? "bg-[#107040]" : "bg-gray-200"
+                    )} />
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Step Content */}
+            <div className="p-6">
+              {/* Step 1: Select Data */}
+              {currentStep === 1 && (
                 <div>
-                  <Label>{language === "ar" ? "عنوان التقرير" : "Report Title"}</Label>
-                  <Input 
-                    value={reportTitle}
-                    onChange={(e) => setReportTitle(e.target.value)}
-                    placeholder={language === "ar" ? "أدخل عنوان التقرير" : "Enter report title"}
-                  />
-                </div>
-                <div>
-                  <Label>{language === "ar" ? "الوصف" : "Description"}</Label>
-                  <Textarea 
-                    value={reportDescription}
-                    onChange={(e) => setReportDescription(e.target.value)}
-                    placeholder={language === "ar" ? "وصف مختصر للتقرير" : "Brief description of the report"}
-                    rows={3}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <Label>{language === "ar" ? "من" : "From"}</Label>
-                    <Input 
-                      type="month"
-                      value={dateRange.start}
-                      onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <Label>{language === "ar" ? "إلى" : "To"}</Label>
-                    <Input 
-                      type="month"
-                      value={dateRange.end}
-                      onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>{language === "ar" ? "القطاعات" : "Sectors"}</CardTitle>
-                <CardDescription>
-                  {language === "ar" ? "اختر القطاعات لتضمينها" : "Select sectors to include"}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {sectors.map(sector => (
-                    <div key={sector.value} className="flex items-center space-x-2">
-                      <Checkbox 
-                        id={sector.value}
-                        checked={selectedSectors.includes(sector.value)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setSelectedSectors([...selectedSectors, sector.value]);
-                          } else {
-                            setSelectedSectors(selectedSectors.filter(s => s !== sector.value));
-                          }
-                        }}
-                      />
-                      <label htmlFor={sector.value} className="text-sm cursor-pointer">
-                        {language === "ar" ? sector.labelAr : sector.labelEn}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>{language === "ar" ? "إضافة قسم" : "Add Section"}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button variant="outline" className="gap-2" onClick={() => addSection("text")}>
-                    <Type className="h-4 w-4" />
-                    {language === "ar" ? "نص" : "Text"}
-                  </Button>
-                  <Button variant="outline" className="gap-2" onClick={() => addSection("chart")}>
-                    <BarChart3 className="h-4 w-4" />
-                    {language === "ar" ? "رسم بياني" : "Chart"}
-                  </Button>
-                  <Button variant="outline" className="gap-2" onClick={() => addSection("table")}>
-                    <Table className="h-4 w-4" />
-                    {language === "ar" ? "جدول" : "Table"}
-                  </Button>
-                  <Button variant="outline" className="gap-2" onClick={() => addSection("indicator")}>
-                    <BarChart3 className="h-4 w-4" />
-                    {language === "ar" ? "مؤشر" : "Indicator"}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right Panel - Report Preview */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Eye className="h-5 w-5" />
-                    {language === "ar" ? "معاينة التقرير" : "Report Preview"}
-                  </CardTitle>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="gap-2">
-                      <Save className="h-4 w-4" />
-                      {language === "ar" ? "حفظ" : "Save"}
-                    </Button>
-                    <Button variant="outline" size="sm" className="gap-2">
-                      <Share2 className="h-4 w-4" />
-                      {language === "ar" ? "مشاركة" : "Share"}
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {/* Report Header Preview */}
-                <div className="border rounded-lg p-6 mb-6 bg-muted/30">
-                  <h2 className="text-2xl font-bold mb-2">
-                    {reportTitle || (language === "ar" ? "عنوان التقرير" : "Report Title")}
+                  <h2 className="text-xl font-semibold mb-4">
+                    {language === 'ar' ? 'اختر فئات البيانات' : 'Select Data Categories'}
                   </h2>
-                  <p className="text-muted-foreground mb-4">
-                    {reportDescription || (language === "ar" ? "وصف التقرير سيظهر هنا" : "Report description will appear here")}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedSectors.map(s => {
-                      const sector = sectors.find(sec => sec.value === s);
-                      return (
-                        <Badge key={s} variant="secondary">
-                          {sector ? (language === "ar" ? sector.labelAr : sector.labelEn) : s}
-                        </Badge>
-                      );
-                    })}
-                    <Badge variant="outline">
-                      {dateRange.start} - {dateRange.end}
-                    </Badge>
-                  </div>
-                </div>
-
-                {/* Sections */}
-                {sections.length === 0 ? (
-                  <div className="border-2 border-dashed rounded-lg p-12 text-center">
-                    <Plus className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">
-                      {language === "ar" ? "لا توجد أقسام" : "No Sections Yet"}
-                    </h3>
-                    <p className="text-muted-foreground">
-                      {language === "ar" 
-                        ? "أضف أقسام من اللوحة اليسرى لبناء تقريرك"
-                        : "Add sections from the left panel to build your report"}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {sections.map((section, index) => (
-                      <div key={section.id} className="border rounded-lg p-4 bg-background">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-2">
-                            <GripVertical className="h-4 w-4 text-muted-foreground cursor-move" />
-                            <Badge variant="outline">
-                              {section.type === "text" && <Type className="h-3 w-3 mr-1" />}
-                              {section.type === "chart" && <BarChart3 className="h-3 w-3 mr-1" />}
-                              {section.type === "table" && <Table className="h-3 w-3 mr-1" />}
-                              {section.type === "indicator" && <BarChart3 className="h-3 w-3 mr-1" />}
-                              {section.type}
-                            </Badge>
-                          </div>
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={() => removeSection(section.id)}
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </div>
-                        
-                        <div className="space-y-3">
-                          <Input 
-                            value={section.title}
-                            onChange={(e) => updateSection(section.id, { title: e.target.value })}
-                            placeholder={language === "ar" ? "عنوان القسم" : "Section title"}
-                          />
-                          
-                          {section.type === "text" && (
-                            <Textarea 
-                              value={section.content || ""}
-                              onChange={(e) => updateSection(section.id, { content: e.target.value })}
-                              placeholder={language === "ar" ? "أدخل النص هنا..." : "Enter text here..."}
-                              rows={4}
-                            />
-                          )}
-                          
-                          {(section.type === "chart" || section.type === "indicator") && (
-                            <Select 
-                              value={section.indicator}
-                              onValueChange={(value) => updateSection(section.id, { indicator: value })}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder={language === "ar" ? "اختر المؤشر" : "Select indicator"} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {indicators.map(ind => (
-                                  <SelectItem key={ind.value} value={ind.value}>
-                                    {ind.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          )}
-                          
-                          {section.type === "chart" && (
-                            <Select 
-                              value={section.chartType}
-                              onValueChange={(value) => updateSection(section.id, { chartType: value })}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder={language === "ar" ? "نوع الرسم البياني" : "Chart type"} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="line">{language === "ar" ? "خطي" : "Line"}</SelectItem>
-                                <SelectItem value="bar">{language === "ar" ? "أعمدة" : "Bar"}</SelectItem>
-                                <SelectItem value="area">{language === "ar" ? "مساحة" : "Area"}</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          )}
-                          
-                          {section.type === "table" && (
-                            <div className="p-4 bg-muted/50 rounded text-center text-sm text-muted-foreground">
-                              {language === "ar" 
-                                ? "سيتم إنشاء الجدول تلقائياً بناءً على القطاعات المحددة"
-                                : "Table will be auto-generated based on selected sectors"}
-                            </div>
-                          )}
-                        </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {dataCategories.map(cat => (
+                      <div
+                        key={cat.id}
+                        onClick={() => toggleDataSelection(cat.id)}
+                        className={cn(
+                          "p-4 rounded-lg border-2 cursor-pointer transition-all text-center",
+                          selectedData.includes(cat.id)
+                            ? "border-[#107040] bg-[#107040]/10"
+                            : "border-gray-200 hover:border-gray-300"
+                        )}
+                      >
+                        {selectedData.includes(cat.id) && (
+                          <Check className="h-5 w-5 text-[#107040] mx-auto mb-2" />
+                        )}
+                        <span className="font-medium">
+                          {language === 'ar' ? cat.labelAr : cat.labelEn}
+                        </span>
                       </div>
                     ))}
                   </div>
-                )}
-
-                {/* Generate Button */}
-                <div className="mt-8 flex justify-end gap-4">
-                  <Button variant="outline" className="gap-2">
-                    <Eye className="h-4 w-4" />
-                    {language === "ar" ? "معاينة كاملة" : "Full Preview"}
-                  </Button>
-                  <Button className="gap-2" onClick={handleGenerateReport}>
-                    <Download className="h-4 w-4" />
-                    {language === "ar" ? "إنشاء وتحميل" : "Generate & Download"}
-                  </Button>
                 </div>
-              </CardContent>
-            </Card>
+              )}
 
-            {/* Premium Features Notice */}
-            <Card className="mt-6 border-yellow-200 dark:border-yellow-900 bg-yellow-50 dark:bg-yellow-950/20">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <Lock className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-1">
-                      {language === "ar" ? "ميزات متقدمة" : "Premium Features"}
-                    </h4>
-                    <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                      {language === "ar"
-                        ? "الاشتراك المميز يتيح تقارير غير محدودة، تصدير PDF/Word، وجدولة التقارير الآلية."
-                        : "Premium subscription unlocks unlimited reports, PDF/Word export, and automated report scheduling."}
-                    </p>
+              {/* Step 2: Choose Visualizations */}
+              {currentStep === 2 && (
+                <div className="grid md:grid-cols-3 gap-6">
+                  {/* Visualization Grid */}
+                  <div className="md:col-span-2">
+                    <h2 className="text-xl font-semibold mb-4">
+                      {language === 'ar' ? 'اختر الرسوم البيانية' : 'Choose Visualizations'}
+                    </h2>
+                    <div className="grid grid-cols-3 gap-4">
+                      {visualizations.map(viz => {
+                        const Icon = viz.icon;
+                        const isSelected = selectedVisualizations.includes(viz.id);
+                        return (
+                          <div
+                            key={viz.id}
+                            onClick={() => toggleVisualization(viz.id)}
+                            className={cn(
+                              "p-4 rounded-lg border-2 cursor-pointer transition-all flex flex-col items-center gap-2",
+                              isSelected
+                                ? "border-[#107040] bg-[#107040]/10"
+                                : "border-gray-200 hover:border-gray-300"
+                            )}
+                          >
+                            {isSelected && (
+                              <div className="absolute top-2 left-2">
+                                <Check className="h-4 w-4 text-[#107040]" />
+                              </div>
+                            )}
+                            <div className={cn(
+                              "w-16 h-16 rounded-lg flex items-center justify-center",
+                              isSelected ? "bg-[#107040]/20" : "bg-gray-100"
+                            )}>
+                              <Icon className={cn(
+                                "h-8 w-8",
+                                isSelected ? "text-[#107040]" : "text-gray-500"
+                              )} />
+                            </div>
+                            <span className="text-sm font-medium text-center">
+                              {language === 'ar' ? viz.labelAr : viz.labelEn}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Report Settings */}
+                  <div className="space-y-4">
+                    <h2 className="text-xl font-semibold">
+                      {language === 'ar' ? 'إعدادات التقرير' : 'Report Settings'}
+                    </h2>
+                    
+                    <div>
+                      <Label>{language === 'ar' ? 'عنوان التقرير' : 'Report Title'}</Label>
+                      <Input
+                        value={reportSettings.title}
+                        onChange={(e) => setReportSettings({ ...reportSettings, title: e.target.value })}
+                        placeholder={language === 'ar' ? 'أدخل عنوان التقرير...' : 'Enter report title...'}
+                      />
+                    </div>
+
+                    <div>
+                      <Label>{language === 'ar' ? 'اسم المؤلف' : 'Author Name'}</Label>
+                      <Input
+                        value={reportSettings.author}
+                        onChange={(e) => setReportSettings({ ...reportSettings, author: e.target.value })}
+                        placeholder={language === 'ar' ? 'أدخل اسم المؤلف...' : 'Enter author name...'}
+                      />
+                    </div>
+
+                    <div>
+                      <Label>{language === 'ar' ? 'النطاق الزمني' : 'Date Range'}</Label>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Calendar className="h-4 w-4" />
+                        <span>Jan 1, 2023 - Dec 31, 2023</span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label>{language === 'ar' ? 'الشعار' : 'Logo'}</Label>
+                      <div className="mt-2 p-4 border rounded-lg flex flex-col items-center gap-2 bg-white">
+                        <div className="w-24 h-24 bg-gray-50 rounded-lg flex items-center justify-center">
+                          <img src="/yeto-logo.svg" alt="YETO" className="w-16 h-16" />
+                        </div>
+                        <span className="font-bold text-lg" style={{ color: YETO_COLORS.navy }}>YETO</span>
+                        <Button variant="outline" size="sm" className="gap-2">
+                          <Upload className="h-4 w-4" />
+                          {language === 'ar' ? 'تحميل شعار جديد' : 'Upload New Logo'}
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label>{language === 'ar' ? 'نظام الألوان' : 'Color Scheme'}</Label>
+                      <Select
+                        value={reportSettings.colorScheme}
+                        onValueChange={(value) => setReportSettings({ ...reportSettings, colorScheme: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {colorSchemes.map(scheme => (
+                            <SelectItem key={scheme.id} value={scheme.id}>
+                              <div className="flex items-center gap-2">
+                                <div className="flex">
+                                  {scheme.colors.map((color, i) => (
+                                    <div
+                                      key={i}
+                                      className="w-4 h-4 rounded-sm -ml-1 first:ml-0 border border-white"
+                                      style={{ backgroundColor: color }}
+                                    />
+                                  ))}
+                                </div>
+                                <span>{scheme.name}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label>{language === 'ar' ? 'اللغة' : 'Language'}</Label>
+                      <div className="flex gap-2 mt-2">
+                        <Button
+                          variant={reportSettings.language === 'en' ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setReportSettings({ ...reportSettings, language: 'en' })}
+                          className={reportSettings.language === 'en' ? 'bg-[#107040]' : ''}
+                        >
+                          English
+                        </Button>
+                        <Button
+                          variant={reportSettings.language === 'ar' ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setReportSettings({ ...reportSettings, language: 'ar' })}
+                          className={reportSettings.language === 'ar' ? 'bg-[#107040]' : ''}
+                        >
+                          العربية
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+              )}
+
+              {/* Step 3: Customize Layout */}
+              {currentStep === 3 && (
+                <div>
+                  <h2 className="text-xl font-semibold mb-4">
+                    {language === 'ar' ? 'تخصيص تخطيط التقرير' : 'Customize Report Layout'}
+                  </h2>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <p className="text-muted-foreground">
+                        {language === 'ar' 
+                          ? 'اسحب وأفلت الأقسام لترتيبها'
+                          : 'Drag and drop sections to arrange them'}
+                      </p>
+                      <div className="space-y-2">
+                        {layoutSections.length === 0 ? (
+                          <div className="p-8 border-2 border-dashed rounded-lg text-center text-muted-foreground">
+                            {language === 'ar' 
+                              ? 'لم تتم إضافة أقسام بعد. انقر على "إضافة إلى التقرير" لإضافة رسوم بيانية.'
+                              : 'No sections added yet. Click "Add to Report" to add visualizations.'}
+                          </div>
+                        ) : (
+                          layoutSections.map((section, index) => (
+                            <div key={section.id} className="p-4 border rounded-lg bg-white flex items-center gap-4">
+                              <span className="text-muted-foreground">{index + 1}</span>
+                              <div className="flex-1">
+                                <span className="font-medium">{section.title}</span>
+                                <span className="text-sm text-muted-foreground ml-2">({section.type})</span>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                    <div className="p-6 bg-gray-50 rounded-lg">
+                      <h3 className="font-semibold mb-4">
+                        {language === 'ar' ? 'معاينة' : 'Preview'}
+                      </h3>
+                      <div className="aspect-[8.5/11] bg-white rounded-lg shadow-inner border p-4">
+                        <div className="h-full flex flex-col">
+                          <div className="text-center mb-4">
+                            <h4 className="font-bold">{reportSettings.title || 'Report Title'}</h4>
+                            <p className="text-xs text-muted-foreground">{reportSettings.author || 'Author'}</p>
+                          </div>
+                          <div className="flex-1 grid grid-cols-2 gap-2">
+                            {layoutSections.slice(0, 4).map((section) => (
+                              <div key={section.id} className="bg-gray-100 rounded p-2 text-xs text-center">
+                                {section.type}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4: Export */}
+              {currentStep === 4 && (
+                <div className="text-center py-8">
+                  <FileText className="h-16 w-16 mx-auto mb-4 text-[#107040]" />
+                  <h2 className="text-2xl font-semibold mb-2">
+                    {language === 'ar' ? 'تقريرك جاهز!' : 'Your Report is Ready!'}
+                  </h2>
+                  <p className="text-muted-foreground mb-8">
+                    {language === 'ar' 
+                      ? 'اختر صيغة التصدير المفضلة لديك'
+                      : 'Choose your preferred export format'}
+                  </p>
+                  <div className="flex justify-center gap-4">
+                    <Button 
+                      onClick={() => handleExport('PDF')}
+                      className="gap-2 bg-[#103050] hover:bg-[#103050]/90"
+                    >
+                      <Download className="h-4 w-4" />
+                      PDF
+                    </Button>
+                    <Button 
+                      onClick={() => handleExport('Excel')}
+                      variant="outline"
+                      className="gap-2"
+                    >
+                      <Download className="h-4 w-4" />
+                      Excel
+                    </Button>
+                    <Button 
+                      onClick={() => handleExport('JSON')}
+                      variant="outline"
+                      className="gap-2"
+                    >
+                      <Download className="h-4 w-4" />
+                      JSON
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Footer Actions */}
+            <div className="flex items-center justify-between p-6 border-t bg-gray-50">
+              <div className="flex gap-2">
+                {currentStep === 2 && (
+                  <>
+                    <Button 
+                      onClick={addToReport}
+                      className="gap-2 bg-[#107040] hover:bg-[#107040]/90"
+                    >
+                      {language === 'ar' ? 'إضافة إلى التقرير' : 'Add to Report'}
+                    </Button>
+                    <Button variant="outline" className="gap-2">
+                      {language === 'ar' ? 'معاينة التقرير' : 'Preview Report'}
+                    </Button>
+                  </>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={handleBack}
+                  disabled={currentStep === 1}
+                  className="gap-2"
+                >
+                  {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                  {language === 'ar' ? 'السابق' : 'Back'}
+                </Button>
+                {currentStep < 4 && (
+                  <Button
+                    onClick={handleNext}
+                    className="gap-2 bg-[#107040] hover:bg-[#107040]/90"
+                  >
+                    {language === 'ar' ? 'التالي' : 'Next'}
+                    {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  </Button>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
