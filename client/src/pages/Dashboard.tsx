@@ -33,6 +33,16 @@ export default function Dashboard() {
   const [regimeTag, setRegimeTag] = useState<"aden" | "sanaa" | "both">("both");
   const [granularity, setGranularity] = useState<"annual" | "quarterly" | "monthly">("annual");
   const [selectedIndicator, setSelectedIndicator] = useState("gdp");
+  
+  // Real Yemen images from search results
+  const yemenImages = {
+    hero: "/images/yemen/sanaa-old-city.jpg",
+    trade: "/images/yemen/aden-port.jpg",
+    banking: "/images/yemen/currency-riyal.jpg",
+    humanitarian: "/images/yemen/humanitarian-aid.jpg",
+    agriculture: "/images/yemen/agriculture-terraces.jpg",
+    energy: "/images/yemen/oil-refinery.jpg",
+  };
 
   // GDP Time Series Data (2010-2024) matching mockup
   const gdpData = [

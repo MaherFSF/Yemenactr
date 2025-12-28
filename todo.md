@@ -492,3 +492,93 @@
 - [ ] Implement SLO monitoring for pipelines
 - [ ] Create ingestion health dashboard
 
+
+
+## Phase 51: Full Platform Upgrade (Mockup Quality + Dynamic Data)
+
+### Original Yemen Imagery
+- [ ] Generate hero image for homepage (Yemen economic landscape)
+- [ ] Generate sector header images (Trade, Banking, Poverty, etc.)
+- [ ] Generate dashboard background imagery
+- [ ] Generate AI Assistant avatar/branding
+- [ ] Generate infographic illustrations
+
+### Dashboard Upgrade (Matching Mockup 04_dashboard_main_view)
+- [ ] Implement KPI cards with real data from connectors
+- [ ] Add interactive line charts for FX rates
+- [ ] Add bar charts for trade data
+- [ ] Add pie charts for sector breakdown
+- [ ] Implement regime comparison toggle (Aden/Sana'a)
+- [ ] Add date range filters
+- [ ] Connect to World Bank/HDX real data
+
+### Trade & Commerce Page (Matching Mockup 26_trade_commerce)
+- [ ] Implement trade balance chart with real data
+- [ ] Add import/export breakdown visualization
+- [ ] Add trading partners map
+- [ ] Implement commodity breakdown charts
+- [ ] Add port activity indicators
+
+### Banking & Finance Page (Matching Mockup 21_sector_banking_finance)
+- [ ] Implement banking sector KPIs
+- [ ] Add credit growth charts
+- [ ] Add liquidity indicators
+- [ ] Implement central bank reserves visualization
+- [ ] Add financial inclusion metrics
+
+### Poverty & Development Page (Matching Mockup 25_poverty_development)
+- [ ] Implement poverty rate trends
+- [ ] Add HDI indicators
+- [ ] Add food security metrics
+- [ ] Implement humanitarian needs visualization
+- [ ] Add regional breakdown map
+
+### Admin Console (Matching Mockup 17_admin_operations_console)
+- [ ] Implement data ingestion status panel
+- [ ] Add QA alerts dashboard
+- [ ] Implement coverage heatmap
+- [ ] Add user management interface
+- [ ] Implement publication approval workflow
+
+### Interactive Timeline (Matching Mockup 03_interactive_timeline)
+- [ ] Implement zoomable timeline with real events
+- [ ] Add event filtering by category
+- [ ] Link events to economic indicators
+- [ ] Add before/after impact visualization
+
+### AI Assistant (Matching Mockup 10_ai_one_brain_assistant)
+- [ ] Upgrade chat interface design
+- [ ] Add evidence pack integration
+- [ ] Implement suggested questions
+- [ ] Add Arabic interface support
+
+### Export Generator (Matching Mockup 20_export_report_generator)
+- [ ] Implement report builder wizard
+- [ ] Add template selection
+- [ ] Implement format options (PDF/XLSX/CSV)
+- [ ] Add custom branding options
+
+### Data Repository (Matching Mockup 09_data_repository)
+- [ ] Implement advanced search
+- [ ] Add category filters
+- [ ] Implement data preview
+- [ ] Add download tracking
+
+### Research Portal (Matching Mockup 05_research_academic_portal)
+- [ ] Implement publication cards
+- [ ] Add author filtering
+- [ ] Implement citation export
+- [ ] Add related research suggestions
+
+### Compliance Dashboard (Matching Mockup 01_compliance_sanctions)
+- [ ] Implement sanctions list display
+- [ ] Add entity risk scoring
+- [ ] Implement alert system
+- [ ] Add compliance timeline
+
+### Bilingual Completeness
+- [ ] Verify all UI strings have Arabic translations
+- [ ] Ensure RTL layout works on all pages
+- [ ] Validate numeric consistency across languages
+- [ ] Test language switcher on all pages
+
