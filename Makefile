@@ -1,7 +1,11 @@
 # YETO Platform - Makefile
+# Yemen Economic Transparency Observatory
 # One-command validation and deployment scripts
+#
+# Usage: make <target>
+# Run 'make help' for available commands
 
-.PHONY: all check test lint typecheck build dev clean docker-up docker-down db-push db-seed validate help
+.PHONY: all check check-quick test test-watch lint typecheck build dev clean docker-up docker-down db-push db-seed db-studio db-migrate validate help ingest ingest-worldbank ingest-imf ingest-fao audit audit-fix coverage report-connectors report-health
 
 # Default target
 all: check
@@ -10,9 +14,24 @@ all: check
 # VALIDATION (make check)
 # ============================================
 
-# Run all validation checks
-check: lint typecheck test validate
-	@echo "✅ All checks passed!"
+# Run all validation checks (comprehensive)
+check: lint typecheck test validate audit-check
+	@echo ""
+	@echo "╔════════════════════════════════════════════════════════════╗"
+	@echo "║           ✅ All checks passed successfully!               ║"
+	@echo "╚════════════════════════════════════════════════════════════╝"
+
+# Run quick checks (typecheck + test only)
+check-quick:
+	@echo "🚀 Running quick checks..."
+	@pnpm typecheck
+	@pnpm test
+	@echo "✅ Quick checks passed!"
+
+# Run security audit check (non-blocking)
+audit-check:
+	@echo "🔒 Running security audit..."
+	@pnpm audit --audit-level=high 2>&1 || echo "⚠️  Security warnings (review recommended)"
 
 # Run linting
 lint:
@@ -107,6 +126,86 @@ deploy-prod:
 	./scripts/deploy-prod.sh
 
 # ============================================
+# DATA INGESTION
+# ============================================
+
+# Run all data connectors
+ingest:
+	@echo "📥 Running all data connectors..."
+	@node -e "require('./server/connectors').runAllConnectors().then(r => console.log(JSON.stringify(r, null, 2)))"
+
+# Run World Bank connector
+ingest-worldbank:
+	@echo "📥 Running World Bank connector..."
+	@node -e "const { WorldBankConnector } = require('./server/connectors'); new WorldBankConnector().fetchAllIndicators().then(r => console.log('Fetched', r.length, 'series'))"
+
+# Run IMF connector
+ingest-imf:
+	@echo "📥 Running IMF connector..."
+	@node -e "require('./server/connectors/imfConnector').ingestIMFData().then(r => console.log(JSON.stringify(r, null, 2)))"
+
+# Run FAO connector
+ingest-fao:
+	@echo "📥 Running FAO connector..."
+	@node -e "require('./server/connectors/faoConnector').ingestFAOData().then(r => console.log(JSON.stringify(r, null, 2)))"
+
+# Run ACLED connector
+ingest-acled:
+	@echo "📥 Running ACLED connector..."
+	@node -e "require('./server/connectors/acledConnector').ingestACLEDData().then(r => console.log(JSON.stringify(r, null, 2)))"
+
+# Run IOM DTM connector
+ingest-dtm:
+	@echo "📥 Running IOM DTM connector..."
+	@node -e "require('./server/connectors/iomDtmConnector').ingestDTMData().then(r => console.log(JSON.stringify(r, null, 2)))"
+
+# ============================================
+# SECURITY
+# ============================================
+
+# Run full security audit
+audit:
+	@echo "🔒 Running security audit..."
+	pnpm audit
+
+# Fix security vulnerabilities
+audit-fix:
+	@echo "🔧 Fixing security vulnerabilities..."
+	pnpm audit --fix
+
+# ============================================
+# TESTING
+# ============================================
+
+# Run tests in watch mode
+test-watch:
+	@echo "🧪 Running tests in watch mode..."
+	pnpm test:watch
+
+# Run tests with coverage
+coverage:
+	@echo "📊 Running tests with coverage..."
+	pnpm test -- --coverage
+
+# ============================================
+# REPORTS
+# ============================================
+
+# Show connector status
+report-connectors:
+	@echo "📊 Connector Status Report"
+	@echo "========================="
+	@node -e "const c = require('./server/connectors'); console.log(JSON.stringify(c.ENHANCED_CONNECTOR_REGISTRY.map(x => ({id: x.id, name: x.name, status: x.status, priority: x.priority})), null, 2))"
+
+# Show system health
+report-health:
+	@echo "📊 System Health Report"
+	@echo "======================="
+	@echo "Node version: $$(node --version)"
+	@echo "pnpm version: $$(pnpm --version)"
+	@echo "Disk usage: $$(df -h . | tail -1 | awk '{print $$5}')"
+
+# ============================================
 # UTILITIES
 # ============================================
 
@@ -124,6 +223,17 @@ mockup-coverage:
 status-update:
 	@echo "📝 Updating STATUS.md..."
 	./scripts/update-status.sh
+
+# Open Drizzle Studio
+db-studio:
+	@echo "🗄️  Opening Drizzle Studio..."
+	pnpm db:studio
+
+# Run database migrations
+db-migrate:
+	@echo "🗄️  Running database migrations..."
+	pnpm drizzle-kit generate
+	pnpm drizzle-kit migrate
 
 # ============================================
 # HELP
@@ -158,8 +268,26 @@ help:
 	@echo "  make deploy-staging - Deploy to staging"
 	@echo "  make deploy-prod    - Deploy to production"
 	@echo ""
+	@echo "Data Ingestion:"
+	@echo "  make ingest         - Run all data connectors"
+	@echo "  make ingest-worldbank - Run World Bank connector"
+	@echo "  make ingest-imf     - Run IMF connector"
+	@echo "  make ingest-fao     - Run FAO connector"
+	@echo "  make ingest-acled   - Run ACLED connector"
+	@echo "  make ingest-dtm     - Run IOM DTM connector"
+	@echo ""
+	@echo "Security:"
+	@echo "  make audit          - Run security audit"
+	@echo "  make audit-fix      - Fix security vulnerabilities"
+	@echo ""
+	@echo "Reports:"
+	@echo "  make report-connectors - Show connector status"
+	@echo "  make report-health  - Show system health"
+	@echo ""
 	@echo "Utilities:"
 	@echo "  make req-coverage   - Generate requirements coverage report"
 	@echo "  make mockup-coverage- Generate mockup coverage report"
 	@echo "  make status-update  - Update STATUS.md"
+	@echo "  make db-studio      - Open Drizzle Studio"
+	@echo "  make db-migrate     - Run database migrations"
 	@echo "  make help           - Show this help message"

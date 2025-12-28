@@ -50,6 +50,7 @@ import APIKeys from "./pages/APIKeys";
 import NotificationSettings from "./pages/NotificationSettings";
 import ComparisonTool from "./pages/ComparisonTool";
 import IndicatorCatalog from "./pages/IndicatorCatalog";
+import AdminMonitoring from "./pages/AdminMonitoring";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -100,6 +101,7 @@ function Router() {
       <Route path={"/legal/data-license"} component={Legal} />
       <Route path={"/legal/accessibility"} component={Legal} />
       <Route path={"/admin"} component={AdminPortal} />
+      <Route path={"/admin/monitoring"} component={AdminMonitoring} />
       <Route path={"/partner"} component={PartnerPortal} />
       <Route path={"/ai-assistant"} component={AIAssistant} />
       <Route path={"/scenario-simulator"} component={ScenarioSimulator} />

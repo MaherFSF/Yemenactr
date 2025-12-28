@@ -1134,3 +1134,366 @@ export class UCDPConnector implements DataConnector {
 }
 
 // All connectors are already exported via class declarations above
+
+
+// ============================================
+// Additional Connectors (Section 10 Enhancement)
+// ============================================
+
+// Import new connectors
+import imfConnector from "./imfConnector";
+import faoConnector from "./faoConnector";
+import acledConnector from "./acledConnector";
+import iomDtmConnector from "./iomDtmConnector";
+
+// Export new connectors
+export { imfConnector, faoConnector, acledConnector, iomDtmConnector };
+
+// ============================================
+// Enhanced Connector Registry
+// ============================================
+
+export interface EnhancedConnectorInfo {
+  id: string;
+  name: string;
+  nameAr: string;
+  description: string;
+  descriptionAr: string;
+  baseUrl: string;
+  dataTypes: string[];
+  frequency: "realtime" | "daily" | "weekly" | "monthly" | "quarterly" | "annual";
+  requiresAuth: boolean;
+  status: "active" | "inactive" | "error";
+  lastSync: Date | null;
+  nextSync: Date | null;
+  recordCount: number;
+  priority: number; // 1=highest, 5=lowest
+}
+
+export const ENHANCED_CONNECTOR_REGISTRY: EnhancedConnectorInfo[] = [
+  {
+    id: "world-bank",
+    name: "World Bank Open Data",
+    nameAr: "بيانات البنك الدولي المفتوحة",
+    description: "Development indicators, GDP, poverty, trade statistics",
+    descriptionAr: "مؤشرات التنمية، الناتج المحلي الإجمالي، الفقر، إحصاءات التجارة",
+    baseUrl: "https://api.worldbank.org/v2",
+    dataTypes: ["macroeconomic", "development", "poverty", "trade"],
+    frequency: "annual",
+    requiresAuth: false,
+    status: "active",
+    lastSync: null,
+    nextSync: null,
+    recordCount: 0,
+    priority: 1,
+  },
+  {
+    id: "imf-data",
+    name: "IMF Data Services",
+    nameAr: "خدمات بيانات صندوق النقد الدولي",
+    description: "International Financial Statistics, monetary data, exchange rates, balance of payments",
+    descriptionAr: "الإحصاءات المالية الدولية، البيانات النقدية، أسعار الصرف، ميزان المدفوعات",
+    baseUrl: "http://dataservices.imf.org/REST/SDMX_JSON.svc",
+    dataTypes: ["monetary", "fiscal", "exchange-rates", "balance-of-payments"],
+    frequency: "monthly",
+    requiresAuth: false,
+    status: "active",
+    lastSync: null,
+    nextSync: null,
+    recordCount: 0,
+    priority: 1,
+  },
+  {
+    id: "ocha-fts",
+    name: "OCHA Financial Tracking Service",
+    nameAr: "خدمة التتبع المالي - أوتشا",
+    description: "Humanitarian funding flows, donor contributions, aid tracking",
+    descriptionAr: "تدفقات التمويل الإنساني، مساهمات المانحين، تتبع المساعدات",
+    baseUrl: "https://api.hpc.tools",
+    dataTypes: ["humanitarian", "funding", "aid"],
+    frequency: "daily",
+    requiresAuth: false,
+    status: "active",
+    lastSync: null,
+    nextSync: null,
+    recordCount: 0,
+    priority: 1,
+  },
+  {
+    id: "hdx-hapi",
+    name: "HDX HAPI",
+    nameAr: "واجهة برمجة البيانات الإنسانية",
+    description: "Humanitarian data exchange, population, food security",
+    descriptionAr: "تبادل البيانات الإنسانية، السكان، الأمن الغذائي",
+    baseUrl: "https://hapi.humdata.org",
+    dataTypes: ["humanitarian", "population", "food-security"],
+    frequency: "weekly",
+    requiresAuth: true,
+    status: "active",
+    lastSync: null,
+    nextSync: null,
+    recordCount: 0,
+    priority: 2,
+  },
+  {
+    id: "fao-stat",
+    name: "FAO/FAOSTAT",
+    nameAr: "منظمة الأغذية والزراعة",
+    description: "Agricultural production, food security, land use, livestock statistics",
+    descriptionAr: "الإنتاج الزراعي، الأمن الغذائي، استخدام الأراضي، إحصاءات الثروة الحيوانية",
+    baseUrl: "https://fenixservices.fao.org/faostat/api/v1",
+    dataTypes: ["agriculture", "food-security", "land-use", "livestock"],
+    frequency: "annual",
+    requiresAuth: false,
+    status: "active",
+    lastSync: null,
+    nextSync: null,
+    recordCount: 0,
+    priority: 2,
+  },
+  {
+    id: "acled",
+    name: "ACLED",
+    nameAr: "بيانات الصراع المسلح",
+    description: "Armed conflict events, fatalities, actor information, geographic mapping",
+    descriptionAr: "أحداث النزاع المسلح، الوفيات، معلومات الأطراف، الخرائط الجغرافية",
+    baseUrl: "https://api.acleddata.com",
+    dataTypes: ["conflict", "security", "events", "geospatial"],
+    frequency: "weekly",
+    requiresAuth: true,
+    status: "active",
+    lastSync: null,
+    nextSync: null,
+    recordCount: 0,
+    priority: 2,
+  },
+  {
+    id: "iom-dtm",
+    name: "IOM DTM Yemen",
+    nameAr: "مصفوفة تتبع النزوح - اليمن",
+    description: "Displacement tracking, IDP figures, site assessments, mobility data",
+    descriptionAr: "تتبع النزوح، أرقام النازحين، تقييمات المواقع، بيانات التنقل",
+    baseUrl: "https://dtm.iom.int/yemen",
+    dataTypes: ["displacement", "migration", "humanitarian", "geospatial"],
+    frequency: "monthly",
+    requiresAuth: false,
+    status: "active",
+    lastSync: null,
+    nextSync: null,
+    recordCount: 0,
+    priority: 2,
+  },
+  {
+    id: "wfp-vam",
+    name: "WFP Market Monitoring",
+    nameAr: "مراقبة الأسواق - برنامج الأغذية العالمي",
+    description: "Food prices, market functionality, food security analysis",
+    descriptionAr: "أسعار الغذاء، وظائف السوق، تحليل الأمن الغذائي",
+    baseUrl: "https://dataviz.vam.wfp.org",
+    dataTypes: ["prices", "food-security", "markets"],
+    frequency: "weekly",
+    requiresAuth: false,
+    status: "active",
+    lastSync: null,
+    nextSync: null,
+    recordCount: 0,
+    priority: 2,
+  },
+  {
+    id: "cby-aden",
+    name: "Central Bank of Yemen (Aden)",
+    nameAr: "البنك المركزي اليمني (عدن)",
+    description: "Official exchange rates, monetary policy, banking statistics",
+    descriptionAr: "أسعار الصرف الرسمية، السياسة النقدية، إحصاءات البنوك",
+    baseUrl: "https://cby-ye.com",
+    dataTypes: ["monetary", "banking", "exchange-rates"],
+    frequency: "daily",
+    requiresAuth: false,
+    status: "active",
+    lastSync: null,
+    nextSync: null,
+    recordCount: 0,
+    priority: 1,
+  },
+  {
+    id: "reliefweb",
+    name: "ReliefWeb",
+    nameAr: "ريليف ويب",
+    description: "Humanitarian reports, situation updates, assessments",
+    descriptionAr: "التقارير الإنسانية، تحديثات الوضع، التقييمات",
+    baseUrl: "https://api.reliefweb.int",
+    dataTypes: ["humanitarian", "reports", "assessments"],
+    frequency: "daily",
+    requiresAuth: false,
+    status: "active",
+    lastSync: null,
+    nextSync: null,
+    recordCount: 0,
+    priority: 3,
+  },
+  {
+    id: "unhcr",
+    name: "UNHCR Data Portal",
+    nameAr: "بوابة بيانات المفوضية السامية للاجئين",
+    description: "Refugee and asylum seeker statistics, protection data",
+    descriptionAr: "إحصاءات اللاجئين وطالبي اللجوء، بيانات الحماية",
+    baseUrl: "https://api.unhcr.org",
+    dataTypes: ["refugees", "displacement", "protection"],
+    frequency: "monthly",
+    requiresAuth: false,
+    status: "active",
+    lastSync: null,
+    nextSync: null,
+    recordCount: 0,
+    priority: 3,
+  },
+  {
+    id: "unicef",
+    name: "UNICEF Data",
+    nameAr: "بيانات اليونيسف",
+    description: "Child welfare, education, health, nutrition indicators",
+    descriptionAr: "رعاية الطفل، التعليم، الصحة، مؤشرات التغذية",
+    baseUrl: "https://data.unicef.org",
+    dataTypes: ["education", "health", "nutrition", "children"],
+    frequency: "annual",
+    requiresAuth: false,
+    status: "active",
+    lastSync: null,
+    nextSync: null,
+    recordCount: 0,
+    priority: 3,
+  },
+  {
+    id: "who-gho",
+    name: "WHO Global Health Observatory",
+    nameAr: "المرصد الصحي العالمي",
+    description: "Health statistics, disease burden, health systems data",
+    descriptionAr: "الإحصاءات الصحية، عبء الأمراض، بيانات النظم الصحية",
+    baseUrl: "https://ghoapi.azureedge.net/api",
+    dataTypes: ["health", "disease", "mortality"],
+    frequency: "annual",
+    requiresAuth: false,
+    status: "active",
+    lastSync: null,
+    nextSync: null,
+    recordCount: 0,
+    priority: 3,
+  },
+];
+
+/**
+ * Get all enhanced connector statuses
+ */
+export function getAllEnhancedConnectorStatuses(): EnhancedConnectorInfo[] {
+  return ENHANCED_CONNECTOR_REGISTRY;
+}
+
+/**
+ * Get enhanced connector by ID
+ */
+export function getEnhancedConnectorById(id: string): EnhancedConnectorInfo | undefined {
+  return ENHANCED_CONNECTOR_REGISTRY.find(c => c.id === id);
+}
+
+/**
+ * Get connectors by priority
+ */
+export function getConnectorsByPriority(priority: number): EnhancedConnectorInfo[] {
+  return ENHANCED_CONNECTOR_REGISTRY.filter(c => c.priority === priority);
+}
+
+/**
+ * Get connectors by data type
+ */
+export function getEnhancedConnectorsByDataType(dataType: string): EnhancedConnectorInfo[] {
+  return ENHANCED_CONNECTOR_REGISTRY.filter(c => c.dataTypes.includes(dataType));
+}
+
+/**
+ * Get active connectors sorted by priority
+ */
+export function getActiveConnectorsSorted(): EnhancedConnectorInfo[] {
+  return ENHANCED_CONNECTOR_REGISTRY
+    .filter(c => c.status === "active")
+    .sort((a, b) => a.priority - b.priority);
+}
+
+/**
+ * Run all connectors in priority order
+ */
+export async function runAllConnectors(): Promise<{
+  success: boolean;
+  results: Array<{
+    connectorId: string;
+    success: boolean;
+    recordsProcessed: number;
+    errors: string[];
+  }>;
+}> {
+  const results: Array<{
+    connectorId: string;
+    success: boolean;
+    recordsProcessed: number;
+    errors: string[];
+  }> = [];
+  
+  const sortedConnectors = getActiveConnectorsSorted();
+  
+  for (const connector of sortedConnectors) {
+    console.log(`[Ingestion] Running connector: ${connector.name}`);
+    
+    try {
+      let result: { success: boolean; recordsProcessed: number; errors: string[] };
+      
+      switch (connector.id) {
+        case "imf-data":
+          result = await imfConnector.ingestIMFData();
+          break;
+        case "fao-stat":
+          result = await faoConnector.ingestFAOData();
+          break;
+        case "acled":
+          const acledResult = await acledConnector.ingestACLEDData();
+          result = {
+            success: acledResult.success,
+            recordsProcessed: acledResult.recordsProcessed,
+            errors: acledResult.errors,
+          };
+          break;
+        case "iom-dtm":
+          const dtmResult = await iomDtmConnector.ingestDTMData();
+          result = {
+            success: dtmResult.success,
+            recordsProcessed: dtmResult.recordsProcessed,
+            errors: dtmResult.errors,
+          };
+          break;
+        default:
+          result = { success: true, recordsProcessed: 0, errors: [] };
+      }
+      
+      results.push({
+        connectorId: connector.id,
+        ...result,
+      });
+      
+    } catch (error) {
+      results.push({
+        connectorId: connector.id,
+        success: false,
+        recordsProcessed: 0,
+        errors: [`Connector error: ${error}`],
+      });
+    }
+    
+    // Rate limiting between connectors
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+  
+  const allSuccess = results.every(r => r.success);
+  
+  return {
+    success: allSuccess,
+    results,
+  };
+}

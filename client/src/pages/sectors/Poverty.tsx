@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
+import { ConfidenceBadge } from "@/components/DataCard";
 import { ExportButton } from "@/components/ExportButton";
 import SectorExportButtons from "@/components/SectorExportButtons";
 import { Download } from "lucide-react";

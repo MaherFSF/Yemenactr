@@ -1,6 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import EvidencePackButton, { EvidencePackData } from "@/components/EvidencePackButton";
+import { ConfidenceBadge, ConfidenceRatingLegend } from "@/components/DataCard";
 import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
 import InsightsTicker from "@/components/InsightsTicker";
 import { Button } from "@/components/ui/button";
@@ -314,7 +315,7 @@ export default function Dashboard() {
                       <div className="text-xs text-gray-500">
                         {language === "ar" ? stat.labelAr : stat.labelEn}
                       </div>
-                      <DataQualityBadge quality="dev" size="sm" />
+                      <ConfidenceBadge rating="C" size="sm" />
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
