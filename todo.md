@@ -122,7 +122,7 @@
 - [x] Build Methodology page with data QA rules
 - [x] Build Transparency & Accountability page
 - [x] Implement corrections policy workflow
-- [ ] Create changelog page
+- [x] Create changelog page (PublicChangelog component)
 
 ## Phase 12: Enhanced AI & Reports
 - [x] Enhance AI Assistant with RAG structure
@@ -241,12 +241,20 @@
 - [ ] Verify UI matches mockup design exactly
 - [ ] Document any deviations with rationale
 
-## Phase 27: Enhanced Data Governance
-- [ ] Implement provenance ledger with W3C PROV concepts
-- [ ] Add vintages system for "what was known when"
-- [ ] Implement contradiction detector
+## Phase 27: Enhanced Data Governance (Section 8 - The Trust Engine)
+- [x] Implement provenance ledger with W3C PROV concepts (provenanceLedgerFull table + service)
+- [x] Add vintages system for "what was known when" (dataVintages table + service)
+- [x] Implement contradiction detector (dataContradictions table + service)
+- [x] Implement confidence rating system A-D (confidenceRatings table + service)
+- [x] Create public changelog for transparency (publicChangelog table + service)
 - [x] Add Evidence Pack system to all KPIs/charts
 - [x] Create EvidencePack component with dialog/popover variants
+- [x] Create ConfidenceRating UI component with badges and legends
+- [x] Create ProvenanceViewer UI component with tabs
+- [x] Create ContradictionView UI component with comparison display
+- [x] Create VintageTimeline UI component with revision history
+- [x] Create PublicChangelog UI component with RSS support
+- [x] Add governance tRPC router with all endpoints
 
 ## Phase 28: Entity Profiles Module
 - [x] Create /entities route with entity profiles
@@ -743,3 +751,37 @@
 - [ ] Filter by time period
 - [ ] Filter by geography
 - [ ] Indicator detail view with methodology
+
+
+## Phase 55: Section 8 - Data Governance: The Trust Engine
+
+### A) Provenance Ledger
+- [ ] Track source, access method, retrieval time, license/terms for each dataset
+- [ ] Track transformations and formulas applied
+- [ ] Track QA checks and outcomes
+- [ ] Track known limitations and caveats
+- [ ] Track update cadence
+
+### B) Confidence Rating A-D
+- [ ] A = audited/official & consistent
+- [ ] B = credible but partial/lagged
+- [ ] C = proxy/modelled/uncertain
+- [ ] D = disputed/low reliability (display with warnings)
+- [ ] Create ConfidenceRating component with visual indicators
+
+### C) Contradiction Detector
+- [ ] Detect conflicting values for same indicator/time/geo
+- [ ] Store both conflicting values
+- [ ] Show discrepancy view with explanations
+- [ ] Explain plausible reasons for contradictions
+
+### D) Versioning & Vintages
+- [ ] Preserve "as-of" views with revision history
+- [ ] Implement diff viewer for comparing versions
+- [ ] Store vintage metadata with timestamps
+
+### E) Corrections Policy + Public Changelog
+- [ ] Implement corrections workflow in admin
+- [ ] Public changelog showing datasets updated
+- [ ] Show documents added and methodology changes
+- [ ] No secrets in public changelog

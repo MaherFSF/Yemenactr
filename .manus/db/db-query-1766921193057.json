@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `data_vintages` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `dataPointId` int NOT NULL,\n  `dataPointType` varchar(50) NOT NULL,\n  `vintageDate` timestamp NOT NULL,\n  `value` decimal(20,6) NOT NULL,\n  `previousValue` decimal(20,6),\n  `changeType` enum('initial','revision','correction','restatement') NOT NULL,\n  `changeReason` text,\n  `changeMagnitude` decimal(10,4),\n  `sourceId` int,\n  `confidenceRating` enum('A','B','C','D'),\n  `createdBy` varchar(255) NOT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  CONSTRAINT `data_vintages_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute CREATE TABLE IF NOT EXISTS `data_vintages` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `dataPointId` int NOT NULL,\n  `dataPointType` varchar(50) NOT NULL,\n  `vintageDate` timestamp NOT NULL,\n  `value` decimal(20,6) NOT NULL,\n  `previousValue` decimal(20,6),\n  `changeType` enum('initial','revision','correction','restatement') NOT NULL,\n  `changeReason` text,\n  `changeMagnitude` decimal(10,4),\n  `sourceId` int,\n  `confidenceRating` enum('A','B','C','D'),\n  `createdBy` varchar(255) NOT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  CONSTRAINT `data_vintages_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 174
+}

@@ -10,6 +10,13 @@ import {
   fetchReliefWebReports,
   getDataSourceStatus,
 } from './ingestion';
+import {
+  provenanceLedgerService,
+  confidenceRatingService,
+  contradictionDetectorService,
+  dataVintagesService,
+  publicChangelogService,
+} from './governance';
 import { WorldBankConnector, HDXConnector, OCHAFTSConnector, ReliefWebConnector } from './connectors';
 import {
   getTimeSeriesByIndicator,
@@ -897,6 +904,401 @@ Current context: ${input.context?.sector ? `Sector: ${input.context.sector}` : '
           retrievedAt: new Date().toISOString(),
         };
       }),
+  }),
+
+  // ============================================================================
+  // DATA GOVERNANCE - THE TRUST ENGINE (Section 8)
+  // ============================================================================
+
+  governance: router({
+    // 8A: Provenance Ledger
+    provenance: router({
+      // Get provenance for a data point
+      get: publicProcedure
+        .input(z.object({
+          entryId: z.number(),
+        }))
+        .query(async ({ input }) => {
+          return await provenanceLedgerService.getEntry(input.entryId);
+        }),
+
+      // Get provenance summary for display
+      getSummary: publicProcedure
+        .input(z.object({
+          entryId: z.number(),
+        }))
+        .query(async ({ input }) => {
+          return await provenanceLedgerService.getProvenanceSummary(input.entryId);
+        }),
+
+      // Get provenance by source
+      getBySource: publicProcedure
+        .input(z.object({
+          sourceId: z.number(),
+        }))
+        .query(async ({ input }) => {
+          return await provenanceLedgerService.getEntriesBySource(input.sourceId);
+        }),
+
+      // Get provenance for a series
+      getForSeries: publicProcedure
+        .input(z.object({
+          seriesId: z.number(),
+        }))
+        .query(async ({ input }) => {
+          return await provenanceLedgerService.getSeriesProvenance(input.seriesId);
+        }),
+
+      // Generate provenance report
+      generateReport: publicProcedure
+        .input(z.object({
+          entryId: z.number(),
+        }))
+        .query(async ({ input }) => {
+          return await provenanceLedgerService.generateProvenanceReport(input.entryId);
+        }),
+
+      // Create provenance entry (admin/analyst only)
+      create: analystProcedure
+        .input(z.object({
+          sourceId: z.number(),
+          datasetId: z.number().optional(),
+          documentId: z.number().optional(),
+          seriesId: z.number().optional(),
+          accessMethod: z.enum(['api', 'scrape', 'manual', 'partner_upload', 'file_import']),
+          retrievalTime: z.date(),
+          retrievalDuration: z.number().optional(),
+          rawDataHash: z.string(),
+          rawDataLocation: z.string().optional(),
+          licenseType: z.string(),
+          licenseUrl: z.string().optional(),
+          termsAccepted: z.boolean(),
+          attributionRequired: z.boolean(),
+          attributionText: z.string().optional(),
+          commercialUseAllowed: z.boolean(),
+          derivativesAllowed: z.boolean(),
+          transformations: z.array(z.object({
+            order: z.number(),
+            type: z.enum(['normalize', 'aggregate', 'interpolate', 'derive', 'clean', 'merge', 'filter', 'convert']),
+            description: z.string(),
+            formula: z.string().optional(),
+            inputFields: z.array(z.string()),
+            outputFields: z.array(z.string()),
+            parameters: z.record(z.string(), z.unknown()).optional(),
+            timestamp: z.string(),
+            executedBy: z.string(),
+          })),
+          qaChecks: z.array(z.object({
+            checkType: z.enum(['schema', 'units', 'outliers', 'continuity', 'geo', 'duplicates', 'contradictions', 'completeness']),
+            checkName: z.string(),
+            passed: z.boolean(),
+            severity: z.enum(['critical', 'warning', 'info']),
+            message: z.string(),
+            details: z.record(z.string(), z.unknown()).optional(),
+            timestamp: z.string(),
+          })),
+          qaScore: z.number().min(0).max(100),
+          qaPassedAt: z.date().optional(),
+          limitations: z.array(z.string()),
+          caveats: z.array(z.string()),
+          knownIssues: z.array(z.string()),
+          expectedUpdateFrequency: z.enum(['realtime', 'daily', 'weekly', 'monthly', 'quarterly', 'annual', 'irregular']),
+          lastUpdated: z.date(),
+          nextExpectedUpdate: z.date().optional(),
+          updateDelayDays: z.number().optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          const entryId = await provenanceLedgerService.createEntry({
+            ...input,
+            createdBy: ctx.user?.name || 'system',
+          });
+          return { success: true, entryId };
+        }),
+    }),
+
+    // 8B: Confidence Ratings
+    confidence: router({
+      // Get rating for a data point
+      get: publicProcedure
+        .input(z.object({
+          dataPointId: z.number(),
+          dataPointType: z.string(),
+        }))
+        .query(async ({ input }) => {
+          return await confidenceRatingService.getRating(input.dataPointId, input.dataPointType);
+        }),
+
+      // Get rating history
+      getHistory: publicProcedure
+        .input(z.object({
+          dataPointId: z.number(),
+        }))
+        .query(async ({ input }) => {
+          return await confidenceRatingService.getRatingHistory(input.dataPointId);
+        }),
+
+      // Get rating badge info
+      getBadge: publicProcedure
+        .input(z.object({
+          rating: z.enum(['A', 'B', 'C', 'D']),
+        }))
+        .query(({ input }) => {
+          return confidenceRatingService.getRatingBadge(input.rating);
+        }),
+
+      // Rate a data point (analyst only)
+      rate: analystProcedure
+        .input(z.object({
+          dataPointId: z.number(),
+          dataPointType: z.enum(['time_series', 'geospatial', 'document']),
+          sourceCredibility: z.number().min(0).max(100),
+          dataCompleteness: z.number().min(0).max(100),
+          timeliness: z.number().min(0).max(100),
+          consistency: z.number().min(0).max(100),
+          methodology: z.number().min(0).max(100),
+          ratingJustification: z.string(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          return await confidenceRatingService.rateDataPoint({
+            ...input,
+            ratedBy: ctx.user?.name || 'system',
+          });
+        }),
+    }),
+
+    // 8C: Contradiction Detection
+    contradictions: router({
+      // Get contradictions for an indicator
+      getByIndicator: publicProcedure
+        .input(z.object({
+          indicatorCode: z.string(),
+        }))
+        .query(async ({ input }) => {
+          return await contradictionDetectorService.getContradictions(input.indicatorCode);
+        }),
+
+      // Get contradiction statistics
+      getStats: publicProcedure
+        .query(async () => {
+          return await contradictionDetectorService.getContradictionStats();
+        }),
+
+      // Scan for contradictions (analyst only)
+      scan: analystProcedure
+        .input(z.object({
+          indicatorCode: z.string(),
+        }))
+        .mutation(async ({ input }) => {
+          const contradictions = await contradictionDetectorService.scanForContradictions(input.indicatorCode);
+          return { found: contradictions.length, contradictions };
+        }),
+
+      // Resolve a contradiction (analyst only)
+      resolve: analystProcedure
+        .input(z.object({
+          contradictionId: z.number(),
+          resolvedValue: z.number(),
+          resolvedSourceId: z.number(),
+          resolutionNotes: z.string(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          await contradictionDetectorService.resolveContradiction(input.contradictionId, {
+            ...input,
+            resolvedBy: ctx.user?.id || 0,
+          });
+          return { success: true };
+        }),
+
+      // Update contradiction status (analyst only)
+      updateStatus: analystProcedure
+        .input(z.object({
+          contradictionId: z.number(),
+          status: z.enum(['investigating', 'explained', 'resolved']),
+          notes: z.string().optional(),
+        }))
+        .mutation(async ({ input }) => {
+          await contradictionDetectorService.updateStatus(
+            input.contradictionId,
+            input.status,
+            input.notes
+          );
+          return { success: true };
+        }),
+    }),
+
+    // 8D: Data Vintages (Versioning)
+    vintages: router({
+      // Get all vintages for a data point
+      get: publicProcedure
+        .input(z.object({
+          dataPointId: z.number(),
+          dataPointType: z.string(),
+        }))
+        .query(async ({ input }) => {
+          return await dataVintagesService.getVintages(input.dataPointId, input.dataPointType);
+        }),
+
+      // Get value as of a specific date
+      getAsOf: publicProcedure
+        .input(z.object({
+          dataPointId: z.number(),
+          dataPointType: z.string(),
+          asOfDate: z.date(),
+        }))
+        .query(async ({ input }) => {
+          return await dataVintagesService.getValueAsOf(
+            input.dataPointId,
+            input.dataPointType,
+            input.asOfDate
+          );
+        }),
+
+      // Compare two vintages
+      compare: publicProcedure
+        .input(z.object({
+          dataPointId: z.number(),
+          dataPointType: z.string(),
+          date1: z.date(),
+          date2: z.date(),
+        }))
+        .query(async ({ input }) => {
+          return await dataVintagesService.compareVintages(
+            input.dataPointId,
+            input.dataPointType,
+            input.date1,
+            input.date2
+          );
+        }),
+
+      // Get revision summary
+      getSummary: publicProcedure
+        .input(z.object({
+          dataPointId: z.number(),
+          dataPointType: z.string(),
+        }))
+        .query(async ({ input }) => {
+          return await dataVintagesService.getRevisionSummary(
+            input.dataPointId,
+            input.dataPointType
+          );
+        }),
+
+      // Get timeline for visualization
+      getTimeline: publicProcedure
+        .input(z.object({
+          dataPointId: z.number(),
+          dataPointType: z.string(),
+        }))
+        .query(async ({ input }) => {
+          return await dataVintagesService.generateTimeline(
+            input.dataPointId,
+            input.dataPointType
+          );
+        }),
+
+      // Record a new vintage (analyst only)
+      record: analystProcedure
+        .input(z.object({
+          dataPointId: z.number(),
+          dataPointType: z.enum(['time_series', 'geospatial', 'document']),
+          vintageDate: z.date(),
+          value: z.number(),
+          previousValue: z.number().optional(),
+          changeType: z.enum(['initial', 'revision', 'correction', 'restatement']),
+          changeReason: z.string().optional(),
+          sourceId: z.number().optional(),
+          confidenceRating: z.enum(['A', 'B', 'C', 'D']).optional(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          return await dataVintagesService.recordVintage({
+            ...input,
+            createdBy: ctx.user?.name || 'system',
+          });
+        }),
+    }),
+
+    // 8E: Public Changelog
+    changelog: router({
+      // Get public changelog entries
+      list: publicProcedure
+        .input(z.object({
+          limit: z.number().min(1).max(100).default(20),
+          offset: z.number().min(0).default(0),
+          changeType: z.string().optional(),
+          startDate: z.date().optional(),
+          endDate: z.date().optional(),
+        }))
+        .query(async ({ input }) => {
+          return await publicChangelogService.getPublicEntries(input);
+        }),
+
+      // Get single entry
+      get: publicProcedure
+        .input(z.object({
+          id: z.number(),
+        }))
+        .query(async ({ input }) => {
+          return await publicChangelogService.getEntry(input.id);
+        }),
+
+      // Get changelog statistics
+      getStats: publicProcedure
+        .query(async () => {
+          return await publicChangelogService.getStats();
+        }),
+
+      // Get RSS feed
+      getRSS: publicProcedure
+        .query(async () => {
+          return await publicChangelogService.generateRSSFeed();
+        }),
+
+      // Get change type label
+      getTypeLabel: publicProcedure
+        .input(z.object({
+          changeType: z.string(),
+          language: z.enum(['en', 'ar']).default('en'),
+        }))
+        .query(({ input }) => {
+          return publicChangelogService.getChangeTypeLabel(input.changeType, input.language);
+        }),
+
+      // Add changelog entry (admin only)
+      add: adminProcedure
+        .input(z.object({
+          changeType: z.enum(['dataset_added', 'dataset_updated', 'document_added', 'methodology_change', 'correction', 'source_added', 'indicator_added']),
+          affectedDatasetIds: z.array(z.number()).optional(),
+          affectedIndicatorCodes: z.array(z.string()).optional(),
+          affectedDocumentIds: z.array(z.number()).optional(),
+          titleEn: z.string(),
+          titleAr: z.string(),
+          descriptionEn: z.string(),
+          descriptionAr: z.string(),
+          impactLevel: z.enum(['low', 'medium', 'high']),
+          affectedDateRange: z.object({
+            start: z.string(),
+            end: z.string(),
+          }).optional(),
+          isPublic: z.boolean().default(true),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          return await publicChangelogService.addEntry({
+            ...input,
+            publishedBy: ctx.user?.id,
+          });
+        }),
+
+      // Update entry visibility (admin only)
+      setVisibility: adminProcedure
+        .input(z.object({
+          id: z.number(),
+          isPublic: z.boolean(),
+        }))
+        .mutation(async ({ input }) => {
+          await publicChangelogService.setVisibility(input.id, input.isPublic);
+          return { success: true };
+        }),
+    }),
   }),
 });
 

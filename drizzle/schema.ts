@@ -627,3 +627,254 @@ export const sentEmails = mysqlTable("sent_emails", {
 
 export type SentEmail = typeof sentEmails.$inferSelect;
 export type InsertSentEmail = typeof sentEmails.$inferInsert;
+
+
+// ============================================================================
+// DATA GOVERNANCE - PROVENANCE LEDGER (Section 8)
+// ============================================================================
+
+export const provenanceLedgerFull = mysqlTable("provenance_ledger_full", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Data point reference
+  sourceId: int("sourceId").notNull().references(() => sources.id),
+  datasetId: int("datasetId").references(() => datasets.id),
+  documentId: int("documentId").references(() => documents.id),
+  seriesId: int("seriesId").references(() => timeSeries.id),
+  
+  // Access tracking
+  accessMethod: mysqlEnum("accessMethod", ["api", "scrape", "manual", "partner_upload", "file_import"]).notNull(),
+  retrievalTime: timestamp("retrievalTime").notNull(),
+  retrievalDuration: int("retrievalDuration"), // milliseconds
+  rawDataHash: varchar("rawDataHash", { length: 64 }).notNull(), // SHA-256
+  rawDataLocation: text("rawDataLocation"), // S3 path
+  
+  // License and terms
+  licenseType: varchar("licenseType", { length: 100 }).notNull(),
+  licenseUrl: text("licenseUrl"),
+  termsAccepted: boolean("termsAccepted").default(false).notNull(),
+  attributionRequired: boolean("attributionRequired").default(true).notNull(),
+  attributionText: text("attributionText"),
+  commercialUseAllowed: boolean("commercialUseAllowed").default(false).notNull(),
+  derivativesAllowed: boolean("derivativesAllowed").default(true).notNull(),
+  
+  // Transformations (JSON array)
+  transformations: json("transformations").$type<{
+    order: number;
+    type: string;
+    description: string;
+    formula?: string;
+    inputFields: string[];
+    outputFields: string[];
+    parameters?: Record<string, unknown>;
+    timestamp: string;
+    executedBy: string;
+  }[]>(),
+  
+  // QA checks (JSON array)
+  qaChecks: json("qaChecks").$type<{
+    checkType: string;
+    checkName: string;
+    passed: boolean;
+    severity: string;
+    message: string;
+    details?: Record<string, unknown>;
+    timestamp: string;
+  }[]>(),
+  qaScore: int("qaScore").default(0).notNull(), // 0-100
+  qaPassedAt: timestamp("qaPassedAt"),
+  
+  // Limitations and caveats (JSON arrays)
+  limitations: json("limitations").$type<string[]>(),
+  caveats: json("caveats").$type<string[]>(),
+  knownIssues: json("knownIssues").$type<string[]>(),
+  
+  // Update cadence
+  expectedUpdateFrequency: mysqlEnum("expectedUpdateFrequency", ["realtime", "daily", "weekly", "monthly", "quarterly", "annual", "irregular"]).notNull(),
+  lastUpdated: timestamp("lastUpdated").notNull(),
+  nextExpectedUpdate: timestamp("nextExpectedUpdate"),
+  updateDelayDays: int("updateDelayDays"),
+  
+  // Metadata
+  createdBy: varchar("createdBy", { length: 255 }).notNull(),
+  version: int("version").default(1).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  sourceIdx: index("source_idx").on(table.sourceId),
+  datasetIdx: index("dataset_idx").on(table.datasetId),
+  seriesIdx: index("series_idx").on(table.seriesId),
+  qaScoreIdx: index("qa_score_idx").on(table.qaScore),
+  retrievalTimeIdx: index("retrieval_time_idx").on(table.retrievalTime),
+}));
+
+export type ProvenanceLedgerFull = typeof provenanceLedgerFull.$inferSelect;
+export type InsertProvenanceLedgerFull = typeof provenanceLedgerFull.$inferInsert;
+
+// ============================================================================
+// DATA GOVERNANCE - CONFIDENCE RATINGS (Section 8B)
+// ============================================================================
+
+export const confidenceRatings = mysqlTable("confidence_ratings", {
+  id: int("id").autoincrement().primaryKey(),
+  dataPointId: int("dataPointId").notNull(),
+  dataPointType: varchar("dataPointType", { length: 50 }).notNull(), // time_series, geospatial, document
+  
+  // Rating (A-D)
+  rating: mysqlEnum("rating", ["A", "B", "C", "D"]).notNull(),
+  
+  // Rating criteria scores (0-100)
+  sourceCredibility: int("sourceCredibility").notNull(), // Official, credible, proxy, disputed
+  dataCompleteness: int("dataCompleteness").notNull(), // Full, partial, sparse
+  timeliness: int("timeliness").notNull(), // Current, lagged, outdated
+  consistency: int("consistency").notNull(), // Consistent, minor discrepancies, major issues
+  methodology: int("methodology").notNull(), // Audited, documented, unclear, unknown
+  
+  // Explanation
+  ratingJustification: text("ratingJustification").notNull(),
+  
+  // Warnings for D-rated data
+  displayWarning: text("displayWarning"),
+  
+  // Audit trail
+  ratedBy: varchar("ratedBy", { length: 255 }).notNull(),
+  ratedAt: timestamp("ratedAt").defaultNow().notNull(),
+  previousRating: mysqlEnum("previousRating", ["A", "B", "C", "D"]),
+  ratingChangeReason: text("ratingChangeReason"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  dataPointIdx: index("data_point_idx").on(table.dataPointId, table.dataPointType),
+  ratingIdx: index("rating_idx").on(table.rating),
+}));
+
+export type ConfidenceRating = typeof confidenceRatings.$inferSelect;
+export type InsertConfidenceRating = typeof confidenceRatings.$inferInsert;
+
+// ============================================================================
+// DATA GOVERNANCE - CONTRADICTION DETECTOR (Section 8C)
+// ============================================================================
+
+export const dataContradictions = mysqlTable("data_contradictions", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Indicator and time reference
+  indicatorCode: varchar("indicatorCode", { length: 100 }).notNull(),
+  date: timestamp("date").notNull(),
+  regimeTag: mysqlEnum("regimeTag", ["aden_irg", "sanaa_defacto", "mixed", "unknown"]).notNull(),
+  
+  // Conflicting values
+  value1: decimal("value1", { precision: 20, scale: 6 }).notNull(),
+  source1Id: int("source1Id").notNull().references(() => sources.id),
+  value2: decimal("value2", { precision: 20, scale: 6 }).notNull(),
+  source2Id: int("source2Id").notNull().references(() => sources.id),
+  
+  // Discrepancy analysis
+  discrepancyPercent: decimal("discrepancyPercent", { precision: 10, scale: 2 }).notNull(),
+  discrepancyType: mysqlEnum("discrepancyType", ["minor", "significant", "major", "critical"]).notNull(),
+  
+  // Explanation
+  plausibleReasons: json("plausibleReasons").$type<string[]>(),
+  resolutionNotes: text("resolutionNotes"),
+  
+  // Status
+  status: mysqlEnum("status", ["detected", "investigating", "explained", "resolved"]).default("detected").notNull(),
+  resolvedValue: decimal("resolvedValue", { precision: 20, scale: 6 }),
+  resolvedSourceId: int("resolvedSourceId").references(() => sources.id),
+  
+  // Audit
+  detectedAt: timestamp("detectedAt").defaultNow().notNull(),
+  resolvedAt: timestamp("resolvedAt"),
+  resolvedBy: int("resolvedBy").references(() => users.id),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  indicatorIdx: index("indicator_idx").on(table.indicatorCode),
+  dateIdx: index("date_idx").on(table.date),
+  statusIdx: index("status_idx").on(table.status),
+}));
+
+export type DataContradiction = typeof dataContradictions.$inferSelect;
+export type InsertDataContradiction = typeof dataContradictions.$inferInsert;
+
+// ============================================================================
+// DATA GOVERNANCE - VERSIONING & VINTAGES (Section 8D)
+// ============================================================================
+
+export const dataVintages = mysqlTable("data_vintages", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Data point reference
+  dataPointId: int("dataPointId").notNull(),
+  dataPointType: varchar("dataPointType", { length: 50 }).notNull(),
+  
+  // Vintage information
+  vintageDate: timestamp("vintageDate").notNull(), // "As of" date
+  value: decimal("value", { precision: 20, scale: 6 }).notNull(),
+  previousValue: decimal("previousValue", { precision: 20, scale: 6 }),
+  
+  // Change tracking
+  changeType: mysqlEnum("changeType", ["initial", "revision", "correction", "restatement"]).notNull(),
+  changeReason: text("changeReason"),
+  changeMagnitude: decimal("changeMagnitude", { precision: 10, scale: 4 }), // Percent change
+  
+  // Metadata
+  sourceId: int("sourceId").references(() => sources.id),
+  confidenceRating: mysqlEnum("confidenceRating", ["A", "B", "C", "D"]),
+  
+  // Audit
+  createdBy: varchar("createdBy", { length: 255 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  dataPointIdx: index("data_point_idx").on(table.dataPointId, table.dataPointType),
+  vintageDateIdx: index("vintage_date_idx").on(table.vintageDate),
+  changeTypeIdx: index("change_type_idx").on(table.changeType),
+}));
+
+export type DataVintage = typeof dataVintages.$inferSelect;
+export type InsertDataVintage = typeof dataVintages.$inferInsert;
+
+// ============================================================================
+// DATA GOVERNANCE - PUBLIC CHANGELOG (Section 8E)
+// ============================================================================
+
+export const publicChangelog = mysqlTable("public_changelog", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Change type
+  changeType: mysqlEnum("changeType", ["dataset_added", "dataset_updated", "document_added", "methodology_change", "correction", "source_added", "indicator_added"]).notNull(),
+  
+  // Affected items
+  affectedDatasetIds: json("affectedDatasetIds").$type<number[]>(),
+  affectedIndicatorCodes: json("affectedIndicatorCodes").$type<string[]>(),
+  affectedDocumentIds: json("affectedDocumentIds").$type<number[]>(),
+  
+  // Description (bilingual)
+  titleEn: varchar("titleEn", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }).notNull(),
+  descriptionEn: text("descriptionEn").notNull(),
+  descriptionAr: text("descriptionAr").notNull(),
+  
+  // Impact assessment
+  impactLevel: mysqlEnum("impactLevel", ["low", "medium", "high"]).notNull(),
+  affectedDateRange: json("affectedDateRange").$type<{ start: string; end: string }>(),
+  
+  // Visibility
+  isPublic: boolean("isPublic").default(true).notNull(),
+  
+  // Audit
+  publishedAt: timestamp("publishedAt").defaultNow().notNull(),
+  publishedBy: int("publishedBy").references(() => users.id),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  changeTypeIdx: index("change_type_idx").on(table.changeType),
+  publishedAtIdx: index("published_at_idx").on(table.publishedAt),
+  isPublicIdx: index("is_public_idx").on(table.isPublic),
+}));
+
+export type PublicChangelogEntry = typeof publicChangelog.$inferSelect;
+export type InsertPublicChangelogEntry = typeof publicChangelog.$inferInsert;
