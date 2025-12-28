@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
 import { ExportButton } from "@/components/ExportButton";
+import SectorExportButtons from "@/components/SectorExportButtons";
+import { Download } from "lucide-react";
 import { 
   Users, 
   TrendingUp, 
@@ -251,6 +253,43 @@ export default function Poverty() {
                 </div>
               ))}
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Data Export Section */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Download className="h-5 w-5 text-[#107040]" />
+              {language === "ar" ? "تصدير بيانات الفقر والتنمية" : "Export Poverty & Development Data"}
+            </CardTitle>
+            <CardDescription>
+              {language === "ar" 
+                ? "تحميل بيانات الفقر والتنمية بتنسيقات مختلفة للتحليل والتقارير"
+                : "Download poverty and development data in various formats for analysis and reporting"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <SectorExportButtons
+              sectorName="poverty"
+              datasets={[
+                {
+                  title: language === "ar" ? "اتجاهات الفقر" : "Poverty Trends",
+                  data: povertyTrendData,
+                  filename: "yemen_poverty_trends"
+                },
+                {
+                  title: language === "ar" ? "مؤشر التنمية البشرية" : "HDI Data",
+                  data: hdiData,
+                  filename: "yemen_hdi"
+                },
+                {
+                  title: language === "ar" ? "الأمن الغذائي" : "Food Security",
+                  data: foodSecurityData,
+                  filename: "yemen_food_security"
+                },
+              ]}
+            />
           </CardContent>
         </Card>
 

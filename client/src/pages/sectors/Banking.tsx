@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
 import { ExportButton } from "@/components/ExportButton";
+import SectorExportButtons from "@/components/SectorExportButtons";
+import { Download } from "lucide-react";
 import { 
   Landmark, 
   TrendingUp, 
@@ -342,6 +344,43 @@ export default function Banking() {
                 </div>
               ))}
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Data Export Section */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Download className="h-5 w-5 text-[#107040]" />
+              {language === "ar" ? "تصدير بيانات القطاع المصرفي" : "Export Banking Data"}
+            </CardTitle>
+            <CardDescription>
+              {language === "ar" 
+                ? "تحميل بيانات القطاع المصرفي بتنسيقات مختلفة للتحليل والتقارير"
+                : "Download banking sector data in various formats for analysis and reporting"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <SectorExportButtons
+              sectorName="banking"
+              datasets={[
+                {
+                  title: language === "ar" ? "سعر الصرف" : "Exchange Rate",
+                  data: exchangeRateData,
+                  filename: "yemen_exchange_rate"
+                },
+                {
+                  title: language === "ar" ? "التضخم" : "Inflation",
+                  data: inflationData,
+                  filename: "yemen_inflation"
+                },
+                {
+                  title: language === "ar" ? "البنوك" : "Banks",
+                  data: bankingSectorData,
+                  filename: "yemen_banks"
+                },
+              ]}
+            />
           </CardContent>
         </Card>
 

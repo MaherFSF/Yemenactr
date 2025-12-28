@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
 import EvidencePackButton from "@/components/EvidencePackButton";
 import { ExportButton } from "@/components/ExportButton";
+import SectorExportButtons from "@/components/SectorExportButtons";
 import { 
   Ship, 
   TrendingUp, 
@@ -403,6 +404,48 @@ export default function Trade() {
                 </div>
               ))}
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Data Export Section */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Download className="h-5 w-5 text-[#107040]" />
+              {language === "ar" ? "تصدير بيانات التجارة" : "Export Trade Data"}
+            </CardTitle>
+            <CardDescription>
+              {language === "ar" 
+                ? "تحميل بيانات التجارة بتنسيقات مختلفة للتحليل والتقارير"
+                : "Download trade data in various formats for analysis and reporting"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <SectorExportButtons
+              sectorName="trade"
+              datasets={[
+                {
+                  title: language === "ar" ? "الميزان التجاري" : "Trade Balance",
+                  data: tradeBalanceData,
+                  filename: "yemen_trade_balance"
+                },
+                {
+                  title: language === "ar" ? "تركيب الصادرات" : "Export Composition",
+                  data: exportCompositionData,
+                  filename: "yemen_export_composition"
+                },
+                {
+                  title: language === "ar" ? "تركيب الواردات" : "Import Composition",
+                  data: importCompositionData,
+                  filename: "yemen_import_composition"
+                },
+                {
+                  title: language === "ar" ? "بيانات الموانئ" : "Port Data",
+                  data: portActivityData,
+                  filename: "yemen_port_operations"
+                },
+              ]}
+            />
           </CardContent>
         </Card>
 
