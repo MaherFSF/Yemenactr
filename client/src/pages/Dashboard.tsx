@@ -1,5 +1,8 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import EvidencePackButton, { EvidencePackData } from "@/components/EvidencePackButton";
+import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
+import InsightsTicker from "@/components/InsightsTicker";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -130,6 +133,12 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      {/* DEV Mode Banner */}
+      <DevModeBanner />
+      
+      {/* Insights Ticker */}
+      <InsightsTicker />
+      
       {/* Header */}
       <div className="bg-white dark:bg-gray-900 border-b">
         <div className="container py-6">
@@ -290,18 +299,46 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {quickStats.map((stat, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div>
-                      <div className="text-xs text-gray-500 mb-1">
+                  <div key={index} className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-xs text-gray-500">
                         {language === "ar" ? stat.labelAr : stat.labelEn}
                       </div>
+                      <DataQualityBadge quality="dev" size="sm" />
+                    </div>
+                    <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {stat.trend === "up" && <TrendingUp className="h-4 w-4 text-red-500" />}
                         {stat.trend === "warning" && <AlertTriangle className="h-4 w-4 text-amber-500" />}
                         <span className="font-bold text-[#103050] dark:text-white">{stat.value}</span>
                       </div>
+                      <MiniSparkline data={stat.sparkline} color={stat.trend === "warning" ? "#F59E0B" : "#EF4444"} />
                     </div>
-                    <MiniSparkline data={stat.sparkline} color={stat.trend === "warning" ? "#F59E0B" : "#EF4444"} />
+                    <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                      <EvidencePackButton 
+                        data={{
+                          indicatorId: `stat-${index}`,
+                          indicatorNameEn: stat.labelEn,
+                          indicatorNameAr: stat.labelAr,
+                          value: stat.value,
+                          unit: "",
+                          timestamp: new Date().toISOString(),
+                          confidence: "C",
+                          sources: [
+                            {
+                              id: "1",
+                              name: "Sample Data Source",
+                              nameAr: "مصدر بيانات عينة",
+                              type: "estimate",
+                              date: "2024-12-28",
+                              quality: "C"
+                            }
+                          ]
+                        }}
+                        variant="link"
+                        size="sm"
+                      />
+                    </div>
                   </div>
                 ))}
               </CardContent>

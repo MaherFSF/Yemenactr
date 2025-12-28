@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -18,7 +18,14 @@ import {
   AlertTriangle,
   FileText,
   ChevronRight,
-  Info
+  Info,
+  Landmark,
+  Fuel,
+  ShoppingCart,
+  Wheat,
+  Network,
+  Building,
+  Plane
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
@@ -29,8 +36,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
+import EvidencePackButton from "@/components/EvidencePackButton";
 
-// Entity data
+// Complete Entity data with HSA Group subsidiaries
 const entities = [
   {
     id: "hsa-group",
@@ -46,25 +55,104 @@ const entities = [
     employeesAr: "15,000+",
     revenueEn: "$2.5B+ (est.)",
     revenueAr: "2.5+ مليار دولار (تقدير)",
-    descriptionEn: "Yemen's largest private conglomerate with operations spanning food manufacturing, trading, banking, telecommunications, and real estate. Founded by Hayel Saeed Anam in Taiz, the group has grown to become a dominant economic force in Yemen and the region.",
-    descriptionAr: "أكبر تكتل خاص في اليمن مع عمليات تشمل تصنيع الأغذية والتجارة والخدمات المصرفية والاتصالات والعقارات. أسسها هائل سعيد أنعم في تعز، ونمت المجموعة لتصبح قوة اقتصادية مهيمنة في اليمن والمنطقة.",
+    descriptionEn: "Yemen's largest private conglomerate with operations spanning food manufacturing, trading, banking, telecommunications, and real estate. Founded by Hayel Saeed Anam in Taiz in 1938, the group has grown to become a dominant economic force in Yemen and the region, with significant market share across multiple sectors.",
+    descriptionAr: "أكبر تكتل خاص في اليمن مع عمليات تشمل تصنيع الأغذية والتجارة والخدمات المصرفية والاتصالات والعقارات. أسسها هائل سعيد أنعم في تعز عام 1938، ونمت المجموعة لتصبح قوة اقتصادية مهيمنة في اليمن والمنطقة، مع حصة سوقية كبيرة عبر قطاعات متعددة.",
     subsidiaries: [
-      { nameEn: "Yemen Kuwait Bank", nameAr: "بنك اليمن والكويت", sector: "banking" },
-      { nameEn: "HSA Trading", nameAr: "هائل سعيد للتجارة", sector: "trading" },
-      { nameEn: "Aujan Industries", nameAr: "صناعات أوجان", sector: "manufacturing" },
-      { nameEn: "National Food Industries", nameAr: "الصناعات الغذائية الوطنية", sector: "food" },
+      { 
+        id: "ykb",
+        nameEn: "Yemen Kuwait Bank", 
+        nameAr: "بنك اليمن والكويت", 
+        sector: "banking",
+        ownership: "Major shareholder",
+        descEn: "One of Yemen's largest commercial banks",
+        descAr: "أحد أكبر البنوك التجارية في اليمن",
+        icon: Banknote
+      },
+      { 
+        id: "hsa-trading",
+        nameEn: "HSA Trading Company", 
+        nameAr: "شركة هائل سعيد للتجارة", 
+        sector: "trading",
+        ownership: "100%",
+        descEn: "Import/export and distribution",
+        descAr: "الاستيراد والتصدير والتوزيع",
+        icon: ShoppingCart
+      },
+      { 
+        id: "ycgs",
+        nameEn: "Yemen Company for Ghee & Soap (YCGS)", 
+        nameAr: "الشركة اليمنية للسمن والصابون", 
+        sector: "manufacturing",
+        ownership: "100%",
+        descEn: "Largest FMCG manufacturer in Yemen",
+        descAr: "أكبر مصنع للسلع الاستهلاكية في اليمن",
+        icon: Factory
+      },
+      { 
+        id: "nfi",
+        nameEn: "National Food Industries", 
+        nameAr: "الصناعات الغذائية الوطنية", 
+        sector: "food",
+        ownership: "100%",
+        descEn: "Food processing and packaging",
+        descAr: "تصنيع وتعبئة المواد الغذائية",
+        icon: Wheat
+      },
+      { 
+        id: "aujan",
+        nameEn: "Aujan Industries Yemen", 
+        nameAr: "صناعات أوجان اليمن", 
+        sector: "beverages",
+        ownership: "Joint venture",
+        descEn: "Beverage manufacturing (Rani, Barbican)",
+        descAr: "تصنيع المشروبات (راني، باربيكان)",
+        icon: Factory
+      },
+      { 
+        id: "hsa-real-estate",
+        nameEn: "HSA Real Estate", 
+        nameAr: "هائل سعيد للعقارات", 
+        sector: "real_estate",
+        ownership: "100%",
+        descEn: "Commercial and residential development",
+        descAr: "التطوير التجاري والسكني",
+        icon: Building
+      },
+      { 
+        id: "yemen-mobile",
+        nameEn: "Yemen Mobile (Y)", 
+        nameAr: "يمن موبايل", 
+        sector: "telecom",
+        ownership: "Minority stake",
+        descEn: "Mobile telecommunications",
+        descAr: "الاتصالات المتنقلة",
+        icon: Smartphone
+      },
     ],
     keyIndicators: [
-      { labelEn: "Market Share (Food)", labelAr: "حصة السوق (الغذاء)", value: "~40%" },
-      { labelEn: "Banking Assets", labelAr: "أصول مصرفية", value: "YER 850B" },
-      { labelEn: "Import Volume", labelAr: "حجم الاستيراد", value: "$800M/yr" },
+      { labelEn: "Market Share (Food/FMCG)", labelAr: "حصة السوق (الغذاء/السلع الاستهلاكية)", value: "~40%", confidence: "B" },
+      { labelEn: "Banking Assets (YKB)", labelAr: "الأصول المصرفية (بنك اليمن والكويت)", value: "YER 850B", confidence: "A" },
+      { labelEn: "Annual Import Volume", labelAr: "حجم الاستيراد السنوي", value: "$800M", confidence: "C" },
+      { labelEn: "Employment (Direct)", labelAr: "التوظيف (مباشر)", value: "15,000+", confidence: "B" },
+      { labelEn: "Distribution Network", labelAr: "شبكة التوزيع", value: "All 22 governorates", confidence: "A" },
     ],
     riskFactors: [
-      { en: "Sanctions exposure through banking operations", ar: "التعرض للعقوبات من خلال العمليات المصرفية" },
-      { en: "Supply chain disruptions due to conflict", ar: "اضطرابات سلسلة التوريد بسبب الصراع" },
+      { en: "Sanctions exposure through banking operations and international transfers", ar: "التعرض للعقوبات من خلال العمليات المصرفية والتحويلات الدولية", severity: "high" },
+      { en: "Supply chain disruptions due to ongoing conflict and port blockades", ar: "اضطرابات سلسلة التوريد بسبب الصراع المستمر وحصار الموانئ", severity: "high" },
+      { en: "Currency volatility affecting import costs and pricing", ar: "تقلبات العملة التي تؤثر على تكاليف الاستيراد والتسعير", severity: "medium" },
+      { en: "Regulatory uncertainty across divided governance structures", ar: "عدم اليقين التنظيمي عبر هياكل الحوكمة المنقسمة", severity: "medium" },
+    ],
+    timeline: [
+      { year: 1938, eventEn: "Founded by Hayel Saeed Anam in Taiz", eventAr: "تأسست على يد هائل سعيد أنعم في تعز" },
+      { year: 1971, eventEn: "Established Yemen Company for Ghee & Soap", eventAr: "تأسيس الشركة اليمنية للسمن والصابون" },
+      { year: 1979, eventEn: "Became major shareholder in Yemen Kuwait Bank", eventAr: "أصبحت مساهماً رئيسياً في بنك اليمن والكويت" },
+      { year: 2000, eventEn: "Expanded into telecommunications sector", eventAr: "التوسع في قطاع الاتصالات" },
+      { year: 2015, eventEn: "Operations disrupted by civil war", eventAr: "تعطلت العمليات بسبب الحرب الأهلية" },
+      { year: 2020, eventEn: "Adapted supply chains to conflict conditions", eventAr: "تكييف سلاسل التوريد مع ظروف الصراع" },
     ],
     icon: Building2,
-    color: "bg-blue-100 text-blue-700"
+    color: "bg-blue-100 text-blue-700",
+    featured: true
   },
   {
     id: "cby-aden",
@@ -80,27 +168,33 @@ const entities = [
     employeesAr: "2,000+",
     revenueEn: "N/A",
     revenueAr: "غير متاح",
-    descriptionEn: "The internationally recognized central bank of Yemen, relocated to Aden in 2016. Responsible for monetary policy, currency issuance, and banking supervision in government-controlled areas.",
-    descriptionAr: "البنك المركزي المعترف به دولياً في اليمن، انتقل إلى عدن في 2016. مسؤول عن السياسة النقدية وإصدار العملة والرقابة المصرفية في المناطق الخاضعة للحكومة.",
+    descriptionEn: "The internationally recognized central bank of Yemen, relocated to Aden in 2016. Responsible for monetary policy, currency issuance, and banking supervision in government-controlled areas. Maintains relationships with international financial institutions.",
+    descriptionAr: "البنك المركزي المعترف به دولياً في اليمن، انتقل إلى عدن في 2016. مسؤول عن السياسة النقدية وإصدار العملة والرقابة المصرفية في المناطق الخاضعة لسيطرة الحكومة. يحافظ على العلاقات مع المؤسسات المالية الدولية.",
     subsidiaries: [],
     keyIndicators: [
-      { labelEn: "Foreign Reserves", labelAr: "الاحتياطيات الأجنبية", value: "$1.2B" },
-      { labelEn: "Exchange Rate", labelAr: "سعر الصرف", value: "2,070 YER/USD" },
-      { labelEn: "Money Supply (M2)", labelAr: "عرض النقود (M2)", value: "YER 7.2T" },
+      { labelEn: "Foreign Reserves", labelAr: "الاحتياطيات الأجنبية", value: "$1.2B (est.)", confidence: "C" },
+      { labelEn: "Currency in Circulation", labelAr: "العملة المتداولة", value: "YER 2.8T", confidence: "B" },
+      { labelEn: "Licensed Banks", labelAr: "البنوك المرخصة", value: "18", confidence: "A" },
     ],
     riskFactors: [
-      { en: "Limited foreign reserves", ar: "احتياطيات أجنبية محدودة" },
-      { en: "Currency depreciation pressure", ar: "ضغوط انخفاض قيمة العملة" },
+      { en: "Limited foreign reserves constraining monetary policy", ar: "محدودية الاحتياطيات الأجنبية تقيد السياسة النقدية", severity: "high" },
+      { en: "Dual central bank system creating monetary fragmentation", ar: "نظام البنك المركزي المزدوج يخلق تجزئة نقدية", severity: "high" },
     ],
-    icon: Banknote,
-    color: "bg-green-100 text-green-700"
+    timeline: [
+      { year: 1971, eventEn: "Central Bank of Yemen established in Sana'a", eventAr: "تأسيس البنك المركزي اليمني في صنعاء" },
+      { year: 2016, eventEn: "Headquarters relocated to Aden by presidential decree", eventAr: "نقل المقر الرئيسي إلى عدن بمرسوم رئاسي" },
+      { year: 2018, eventEn: "Saudi deposit of $2B to stabilize currency", eventAr: "وديعة سعودية بقيمة 2 مليار دولار لتثبيت العملة" },
+    ],
+    icon: Landmark,
+    color: "bg-green-100 text-green-700",
+    featured: true
   },
   {
     id: "cby-sanaa",
     nameEn: "Central Bank of Yemen (Sana'a)",
     nameAr: "البنك المركزي اليمني (صنعاء)",
     typeEn: "Central Bank (De facto)",
-    typeAr: "بنك مركزي (فعلي)",
+    typeAr: "بنك مركزي (بحكم الأمر الواقع)",
     sectorEn: "Banking & Finance",
     sectorAr: "القطاع المصرفي والمالي",
     foundedYear: 1971,
@@ -109,258 +203,319 @@ const entities = [
     employeesAr: "3,000+",
     revenueEn: "N/A",
     revenueAr: "غير متاح",
-    descriptionEn: "The de facto central bank operating in Houthi-controlled areas. Maintains separate monetary policy and has issued currency notes not recognized by the Aden-based CBY.",
-    descriptionAr: "البنك المركزي الفعلي العامل في المناطق الخاضعة للحوثيين. يحافظ على سياسة نقدية منفصلة وأصدر أوراق نقدية غير معترف بها من قبل البنك المركزي في عدن.",
+    descriptionEn: "The de facto central bank operating in Houthi-controlled areas. Continues to operate from the original headquarters in Sana'a. Issues currency and manages banking operations in northern Yemen, though not internationally recognized.",
+    descriptionAr: "البنك المركزي بحكم الأمر الواقع العامل في المناطق الخاضعة لسيطرة الحوثيين. يواصل العمل من المقر الأصلي في صنعاء. يصدر العملة ويدير العمليات المصرفية في شمال اليمن، رغم عدم الاعتراف الدولي.",
     subsidiaries: [],
     keyIndicators: [
-      { labelEn: "Exchange Rate", labelAr: "سعر الصرف", value: "535 YER/USD" },
-      { labelEn: "Currency Control", labelAr: "التحكم بالعملة", value: "Strict" },
-      { labelEn: "Banking Licenses", labelAr: "تراخيص مصرفية", value: "18 banks" },
+      { labelEn: "Old Currency Notes", labelAr: "الأوراق النقدية القديمة", value: "Only pre-2017 accepted", confidence: "A" },
+      { labelEn: "Exchange Rate (unofficial)", labelAr: "سعر الصرف (غير رسمي)", value: "YER 530/USD", confidence: "B" },
     ],
     riskFactors: [
-      { en: "International sanctions risk", ar: "مخاطر العقوبات الدولية" },
-      { en: "Limited international recognition", ar: "اعتراف دولي محدود" },
+      { en: "International isolation and sanctions risk", ar: "العزلة الدولية ومخاطر العقوبات", severity: "high" },
+      { en: "Currency fragmentation with Aden-issued notes", ar: "تجزئة العملة مع الأوراق النقدية الصادرة من عدن", severity: "high" },
     ],
-    icon: Banknote,
-    color: "bg-amber-100 text-amber-700"
+    timeline: [
+      { year: 2016, eventEn: "Split from Aden branch after government relocation", eventAr: "الانفصال عن فرع عدن بعد انتقال الحكومة" },
+      { year: 2019, eventEn: "Banned new currency notes issued by Aden CBY", eventAr: "حظر الأوراق النقدية الجديدة الصادرة من البنك المركزي في عدن" },
+    ],
+    icon: Landmark,
+    color: "bg-red-100 text-red-700",
+    featured: true
   },
   {
     id: "aden-port",
     nameEn: "Aden Container Terminal",
     nameAr: "محطة حاويات عدن",
-    typeEn: "Port Operator",
-    typeAr: "مشغل ميناء",
+    typeEn: "Port Authority",
+    typeAr: "هيئة ميناء",
     sectorEn: "Logistics & Trade",
-    sectorAr: "اللوجستيات والتجارة",
+    sectorAr: "الخدمات اللوجستية والتجارة",
     foundedYear: 1999,
     headquarters: "Aden",
     employeesEn: "1,500+",
     employeesAr: "1,500+",
     revenueEn: "$150M (est.)",
     revenueAr: "150 مليون دولار (تقدير)",
-    descriptionEn: "Yemen's primary container port, handling the majority of the country's imports. Critical infrastructure for humanitarian aid delivery and commercial trade.",
-    descriptionAr: "ميناء الحاويات الرئيسي في اليمن، يتعامل مع غالبية واردات البلاد. بنية تحتية حيوية لتوصيل المساعدات الإنسانية والتجارة التجارية.",
+    descriptionEn: "Yemen's primary container port, strategically located at the entrance to the Red Sea. Operated by DP World until 2012, now under government management. Critical for humanitarian aid and commercial imports.",
+    descriptionAr: "الميناء الرئيسي للحاويات في اليمن، يقع استراتيجياً عند مدخل البحر الأحمر. كان يديره موانئ دبي العالمية حتى 2012، والآن تحت إدارة الحكومة. حيوي للمساعدات الإنسانية والواردات التجارية.",
     subsidiaries: [],
     keyIndicators: [
-      { labelEn: "Container Throughput", labelAr: "إنتاجية الحاويات", value: "450K TEU/yr" },
-      { labelEn: "Import Share", labelAr: "حصة الاستيراد", value: "~60%" },
-      { labelEn: "Capacity Utilization", labelAr: "استخدام الطاقة", value: "75%" },
+      { labelEn: "Container Throughput", labelAr: "حركة الحاويات", value: "450,000 TEU/yr", confidence: "B" },
+      { labelEn: "Vessel Calls", labelAr: "رسو السفن", value: "~800/yr", confidence: "B" },
     ],
     riskFactors: [
-      { en: "Security threats from conflict", ar: "تهديدات أمنية من الصراع" },
-      { en: "Infrastructure damage", ar: "أضرار البنية التحتية" },
+      { en: "Security concerns affecting shipping insurance", ar: "مخاوف أمنية تؤثر على تأمين الشحن", severity: "high" },
+      { en: "Infrastructure damage from conflict", ar: "أضرار البنية التحتية من الصراع", severity: "medium" },
     ],
+    timeline: [],
     icon: Ship,
-    color: "bg-cyan-100 text-cyan-700"
+    color: "bg-cyan-100 text-cyan-700",
+    featured: false
   },
   {
-    id: "yemenmobile",
-    nameEn: "Yemen Mobile (TeleYemen)",
-    nameAr: "يمن موبايل (تيليمن)",
+    id: "yemen-mobile",
+    nameEn: "Yemen Mobile (Y)",
+    nameAr: "يمن موبايل",
     typeEn: "Telecommunications",
     typeAr: "اتصالات",
     sectorEn: "Telecommunications",
     sectorAr: "الاتصالات",
-    foundedYear: 2000,
+    foundedYear: 2004,
     headquarters: "Sana'a",
-    employeesEn: "3,000+",
-    employeesAr: "3,000+",
-    revenueEn: "$400M (est.)",
-    revenueAr: "400 مليون دولار (تقدير)",
-    descriptionEn: "State-owned telecommunications company providing mobile and fixed-line services across Yemen. Operates under Houthi control in northern areas.",
-    descriptionAr: "شركة اتصالات مملوكة للدولة تقدم خدمات الهاتف المحمول والثابت في جميع أنحاء اليمن. تعمل تحت سيطرة الحوثيين في المناطق الشمالية.",
+    employeesEn: "2,500+",
+    employeesAr: "2,500+",
+    revenueEn: "$300M (est.)",
+    revenueAr: "300 مليون دولار (تقدير)",
+    descriptionEn: "One of Yemen's major mobile network operators, providing GSM and 3G services. Operates primarily in northern Yemen with significant market share.",
+    descriptionAr: "أحد مشغلي شبكات الهاتف المحمول الرئيسيين في اليمن، يوفر خدمات GSM و3G. يعمل بشكل رئيسي في شمال اليمن مع حصة سوقية كبيرة.",
     subsidiaries: [],
     keyIndicators: [
-      { labelEn: "Subscribers", labelAr: "المشتركون", value: "12M+" },
-      { labelEn: "Network Coverage", labelAr: "تغطية الشبكة", value: "85%" },
-      { labelEn: "Market Share", labelAr: "حصة السوق", value: "~55%" },
+      { labelEn: "Subscribers", labelAr: "المشتركون", value: "5M+", confidence: "C" },
+      { labelEn: "Network Coverage", labelAr: "تغطية الشبكة", value: "~60% population", confidence: "C" },
     ],
     riskFactors: [
-      { en: "Infrastructure damage from conflict", ar: "أضرار البنية التحتية من الصراع" },
-      { en: "Regulatory uncertainty", ar: "عدم اليقين التنظيمي" },
+      { en: "Infrastructure damage from airstrikes", ar: "أضرار البنية التحتية من الغارات الجوية", severity: "high" },
+      { en: "Fuel shortages affecting tower operations", ar: "نقص الوقود يؤثر على تشغيل الأبراج", severity: "medium" },
     ],
+    timeline: [],
     icon: Smartphone,
-    color: "bg-purple-100 text-purple-700"
+    color: "bg-purple-100 text-purple-700",
+    featured: false
+  },
+  {
+    id: "safer-oil",
+    nameEn: "Safer Exploration & Production",
+    nameAr: "صافر للاستكشاف والإنتاج",
+    typeEn: "Oil & Gas",
+    typeAr: "النفط والغاز",
+    sectorEn: "Energy",
+    sectorAr: "الطاقة",
+    foundedYear: 1997,
+    headquarters: "Sana'a",
+    employeesEn: "1,000+",
+    employeesAr: "1,000+",
+    revenueEn: "Minimal (operations suspended)",
+    revenueAr: "الحد الأدنى (العمليات معلقة)",
+    descriptionEn: "Yemen's national oil company responsible for exploration and production. Operations largely suspended since 2015 due to conflict. The Safer FSO tanker remains a major environmental concern.",
+    descriptionAr: "شركة النفط الوطنية اليمنية المسؤولة عن الاستكشاف والإنتاج. العمليات معلقة إلى حد كبير منذ 2015 بسبب الصراع. تظل ناقلة صافر العائمة مصدر قلق بيئي كبير.",
+    subsidiaries: [],
+    keyIndicators: [
+      { labelEn: "Pre-war Production", labelAr: "الإنتاج قبل الحرب", value: "125,000 bpd", confidence: "A" },
+      { labelEn: "Current Production", labelAr: "الإنتاج الحالي", value: "<15,000 bpd", confidence: "C" },
+    ],
+    riskFactors: [
+      { en: "Safer FSO environmental disaster risk", ar: "خطر كارثة بيئية من ناقلة صافر العائمة", severity: "critical" },
+      { en: "Infrastructure damage and looting", ar: "أضرار البنية التحتية والنهب", severity: "high" },
+    ],
+    timeline: [],
+    icon: Fuel,
+    color: "bg-orange-100 text-orange-700",
+    featured: false
   },
 ];
 
-// Entity types for filtering
+// Entity type filters
 const entityTypes = [
-  { valueEn: "all", valueAr: "الكل", labelEn: "All Types", labelAr: "جميع الأنواع" },
-  { valueEn: "conglomerate", valueAr: "تكتل", labelEn: "Conglomerates", labelAr: "التكتلات" },
-  { valueEn: "bank", valueAr: "بنك", labelEn: "Banks", labelAr: "البنوك" },
-  { valueEn: "port", valueAr: "ميناء", labelEn: "Ports & Logistics", labelAr: "الموانئ واللوجستيات" },
-  { valueEn: "telecom", valueAr: "اتصالات", labelEn: "Telecommunications", labelAr: "الاتصالات" },
+  { value: "all", labelEn: "All Types", labelAr: "جميع الأنواع" },
+  { value: "conglomerate", labelEn: "Conglomerates", labelAr: "التكتلات" },
+  { value: "bank", labelEn: "Banks", labelAr: "البنوك" },
+  { value: "port", labelEn: "Ports & Logistics", labelAr: "الموانئ والخدمات اللوجستية" },
+  { value: "telecom", labelEn: "Telecommunications", labelAr: "الاتصالات" },
+  { value: "energy", labelEn: "Energy", labelAr: "الطاقة" },
 ];
 
 export default function Entities() {
   const { language } = useLanguage();
+  const isArabic = language === "ar";
   const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState("all");
 
+  // Filter entities
   const filteredEntities = entities.filter(entity => {
     const matchesSearch = 
       entity.nameEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      entity.nameAr.includes(searchQuery);
+      entity.nameAr.includes(searchQuery) ||
+      entity.sectorEn.toLowerCase().includes(searchQuery.toLowerCase());
+    
     const matchesType = selectedType === "all" || 
-      entity.typeEn.toLowerCase().includes(selectedType.toLowerCase());
+      entity.typeEn.toLowerCase().includes(selectedType) ||
+      entity.sectorEn.toLowerCase().includes(selectedType);
+    
     return matchesSearch && matchesType;
   });
 
+  const featuredEntities = filteredEntities.filter(e => e.featured);
+  const otherEntities = filteredEntities.filter(e => !e.featured);
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950" dir={isArabic ? "rtl" : "ltr"}>
+      {/* DEV Mode Banner */}
+      <DevModeBanner />
+
       {/* Header */}
       <div className="bg-[#103050] text-white py-12">
         <div className="container">
-          <div className={`${language === 'ar' ? 'text-right' : ''}`}>
-            <Badge className="mb-4 bg-white/20 text-white border-white/30">
-              {language === "ar" ? "ملفات الكيانات" : "Entity Profiles"}
-            </Badge>
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">
-              {language === "ar" 
-                ? "الكيانات الاقتصادية الرئيسية في اليمن"
-                : "Key Economic Entities in Yemen"}
+          <div className="flex items-center gap-3 mb-4">
+            <Network className="h-10 w-10" />
+            <h1 className="text-3xl font-bold">
+              {isArabic ? "ملفات الكيانات" : "Entity Profiles"}
             </h1>
-            <p className="text-white/80 max-w-3xl">
-              {language === "ar"
-                ? "ملفات تعريفية شاملة للشركات والمؤسسات والجهات الفاعلة الرئيسية في الاقتصاد اليمني، بما في ذلك هياكل الملكية والمؤشرات الرئيسية وعوامل المخاطر."
-                : "Comprehensive profiles of major companies, institutions, and key actors in Yemen's economy, including ownership structures, key indicators, and risk factors."}
-            </p>
           </div>
+          <p className="text-white/80 max-w-2xl">
+            {isArabic 
+              ? "استكشف الملفات الشاملة للكيانات الاقتصادية الرئيسية في اليمن، بما في ذلك التكتلات التجارية والبنوك المركزية والبنية التحتية الحيوية."
+              : "Explore comprehensive profiles of key economic entities in Yemen, including commercial conglomerates, central banks, and critical infrastructure."}
+          </p>
         </div>
       </div>
 
-      {/* Search and Filters */}
-      <div className="bg-white dark:bg-gray-900 border-b py-4">
-        <div className="container">
-          <div className={`flex flex-wrap items-center gap-4 ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
-            <div className="relative flex-1 min-w-[250px]">
-              <Search className={`absolute top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 ${language === 'ar' ? 'right-3' : 'left-3'}`} />
-              <Input
-                placeholder={language === "ar" ? "البحث عن كيان..." : "Search entities..."}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className={`${language === 'ar' ? 'pr-10 text-right' : 'pl-10'}`}
-              />
-            </div>
-            <Select value={selectedType} onValueChange={setSelectedType}>
-              <SelectTrigger className="w-[180px]">
-                <Filter className="h-4 w-4 mr-2" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {entityTypes.map((type) => (
-                  <SelectItem key={type.valueEn} value={type.valueEn}>
-                    {language === "ar" ? type.labelAr : type.labelEn}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+      {/* Search & Filters */}
+      <div className="container py-6">
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder={isArabic ? "البحث عن كيان..." : "Search entities..."}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
           </div>
+          <Select value={selectedType} onValueChange={setSelectedType}>
+            <SelectTrigger className="w-full md:w-48">
+              <Filter className="h-4 w-4 mr-2" />
+              <SelectValue placeholder={isArabic ? "نوع الكيان" : "Entity Type"} />
+            </SelectTrigger>
+            <SelectContent>
+              {entityTypes.map((type) => (
+                <SelectItem key={type.value} value={type.value}>
+                  {isArabic ? type.labelAr : type.labelEn}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
-      </div>
 
-      {/* Entity Grid */}
-      <div className="container py-8">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredEntities.map((entity) => (
-            <Card 
-              key={entity.id} 
-              className="hover:shadow-lg transition-shadow cursor-pointer group"
-              onClick={() => setLocation(`/entities/${entity.id}`)}
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className={`p-3 rounded-lg ${entity.color}`}>
-                    <entity.icon className="h-6 w-6" />
-                  </div>
-                  <Badge variant="outline" className="text-xs">
-                    {language === "ar" ? entity.typeAr : entity.typeEn}
-                  </Badge>
-                </div>
-                <CardTitle className="text-lg mt-3 group-hover:text-[#107040] transition-colors">
-                  {language === "ar" ? entity.nameAr : entity.nameEn}
-                </CardTitle>
-                <p className="text-sm text-gray-500">
-                  {language === "ar" ? entity.sectorAr : entity.sectorEn}
-                </p>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3 mb-4">
-                  {language === "ar" ? entity.descriptionAr : entity.descriptionEn}
-                </p>
-                
-                {/* Key Indicators Preview */}
-                <div className="grid grid-cols-2 gap-2 mb-4">
-                  {entity.keyIndicators.slice(0, 2).map((indicator, index) => (
-                    <div key={index} className="bg-gray-50 dark:bg-gray-800 rounded p-2">
-                      <div className="text-xs text-gray-500">
-                        {language === "ar" ? indicator.labelAr : indicator.labelEn}
+        {/* Featured Entities */}
+        {featuredEntities.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-xl font-bold text-[#103050] dark:text-white mb-4">
+              {isArabic ? "الكيانات الرئيسية" : "Key Entities"}
+            </h2>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {featuredEntities.map((entity) => (
+                <Card key={entity.id} className="hover:shadow-lg transition-shadow cursor-pointer group">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className={`p-3 rounded-lg ${entity.color}`}>
+                        <entity.icon className="h-6 w-6" />
                       </div>
-                      <div className="font-semibold text-[#103050] dark:text-white">
-                        {indicator.value}
+                      <div className="flex items-center gap-2">
+                        <DataQualityBadge quality="dev" size="sm" />
+                        <Badge variant="outline">
+                          {isArabic ? entity.typeAr : entity.typeEn}
+                        </Badge>
                       </div>
                     </div>
-                  ))}
-                </div>
+                    <CardTitle className="mt-4 group-hover:text-[#107040] transition-colors">
+                      {isArabic ? entity.nameAr : entity.nameEn}
+                    </CardTitle>
+                    <CardDescription>
+                      {isArabic ? entity.sectorAr : entity.sectorEn} • {entity.headquarters}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3 mb-4">
+                      {isArabic ? entity.descriptionAr : entity.descriptionEn}
+                    </p>
+                    
+                    {/* Key Indicators Preview */}
+                    <div className="space-y-2 mb-4">
+                      {entity.keyIndicators.slice(0, 2).map((indicator, idx) => (
+                        <div key={idx} className="flex items-center justify-between text-sm">
+                          <span className="text-gray-500">
+                            {isArabic ? indicator.labelAr : indicator.labelEn}
+                          </span>
+                          <span className="font-medium">{indicator.value}</span>
+                        </div>
+                      ))}
+                    </div>
 
-                {/* Risk Indicator */}
-                {entity.riskFactors.length > 0 && (
-                  <div className="flex items-center gap-2 text-amber-600 text-sm">
-                    <AlertTriangle className="h-4 w-4" />
-                    <span>{entity.riskFactors.length} {language === "ar" ? "عوامل خطر" : "risk factors"}</span>
-                  </div>
-                )}
+                    {/* Risk Factors Preview */}
+                    {entity.riskFactors.length > 0 && (
+                      <div className="flex items-center gap-2 text-sm text-amber-600 mb-4">
+                        <AlertTriangle className="h-4 w-4" />
+                        <span>{entity.riskFactors.length} {isArabic ? "عوامل خطر" : "risk factors"}</span>
+                      </div>
+                    )}
 
-                <Button variant="ghost" className="w-full mt-4 group-hover:bg-[#107040]/10 group-hover:text-[#107040]">
-                  {language === "ar" ? "عرض الملف الكامل" : "View Full Profile"}
-                  <ChevronRight className={`h-4 w-4 ml-2 ${language === 'ar' ? 'rotate-180' : ''}`} />
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                    <Link href={`/entities/${entity.id}`}>
+                      <Button variant="outline" className="w-full group-hover:bg-[#107040] group-hover:text-white transition-colors">
+                        {isArabic ? "عرض الملف الكامل" : "View Full Profile"}
+                        <ChevronRight className="h-4 w-4 ml-2" />
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
 
+        {/* Other Entities */}
+        {otherEntities.length > 0 && (
+          <div>
+            <h2 className="text-xl font-bold text-[#103050] dark:text-white mb-4">
+              {isArabic ? "كيانات أخرى" : "Other Entities"}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {otherEntities.map((entity) => (
+                <Card key={entity.id} className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-3">
+                      <div className={`p-2 rounded-lg ${entity.color}`}>
+                        <entity.icon className="h-5 w-5" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-1">
+                          <h3 className="font-medium">
+                            {isArabic ? entity.nameAr : entity.nameEn}
+                          </h3>
+                          <DataQualityBadge quality="dev" size="sm" />
+                        </div>
+                        <p className="text-sm text-gray-500 mb-2">
+                          {isArabic ? entity.sectorAr : entity.sectorEn}
+                        </p>
+                        <Link href={`/entities/${entity.id}`}>
+                          <Button variant="ghost" size="sm" className="p-0 h-auto text-[#107040]">
+                            {isArabic ? "عرض الملف" : "View Profile"}
+                            <ChevronRight className="h-4 w-4 ml-1" />
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* No Results */}
         {filteredEntities.length === 0 && (
-          <div className="text-center py-12">
-            <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-              {language === "ar" ? "لم يتم العثور على كيانات" : "No entities found"}
+          <Card className="p-12 text-center">
+            <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-600 mb-2">
+              {isArabic ? "لم يتم العثور على كيانات" : "No entities found"}
             </h3>
             <p className="text-gray-500">
-              {language === "ar" 
+              {isArabic 
                 ? "جرب تعديل معايير البحث أو الفلتر"
                 : "Try adjusting your search or filter criteria"}
             </p>
-          </div>
-        )}
-      </div>
-
-      {/* Info Section */}
-      <div className="bg-white dark:bg-gray-900 border-t py-12">
-        <div className="container">
-          <Card className="bg-[#103050]/5 border-[#103050]/20">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <Info className="h-6 w-6 text-[#103050] mt-1" />
-                <div>
-                  <h3 className="font-semibold text-[#103050] dark:text-white mb-2">
-                    {language === "ar" ? "حول ملفات الكيانات" : "About Entity Profiles"}
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {language === "ar"
-                      ? "تم تجميع ملفات الكيانات من مصادر متعددة بما في ذلك السجلات الحكومية والتقارير المالية والمصادر المفتوحة. يتم تحديث المعلومات بشكل دوري ويتم التحقق منها من خلال منهجية YETO للتحقق من البيانات."
-                      : "Entity profiles are compiled from multiple sources including government registries, financial reports, and open sources. Information is updated periodically and verified through YETO's data verification methodology."}
-                  </p>
-                  <Button variant="link" className="text-[#107040] p-0 h-auto mt-2">
-                    {language === "ar" ? "عرض المنهجية" : "View Methodology"}
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
           </Card>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
+import InsightsTicker from "@/components/InsightsTicker";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   ArrowRight, 
@@ -28,6 +29,7 @@ import {
   Package
 } from "lucide-react";
 import { Link } from "wouter";
+import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
 
 export default function Home() {
   const { language } = useLanguage();
@@ -184,6 +186,12 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
+      {/* DEV Mode Banner */}
+      <DevModeBanner />
+      
+      {/* Insights Ticker - Sticky bar with rotating updates */}
+      <InsightsTicker />
+      
       {/* Hero Section - Matching mockup exactly */}
       <section 
         className="relative min-h-[600px] flex items-center"

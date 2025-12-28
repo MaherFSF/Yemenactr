@@ -299,3 +299,60 @@
 - [x] Build API key generation interface
 - [x] Add usage tracking and rate limiting display
 - [ ] Implement API key validation middleware (backend)ing per tier
+
+
+## Phase 37: World-Class Implementation (Master Build Exact)
+
+### Insights Ticker
+- [x] Create InsightsTicker component with rotating evidence-backed updates
+- [x] Add sticky ticker bar to homepage
+- [x] Implement auto-rotation with pause on hover
+- [x] Link each insight to its Evidence Pack
+- [ ] Add InsightsTicker to dashboard page
+
+### Evidence Pack Integration
+- [x] Add "Show me how you know this" button to all KPI cards
+- [x] Create enhanced EvidencePackButton component with tabs
+- [x] Create DataQualityBadge component for DEV labels
+- [x] Add DevModeBanner component for development mode
+- [x] Implement Evidence Pack modal with full provenance display
+- [ ] Add Evidence Pack buttons to all charts
+- [ ] Add Evidence Pack links to all data tables
+### Admin Console Enhancement
+- [x] Add ingestion health dashboard with real-time status
+- [x] Implement QA alerts panel with severity levels
+- [x] Add coverage heatmap visualization
+- [x] Create data source health monitoring
+- [x] Add pending submissions review workflows panel for common admin tasks
+### Entity Profiles Complete
+- [x] Add HSA Group subsidiaries (YCGS, NFI, Aujan, YKB, etc.)
+- [x] Add entity timeline with key events
+- [x] Link entities to related indicators
+- [x] Add risk factors with severity levels
+- [x] Add confidence ratings to indicators
+- [ ] Add ownership structure visualization (future enhancement)ces
+
+### Time-Travel View
+- [x] Implement vintage selector for historical data views
+- [x] Add "what was known when" query interface
+- [x] Create TimeTravelView component with timeline
+- [x] Add TimeTravelBadge for inline use
+- [ ] Store data vintages with timestamps
+- [ ] Display vintage metadata on all data points
+
+### DEV Labels
+- [ ] Add DEV badge to all synthetic/placeholder data
+- [ ] Implement data quality indicator badges (Verified/Provisional/Experimental)
+- [ ] Add last updated timestamps to all data displays
+
+### Validation Scripts
+- [ ] Create Makefile with check command
+- [ ] Create scripts/req_coverage_check.py
+- [ ] Create scripts/mockup_coverage_check.py
+- [ ] Implement E2E tests with Playwright
+
+### Final Polish
+- [ ] Verify all pages have Arabic and English versions
+- [ ] Ensure all numeric values are consistent across translations
+- [ ] Add contact email (yeto@causewaygrp.com) to footer
+- [ ] Remove any physical address references
