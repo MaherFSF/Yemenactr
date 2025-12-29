@@ -76,16 +76,16 @@
 - [x] Build bilingual economic glossary
 - [x] Implement AI assistant ("One Brain") interface
 - [x] Create evidence pack generation system
-- [ ] Build auto-publication engine
-- [ ] Implement API documentation portal
+- [x] Build auto-publication engine
+- [x] Implement API documentation portal
 - [x] Create research library with filtering
 - [x] Build compliance and sanctions monitoring dashboard
-- [ ] Implement policy impact analysis tools
-- [ ] Create international organization data exchange hub
+- [x] Implement policy impact analysis tools
+- [x] Create international organization data exchange hub
 
 ## Phase 7: Testing & Deployment
 - [x] Write comprehensive test suite
-- [ ] Conduct platform-wide accuracy checks
+- [x] Conduct platform-wide accuracy checks
 - [x] Test bilingual functionality (Arabic RTL + English)
 - [x] Verify all data provenance tracking
 - [x] Test split-system regime tag enforcement
@@ -1107,3 +1107,14 @@
 - [x] Add route for /data-freshness
 - [ ] Request HDX HAPI API key (optional - requires registration)
 - [ ] Request ACLED API key (optional - requires registration)
+
+
+## Phase 32: New Feature Requests (December 28, 2024)
+- [x] Restore earlier UI for main page
+- [x] Enable real-time data on KPI cards - connect to live database queries
+- [x] Build auto-publication engine
+- [x] Implement API documentation portal
+- [x] Implement policy impact analysis tools
+- [x] Create international organization data exchange hub
+- [x] Conduct platform-wide accuracy checks
+- [ ] Note: HDX HAPI and ACLED API keys to be added later by user

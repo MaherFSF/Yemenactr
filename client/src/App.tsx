@@ -52,6 +52,10 @@ import ComparisonTool from "./pages/ComparisonTool";
 import IndicatorCatalog from "./pages/IndicatorCatalog";
 import AdminMonitoring from "./pages/AdminMonitoring";
 import DataFreshness from "./pages/DataFreshness";
+import ApiDocs from "./pages/ApiDocs";
+import PolicyImpact from "./pages/PolicyImpact";
+import DataExchangeHub from "./pages/DataExchangeHub";
+import AccuracyDashboard from "./pages/AccuracyDashboard";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -103,7 +107,11 @@ function Router() {
       <Route path={"/legal/accessibility"} component={Legal} />
       <Route path={"/admin"} component={AdminPortal} />
       <Route path={"/admin/monitoring"} component={AdminMonitoring} />
-      <Route path={"/data-freshness"} component={DataFreshness} />
+      <Route path="/data-freshness" component={DataFreshness} />
+      <Route path="/api-docs" component={ApiDocs} />
+      <Route path="/policy-impact" component={PolicyImpact} />
+      <Route path="/data-exchange" component={DataExchangeHub} />
+      <Route path="/accuracy" component={AccuracyDashboard} />
       <Route path={"/partner"} component={PartnerPortal} />
       <Route path={"/ai-assistant"} component={AIAssistant} />
       <Route path={"/scenario-simulator"} component={ScenarioSimulator} />

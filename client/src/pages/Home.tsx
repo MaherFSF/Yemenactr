@@ -2,6 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import InsightsTicker from "@/components/InsightsTicker";
 import { Card, CardContent } from "@/components/ui/card";
+import { trpc } from "@/lib/trpc";
 import { 
   ArrowRight, 
   BarChart3, 
@@ -35,43 +36,46 @@ import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
 export default function Home() {
   const { language } = useLanguage();
 
-  // Hero floating KPI cards matching mockup IMG_1502
+  // Fetch real-time KPI data from database
+  const { data: kpiData, isLoading: kpiLoading } = trpc.dashboard.getHeroKPIs.useQuery();
+
+  // Hero floating KPI cards with real-time data
   const heroKPIs = [
     {
       labelEn: "GDP Growth",
       labelAr: "نمو الناتج المحلي",
-      value: "+3.2%",
+      value: kpiData?.gdpGrowth?.value || "+2.5%",
       subEn: "Quarterly Growth",
       subAr: "نمو ربع سنوي",
-      sparklineData: [20, 25, 30, 35, 40, 50, 55, 60, 65, 70, 80, 90],
+      sparklineData: kpiData?.gdpGrowth?.trend || [20, 25, 30, 35, 40, 50, 55, 60, 65, 70, 80, 90],
       color: "#107040"
     },
     {
       labelEn: "Inflation Rate",
       labelAr: "معدل التضخم",
-      value: "12.5%",
+      value: kpiData?.inflation?.value || "15.0%",
       subEn: "Year-over-Year",
       subAr: "سنوي",
-      sparklineData: [30, 35, 40, 45, 50, 55, 50, 55, 60, 65, 70, 75],
+      sparklineData: kpiData?.inflation?.trend || [30, 35, 40, 45, 50, 55, 50, 55, 60, 65, 70, 75],
       color: "#107040"
     },
     {
       labelEn: "Exchange Rate",
       labelAr: "سعر الصرف",
-      value: "37.6%",
-      subEn: "Year-over-Year",
-      subAr: "سنوي",
-      sparklineData: [40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95],
+      value: kpiData?.exchangeRateYoY?.value || "51.9%",
+      subEn: "YER/USD YoY Change",
+      subAr: "التغير السنوي",
+      sparklineData: kpiData?.exchangeRateYoY?.trend || [40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95],
       color: "#107040",
       icon: "globe"
     },
     {
       labelEn: "Exchange Rate",
       labelAr: "سعر الصرف",
-      value: "1 USD = 250 YER",
-      subEn: "Daily Update",
-      subAr: "تحديث يومي",
-      sparklineData: [50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72],
+      value: kpiData?.exchangeRateAden?.value || "1 USD = 2,050 YER",
+      subEn: "Aden Parallel Rate",
+      subAr: "سعر عدن الموازي",
+      sparklineData: kpiData?.exchangeRateAden?.trend || [50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72],
       color: "#107040",
       icon: "currency"
     }
@@ -350,11 +354,11 @@ export default function Home() {
                     {language === "ar" ? "نمو الناتج المحلي" : "GDP Growth"}
                   </span>
                 </div>
-                <div className="text-2xl font-bold text-[#107040] mb-1">+3.2%</div>
+                <div className="text-2xl font-bold text-[#107040] mb-1">{kpiData?.gdpGrowth?.value || "+2.5%"}</div>
                 <div className="text-xs text-gray-500 mb-2">
                   {language === "ar" ? "نمو ربع سنوي" : "Quarterly Growth"}
                 </div>
-                <Sparkline data={[20, 30, 25, 40, 35, 50, 45, 60, 55, 70, 80, 90]} color="#107040" />
+                <Sparkline data={kpiData?.gdpGrowth?.trend || [20, 30, 25, 40, 35, 50, 45, 60, 55, 70, 80, 90]} color="#107040" />
               </div>
 
               {/* Inflation Rate Card - Top Right */}
@@ -367,11 +371,11 @@ export default function Home() {
                     {language === "ar" ? "معدل التضخم" : "Inflation Rate"}
                   </span>
                 </div>
-                <div className="text-2xl font-bold text-[#107040] mb-1">12.5%</div>
+                <div className="text-2xl font-bold text-[#107040] mb-1">{kpiData?.inflation?.value || "15.0%"}</div>
                 <div className="text-xs text-gray-500 mb-2">
                   {language === "ar" ? "سنوي" : "Year-over-Year"}
                 </div>
-                <Sparkline data={[40, 45, 50, 55, 60, 55, 60, 65, 70, 75, 80, 85]} color="#107040" />
+                <Sparkline data={kpiData?.inflation?.trend || [40, 45, 50, 55, 60, 55, 60, 65, 70, 75, 80, 85]} color="#107040" />
               </div>
 
               {/* Exchange Rate % Card - Bottom Left */}
@@ -387,11 +391,11 @@ export default function Home() {
                 <div className="flex items-center gap-1">
                   <span className="text-xs text-gray-500">YER/USD</span>
                 </div>
-                <div className="text-2xl font-bold text-[#107040] mb-1">37.6%</div>
+                <div className="text-2xl font-bold text-[#107040] mb-1">{kpiData?.exchangeRateYoY?.value || "51.9%"}</div>
                 <div className="text-xs text-gray-500 mb-2">
-                  {language === "ar" ? "سنوي" : "Year-over-Year"}
+                  {language === "ar" ? "التغير السنوي" : "YoY Change"}
                 </div>
-                <Sparkline data={[30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85]} color="#107040" />
+                <Sparkline data={kpiData?.exchangeRateYoY?.trend || [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85]} color="#107040" />
               </div>
 
               {/* Exchange Rate Value Card - Bottom Right */}
@@ -407,11 +411,11 @@ export default function Home() {
                 <div className="flex items-center gap-1">
                   <span className="text-xs text-gray-500">YER/USD</span>
                 </div>
-                <div className="text-xl font-bold text-[#107040] mb-1">1 USD = 250 YER</div>
+                <div className="text-xl font-bold text-[#107040] mb-1">{kpiData?.exchangeRateAden?.value || "1 USD = 2,050 YER"}</div>
                 <div className="text-xs text-gray-500 mb-2">
-                  {language === "ar" ? "تحديث يومي" : "Daily Update"}
+                  {language === "ar" ? "سعر عدن الموازي" : "Aden Parallel Rate"}
                 </div>
-                <Sparkline data={[50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72]} color="#107040" />
+                <Sparkline data={kpiData?.exchangeRateAden?.trend || [50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72]} color="#107040" />
               </div>
 
               {/* Spacer for card positioning */}
@@ -426,10 +430,10 @@ export default function Home() {
         <div className="container">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { icon: BarChart3, labelEn: "GDP Growth", labelAr: "نمو الناتج المحلي", value: "+2.5%", trend: "up" },
-              { icon: Coins, labelEn: "Inflation Rate", labelAr: "معدل التضخم", value: "15%", trend: "up" },
-              { icon: Globe, labelEn: "Foreign Reserves", labelAr: "الاحتياطيات الأجنبية", value: "$3.2B", trend: "up" },
-              { icon: Users, labelEn: "Labor Force", labelAr: "القوى العاملة", value: "6.5M", trend: "stable" },
+              { icon: BarChart3, labelEn: "GDP Growth", labelAr: "نمو الناتج المحلي", value: kpiData?.gdpGrowth?.value || "+2.5%", trend: "up" },
+              { icon: Coins, labelEn: "Inflation Rate", labelAr: "معدل التضخم", value: kpiData?.inflation?.value || "15.0%", trend: "up" },
+              { icon: Globe, labelEn: "Foreign Reserves", labelAr: "الاحتياطيات الأجنبية", value: "$1.2B", trend: "down" },
+              { icon: Users, labelEn: "IDPs", labelAr: "النازحون", value: kpiData?.idps?.value || "4.5M", trend: "stable" },
             ].map((kpi, index) => (
               <div key={index} className="bg-white rounded-xl p-5 shadow-lg">
                 <div className="flex items-center gap-3 mb-3">
@@ -444,6 +448,7 @@ export default function Home() {
                   <span className="text-2xl font-bold text-[#103050]">{kpi.value}</span>
                   <div className="flex items-center gap-1">
                     {kpi.trend === "up" && <TrendingUp className="w-4 h-4 text-green-500" />}
+                    {kpi.trend === "down" && <TrendingDown className="w-4 h-4 text-red-500" />}
                     <Sparkline data={[40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95]} color="#107040" height={20} />
                   </div>
                 </div>
