@@ -1126,3 +1126,7 @@
 - [x] Add Yemen background image to hero section
 - [x] Replace compass icon with YETO logo
 - [x] Add entrance animations to KPI cards
+
+- [x] Add scroll-triggered animations to sections (features, sectors, stats)
+- [x] Create custom YETO logo SVG for hero center
+- [x] Implement parallax effect for hero background image

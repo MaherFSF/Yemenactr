@@ -32,9 +32,13 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
+import { AnimatedSection, StaggeredContainer } from "@/components/AnimatedSection";
+import { YetoLogo } from "@/components/YetoLogo";
+import { useScrollPosition } from "@/hooks/useParallax";
 
 export default function Home() {
   const { language } = useLanguage();
+  const scrollY = useScrollPosition();
 
   // Fetch real-time KPI data from database
   const { data: kpiData, isLoading: kpiLoading } = trpc.dashboard.getHeroKPIs.useQuery();
@@ -241,18 +245,21 @@ export default function Home() {
       {/* Insights Ticker - Sticky bar with rotating updates */}
       <InsightsTicker />
       
-      {/* Hero Section - Yemen skyline background */}
+      {/* Hero Section - Yemen skyline background with parallax */}
       <section className="relative min-h-[650px] overflow-hidden">
-        {/* Yemen skyline background image */}
-        <div className="absolute inset-0">
+        {/* Yemen skyline background image with parallax effect */}
+        <div 
+          className="absolute inset-0 scale-110"
+          style={{ transform: `translateY(${scrollY * 0.3}px) scale(1.1)` }}
+        >
           <img 
             src="/images/hero-yemen-skyline.jpg" 
             alt="Yemen Skyline" 
             className="w-full h-full object-cover"
           />
-          {/* Dark overlay for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#103050]/95 via-[#103050]/80 to-[#103050]/60" />
         </div>
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#103050]/95 via-[#103050]/80 to-[#103050]/60" />
 
         {/* Content overlay */}
         <div className="relative z-10 container py-16 md:py-24">
@@ -302,14 +309,9 @@ export default function Home() {
 
             {/* Right Content - Floating KPI Cards with animations */}
             <div className={`relative ${language === 'ar' ? 'lg:order-1' : ''}`}>
-              {/* YETO Logo in center */}
+              {/* Custom YETO Logo SVG in center */}
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0">
-                <div className="w-32 h-32 rounded-full border-2 border-[#C0A030]/30 flex items-center justify-center bg-[#103050]/50 backdrop-blur-sm animate-pulse">
-                  <div className="text-center">
-                    <span className="text-2xl font-bold text-[#C0A030]">YETO</span>
-                    <div className="w-8 h-0.5 bg-[#C0A030]/50 mx-auto mt-1" />
-                  </div>
-                </div>
+                <YetoLogo variant="badge" size="lg" animated />
               </div>
 
               {/* GDP Growth Card - Top Left with entrance animation */}
@@ -396,7 +398,7 @@ export default function Home() {
       {/* KPI Cards Row - Matching mockup IMG_1500 */}
       <section className="py-8 bg-[#103050]">
         <div className="container">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StaggeredContainer staggerDelay={100} className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { icon: BarChart3, labelEn: "GDP Growth", labelAr: "نمو الناتج المحلي", value: kpiData?.gdpGrowth?.value || "+2.5%", trend: "up" },
               { icon: Coins, labelEn: "Inflation Rate", labelAr: "معدل التضخم", value: kpiData?.inflation?.value || "15.0%", trend: "up" },
@@ -422,20 +424,20 @@ export default function Home() {
                 </div>
               </div>
             ))}
-          </div>
+          </StaggeredContainer>
         </div>
       </section>
 
       {/* Sectors Grid with Icons - Matching mockup IMG_1498 */}
       <section className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="container">
-          <div className={`text-center mb-12 ${language === 'ar' ? 'text-right' : ''}`}>
+          <AnimatedSection animation="fadeInUp" className={`text-center mb-12 ${language === 'ar' ? 'text-right' : ''}`}>
             <h2 className="text-2xl font-bold text-gray-600 dark:text-gray-300 mb-4">
               {language === "ar" ? "تصفح البيانات والتحليلات حسب القطاع الاقتصادي" : "Browse data and analysis by economic sector"}
             </h2>
-          </div>
+          </AnimatedSection>
 
-          <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
+          <StaggeredContainer staggerDelay={50} className="grid grid-cols-3 md:grid-cols-5 gap-4">
             {sectors.map((sector, index) => (
               <Link key={index} href={sector.href}>
                 <Card className={`${sector.color} border cursor-pointer transition-all hover:scale-105 hover:shadow-lg h-full`}>
@@ -448,14 +450,14 @@ export default function Home() {
                 </Card>
               </Link>
             ))}
-          </div>
+          </StaggeredContainer>
         </div>
       </section>
 
       {/* Sector Cards with Images - Matching mockup IMG_1499 */}
       <section className="py-16 bg-white dark:bg-gray-950">
         <div className="container">
-          <div className="grid md:grid-cols-3 gap-6">
+          <StaggeredContainer staggerDelay={150} className="grid md:grid-cols-3 gap-6">
             {sectorsWithImages.map((sector, index) => (
               <Link key={index} href={sector.href}>
                 <div className="relative rounded-2xl overflow-hidden h-48 group cursor-pointer">
@@ -473,18 +475,20 @@ export default function Home() {
                 </div>
               </Link>
             ))}
-          </div>
+          </StaggeredContainer>
         </div>
       </section>
 
       {/* Latest Updates Section - Matching mockup IMG_1499 */}
       <section className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="container">
-          <h2 className="text-3xl font-bold text-center text-[#103050] dark:text-white mb-12">
-            {language === "ar" ? "آخر التحديثات" : "Latest Updates"}
-          </h2>
+          <AnimatedSection animation="fadeInUp">
+            <h2 className="text-3xl font-bold text-center text-[#103050] dark:text-white mb-12">
+              {language === "ar" ? "آخر التحديثات" : "Latest Updates"}
+            </h2>
+          </AnimatedSection>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <StaggeredContainer staggerDelay={150} className="grid md:grid-cols-3 gap-6">
             {latestUpdates.map((update, index) => (
               <Link key={index} href={update.href}>
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full">
@@ -508,14 +512,14 @@ export default function Home() {
                 </Card>
               </Link>
             ))}
-          </div>
+          </StaggeredContainer>
         </div>
       </section>
 
       {/* Features Grid - Matching mockup IMG_1498 */}
       <section className="py-16 bg-white dark:bg-gray-950">
         <div className="container">
-          <div className={`text-center mb-12 ${language === 'ar' ? 'text-right' : ''}`}>
+          <AnimatedSection animation="fadeInUp" className={`text-center mb-12 ${language === 'ar' ? 'text-right' : ''}`}>
             <h2 className="text-3xl font-bold text-[#103050] dark:text-white mb-4">
               {language === "ar" ? "أدوات وميزات المنصة" : "Platform Tools & Features"}
             </h2>
@@ -524,9 +528,9 @@ export default function Home() {
                 ? "استفد من مجموعة شاملة من الأدوات لتحليل البيانات الاقتصادية"
                 : "Leverage a comprehensive suite of tools for economic data analysis"}
             </p>
-          </div>
+          </AnimatedSection>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <StaggeredContainer staggerDelay={100} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, index) => (
               <Link key={index} href={feature.href}>
                 <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group border-2 hover:border-[#107040]/30">
@@ -548,14 +552,14 @@ export default function Home() {
                 </Card>
               </Link>
             ))}
-          </div>
+          </StaggeredContainer>
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="py-16 bg-[#103050] text-white">
         <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
+          <AnimatedSection animation="scaleIn" className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-4">
               {language === "ar" 
                 ? "ابدأ استكشاف البيانات الاقتصادية اليمنية"
@@ -579,7 +583,7 @@ export default function Home() {
                 </Button>
               </Link>
             </div>
-          </div>
+          </AnimatedSection>
         </div>
       </section>
 
