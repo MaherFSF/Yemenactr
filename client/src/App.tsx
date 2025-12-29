@@ -58,6 +58,12 @@ import DataExchangeHub from "./pages/DataExchangeHub";
 import AccuracyDashboard from "./pages/AccuracyDashboard";
 import SchedulerDashboard from "./pages/SchedulerDashboard";
 import AlertsDashboard from "./pages/AlertsDashboard";
+import ResearchPortal from "./pages/ResearchPortal";
+import ResearchExplorer from "./pages/ResearchExplorer";
+import ResearchVisualization from "./pages/ResearchVisualization";
+import ResearchAssistant from "./pages/ResearchAssistant";
+import ResearchLibrary from "./pages/ResearchLibrary";
+import ResearchAudit from "./pages/ResearchAudit";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -72,6 +78,12 @@ function Router() {
       <Route path={"/contact"} component={Contact} />
       <Route path={"/glossary"} component={Glossary} />
       <Route path={"/research"} component={Research} />
+      <Route path={"/research-portal"} component={ResearchPortal} />
+      <Route path={"/research-explorer"} component={ResearchExplorer} />
+      <Route path={"/research-analytics"} component={ResearchVisualization} />
+      <Route path={"/research-assistant"} component={ResearchAssistant} />
+      <Route path={"/research-library"} component={ResearchLibrary} />
+      <Route path={"/research-audit"} component={ResearchAudit} />
       <Route path={"/sectors/banking"} component={Banking} />
       <Route path={"/sectors/trade"} component={Trade} />
       <Route path={"/sectors/poverty"} component={Poverty} />

@@ -46,7 +46,10 @@ import {
   getSectorMetrics,
   getRegimeComparison,
   getPlatformStats,
+  getDb,
 } from "./db";
+import { researchPublications, researchOrganizations } from "../drizzle/schema";
+import { sql, desc, eq, like, or, and, inArray } from "drizzle-orm";
 
 export const appRouter = router({
   system: systemRouter,
@@ -528,6 +531,68 @@ Current context: ${input.context?.sector ? `Sector: ${input.context.sector}` : '
             sources: [],
             confidence: "D" as const,
             timestamp: new Date().toISOString(),
+          };
+        }
+      }),
+
+    askResearch: publicProcedure
+      .input(z.object({
+        question: z.string().min(1).max(2000),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        if (!db) {
+          return {
+            answer: "Database not available. Please try again later.",
+            sources: [],
+          };
+        }
+
+        // Fetch relevant publications for context
+        const publications = await db.select()
+          .from(researchPublications)
+          .orderBy(desc(researchPublications.publicationYear))
+          .limit(20);
+
+        // Build context from publications
+        const pubContext = publications.map(p => 
+          `- ${p.title} (${p.publicationYear}): ${p.abstract?.slice(0, 200) || 'No abstract'}`
+        ).join('\n');
+
+        const systemPrompt = `You are a research assistant specializing in Yemen economic research. You have access to the following publications:
+
+${pubContext}
+
+Answer the user's question based on this research. Be specific and cite sources when possible. If the question cannot be answered from the available research, say so clearly.`;
+
+        try {
+          const response = await invokeLLM({
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: input.question },
+            ],
+          });
+
+          const rawContent = response.choices[0]?.message?.content;
+          const answer = typeof rawContent === 'string' ? rawContent : "Unable to generate response.";
+
+          // Extract mentioned sources
+          const sources = publications
+            .filter(p => answer.toLowerCase().includes(p.title?.toLowerCase().slice(0, 30) || ''))
+            .slice(0, 5)
+            .map(p => ({
+              title: p.title || 'Unknown',
+              year: p.publicationYear || 2024,
+              organization: undefined,
+              url: p.sourceUrl || undefined,
+            }));
+
+          return { answer, sources };
+        } catch (error) {
+          console.error("Research AI error:", error);
+          return {
+            answer: "I encountered an error processing your question. Please try again.",
+            sources: [],
           };
         }
       }),
@@ -1524,6 +1589,182 @@ Current context: ${input.context?.sector ? `Sector: ${input.context.sector}` : '
       .query(async () => {
         const alerts = await signalDetector.getAlerts(100);
         return alerts.filter(a => !a.isRead).length;
+      }),
+  }),
+
+  // ============================================================================
+  // RESEARCH PORTAL
+  // ============================================================================
+  
+  research: router({
+    // Get research stats
+    getStats: publicProcedure
+      .query(async () => {
+        const db = await getDb();
+        if (!db) return { totalPublications: 0, totalOrganizations: 0, totalCategories: 0 };
+        
+        const [pubCount] = await db.select({ count: sql<number>`count(*)` }).from(researchPublications);
+        const [orgCount] = await db.select({ count: sql<number>`count(*)` }).from(researchOrganizations);
+        const categories = await db.selectDistinct({ category: researchPublications.researchCategory }).from(researchPublications);
+        
+        return {
+          totalPublications: pubCount?.count || 0,
+          totalOrganizations: orgCount?.count || 0,
+          totalCategories: categories.length,
+        };
+      }),
+
+    // Get recent publications
+    getRecent: publicProcedure
+      .input(z.object({ limit: z.number().default(10) }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+        
+        const pubs = await db.select({
+          id: researchPublications.id,
+          title: researchPublications.title,
+          publicationType: researchPublications.publicationType,
+          researchCategory: researchPublications.researchCategory,
+          publicationYear: researchPublications.publicationYear,
+          organizationId: researchPublications.organizationId,
+        })
+        .from(researchPublications)
+        .orderBy(desc(researchPublications.createdAt))
+        .limit(input.limit);
+        
+        // Get organization names
+        const orgIds = Array.from(new Set(pubs.map(p => p.organizationId).filter(Boolean)));
+        const orgs = orgIds.length > 0 
+          ? await db.select().from(researchOrganizations).where(inArray(researchOrganizations.id, orgIds as number[]))
+          : [];
+        const orgMap = Object.fromEntries(orgs.map(o => [o.id, o.name]));
+        
+        return pubs.map(p => ({
+          ...p,
+          organizationName: p.organizationId ? orgMap[p.organizationId] : null,
+        }));
+      }),
+
+    // Get category stats
+    getCategoryStats: publicProcedure
+      .query(async () => {
+        const db = await getDb();
+        if (!db) return [];
+        
+        const stats = await db.select({
+          category: researchPublications.researchCategory,
+          count: sql<number>`count(*)`,
+        })
+        .from(researchPublications)
+        .groupBy(researchPublications.researchCategory)
+        .orderBy(desc(sql`count(*)`));
+        
+        return stats;
+      }),
+
+    // Get organizations
+    getOrganizations: publicProcedure
+      .query(async () => {
+        const db = await getDb();
+        if (!db) return [];
+        
+        const orgs = await db.select({
+          id: researchOrganizations.id,
+          name: researchOrganizations.name,
+          acronym: researchOrganizations.acronym,
+          type: researchOrganizations.type,
+        }).from(researchOrganizations);
+        
+        // Get publication counts
+        const counts = await db.select({
+          organizationId: researchPublications.organizationId,
+          count: sql<number>`count(*)`,
+        })
+        .from(researchPublications)
+        .groupBy(researchPublications.organizationId);
+        
+        const countMap = Object.fromEntries(counts.map(c => [c.organizationId, c.count]));
+        
+        return orgs.map(o => ({
+          ...o,
+          publicationCount: countMap[o.id] || 0,
+        })).sort((a, b) => b.publicationCount - a.publicationCount);
+      }),
+
+    // Search publications
+    search: publicProcedure
+      .input(z.object({
+        query: z.string().optional(),
+        category: z.string().optional(),
+        type: z.string().optional(),
+        year: z.number().optional(),
+        organizationId: z.number().optional(),
+        limit: z.number().default(20),
+      }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+        
+        let query = db.select({
+          id: researchPublications.id,
+          title: researchPublications.title,
+          abstract: researchPublications.abstract,
+          publicationType: researchPublications.publicationType,
+          researchCategory: researchPublications.researchCategory,
+          publicationYear: researchPublications.publicationYear,
+          sourceUrl: researchPublications.sourceUrl,
+          organizationId: researchPublications.organizationId,
+          viewCount: researchPublications.viewCount,
+          downloadCount: researchPublications.downloadCount,
+        })
+        .from(researchPublications)
+        .$dynamic();
+        
+        const conditions = [];
+        
+        if (input.query) {
+          conditions.push(or(
+            like(researchPublications.title, `%${input.query}%`),
+            like(researchPublications.abstract, `%${input.query}%`)
+          ));
+        }
+        
+        if (input.category) {
+          conditions.push(eq(researchPublications.researchCategory, input.category as any));
+        }
+        
+        if (input.type) {
+          conditions.push(eq(researchPublications.publicationType, input.type as any));
+        }
+        
+        if (input.year) {
+          conditions.push(eq(researchPublications.publicationYear, input.year));
+        }
+        
+        if (input.organizationId) {
+          conditions.push(eq(researchPublications.organizationId, input.organizationId));
+        }
+        
+        if (conditions.length > 0) {
+          query = query.where(and(...conditions));
+        }
+        
+        const pubs = await query
+          .orderBy(desc(researchPublications.publicationYear))
+          .limit(input.limit);
+        
+        // Get organization names
+        const orgIds = Array.from(new Set(pubs.map(p => p.organizationId).filter(Boolean)));
+        const orgs = orgIds.length > 0 
+          ? await db.select().from(researchOrganizations).where(inArray(researchOrganizations.id, orgIds as number[]))
+          : [];
+        const orgMap = Object.fromEntries(orgs.map(o => [o.id, o.name]));
+        
+        return pubs.map(p => ({
+          ...p,
+          organizationName: p.organizationId ? orgMap[p.organizationId] : null,
+        }));
       }),
   }),
 });

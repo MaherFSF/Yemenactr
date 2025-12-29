@@ -50,6 +50,13 @@
       "when": 1766989231823,
       "tag": "0006_panoramic_lady_bullseye",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1766991128442,
+      "tag": "0007_odd_proudstar",
+      "breakpoints": true
     }
   ]
 }

@@ -1157,3 +1157,57 @@
 - [x] Configure daily data refresh scheduler for all connectors
 - [x] Add scheduler status to admin monitoring dashboard
 - [x] Create alerts history page
+
+
+## Phase 37: Research Portal Enhancement (December 29, 2024)
+
+### Database & Metadata
+- [x] Enhance research/documents schema with rich metadata fields
+- [x] Add controlled vocabulary for research categories and data types
+- [x] Create research_authors and research_organizations tables
+- [x] Add citation tracking and engagement metrics fields
+
+### Automated Ingestion Connectors
+- [x] World Bank Open Knowledge Repository connector
+- [x] IMF eLibrary connector for Article IV documents
+- [x] UNDP publications connector
+- [x] WFP market bulletins connector
+- [ ] IsDB research connector (pending API access)
+- [x] Think-tank connectors (Brookings, CSIS, Chatham House, Sana'a Center)
+- [ ] Academic repository connectors (SSRN, RePEc - pending API access)
+- [x] Central Bank of Yemen publications connector
+
+### Research Dashboard
+- [x] Create research landing dashboard with key metrics
+- [x] Add trending topics and recent additions sections
+- [x] Implement top cited papers display
+- [x] Add quick access to major sections
+
+### Advanced Filtering & Search
+- [x] Multi-select filter panel for all metadata fields
+- [x] "Peer-reviewed only" and "has dataset" filters
+- [x] "New in last 30 days" and "popular this month" filters
+- [x] Persistent filters across navigation
+
+### Interactive Visualizations
+- [x] Time series exploration tool
+- [x] Regional comparison charts
+- [x] Scenario simulator for policy impacts
+- [x] Interactive maps with event overlays
+
+### AI Research Assistant
+- [x] Integrate AI assistant for research queries
+- [x] Enable database search and summarization
+- [ ] Add methodology explanations and citations
+
+### User Engagement
+- [x] User bookmarks and reading lists
+- [x] Topic alerts and notifications
+- [x] Research submission portal
+- [x] Export report generator (PDF with charts)
+
+### Completeness Audit
+- [x] Yearly coverage verification system
+- [x] Expected publications checklist per year
+- [x] Gap detection and targeted search
+- [x] Automated monitoring for new releases

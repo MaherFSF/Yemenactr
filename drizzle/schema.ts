@@ -958,3 +958,367 @@ export const schedulerRunHistory = mysqlTable("scheduler_run_history", {
 
 export type SchedulerRunHistory = typeof schedulerRunHistory.$inferSelect;
 export type InsertSchedulerRunHistory = typeof schedulerRunHistory.$inferInsert;
+
+
+// ============================================================================
+// RESEARCH PORTAL - ENHANCED SCHEMA
+// ============================================================================
+
+// Research Authors
+export const researchAuthors = mysqlTable("research_authors", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  nameAr: varchar("nameAr", { length: 255 }),
+  affiliation: varchar("affiliation", { length: 255 }),
+  affiliationAr: varchar("affiliationAr", { length: 255 }),
+  orcid: varchar("orcid", { length: 50 }), // ORCID identifier
+  email: varchar("email", { length: 320 }),
+  bio: text("bio"),
+  bioAr: text("bioAr"),
+  profileUrl: text("profileUrl"),
+  publicationCount: int("publicationCount").default(0).notNull(),
+  citationCount: int("citationCount").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  nameIdx: index("name_idx").on(table.name),
+  affiliationIdx: index("affiliation_idx").on(table.affiliation),
+}));
+
+export type ResearchAuthor = typeof researchAuthors.$inferSelect;
+export type InsertResearchAuthor = typeof researchAuthors.$inferInsert;
+
+// Research Organizations
+export const researchOrganizations = mysqlTable("research_organizations", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  nameAr: varchar("nameAr", { length: 255 }),
+  acronym: varchar("acronym", { length: 50 }),
+  type: mysqlEnum("type", [
+    "ifi", // International Financial Institution
+    "un_agency",
+    "bilateral_donor",
+    "gulf_fund",
+    "think_tank",
+    "academic",
+    "government",
+    "central_bank",
+    "ngo",
+    "private_sector",
+    "other"
+  ]).notNull(),
+  country: varchar("country", { length: 100 }),
+  website: text("website"),
+  logoUrl: text("logoUrl"),
+  description: text("description"),
+  descriptionAr: text("descriptionAr"),
+  publicationCount: int("publicationCount").default(0).notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  nameIdx: index("name_idx").on(table.name),
+  typeIdx: index("type_idx").on(table.type),
+  acronymIdx: index("acronym_idx").on(table.acronym),
+}));
+
+export type ResearchOrganization = typeof researchOrganizations.$inferSelect;
+export type InsertResearchOrganization = typeof researchOrganizations.$inferInsert;
+
+// Enhanced Research Publications (extends documents concept)
+export const researchPublications = mysqlTable("research_publications", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Basic Info
+  title: varchar("title", { length: 500 }).notNull(),
+  titleAr: varchar("titleAr", { length: 500 }),
+  abstract: text("abstract"),
+  abstractAr: text("abstractAr"),
+  
+  // Publication Details
+  publicationType: mysqlEnum("publicationType", [
+    "research_paper",
+    "working_paper",
+    "policy_brief",
+    "technical_note",
+    "case_study",
+    "statistical_bulletin",
+    "sanctions_notice",
+    "presentation",
+    "evaluation_report",
+    "journal_article",
+    "book_chapter",
+    "thesis",
+    "dataset_documentation",
+    "methodology_note",
+    "survey_report",
+    "market_bulletin",
+    "economic_monitor",
+    "article_iv",
+    "country_report"
+  ]).notNull(),
+  
+  // Research Category
+  researchCategory: mysqlEnum("researchCategory", [
+    "macroeconomic_analysis",
+    "banking_sector",
+    "monetary_policy",
+    "fiscal_policy",
+    "trade_external",
+    "poverty_development",
+    "conflict_economics",
+    "humanitarian_finance",
+    "split_system_analysis",
+    "labor_market",
+    "food_security",
+    "energy_sector",
+    "infrastructure",
+    "agriculture",
+    "health_sector",
+    "education",
+    "governance",
+    "sanctions_compliance"
+  ]).notNull(),
+  
+  // Data Category
+  dataCategory: mysqlEnum("dataCategory", [
+    "economic_growth",
+    "inflation",
+    "employment",
+    "fiscal_policy",
+    "monetary_policy",
+    "trade_investment",
+    "social_indicators",
+    "humanitarian_aid",
+    "exchange_rates",
+    "banking_finance",
+    "public_debt",
+    "remittances",
+    "commodity_prices"
+  ]),
+  
+  // Data Type
+  dataType: mysqlEnum("dataType", [
+    "time_series",
+    "survey",
+    "spatial",
+    "qualitative",
+    "cross_sectional",
+    "panel",
+    "mixed_methods"
+  ]),
+  
+  // Geographic Scope
+  geographicScope: mysqlEnum("geographicScope", [
+    "national",
+    "governorate",
+    "district",
+    "regional_comparison",
+    "international_comparison"
+  ]).default("national"),
+  
+  // Time Coverage
+  publicationDate: timestamp("publicationDate"),
+  publicationYear: int("publicationYear").notNull(),
+  publicationMonth: int("publicationMonth"),
+  publicationQuarter: int("publicationQuarter"),
+  timeCoverageStart: int("timeCoverageStart"), // Year
+  timeCoverageEnd: int("timeCoverageEnd"), // Year
+  
+  // Source Organization
+  organizationId: int("organizationId").references(() => researchOrganizations.id),
+  externalId: varchar("externalId", { length: 255 }), // External system ID
+  
+  // File Info
+  fileKey: varchar("fileKey", { length: 255 }),
+  fileUrl: text("fileUrl"),
+  mimeType: varchar("mimeType", { length: 100 }),
+  fileSize: int("fileSize"),
+  
+  // External Links
+  sourceUrl: text("sourceUrl"), // Original publication URL
+  doi: varchar("doi", { length: 255 }), // Digital Object Identifier
+  isbn: varchar("isbn", { length: 50 }),
+  issn: varchar("issn", { length: 50 }),
+  
+  // Language
+  language: mysqlEnum("language", ["en", "ar", "fr", "other"]).default("en"),
+  hasArabicVersion: boolean("hasArabicVersion").default(false),
+  
+  // Quality Indicators
+  isPeerReviewed: boolean("isPeerReviewed").default(false),
+  hasDataset: boolean("hasDataset").default(false),
+  linkedDatasetIds: json("linkedDatasetIds").$type<number[]>(),
+  
+  // Engagement Metrics
+  downloadCount: int("downloadCount").default(0).notNull(),
+  viewCount: int("viewCount").default(0).notNull(),
+  citationCount: int("citationCount").default(0).notNull(),
+  altmetricScore: decimal("altmetricScore", { precision: 10, scale: 2 }),
+  
+  // Tags and Keywords
+  keywords: json("keywords").$type<string[]>(),
+  keywordsAr: json("keywordsAr").$type<string[]>(),
+  tags: json("tags").$type<string[]>(),
+  
+  // Citation Info
+  citationText: text("citationText"),
+  bibtex: text("bibtex"),
+  
+  // Status
+  status: mysqlEnum("status", ["draft", "pending_review", "published", "archived"]).default("published").notNull(),
+  isFeatured: boolean("isFeatured").default(false),
+  isRecurring: boolean("isRecurring").default(false), // e.g., monthly bulletin
+  recurringFrequency: varchar("recurringFrequency", { length: 50 }), // "monthly", "quarterly", "annual"
+  
+  // Audit
+  uploaderId: int("uploaderId").references(() => users.id),
+  reviewerId: int("reviewerId").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  titleIdx: index("title_idx").on(table.title),
+  publicationTypeIdx: index("publication_type_idx").on(table.publicationType),
+  researchCategoryIdx: index("research_category_idx").on(table.researchCategory),
+  publicationYearIdx: index("publication_year_idx").on(table.publicationYear),
+  organizationIdx: index("organization_idx").on(table.organizationId),
+  statusIdx: index("status_idx").on(table.status),
+  isPeerReviewedIdx: index("is_peer_reviewed_idx").on(table.isPeerReviewed),
+  hasDatasetIdx: index("has_dataset_idx").on(table.hasDataset),
+  languageIdx: index("language_idx").on(table.language),
+}));
+
+export type ResearchPublication = typeof researchPublications.$inferSelect;
+export type InsertResearchPublication = typeof researchPublications.$inferInsert;
+
+// Publication-Author Junction
+export const publicationAuthors = mysqlTable("publication_authors", {
+  id: int("id").autoincrement().primaryKey(),
+  publicationId: int("publicationId").notNull().references(() => researchPublications.id),
+  authorId: int("authorId").notNull().references(() => researchAuthors.id),
+  authorOrder: int("authorOrder").default(1).notNull(),
+  isCorresponding: boolean("isCorresponding").default(false),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  publicationIdx: index("publication_idx").on(table.publicationId),
+  authorIdx: index("author_idx").on(table.authorId),
+}));
+
+export type PublicationAuthor = typeof publicationAuthors.$inferSelect;
+export type InsertPublicationAuthor = typeof publicationAuthors.$inferInsert;
+
+// User Reading Lists
+export const userReadingLists = mysqlTable("user_reading_lists", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  isPublic: boolean("isPublic").default(false),
+  itemCount: int("itemCount").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_idx").on(table.userId),
+}));
+
+export type UserReadingList = typeof userReadingLists.$inferSelect;
+export type InsertUserReadingList = typeof userReadingLists.$inferInsert;
+
+// Reading List Items
+export const readingListItems = mysqlTable("reading_list_items", {
+  id: int("id").autoincrement().primaryKey(),
+  readingListId: int("readingListId").notNull().references(() => userReadingLists.id),
+  publicationId: int("publicationId").notNull().references(() => researchPublications.id),
+  notes: text("notes"),
+  addedAt: timestamp("addedAt").defaultNow().notNull(),
+}, (table) => ({
+  readingListIdx: index("reading_list_idx").on(table.readingListId),
+  publicationIdx: index("publication_idx").on(table.publicationId),
+}));
+
+export type ReadingListItem = typeof readingListItems.$inferSelect;
+export type InsertReadingListItem = typeof readingListItems.$inferInsert;
+
+// User Bookmarks
+export const userBookmarks = mysqlTable("user_bookmarks", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  publicationId: int("publicationId").notNull().references(() => researchPublications.id),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_idx").on(table.userId),
+  publicationIdx: index("publication_idx").on(table.publicationId),
+  uniqueBookmark: index("unique_bookmark").on(table.userId, table.publicationId),
+}));
+
+export type UserBookmark = typeof userBookmarks.$inferSelect;
+export type InsertUserBookmark = typeof userBookmarks.$inferInsert;
+
+// Topic Alerts
+export const topicAlerts = mysqlTable("topic_alerts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  name: varchar("name", { length: 255 }).notNull(),
+  keywords: json("keywords").$type<string[]>().notNull(),
+  categories: json("categories").$type<string[]>(),
+  organizations: json("organizations").$type<number[]>(),
+  frequency: mysqlEnum("frequency", ["immediate", "daily", "weekly"]).default("daily").notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  lastTriggeredAt: timestamp("lastTriggeredAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_idx").on(table.userId),
+  isActiveIdx: index("is_active_idx").on(table.isActive),
+}));
+
+export type TopicAlert = typeof topicAlerts.$inferSelect;
+export type InsertTopicAlert = typeof topicAlerts.$inferInsert;
+
+// Research Completeness Audit
+export const researchCompletenessAudit = mysqlTable("research_completeness_audit", {
+  id: int("id").autoincrement().primaryKey(),
+  year: int("year").notNull(),
+  organizationId: int("organizationId").references(() => researchOrganizations.id),
+  expectedPublicationType: varchar("expectedPublicationType", { length: 100 }).notNull(),
+  expectedTitle: varchar("expectedTitle", { length: 500 }),
+  isFound: boolean("isFound").default(false).notNull(),
+  publicationId: int("publicationId").references(() => researchPublications.id),
+  notes: text("notes"),
+  lastCheckedAt: timestamp("lastCheckedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  yearIdx: index("year_idx").on(table.year),
+  organizationIdx: index("organization_idx").on(table.organizationId),
+  isFoundIdx: index("is_found_idx").on(table.isFound),
+}));
+
+export type ResearchCompletenessAudit = typeof researchCompletenessAudit.$inferSelect;
+export type InsertResearchCompletenessAudit = typeof researchCompletenessAudit.$inferInsert;
+
+// Research Ingestion Sources
+export const researchIngestionSources = mysqlTable("research_ingestion_sources", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  organizationId: int("organizationId").references(() => researchOrganizations.id),
+  sourceType: mysqlEnum("sourceType", ["api", "rss", "scrape", "oai_pmh", "manual"]).notNull(),
+  endpoint: text("endpoint"),
+  apiKey: varchar("apiKey", { length: 255 }),
+  config: json("config").$type<Record<string, unknown>>(),
+  isActive: boolean("isActive").default(true).notNull(),
+  lastFetchAt: timestamp("lastFetchAt"),
+  lastFetchStatus: mysqlEnum("lastFetchStatus", ["success", "failed", "partial"]),
+  lastFetchCount: int("lastFetchCount"),
+  totalIngested: int("totalIngested").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  nameIdx: index("name_idx").on(table.name),
+  sourceTypeIdx: index("source_type_idx").on(table.sourceType),
+  isActiveIdx: index("is_active_idx").on(table.isActive),
+}));
+
+export type ResearchIngestionSource = typeof researchIngestionSources.$inferSelect;
+export type InsertResearchIngestionSource = typeof researchIngestionSources.$inferInsert;
