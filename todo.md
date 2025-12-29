@@ -1135,3 +1135,16 @@
 - [x] Add loading skeleton states for KPI cards
 - [x] Implement smooth scroll navigation
 - [x] Add hover micro-interactions to sector cards
+
+
+## Phase 35: New API Connectors (December 29, 2024)
+- [x] Create World Bank API connector (GDP, poverty, external balance)
+- [x] Create OCHA FTS API connector (humanitarian funding flows)
+- [x] Create IMF IFS/SDMX connector (monetary & financial data)
+- [x] Create HDX CKAN connector (WFP food prices, IOM DTM, COD population)
+- [x] Create OFAC Sanctions connector (US sanctions list)
+- [x] Create EU Sanctions connector (EU consolidated list)
+- [x] Create ReliefWeb RSS connector (humanitarian updates)
+- [x] Create FEWS NET connector (food security phases)
+- [ ] Add signal detectors and alerting system
+- [x] Run backfill and test all connectors (647 records from 5/6 connectors)
