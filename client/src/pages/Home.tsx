@@ -95,29 +95,23 @@ export default function Home() {
     { valueEn: "47", valueAr: "47", labelEn: "Data Sources", labelAr: "مصدر بيانات", icon: BarChart3 },
   ];
 
-  // Sectors with images matching mockup IMG_1499
+  // Sectors with images - all 15 sectors matching mockup IMG_1527
   const sectorsWithImages = [
-    { 
-      nameEn: "Trade & Commerce", 
-      nameAr: "التجارة والأعمال", 
-      href: "/sectors/trade", 
-      image: "/images/sectors/trade-port.jpg",
-      icon: Ship 
-    },
-    { 
-      nameEn: "Local Economy", 
-      nameAr: "الاقتصاد المحلي", 
-      href: "/sectors/macroeconomy", 
-      image: "/images/sectors/local-market.webp",
-      icon: TrendingUp 
-    },
-    { 
-      nameEn: "Rural Development", 
-      nameAr: "التنمية الريفية", 
-      href: "/sectors/agriculture", 
-      image: "/images/sectors/agriculture-terraces.jpg",
-      icon: Droplets 
-    },
+    { nameEn: "Trade & Commerce", nameAr: "التجارة والأعمال", href: "/sectors/trade", image: "/images/sectors/trade-port.jpg", icon: Ship },
+    { nameEn: "Local Economy", nameAr: "الاقتصاد المحلي", href: "/sectors/macroeconomy", image: "/images/sectors/local-market.webp", icon: TrendingUp },
+    { nameEn: "Rural Development", nameAr: "التنمية الريفية", href: "/sectors/agriculture", image: "/images/sectors/agriculture-terraces.jpg", icon: Droplets },
+    { nameEn: "Banking & Finance", nameAr: "القطاع المصرفي", href: "/sectors/banking", image: "/images/sectors/banking-finance.webp", icon: Banknote },
+    { nameEn: "Currency & Exchange", nameAr: "العملة والصرف", href: "/sectors/currency", image: "/images/sectors/currency-exchange.jpg", icon: Globe },
+    { nameEn: "Food Security", nameAr: "الأمن الغذائي", href: "/sectors/food-security", image: "/images/sectors/food-security.jpg", icon: Wheat },
+    { nameEn: "Energy & Fuel", nameAr: "الطاقة والوقود", href: "/sectors/energy", image: "/images/sectors/energy-fuel.jpg", icon: Zap },
+    { nameEn: "Aid Flows", nameAr: "تدفقات المساعدات", href: "/sectors/aid-flows", image: "/images/sectors/aid-flows.jpg", icon: Heart },
+    { nameEn: "Poverty & Development", nameAr: "الفقر والتنمية", href: "/sectors/poverty", image: "/images/sectors/poverty-development.jpg", icon: Users },
+    { nameEn: "Labor Market", nameAr: "سوق العمل", href: "/sectors/labor-market", image: "/images/sectors/labor-market.jpg", icon: Briefcase },
+    { nameEn: "Infrastructure", nameAr: "البنية التحتية", href: "/sectors/infrastructure", image: "/images/sectors/infrastructure.jpg", icon: Building2 },
+    { nameEn: "Conflict Economy", nameAr: "اقتصاد الصراع", href: "/sectors/conflict-economy", image: "/images/sectors/conflict-economy.jpg", icon: AlertTriangle },
+    { nameEn: "Public Finance", nameAr: "المالية العامة", href: "/sectors/public-finance", image: "/images/sectors/public-finance.jpg", icon: Building2 },
+    { nameEn: "Investment", nameAr: "الاستثمار", href: "/sectors/investment", image: "/images/sectors/investment.jpg", icon: Factory },
+    { nameEn: "Prices & Cost of Living", nameAr: "الأسعار وتكاليف المعيشة", href: "/sectors/prices", image: "/images/sectors/prices-cost.jpg", icon: DollarSign },
   ];
 
   // All sectors grid
@@ -420,7 +414,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* KPI Cards Row - Matching mockup IMG_1500 */}
+      {/* KPI Cards Row - Unique indicators not shown in hero (Foreign Reserves, IDPs) */}
       <section id="kpi-stats" className="py-8 bg-[#103050]">
         <div className="container">
           <StaggeredContainer staggerDelay={100} className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -428,7 +422,7 @@ export default function Home() {
               { icon: BarChart3, labelEn: "GDP Growth", labelAr: "نمو الناتج المحلي", value: kpiData?.gdpGrowth?.value || "+2.5%", trend: "up" },
               { icon: Coins, labelEn: "Inflation Rate", labelAr: "معدل التضخم", value: kpiData?.inflation?.value || "15.0%", trend: "up" },
               { icon: Globe, labelEn: "Foreign Reserves", labelAr: "الاحتياطيات الأجنبية", value: "$1.2B", trend: "down" },
-              { icon: Users, labelEn: "IDPs", labelAr: "النازحون", value: kpiData?.idps?.value || "4.5M", trend: "stable" },
+              { icon: Users, labelEn: "IDPs", labelAr: "النازحون", value: kpiData?.idps?.value || "4.8M", trend: "stable" },
             ].map((kpi, index) => (
               <div key={index} className="bg-white rounded-xl p-5 shadow-lg">
                 <div className="flex items-center gap-3 mb-3">
@@ -485,23 +479,28 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sector Cards with Images - Matching mockup IMG_1499 */}
+      {/* Sector Cards with Images - All 15 sectors matching mockup IMG_1527 */}
       <section className="py-16 bg-white dark:bg-gray-950">
         <div className="container">
-          <StaggeredContainer staggerDelay={150} className="grid md:grid-cols-3 gap-6">
+          <AnimatedSection animation="fadeInUp" className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-600 dark:text-gray-300">
+              {language === "ar" ? "استكشف القطاعات الاقتصادية" : "Explore Economic Sectors"}
+            </h2>
+          </AnimatedSection>
+          <StaggeredContainer staggerDelay={80} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {sectorsWithImages.map((sector, index) => (
               <Link key={index} href={sector.href}>
-                <div className="relative rounded-2xl overflow-hidden h-48 group cursor-pointer
+                <div className="relative rounded-xl overflow-hidden h-40 group cursor-pointer
                   transition-all duration-500 ease-out
                   hover:shadow-2xl hover:-translate-y-2 hover:ring-4 hover:ring-[#107040]/30">
                   <img 
                     src={sector.image} 
                     alt={language === "ar" ? sector.nameAr : sector.nameEn}
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-115"
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-all duration-500 group-hover:from-[#107040]/80 group-hover:via-[#107040]/30" />
-                  <div className="absolute bottom-4 left-4 right-4 transition-transform duration-300 group-hover:translate-y-[-4px]">
-                    <h3 className="text-xl font-bold text-white transition-all duration-300 group-hover:text-[#C0A030]">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent transition-all duration-500 group-hover:from-[#107040]/90 group-hover:via-[#107040]/40" />
+                  <div className="absolute bottom-3 left-3 right-3 transition-transform duration-300 group-hover:translate-y-[-4px]">
+                    <h3 className="text-sm font-bold text-white transition-all duration-300 group-hover:text-[#C0A030] leading-tight">
                       {language === "ar" ? sector.nameAr : sector.nameEn}
                     </h3>
                     <div className="h-0.5 w-0 bg-[#C0A030] transition-all duration-500 group-hover:w-full mt-1" />

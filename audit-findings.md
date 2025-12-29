@@ -367,3 +367,31 @@ Terms displayed with Arabic as primary, English as secondary:
 
 All definitions shown in Arabic with full RTL text alignment.
 
+
+
+## Landing Page Fixes - Phase 41 ✅
+
+### Duplicate Indicators Issue
+The KPI row below the hero now shows 4 indicators: GDP Growth (+2.5%), Inflation Rate (15.0%), Foreign Reserves ($1.2B), and IDPs (4.8M). These match the mockup design from IMG_1526.
+
+### Sector Cards with Images
+All 15 sector cards now display with images in a 5-column grid:
+1. Trade & Commerce - port image ✅
+2. Local Economy - market image ✅
+3. Rural Development - terraces image ✅
+4. Banking & Finance - currency image ✅
+5. Currency & Exchange - money exchange image ✅
+6. Food Security - FAO aid image ✅
+7. Energy & Fuel - fuel station image ✅
+8. Aid Flows - humanitarian aid image ✅
+9. Poverty & Development - poverty image ✅
+10. Labor Market - workers image ✅
+11. Infrastructure - construction image ✅
+12. Conflict Economy - war economy image ✅
+13. Public Finance - government image ✅
+14. Investment - business image ✅
+15. Prices & Cost of Living - market prices image ✅
+
+The sector grid with icons (15 sectors) appears above the image cards section.
+Both Arabic and English versions display correctly with RTL layout for Arabic.
+
