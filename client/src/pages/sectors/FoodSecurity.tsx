@@ -86,30 +86,43 @@ export default function FoodSecurity() {
 
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-red-100 via-red-50 to-red-100 dark:from-red-950/30 dark:via-red-900/20 dark:to-red-950/30 border-b">
-        <div className="container py-12">
-          <div className="max-w-4xl mx-auto">
+      {/* Hero Section with Background Image */}
+      <section className="relative h-[350px] overflow-hidden">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(/sectors/food-security.jpg)` }}
+        />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#103050]/90 to-[#1a4a70]/80" />
+        {/* Pattern Overlay */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }} />
+        </div>
+        <div className="container relative h-full flex items-center">
+          <div className={`max-w-2xl ${language === 'ar' ? 'mr-auto text-right' : 'ml-0'}`}>
             <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="mb-4 gap-2">
+              <Button variant="ghost" size="sm" className="mb-4 gap-2 text-white hover:bg-white/20">
                 <ArrowLeft className="h-4 w-4" />
                 {language === "ar" ? "العودة إلى لوحة المعلومات" : "Back to Dashboard"}
               </Button>
             </Link>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                <Wheat className="h-6 w-6 text-red-600" />
+              <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
+                <Wheat className="h-8 w-8 text-white" />
               </div>
-              <Badge variant="outline" className="text-sm border-red-200 text-red-700">
+              <Badge className="bg-[#107040] text-white border-0">
                 {language === "ar" ? "القطاع الإنساني" : "Humanitarian Sector"}
               </Badge>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               {language === "ar" 
                 ? "الأمن الغذائي والأسواق"
                 : "Food Security & Markets"}
             </h1>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-xl text-white/90 mb-6">
               {language === "ar"
                 ? "تحليل حالة الأمن الغذائي وسوء التغذية وأسواق الغذاء في اليمن"
                 : "Analysis of food security status, malnutrition, and food markets in Yemen"}

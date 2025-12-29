@@ -241,27 +241,42 @@ export default function Agriculture() {
 
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-[#103050] to-[#0B1F33] text-white">
-        <div className="container py-12">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
-              <Wheat className="h-6 w-6" />
+      {/* Hero Section with Background Image */}
+      <section className="relative h-[350px] overflow-hidden">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(/sectors/agriculture.jpg)` }}
+        />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#103050]/90 to-[#1a4a70]/80" />
+        {/* Pattern Overlay */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }} />
+        </div>
+        <div className="container relative h-full flex items-center">
+          <div className={`max-w-2xl ${language === 'ar' ? 'mr-auto text-right' : 'ml-0'}`}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
+                <Wheat className="h-8 w-8 text-white" />
+              </div>
+              <Badge className="bg-[#107040] text-white border-0">
+                {language === "ar" ? "قطاع" : "Sector"}
+              </Badge>
             </div>
-            <Badge variant="secondary" className="bg-white/20 text-white border-0">
-              {language === "ar" ? "قطاع" : "Sector"}
-            </Badge>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              {language === "ar" 
+                ? "الزراعة والتنمية الريفية"
+                : "Agriculture & Rural Development"}
+            </h1>
+            <p className="text-xl text-white/90 mb-6">
+              {language === "ar"
+                ? "تحليل الإنتاج الزراعي والأمن الغذائي وسبل العيش الريفية وتحديات المياه"
+                : "Analysis of agricultural production, food security, rural livelihoods, and water challenges"}
+            </p>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            {language === "ar" 
-              ? "الزراعة والتنمية الريفية"
-              : "Agriculture & Rural Development"}
-          </h1>
-          <p className="text-lg text-white/80 max-w-3xl">
-            {language === "ar"
-              ? "تحليل الإنتاج الزراعي والأمن الغذائي وسبل العيش الريفية وتحديات المياه"
-              : "Analysis of agricultural production, food security, rural livelihoods, and water challenges"}
-          </p>
         </div>
       </section>
 
