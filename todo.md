@@ -1148,3 +1148,12 @@
 - [x] Create FEWS NET connector (food security phases)
 - [ ] Add signal detectors and alerting system
 - [x] Run backfill and test all connectors (647 records from 5/6 connectors)
+
+
+## Phase 36: Signal Detectors & Daily Scheduler (December 29, 2024)
+- [x] Create signal detector service with threshold alerts
+- [x] Define alert thresholds for key indicators (FX rate, inflation, food insecurity)
+- [x] Implement alert notification system (owner notifications)
+- [x] Configure daily data refresh scheduler for all connectors
+- [x] Add scheduler status to admin monitoring dashboard
+- [x] Create alerts history page

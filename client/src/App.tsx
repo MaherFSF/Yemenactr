@@ -56,6 +56,8 @@ import ApiDocs from "./pages/ApiDocs";
 import PolicyImpact from "./pages/PolicyImpact";
 import DataExchangeHub from "./pages/DataExchangeHub";
 import AccuracyDashboard from "./pages/AccuracyDashboard";
+import SchedulerDashboard from "./pages/SchedulerDashboard";
+import AlertsDashboard from "./pages/AlertsDashboard";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -112,6 +114,8 @@ function Router() {
       <Route path="/policy-impact" component={PolicyImpact} />
       <Route path="/data-exchange" component={DataExchangeHub} />
       <Route path="/accuracy" component={AccuracyDashboard} />
+      <Route path="/admin/scheduler" component={SchedulerDashboard} />
+      <Route path="/admin/alerts" component={AlertsDashboard} />
       <Route path={"/partner"} component={PartnerPortal} />
       <Route path={"/ai-assistant"} component={AIAssistant} />
       <Route path={"/scenario-simulator"} component={ScenarioSimulator} />

@@ -18,6 +18,8 @@ import {
   publicChangelogService,
 } from './governance';
 import { runPlatformAccuracyChecks } from './services/accuracyChecker';
+import { signalDetector } from './services/signalDetector';
+import { dailyScheduler } from './services/dailyScheduler';
 import {
   autoPublicationEngine,
   generateDailySnapshot,
@@ -1430,6 +1432,98 @@ Current context: ${input.context?.sector ? `Sector: ${input.context.sector}` : '
     runChecks: adminProcedure
       .query(async () => {
         return await runPlatformAccuracyChecks();
+      }),
+  }),
+
+  // ============================================================================
+  // SCHEDULER
+  // ============================================================================
+  
+  scheduler: router({
+    // Get scheduler status
+    getStatus: adminProcedure
+      .query(async () => {
+        return await dailyScheduler.getStatus();
+      }),
+
+    // Get run history
+    getHistory: adminProcedure
+      .input(z.object({ limit: z.number().default(50) }).optional())
+      .query(async ({ input }) => {
+        return await dailyScheduler.getHistory(input?.limit || 50);
+      }),
+
+    // Run a specific job
+    runJob: adminProcedure
+      .input(z.object({ jobId: z.string() }))
+      .mutation(async ({ input }) => {
+        return await dailyScheduler.runJob(input.jobId);
+      }),
+
+    // Run all data refresh jobs
+    runAll: adminProcedure
+      .mutation(async () => {
+        return await dailyScheduler.runAll();
+      }),
+
+    // Enable/disable a job
+    setEnabled: adminProcedure
+      .input(z.object({ jobId: z.string(), enabled: z.boolean() }))
+      .mutation(async ({ input }) => {
+        return await dailyScheduler.setEnabled(input.jobId, input.enabled);
+      }),
+
+    // Get job configurations
+    getJobs: adminProcedure
+      .query(() => {
+        return dailyScheduler.jobs.map(j => ({
+          id: j.id,
+          name: j.name,
+          type: j.type,
+          cronExpression: j.cronExpression,
+          description: j.description,
+          enabled: j.enabled,
+          connector: j.connector,
+        }));
+      }),
+  }),
+
+  // ============================================================================
+  // ALERTS
+  // ============================================================================
+  
+  alerts: router({
+    // Get recent alerts
+    getRecent: protectedProcedure
+      .input(z.object({ limit: z.number().default(50) }).optional())
+      .query(async ({ input }) => {
+        return await signalDetector.getAlerts(input?.limit || 50);
+      }),
+
+    // Run signal detection
+    runDetection: adminProcedure
+      .mutation(async () => {
+        return await signalDetector.run();
+      }),
+
+    // Mark alert as read
+    markRead: protectedProcedure
+      .input(z.object({ alertId: z.number() }))
+      .mutation(async ({ input }) => {
+        return await signalDetector.markRead(input.alertId);
+      }),
+
+    // Get alert thresholds
+    getThresholds: protectedProcedure
+      .query(() => {
+        return signalDetector.thresholds;
+      }),
+
+    // Get unread count
+    getUnreadCount: protectedProcedure
+      .query(async () => {
+        const alerts = await signalDetector.getAlerts(100);
+        return alerts.filter(a => !a.isRead).length;
       }),
   }),
 });

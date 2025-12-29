@@ -878,3 +878,83 @@ export const publicChangelog = mysqlTable("public_changelog", {
 
 export type PublicChangelogEntry = typeof publicChangelog.$inferSelect;
 export type InsertPublicChangelogEntry = typeof publicChangelog.$inferInsert;
+
+
+// ============================================================================
+// SIGNAL ALERTS
+// ============================================================================
+
+export const alerts = mysqlTable("alerts", {
+  id: int("id").autoincrement().primaryKey(),
+  type: varchar("type", { length: 50 }).notNull(), // 'info', 'warning', 'critical'
+  title: varchar("title", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }),
+  description: text("description"),
+  indicatorCode: varchar("indicatorCode", { length: 100 }),
+  severity: varchar("severity", { length: 20 }).default("info").notNull(),
+  isRead: boolean("isRead").default(false).notNull(),
+  acknowledgedBy: int("acknowledgedBy").references(() => users.id),
+  acknowledgedAt: timestamp("acknowledgedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  typeIdx: index("type_idx").on(table.type),
+  severityIdx: index("severity_idx").on(table.severity),
+  isReadIdx: index("is_read_idx").on(table.isRead),
+  createdAtIdx: index("created_at_idx").on(table.createdAt),
+}));
+
+export type Alert = typeof alerts.$inferSelect;
+export type InsertAlert = typeof alerts.$inferInsert;
+
+// ============================================================================
+// SCHEDULER JOBS
+// ============================================================================
+
+export const schedulerJobs = mysqlTable("scheduler_jobs", {
+  id: int("id").autoincrement().primaryKey(),
+  jobName: varchar("jobName", { length: 100 }).notNull().unique(),
+  jobType: mysqlEnum("jobType", ["data_refresh", "signal_detection", "publication", "backup", "cleanup"]).notNull(),
+  cronExpression: varchar("cronExpression", { length: 50 }).notNull(),
+  isEnabled: boolean("isEnabled").default(true).notNull(),
+  lastRunAt: timestamp("lastRunAt"),
+  lastRunStatus: mysqlEnum("lastRunStatus", ["success", "failed", "running", "skipped"]),
+  lastRunDuration: int("lastRunDuration"), // milliseconds
+  lastRunError: text("lastRunError"),
+  nextRunAt: timestamp("nextRunAt"),
+  runCount: int("runCount").default(0).notNull(),
+  failCount: int("failCount").default(0).notNull(),
+  config: json("config").$type<Record<string, unknown>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  jobNameIdx: index("job_name_idx").on(table.jobName),
+  jobTypeIdx: index("job_type_idx").on(table.jobType),
+  nextRunAtIdx: index("next_run_at_idx").on(table.nextRunAt),
+}));
+
+export type SchedulerJob = typeof schedulerJobs.$inferSelect;
+export type InsertSchedulerJob = typeof schedulerJobs.$inferInsert;
+
+// ============================================================================
+// SCHEDULER RUN HISTORY
+// ============================================================================
+
+export const schedulerRunHistory = mysqlTable("scheduler_run_history", {
+  id: int("id").autoincrement().primaryKey(),
+  jobId: int("jobId").notNull().references(() => schedulerJobs.id),
+  jobName: varchar("jobName", { length: 100 }).notNull(),
+  status: mysqlEnum("status", ["success", "failed", "running", "skipped"]).notNull(),
+  startedAt: timestamp("startedAt").notNull(),
+  completedAt: timestamp("completedAt"),
+  duration: int("duration"), // milliseconds
+  recordsProcessed: int("recordsProcessed").default(0).notNull(),
+  errorMessage: text("errorMessage"),
+  details: json("details").$type<Record<string, unknown>>(),
+}, (table) => ({
+  jobIdIdx: index("job_id_idx").on(table.jobId),
+  statusIdx: index("status_idx").on(table.status),
+  startedAtIdx: index("started_at_idx").on(table.startedAt),
+}));
+
+export type SchedulerRunHistory = typeof schedulerRunHistory.$inferSelect;
+export type InsertSchedulerRunHistory = typeof schedulerRunHistory.$inferInsert;
