@@ -35,6 +35,8 @@ import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
 import { AnimatedSection, StaggeredContainer } from "@/components/AnimatedSection";
 import { YetoLogo } from "@/components/YetoLogo";
 import { useScrollPosition } from "@/hooks/useParallax";
+import { KpiCardSkeleton, KpiRowSkeleton } from "@/components/KpiCardSkeleton";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 export default function Home() {
   const { language } = useLanguage();
@@ -314,79 +316,102 @@ export default function Home() {
                 <YetoLogo variant="badge" size="lg" animated />
               </div>
 
-              {/* GDP Growth Card - Top Left with entrance animation */}
-              <div className="absolute top-0 left-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-all duration-300 animate-[slideInLeft_0.6s_ease-out]">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
-                    <BarChart3 className="w-4 h-4 text-[#C0A030]" />
+              {/* Loading skeleton state */}
+              {kpiLoading && (
+                <>
+                  <div className="absolute top-0 left-0 animate-[slideInLeft_0.6s_ease-out]">
+                    <KpiCardSkeleton variant="hero" />
                   </div>
-                  <span className="text-sm font-medium text-gray-700">
-                    {language === "ar" ? "نمو الناتج المحلي" : "GDP Growth"}
-                  </span>
-                </div>
-                <div className="text-2xl font-bold text-[#107040] mb-1">{kpiData?.gdpGrowth?.value || "+2.5%"}</div>
-                <div className="text-xs text-gray-500 mb-2">
-                  {language === "ar" ? "نمو ربع سنوي" : "Quarterly Growth"}
-                </div>
-                <Sparkline data={kpiData?.gdpGrowth?.trend || [20, 30, 25, 40, 35, 50, 45, 60, 55, 70, 80, 90]} color="#107040" />
-              </div>
+                  <div className="absolute top-0 right-0 animate-[slideInRight_0.6s_ease-out_0.1s_both]">
+                    <KpiCardSkeleton variant="hero" />
+                  </div>
+                  <div className="absolute bottom-0 left-0 animate-[slideInLeft_0.6s_ease-out_0.2s_both]">
+                    <KpiCardSkeleton variant="hero" />
+                  </div>
+                  <div className="absolute bottom-0 right-0 animate-[slideInRight_0.6s_ease-out_0.3s_both]">
+                    <KpiCardSkeleton variant="hero" />
+                  </div>
+                </>
+              )}
 
-              {/* Inflation Rate Card - Top Right with entrance animation */}
-              <div className="absolute top-0 right-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-all duration-300 animate-[slideInRight_0.6s_ease-out_0.1s_both]">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
-                    <Coins className="w-4 h-4 text-[#C0A030]" />
+              {/* KPI Cards - Only show when loaded */}
+              {!kpiLoading && (
+                <>
+                  {/* GDP Growth Card - Top Left */}
+                  <div className="absolute top-0 left-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-all duration-300 animate-[slideInLeft_0.6s_ease-out]">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
+                        <BarChart3 className="w-4 h-4 text-[#C0A030]" />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700">
+                        {language === "ar" ? "نمو الناتج المحلي" : "GDP Growth"}
+                      </span>
+                    </div>
+                    <div className="text-2xl font-bold text-[#107040] mb-1">{kpiData?.gdpGrowth?.value || "+2.5%"}</div>
+                    <div className="text-xs text-gray-500 mb-2">
+                      {language === "ar" ? "نمو ربع سنوي" : "Quarterly Growth"}
+                    </div>
+                    <Sparkline data={kpiData?.gdpGrowth?.trend || [20, 30, 25, 40, 35, 50, 45, 60, 55, 70, 80, 90]} color="#107040" />
                   </div>
-                  <span className="text-sm font-medium text-gray-700">
-                    {language === "ar" ? "معدل التضخم" : "Inflation Rate"}
-                  </span>
-                </div>
-                <div className="text-2xl font-bold text-[#107040] mb-1">{kpiData?.inflation?.value || "15.0%"}</div>
-                <div className="text-xs text-gray-500 mb-2">
-                  {language === "ar" ? "سنوي" : "Year-over-Year"}
-                </div>
-                <Sparkline data={kpiData?.inflation?.trend || [40, 45, 50, 55, 60, 55, 60, 65, 70, 75, 80, 85]} color="#107040" />
-              </div>
 
-              {/* Exchange Rate % Card - Bottom Left with entrance animation */}
-              <div className="absolute bottom-0 left-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-all duration-300 animate-[slideInLeft_0.6s_ease-out_0.2s_both]">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
-                    <Globe className="w-4 h-4 text-[#C0A030]" />
+                  {/* Inflation Rate Card - Top Right */}
+                  <div className="absolute top-0 right-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-all duration-300 animate-[slideInRight_0.6s_ease-out_0.1s_both]">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
+                        <Coins className="w-4 h-4 text-[#C0A030]" />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700">
+                        {language === "ar" ? "معدل التضخم" : "Inflation Rate"}
+                      </span>
+                    </div>
+                    <div className="text-2xl font-bold text-[#107040] mb-1">{kpiData?.inflation?.value || "15.0%"}</div>
+                    <div className="text-xs text-gray-500 mb-2">
+                      {language === "ar" ? "سنوي" : "Year-over-Year"}
+                    </div>
+                    <Sparkline data={kpiData?.inflation?.trend || [40, 45, 50, 55, 60, 55, 60, 65, 70, 75, 80, 85]} color="#107040" />
                   </div>
-                  <span className="text-sm font-medium text-gray-700">
-                    {language === "ar" ? "سعر الصرف" : "Exchange Rate"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-xs text-gray-500">YER/USD</span>
-                </div>
-                <div className="text-2xl font-bold text-[#107040] mb-1">{kpiData?.exchangeRateYoY?.value || "51.9%"}</div>
-                <div className="text-xs text-gray-500 mb-2">
-                  {language === "ar" ? "التغير السنوي" : "YoY Change"}
-                </div>
-                <Sparkline data={kpiData?.exchangeRateYoY?.trend || [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85]} color="#107040" />
-              </div>
 
-              {/* Exchange Rate Value Card - Bottom Right with entrance animation */}
-              <div className="absolute bottom-0 right-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-all duration-300 animate-[slideInRight_0.6s_ease-out_0.3s_both]">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-8 h-8 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
-                    <DollarSign className="w-4 h-4 text-[#C0A030]" />
+                  {/* Exchange Rate % Card - Bottom Left */}
+                  <div className="absolute bottom-0 left-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-all duration-300 animate-[slideInLeft_0.6s_ease-out_0.2s_both]">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
+                        <Globe className="w-4 h-4 text-[#C0A030]" />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700">
+                        {language === "ar" ? "سعر الصرف" : "Exchange Rate"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-gray-500">YER/USD</span>
+                    </div>
+                    <div className="text-2xl font-bold text-[#107040] mb-1">{kpiData?.exchangeRateYoY?.value || "51.9%"}</div>
+                    <div className="text-xs text-gray-500 mb-2">
+                      {language === "ar" ? "التغير السنوي" : "YoY Change"}
+                    </div>
+                    <Sparkline data={kpiData?.exchangeRateYoY?.trend || [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85]} color="#107040" />
                   </div>
-                  <span className="text-sm font-medium text-gray-700">
-                    {language === "ar" ? "سعر الصرف" : "Exchange Rate"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-xs text-gray-500">YER/USD</span>
-                </div>
-                <div className="text-xl font-bold text-[#107040] mb-1">{kpiData?.exchangeRateAden?.value || "1 USD = 2,050 YER"}</div>
-                <div className="text-xs text-gray-500 mb-2">
-                  {language === "ar" ? "سعر عدن الموازي" : "Aden Parallel Rate"}
-                </div>
-                <Sparkline data={kpiData?.exchangeRateAden?.trend || [50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72]} color="#107040" />
-              </div>
+
+                  {/* Exchange Rate Value Card - Bottom Right */}
+                  <div className="absolute bottom-0 right-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-all duration-300 animate-[slideInRight_0.6s_ease-out_0.3s_both]">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
+                        <DollarSign className="w-4 h-4 text-[#C0A030]" />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700">
+                        {language === "ar" ? "سعر الصرف" : "Exchange Rate"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-gray-500">YER/USD</span>
+                    </div>
+                    <div className="text-xl font-bold text-[#107040] mb-1">{kpiData?.exchangeRateAden?.value || "1 USD = 2,050 YER"}</div>
+                    <div className="text-xs text-gray-500 mb-2">
+                      {language === "ar" ? "سعر عدن الموازي" : "Aden Parallel Rate"}
+                    </div>
+                    <Sparkline data={kpiData?.exchangeRateAden?.trend || [50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72]} color="#107040" />
+                  </div>
+                </>
+              )}
 
               {/* Spacer for card positioning */}
               <div className="h-80"></div>
@@ -396,7 +421,7 @@ export default function Home() {
       </section>
 
       {/* KPI Cards Row - Matching mockup IMG_1500 */}
-      <section className="py-8 bg-[#103050]">
+      <section id="kpi-stats" className="py-8 bg-[#103050]">
         <div className="container">
           <StaggeredContainer staggerDelay={100} className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
@@ -429,7 +454,7 @@ export default function Home() {
       </section>
 
       {/* Sectors Grid with Icons - Matching mockup IMG_1498 */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900">
+      <section id="sectors" className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="container">
           <AnimatedSection animation="fadeInUp" className={`text-center mb-12 ${language === 'ar' ? 'text-right' : ''}`}>
             <h2 className="text-2xl font-bold text-gray-600 dark:text-gray-300 mb-4">
@@ -440,10 +465,16 @@ export default function Home() {
           <StaggeredContainer staggerDelay={50} className="grid grid-cols-3 md:grid-cols-5 gap-4">
             {sectors.map((sector, index) => (
               <Link key={index} href={sector.href}>
-                <Card className={`${sector.color} border cursor-pointer transition-all hover:scale-105 hover:shadow-lg h-full`}>
+                <Card className={`${sector.color} border cursor-pointer h-full group
+                  transition-all duration-300 ease-out
+                  hover:scale-[1.08] hover:shadow-xl hover:-translate-y-1
+                  hover:border-[#107040]/40 hover:ring-2 hover:ring-[#107040]/20`}>
                   <CardContent className="p-4 text-center">
-                    <sector.icon className="h-8 w-8 mx-auto mb-3 text-gray-700" />
-                    <div className="font-medium text-gray-800 text-sm">
+                    <div className="relative">
+                      <sector.icon className="h-8 w-8 mx-auto mb-3 text-gray-700 transition-all duration-300 group-hover:text-[#107040] group-hover:scale-110" />
+                      <div className="absolute inset-0 bg-[#107040]/10 rounded-full scale-0 group-hover:scale-150 transition-transform duration-500 opacity-0 group-hover:opacity-100" />
+                    </div>
+                    <div className="font-medium text-gray-800 text-sm transition-colors duration-300 group-hover:text-[#107040]">
                       {language === "ar" ? sector.nameAr : sector.nameEn}
                     </div>
                   </CardContent>
@@ -460,17 +491,20 @@ export default function Home() {
           <StaggeredContainer staggerDelay={150} className="grid md:grid-cols-3 gap-6">
             {sectorsWithImages.map((sector, index) => (
               <Link key={index} href={sector.href}>
-                <div className="relative rounded-2xl overflow-hidden h-48 group cursor-pointer">
+                <div className="relative rounded-2xl overflow-hidden h-48 group cursor-pointer
+                  transition-all duration-500 ease-out
+                  hover:shadow-2xl hover:-translate-y-2 hover:ring-4 hover:ring-[#107040]/30">
                   <img 
                     src={sector.image} 
                     alt={language === "ar" ? sector.nameAr : sector.nameEn}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-115"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="text-xl font-bold text-white">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-all duration-500 group-hover:from-[#107040]/80 group-hover:via-[#107040]/30" />
+                  <div className="absolute bottom-4 left-4 right-4 transition-transform duration-300 group-hover:translate-y-[-4px]">
+                    <h3 className="text-xl font-bold text-white transition-all duration-300 group-hover:text-[#C0A030]">
                       {language === "ar" ? sector.nameAr : sector.nameEn}
                     </h3>
+                    <div className="h-0.5 w-0 bg-[#C0A030] transition-all duration-500 group-hover:w-full mt-1" />
                   </div>
                 </div>
               </Link>
@@ -480,7 +514,7 @@ export default function Home() {
       </section>
 
       {/* Latest Updates Section - Matching mockup IMG_1499 */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900">
+      <section id="updates" className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="container">
           <AnimatedSection animation="fadeInUp">
             <h2 className="text-3xl font-bold text-center text-[#103050] dark:text-white mb-12">
@@ -517,7 +551,7 @@ export default function Home() {
       </section>
 
       {/* Features Grid - Matching mockup IMG_1498 */}
-      <section className="py-16 bg-white dark:bg-gray-950">
+      <section id="features" className="py-16 bg-white dark:bg-gray-950">
         <div className="container">
           <AnimatedSection animation="fadeInUp" className={`text-center mb-12 ${language === 'ar' ? 'text-right' : ''}`}>
             <h2 className="text-3xl font-bold text-[#103050] dark:text-white mb-4">
@@ -604,6 +638,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Scroll to Top Button */}
+      <ScrollToTop />
     </div>
   );
 }
