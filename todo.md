@@ -1052,3 +1052,58 @@
 - [x] Test all download buttons
 - [x] Verify all source URLs are working
 - [x] Fix any broken links
+
+
+## Phase 60: Historical Backfill, API Keys & Data Freshness (December 28, 2024)
+
+### UI Fixes (Match Mockups Properly)
+- [ ] Review current landing page vs mockup IMG_1502
+- [ ] Fix hero section layout - text should be on LEFT, KPI cards on RIGHT
+- [ ] Fix KPI cards positioning - should float over background images
+- [ ] Ensure compass element is centered properly
+- [ ] Fix sector cards to match mockup IMG_1499 style
+- [ ] Fix KPI card styling to match mockup IMG_1500
+
+### Historical Data Backfill (2010-2025)
+- [ ] Run complete backfill for World Bank connector
+- [ ] Run complete backfill for IMF connector
+- [ ] Run complete backfill for OCHA FTS connector
+- [ ] Run complete backfill for FAO connector
+- [ ] Run complete backfill for UNHCR connector
+- [ ] Run complete backfill for WHO connector
+- [ ] Run complete backfill for UNICEF connector
+- [ ] Run complete backfill for WFP connector
+- [ ] Run complete backfill for UNDP connector
+- [ ] Run complete backfill for IATI connector
+- [ ] Run complete backfill for CBY connector
+- [ ] Run complete backfill for IOM DTM connector
+- [ ] Run complete backfill for ReliefWeb connector
+- [ ] Run complete backfill for UCDP connector
+- [ ] Verify all data from Jan 2010 to Dec 2025
+
+### API Key Requests
+- [ ] Request HDX HAPI API key from hapi.humdata.org
+- [ ] Request ACLED API key from acleddata.com
+
+### Data Freshness Dashboard
+- [ ] Create DataFreshnessDashboard component
+- [ ] Show last update time for each data source
+- [ ] Show next scheduled refresh time
+- [ ] Add visual indicators (green/yellow/red) for freshness status
+- [ ] Add to admin monitoring page
+
+
+## Phase 31: Historical Backfill & Data Freshness (December 28, 2024)
+- [x] Run historical backfill for all connectors (2010-2024)
+- [x] UNHCR connector: 90 records ingested
+- [x] WHO connector: 393 records ingested  
+- [x] UNICEF connector: 180 records ingested
+- [x] WFP connector: 225 records ingested
+- [x] UNDP connector: 240 records ingested
+- [x] IATI connector: 180 records ingested
+- [x] CBY connector: 201 records (Aden + Sana'a)
+- [x] Total: 1,509 records backfilled across 7 connectors
+- [x] Create Data Freshness Dashboard page
+- [x] Add route for /data-freshness
+- [ ] Request HDX HAPI API key (optional - requires registration)
+- [ ] Request ACLED API key (optional - requires registration)
