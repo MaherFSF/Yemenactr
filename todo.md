@@ -1118,3 +1118,7 @@
 - [x] Create international organization data exchange hub
 - [x] Conduct platform-wide accuracy checks
 - [ ] Note: HDX HAPI and ACLED API keys to be added later by user
+
+
+## Phase 33: UI Cleanup (December 29, 2024)
+- [x] Remove four background images from hero section

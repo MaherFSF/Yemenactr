@@ -241,52 +241,17 @@ export default function Home() {
       {/* Insights Ticker - Sticky bar with rotating updates */}
       <InsightsTicker />
       
-      {/* Hero Section - Matching mockup IMG_1502 exactly */}
+      {/* Hero Section - Clean gradient design */}
       <section className="relative min-h-[650px] overflow-hidden">
-        {/* Background collage */}
-        <div className="absolute inset-0 grid grid-cols-4 grid-rows-2">
-          <div className="col-span-2 row-span-2 relative">
-            <div 
-              className="absolute inset-0"
-              style={{
-                backgroundImage: `linear-gradient(to right, rgba(16, 48, 80, 0.95), rgba(16, 48, 80, 0.7))`,
-                zIndex: 1
-              }}
-            />
-            <img 
-              src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80" 
-              alt="Office" 
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="relative">
-            <img 
-              src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80" 
-              alt="Analytics" 
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="relative">
-            <img 
-              src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&q=80" 
-              alt="Dashboard" 
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="relative">
-            <img 
-              src="/images/sectors/trade-port.jpg" 
-              alt="Port" 
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="relative">
-            <img 
-              src="/images/sectors/solar-energy.jpg" 
-              alt="Solar" 
-              className="w-full h-full object-cover"
-            />
-          </div>
+        {/* Clean gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#103050] via-[#1a4a70] to-[#103050]">
+          {/* Subtle pattern overlay */}
+          <div className="absolute inset-0 opacity-10" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }} />
+          {/* Decorative circles */}
+          <div className="absolute top-20 right-20 w-64 h-64 bg-[#C0A030]/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 left-20 w-96 h-96 bg-[#107040]/10 rounded-full blur-3xl" />
         </div>
 
         {/* Content overlay */}
