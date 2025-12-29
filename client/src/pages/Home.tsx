@@ -241,17 +241,17 @@ export default function Home() {
       {/* Insights Ticker - Sticky bar with rotating updates */}
       <InsightsTicker />
       
-      {/* Hero Section - Clean gradient design */}
+      {/* Hero Section - Yemen skyline background */}
       <section className="relative min-h-[650px] overflow-hidden">
-        {/* Clean gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#103050] via-[#1a4a70] to-[#103050]">
-          {/* Subtle pattern overlay */}
-          <div className="absolute inset-0 opacity-10" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }} />
-          {/* Decorative circles */}
-          <div className="absolute top-20 right-20 w-64 h-64 bg-[#C0A030]/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 left-20 w-96 h-96 bg-[#107040]/10 rounded-full blur-3xl" />
+        {/* Yemen skyline background image */}
+        <div className="absolute inset-0">
+          <img 
+            src="/images/hero-yemen-skyline.jpg" 
+            alt="Yemen Skyline" 
+            className="w-full h-full object-cover"
+          />
+          {/* Dark overlay for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#103050]/95 via-[#103050]/80 to-[#103050]/60" />
         </div>
 
         {/* Content overlay */}
@@ -300,17 +300,20 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right Content - Floating KPI Cards matching mockup */}
+            {/* Right Content - Floating KPI Cards with animations */}
             <div className={`relative ${language === 'ar' ? 'lg:order-1' : ''}`}>
-              {/* Compass in center */}
+              {/* YETO Logo in center */}
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0">
-                <div className="w-32 h-32 rounded-full border-2 border-[#C0A030]/30 flex items-center justify-center">
-                  <Compass className="w-16 h-16 text-[#C0A030]/50" />
+                <div className="w-32 h-32 rounded-full border-2 border-[#C0A030]/30 flex items-center justify-center bg-[#103050]/50 backdrop-blur-sm animate-pulse">
+                  <div className="text-center">
+                    <span className="text-2xl font-bold text-[#C0A030]">YETO</span>
+                    <div className="w-8 h-0.5 bg-[#C0A030]/50 mx-auto mt-1" />
+                  </div>
                 </div>
               </div>
 
-              {/* GDP Growth Card - Top Left */}
-              <div className="absolute top-0 left-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-transform">
+              {/* GDP Growth Card - Top Left with entrance animation */}
+              <div className="absolute top-0 left-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-all duration-300 animate-[slideInLeft_0.6s_ease-out]">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-8 h-8 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
                     <BarChart3 className="w-4 h-4 text-[#C0A030]" />
@@ -326,8 +329,8 @@ export default function Home() {
                 <Sparkline data={kpiData?.gdpGrowth?.trend || [20, 30, 25, 40, 35, 50, 45, 60, 55, 70, 80, 90]} color="#107040" />
               </div>
 
-              {/* Inflation Rate Card - Top Right */}
-              <div className="absolute top-0 right-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-transform">
+              {/* Inflation Rate Card - Top Right with entrance animation */}
+              <div className="absolute top-0 right-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-all duration-300 animate-[slideInRight_0.6s_ease-out_0.1s_both]">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-8 h-8 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
                     <Coins className="w-4 h-4 text-[#C0A030]" />
@@ -343,8 +346,8 @@ export default function Home() {
                 <Sparkline data={kpiData?.inflation?.trend || [40, 45, 50, 55, 60, 55, 60, 65, 70, 75, 80, 85]} color="#107040" />
               </div>
 
-              {/* Exchange Rate % Card - Bottom Left */}
-              <div className="absolute bottom-0 left-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-transform">
+              {/* Exchange Rate % Card - Bottom Left with entrance animation */}
+              <div className="absolute bottom-0 left-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-all duration-300 animate-[slideInLeft_0.6s_ease-out_0.2s_both]">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-8 h-8 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
                     <Globe className="w-4 h-4 text-[#C0A030]" />
@@ -363,8 +366,8 @@ export default function Home() {
                 <Sparkline data={kpiData?.exchangeRateYoY?.trend || [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85]} color="#107040" />
               </div>
 
-              {/* Exchange Rate Value Card - Bottom Right */}
-              <div className="absolute bottom-0 right-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-transform">
+              {/* Exchange Rate Value Card - Bottom Right with entrance animation */}
+              <div className="absolute bottom-0 right-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-all duration-300 animate-[slideInRight_0.6s_ease-out_0.3s_both]">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-8 h-8 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
                     <DollarSign className="w-4 h-4 text-[#C0A030]" />

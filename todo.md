@@ -1122,3 +1122,7 @@
 
 ## Phase 33: UI Cleanup (December 29, 2024)
 - [x] Remove four background images from hero section
+
+- [x] Add Yemen background image to hero section
+- [x] Replace compass icon with YETO logo
+- [x] Add entrance animations to KPI cards
