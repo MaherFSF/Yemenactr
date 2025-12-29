@@ -84,29 +84,42 @@ export default function Currency() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-yellow-100 via-yellow-50 to-yellow-100 dark:from-yellow-950/30 dark:via-yellow-900/20 dark:to-yellow-950/30 border-b">
-        <div className="container py-12">
-          <div className="max-w-4xl mx-auto">
+      <section className="relative h-[400px] overflow-hidden">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(/sectors/currency.jpg)` }}
+        />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#C0A030]/90 to-[#8B7500]/80" />
+        {/* Pattern Overlay */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }} />
+        </div>
+        <div className="container relative h-full flex items-center">
+          <div className={`max-w-2xl ${language === 'ar' ? 'mr-auto text-right' : 'ml-0'}`}>
             <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="mb-4 gap-2">
+              <Button variant="ghost" size="sm" className="mb-4 gap-2 text-white hover:bg-white/20">
                 <ArrowLeft className="h-4 w-4" />
                 {language === "ar" ? "العودة إلى لوحة المعلومات" : "Back to Dashboard"}
               </Button>
             </Link>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
-                <Banknote className="h-6 w-6 text-yellow-600" />
+              <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
+                <Banknote className="h-8 w-8 text-white" />
               </div>
-              <Badge variant="outline" className="text-sm border-yellow-200 text-yellow-700">
+              <Badge className="bg-[#107040] text-white border-0">
                 {language === "ar" ? "القطاع المالي" : "Financial Sector"}
               </Badge>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               {language === "ar" 
                 ? "العملة وأسعار الصرف"
                 : "Currency & Exchange Rates"}
             </h1>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-xl text-white/90 mb-6">
               {language === "ar"
                 ? "تتبع أسعار صرف الريال اليمني والفجوة بين النظامين النقديين"
                 : "Tracking Yemeni Rial exchange rates and the dual monetary system divergence"}

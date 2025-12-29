@@ -221,7 +221,7 @@ export default function Trade() {
       <section className="relative h-[400px] overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${images.hero})` }}
+          style={{ backgroundImage: `url(/sectors/trade.jpg)` }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-[#103050]/90 via-[#103050]/70 to-transparent" />
         </div>

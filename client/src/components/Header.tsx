@@ -34,7 +34,12 @@ import {
   Database,
   Clock,
   BookOpen,
-  Shield
+  Shield,
+  Search,
+  LineChart,
+  MessageSquare,
+  Library,
+  ClipboardCheck
 } from "lucide-react";
 import { useState } from "react";
 import GlobalSearch from "@/components/GlobalSearch";
@@ -77,7 +82,12 @@ export default function Header() {
   ];
 
   const resources = [
-    { nameEn: "Research Library", nameAr: "مكتبة الأبحاث", href: "/research", icon: BookOpen },
+    { nameEn: "Research Portal", nameAr: "بوابة الأبحاث", href: "/research-portal", icon: BookOpen },
+    { nameEn: "Research Explorer", nameAr: "مستكشف الأبحاث", href: "/research-explorer", icon: Search },
+    { nameEn: "Research Analytics", nameAr: "تحليلات الأبحاث", href: "/research-visualization", icon: LineChart },
+    { nameEn: "Research Assistant", nameAr: "مساعد الأبحاث", href: "/research-assistant", icon: MessageSquare },
+    { nameEn: "Research Library", nameAr: "مكتبتي البحثية", href: "/research-library", icon: Library },
+    { nameEn: "Research Audit", nameAr: "تدقيق الأبحاث", href: "/research-audit", icon: ClipboardCheck },
     { nameEn: "Methodology", nameAr: "المنهجية", href: "/methodology", icon: Shield },
     { nameEn: "Glossary", nameAr: "المصطلحات", href: "/glossary", icon: FileText },
     { nameEn: "About YETO", nameAr: "عن يتو", href: "/about", icon: Users },
