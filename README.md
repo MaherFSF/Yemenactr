@@ -12,6 +12,8 @@
 [![React](https://img.shields.io/badge/React-19-61dafb.svg)](https://react.dev/)
 [![tRPC](https://img.shields.io/badge/tRPC-11-2596be.svg)](https://trpc.io/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38bdf8.svg)](https://tailwindcss.com/)
+[![Tests](https://img.shields.io/badge/Tests-131%20Passing-brightgreen.svg)]()
+[![Routes](https://img.shields.io/badge/Routes-60%2F60-brightgreen.svg)]()
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg)]()
 
 [Live Demo](https://yeto.causewaygrp.com) · [Documentation](docs/) · [Report Bug](mailto:yeto@causewaygrp.com)
@@ -23,17 +25,17 @@
 ## 📋 Table of Contents
 
 - [Overview](#overview)
+- [Current Status](#current-status)
 - [Key Features](#key-features)
+- [Data Connectors](#data-connectors)
 - [Architecture](#architecture)
 - [Technology Stack](#technology-stack)
 - [Getting Started](#getting-started)
 - [Project Structure](#project-structure)
 - [Data Governance](#data-governance)
-- [Security](#security)
 - [API Reference](#api-reference)
 - [Testing](#testing)
 - [Deployment](#deployment)
-- [Contributing](#contributing)
 - [License](#license)
 
 ---
@@ -55,21 +57,49 @@ YETO (Yemen Economic Transparency Observatory) is a comprehensive economic intel
 
 ---
 
+## Current Status
+
+**Last Updated:** December 29, 2024
+
+### Platform Health
+
+| Metric | Status |
+|--------|--------|
+| **Routes Tested** | 60/60 (100% ✅) |
+| **Unit Tests** | 131 Passing ✅ |
+| **TypeScript Errors** | 0 ✅ |
+| **Data Records** | 4,347+ |
+| **Active Connectors** | 14/16 |
+
+### Recent Updates
+
+- ✅ Comprehensive site audit completed - all 60 routes passing
+- ✅ Research Portal with 6 new pages (Explorer, Analytics, Assistant, Library, Audit)
+- ✅ Signal detection system with 12 configurable thresholds
+- ✅ Daily scheduler with 13 automated data refresh jobs
+- ✅ 7 new data connectors (World Bank, OCHA FTS, IMF, HDX, Sanctions, ReliefWeb, FEWS NET)
+- ✅ Real-time KPI cards connected to live database
+- ✅ Scroll animations and parallax effects on homepage
+- ✅ Custom YETO logo SVG with animations
+
+---
+
 ## Key Features
 
 ### 📊 Data Intelligence
 
 | Feature | Description |
 |---------|-------------|
-| **47+ Data Sources** | Aggregated from World Bank, OCHA, IMF, CBY, and local institutions |
-| **1.2M+ Data Points** | Time series, geospatial, and event data |
+| **16 Data Connectors** | World Bank, IMF, UNHCR, WHO, WFP, UNDP, UNICEF, IATI, CBY, HDX, OCHA FTS, FEWS NET, Sanctions, ReliefWeb |
+| **4,347+ Data Points** | Time series, geospatial, and event data |
 | **15 Economic Sectors** | Comprehensive coverage from banking to agriculture |
-| **Real-time Updates** | Automated ingestion with quality validation |
+| **Real-time Updates** | Automated daily ingestion with quality validation |
 
 ### 🔍 Analysis Tools
 
 - **AI Research Assistant**: Natural language queries with evidence-backed responses
 - **Scenario Simulator**: "What-if" analysis with transparent assumptions
+- **Policy Impact Analysis**: 6 scenario models for economic policy evaluation
 - **Contradiction Detector**: Identifies discrepancies between sources
 - **Vintage Time Travel**: View data as it was known at any point in time
 
@@ -85,7 +115,45 @@ YETO (Yemen Economic Transparency Observatory) is a comprehensive economic intel
 - **Provenance Ledger**: W3C PROV-compliant data lineage tracking
 - **Confidence Ratings**: A-D grades with transparent methodology
 - **Public Changelog**: RSS-enabled update notifications
-- **Integrity Verification**: Checksums and audit trails
+- **Signal Detection**: Automated alerts for threshold breaches
+
+### 📚 Research Portal
+
+- **Research Explorer**: Advanced filtering by category, type, year, organization
+- **Research Analytics**: Timeline visualization, topic clustering, citation networks
+- **AI Research Assistant**: Natural language queries across publications
+- **Research Library**: Bookmarks, reading lists, topic alerts
+- **Completeness Audit**: Gap detection and coverage analysis
+
+---
+
+## Data Connectors
+
+### Active Connectors (14)
+
+| Connector | Source | Data Type | Records |
+|-----------|--------|-----------|---------|
+| World Bank WDI | api.worldbank.org | GDP, poverty, trade | 394 |
+| UNHCR | data.unhcr.org | Refugees, IDPs | 90 |
+| WHO | ghoapi.azureedge.net | Health indicators | 393 |
+| UNICEF | data.unicef.org | Child welfare | 180 |
+| WFP | api.wfp.org | Food prices, security | 225 |
+| UNDP | hdr.undp.org | Human development | 240 |
+| IATI | iatiregistry.org | Aid transparency | 180 |
+| CBY | cby.gov.ye | Exchange rates, monetary | 201 |
+| HDX CKAN | data.humdata.org | Humanitarian data | 10 |
+| IMF IFS | data.imf.org | Monetary, financial | 79 |
+| FEWS NET | fews.net | Food security phases | 232 |
+| Sanctions | treasury.gov, sanctionsmap.eu | OFAC/EU lists | 11 |
+| ReliefWeb | reliefweb.int | Humanitarian updates | Pending |
+| OCHA FTS | fts.unocha.org | Funding flows | Pending |
+
+### Pending Connectors (2)
+
+| Connector | Requirement |
+|-----------|-------------|
+| HDX HAPI | API key required |
+| ACLED | API key required |
 
 ---
 
@@ -110,23 +178,13 @@ YETO (Yemen Economic Transparency Observatory) is a comprehensive economic intel
 │  └─────────────┘  └─────────────┘  └─────────────┘             │
 │                                                                 │
 │  ┌─────────────────────────────────────────────────────────┐   │
-│  │                    Hardening Layer                       │   │
+│  │                  Data Pipeline Layer                     │   │
 │  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐   │   │
-│  │  │Monitoring│ │  Backup  │ │  Cache   │ │ Security │   │   │
-│  │  │& Metrics │ │& Recovery│ │& RateLimit│ │& Audit  │   │   │
+│  │  │Connectors│ │Validation│ │Scheduler │ │ Signals  │   │   │
+│  │  │  (16)    │ │   & QA   │ │  (Daily) │ │Detection │   │   │
 │  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘   │   │
 │  └─────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────┘
-```
-
-### Data Flow
-
-```
-External Sources → Ingestion Pipeline → QA Validation → Provenance Ledger
-                                              ↓
-                                    Confidence Rating
-                                              ↓
-                                    Time Series DB → API → UI
 ```
 
 ---
@@ -164,15 +222,6 @@ External Sources → Ingestion Pipeline → QA Validation → Provenance Ledger
 | TiDB (MySQL-compatible) | Primary Database |
 | S3-compatible Storage | File Storage |
 
-### DevOps & Quality
-
-| Technology | Purpose |
-|------------|---------|
-| Vitest | Unit Testing |
-| ESLint | Code Linting |
-| Prettier | Code Formatting |
-| GitHub Actions | CI/CD |
-
 ---
 
 ## Getting Started
@@ -205,34 +254,13 @@ pnpm db:push
 pnpm dev
 ```
 
-### Environment Variables
-
-```env
-# Database
-DATABASE_URL=mysql://user:password@host:port/database
-
-# Authentication
-JWT_SECRET=your-jwt-secret
-OAUTH_SERVER_URL=https://api.manus.im
-VITE_OAUTH_PORTAL_URL=https://manus.im/login
-
-# Application
-VITE_APP_ID=your-app-id
-VITE_APP_TITLE=YETO
-VITE_APP_LOGO=/yeto-logo.svg
-
-# External APIs (optional)
-BUILT_IN_FORGE_API_URL=https://api.forge.example.com
-BUILT_IN_FORGE_API_KEY=your-api-key
-```
-
 ### Available Scripts
 
 ```bash
 pnpm dev          # Start development server
 pnpm build        # Build for production
 pnpm preview      # Preview production build
-pnpm test         # Run unit tests
+pnpm test         # Run unit tests (131 tests)
 pnpm typecheck    # TypeScript type checking
 pnpm lint         # ESLint code linting
 pnpm db:push      # Push schema to database
@@ -248,28 +276,33 @@ yeto-platform/
 ├── client/                 # Frontend application
 │   ├── public/            # Static assets
 │   ├── src/
-│   │   ├── components/    # Reusable UI components
+│   │   ├── components/    # Reusable UI components (60+)
 │   │   ├── contexts/      # React contexts
-│   │   ├── hooks/         # Custom hooks
+│   │   ├── hooks/         # Custom hooks (10+)
 │   │   ├── lib/           # Utilities and tRPC client
-│   │   ├── pages/         # Page components
+│   │   ├── pages/         # Page components (60+)
 │   │   ├── App.tsx        # Main app with routing
 │   │   └── main.tsx       # Entry point
 │   └── index.html         # HTML template
 ├── server/                 # Backend application
 │   ├── _core/             # Framework internals
+│   ├── connectors/        # Data source connectors (16)
 │   ├── governance/        # Data governance services
 │   ├── hardening/         # Production hardening
+│   ├── scheduler/         # Automated job scheduling
+│   ├── services/          # Business logic services
 │   ├── db.ts              # Database helpers
 │   └── routers.ts         # tRPC procedures
 ├── drizzle/               # Database schema
 │   └── schema.ts          # Drizzle schema definitions
 ├── shared/                # Shared types and constants
+├── scripts/               # Utility scripts
 ├── docs/                  # Documentation
 │   ├── 0_START_HERE.md   # Quick start guide
-│   ├── WORKPLAN.md       # Implementation roadmap
-│   ├── REQ_INDEX.md      # Requirements index
-│   └── ...               # Additional docs
+│   ├── ARCHITECTURE.md   # System architecture
+│   ├── API_REFERENCE.md  # API documentation
+│   ├── DATA_GOVERNANCE.md # Data governance policies
+│   └── site-audit-report.md # Latest audit results
 └── storage/               # S3 storage helpers
 ```
 
@@ -279,274 +312,69 @@ yeto-platform/
 
 YETO implements a comprehensive "Trust Engine" for data governance:
 
-### Provenance Ledger (Section 8A)
+### Provenance Ledger
 
-Every data point tracks its complete lineage:
+Every data point tracks its complete lineage including source, access method, retrieval time, transformations, and QA checks.
 
-```typescript
-interface ProvenanceLedger {
-  sourceId: number;           // Original data source
-  accessMethod: string;       // How data was retrieved
-  retrievalTime: Date;        // When data was fetched
-  rawDataHash: string;        // SHA-256 of raw data
-  transformations: Transform[]; // Processing steps
-  qaChecks: QACheck[];        // Quality validations
-  licenseType: string;        // Data license
-}
-```
-
-### Confidence Ratings (Section 8B)
-
-Data quality is rated A-D based on five dimensions:
+### Confidence Ratings
 
 | Rating | Score | Description |
 |--------|-------|-------------|
 | **A** | 85-100 | Highly Reliable - Official/audited data |
 | **B** | 70-84 | Reliable - Credible institutional source |
 | **C** | 50-69 | Moderate - Proxy or modelled data |
-| **D** | 0-49 | Low Reliability - Use with caution |
+| **D** | <50 | Low - Disputed or unverified |
 
-Scoring dimensions:
-- Source Credibility (25%)
-- Data Completeness (20%)
-- Timeliness (20%)
-- Consistency (20%)
-- Methodology (15%)
+### Signal Detection
 
-### Contradiction Detection (Section 8C)
-
-Automatic detection of discrepancies between sources:
-
-```typescript
-interface Contradiction {
-  indicatorId: number;
-  source1: { value: number; sourceId: number };
-  source2: { value: number; sourceId: number };
-  discrepancyPercent: number;
-  discrepancyType: 'minor' | 'significant' | 'major' | 'critical';
-  plausibleReasons: string[];
-}
-```
-
-### Data Vintages (Section 8D)
-
-Point-in-time queries for historical analysis:
-
-```typescript
-// Get GDP as it was known on January 1, 2024
-const gdp = await getValueAsOf('gdp', new Date('2024-01-01'));
-```
-
-### Public Changelog (Section 8E)
-
-Transparent update notifications with RSS support:
-
-- Dataset additions and updates
-- Methodology changes
-- Corrections and restatements
-- Source additions
-
----
-
-## Security
-
-### Hardening Features (Section 9)
-
-#### Monitoring & Observability (9A)
-
-- Health check endpoints (`/health`, `/ready`, `/live`)
-- System metrics collection (CPU, memory, requests)
-- Request logging with correlation IDs
-- Error tracking and alerting
-
-#### Backup & Recovery (9B)
-
-- Automated daily full backups
-- Hourly incremental backups
-- Point-in-time recovery
-- Integrity verification
-
-#### Performance Optimization (9C)
-
-- LRU caching with TTL
-- Rate limiting (API, auth, export)
-- Query optimization tracking
-- Response compression
-
-#### Security Hardening (9D)
-
-- CSRF protection with single-use tokens
-- Security headers (CSP, HSTS, X-Frame-Options)
-- Input sanitization (XSS, SQL injection prevention)
-- Brute force protection
-- API key management with rotation
-- Security audit logging
-
-### Security Headers
-
-```http
-Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'...
-Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-X-Content-Type-Options: nosniff
-X-Frame-Options: SAMEORIGIN
-X-XSS-Protection: 1; mode=block
-Referrer-Policy: strict-origin-when-cross-origin
-```
+Automated monitoring for 12 threshold conditions:
+- Exchange rate spikes (5%, 10%)
+- Inflation thresholds (20%, 30%)
+- Food insecurity levels (50%, 60%)
+- Sanctions intensity changes
 
 ---
 
 ## API Reference
 
-### tRPC Procedures
+### tRPC Endpoints
 
-YETO uses tRPC for type-safe API calls. All procedures are available under the `/api/trpc` endpoint.
+| Router | Endpoints | Description |
+|--------|-----------|-------------|
+| `dashboard` | getStats, getHeroKPIs | Platform statistics |
+| `research` | getPublications, search | Research portal |
+| `scheduler` | getJobs, runJob | Job management |
+| `alerts` | getAlerts, acknowledge | Alert system |
+| `ai` | chat, askResearch | AI assistant |
 
-#### Authentication
-
-```typescript
-// Get current user
-trpc.auth.me.useQuery()
-
-// Logout
-trpc.auth.logout.useMutation()
-```
-
-#### Data Queries
-
-```typescript
-// Get time series data
-trpc.data.getTimeSeries.useQuery({
-  indicatorId: 1,
-  startDate: '2020-01-01',
-  endDate: '2024-12-31',
-})
-
-// Get sector overview
-trpc.sectors.getOverview.useQuery({ sectorId: 'banking' })
-
-// Search indicators
-trpc.indicators.search.useQuery({ query: 'exchange rate' })
-```
-
-#### Governance
-
-```typescript
-// Get provenance for a data point
-trpc.governance.getProvenance.useQuery({ dataPointId: 123 })
-
-// Get confidence rating
-trpc.governance.getConfidenceRating.useQuery({ indicatorId: 1 })
-
-// Get contradictions
-trpc.governance.getContradictions.useQuery({ status: 'open' })
-
-// Get changelog
-trpc.governance.getChangelog.useQuery({ limit: 50 })
-```
-
-#### Monitoring (Admin)
-
-```typescript
-// Get health status
-trpc.monitoring.getHealth.useQuery()
-
-// Get system metrics
-trpc.monitoring.getMetrics.useQuery()
-
-// Get active alerts
-trpc.monitoring.getAlerts.useQuery()
-```
+See [docs/API_REFERENCE.md](docs/API_REFERENCE.md) for complete documentation.
 
 ---
 
 ## Testing
 
-### Running Tests
-
 ```bash
 # Run all tests
 pnpm test
 
-# Run specific test file
-pnpm test server/governance.test.ts
-
 # Run with coverage
 pnpm test --coverage
 
-# Watch mode
-pnpm test --watch
+# Run specific test file
+pnpm test server/auth.logout.test.ts
 ```
 
-### Test Structure
-
-```
-server/
-├── auth.logout.test.ts      # Authentication tests
-├── governance.test.ts       # Data governance tests (15 tests)
-└── hardening.test.ts        # Hardening tests (42 tests)
-```
-
-### Test Categories
-
-| Category | Tests | Description |
-|----------|-------|-------------|
-| Core Platform | 21 | YETO core functionality |
-| Governance | 15 | Provenance, confidence, contradictions, vintages, changelog |
-| Hardening | 42 | Monitoring, backup, performance, security |
-| Integration | 35 | R0/R1/R2 compliance, authorization, connectors |
-| Connectors | 17 | API connector validation |
-| Auth | 1 | Authentication flows |
-| **Total** | **131** | All tests passing ✅ |
+**Current Status:** 131 tests passing
 
 ---
 
 ## Deployment
 
-### Production Checklist
+YETO is deployed via Manus platform with built-in hosting:
 
-- [ ] Environment variables configured
-- [ ] Database migrations applied
-- [ ] SSL/TLS certificates installed
-- [ ] Security headers enabled
-- [ ] Rate limiting configured
-- [ ] Backup schedule active
-- [ ] Monitoring alerts configured
-- [ ] Error tracking enabled
-
-### Recommended Infrastructure
-
-```
-                    ┌─────────────┐
-                    │   CDN       │
-                    │ (Cloudflare)│
-                    └──────┬──────┘
-                           │
-                    ┌──────┴──────┐
-                    │ Load Balancer│
-                    └──────┬──────┘
-                           │
-          ┌────────────────┼────────────────┐
-          │                │                │
-    ┌─────┴─────┐   ┌─────┴─────┐   ┌─────┴─────┐
-    │  App Node │   │  App Node │   │  App Node │
-    │     1     │   │     2     │   │     3     │
-    └─────┬─────┘   └─────┬─────┘   └─────┬─────┘
-          │                │                │
-          └────────────────┼────────────────┘
-                           │
-                    ┌──────┴──────┐
-                    │   TiDB      │
-                    │  Cluster    │
-                    └─────────────┘
-```
-
----
-
-## Contributing
-
-YETO is a proprietary platform developed by CauseWay. For inquiries about contributing or partnership opportunities, please contact:
-
-**Email**: yeto@causewaygrp.com
+1. Create a checkpoint: `webdev_save_checkpoint`
+2. Click "Publish" in the Manus UI
+3. Configure custom domain in Settings → Domains
 
 ---
 
@@ -558,51 +386,15 @@ This software is proprietary and confidential. Unauthorized copying, distributio
 
 ---
 
-## Acknowledgments
+## Contact
 
-### Data Sources & API Connectors
-
-YETO aggregates data from the following authoritative sources:
-
-#### ✅ Working Connectors (No API Key Required)
-
-| Connector | Data Types | Update Frequency |
-|-----------|------------|------------------|
-| World Bank Open Data | GDP, Development, Trade, Poverty | Annual |
-| IMF Data Services | IFS, WEO, Exchange Rates, BoP | Monthly |
-| OCHA FTS | Humanitarian Funding Flows | Daily |
-| FAO/FAOSTAT | Agriculture, Food Security | Annual |
-| IOM DTM | Displacement, Migration | Monthly |
-| ReliefWeb | Humanitarian Reports | Daily |
-| WHO GHO | Health Statistics | Annual |
-
-#### ⚠️ Connectors Requiring API Keys
-
-| Connector | Data Types | How to Obtain Key |
-|-----------|------------|-------------------|
-| HDX HAPI | Humanitarian Data | [hapi.humdata.org](https://hapi.humdata.org/) |
-| ACLED | Armed Conflict Events | [acleddata.com/access-data](https://acleddata.com/access-data/) |
-
-#### 📋 Planned Connectors
-
-| Connector | Data Types | Priority |
-|-----------|------------|----------|
-| UNHCR Data Portal | Refugee Statistics | P2 |
-| UNICEF Data | Child Welfare | P3 |
-| Central Bank of Yemen (Aden) | Exchange Rates | P1 |
-| WFP Market Monitoring | Food Prices | P2 |
-
-### Technology Partners
-
-- [Manus](https://manus.im) - Platform Infrastructure
-- [TiDB](https://pingcap.com) - Distributed Database
+- **Email:** yeto@causewaygrp.com
+- **Website:** [causewaygrp.com](https://causewaygrp.com)
 
 ---
 
 <div align="center">
 
-**Built with ❤️ for Yemen**
-
-*Transparency • Accountability • Evidence*
+**Built with ❤️ for Yemen's economic transparency**
 
 </div>
