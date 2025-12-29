@@ -447,40 +447,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sectors Grid with Icons - Matching mockup IMG_1498 */}
+      {/* Sector Cards with Images - All 15 sectors */}
       <section id="sectors" className="py-16 bg-gray-50 dark:bg-gray-900">
-        <div className="container">
-          <AnimatedSection animation="fadeInUp" className={`text-center mb-12 ${language === 'ar' ? 'text-right' : ''}`}>
-            <h2 className="text-2xl font-bold text-gray-600 dark:text-gray-300 mb-4">
-              {language === "ar" ? "تصفح البيانات والتحليلات حسب القطاع الاقتصادي" : "Browse data and analysis by economic sector"}
-            </h2>
-          </AnimatedSection>
-
-          <StaggeredContainer staggerDelay={50} className="grid grid-cols-3 md:grid-cols-5 gap-4">
-            {sectors.map((sector, index) => (
-              <Link key={index} href={sector.href}>
-                <Card className={`${sector.color} border cursor-pointer h-full group
-                  transition-all duration-300 ease-out
-                  hover:scale-[1.08] hover:shadow-xl hover:-translate-y-1
-                  hover:border-[#107040]/40 hover:ring-2 hover:ring-[#107040]/20`}>
-                  <CardContent className="p-4 text-center">
-                    <div className="relative">
-                      <sector.icon className="h-8 w-8 mx-auto mb-3 text-gray-700 transition-all duration-300 group-hover:text-[#107040] group-hover:scale-110" />
-                      <div className="absolute inset-0 bg-[#107040]/10 rounded-full scale-0 group-hover:scale-150 transition-transform duration-500 opacity-0 group-hover:opacity-100" />
-                    </div>
-                    <div className="font-medium text-gray-800 text-sm transition-colors duration-300 group-hover:text-[#107040]">
-                      {language === "ar" ? sector.nameAr : sector.nameEn}
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </StaggeredContainer>
-        </div>
-      </section>
-
-      {/* Sector Cards with Images - All 15 sectors matching mockup IMG_1527 */}
-      <section className="py-16 bg-white dark:bg-gray-950">
         <div className="container">
           <AnimatedSection animation="fadeInUp" className="text-center mb-8">
             <h2 className="text-2xl font-bold text-gray-600 dark:text-gray-300">
