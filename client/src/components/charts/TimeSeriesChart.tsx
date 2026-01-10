@@ -14,6 +14,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Info } from "lucide-react";
+import { EvidencePack, type Source } from "@/components/EvidencePack";
 
 interface DataPoint {
   date: string;
@@ -32,6 +33,10 @@ interface TimeSeriesChartProps {
   chartType?: "line" | "area";
   confidenceLevel?: "A" | "B" | "C" | "D";
   source?: string;
+  sources?: Source[];
+  methodology?: string;
+  methodologyAr?: string;
+  lastUpdated?: string;
   className?: string;
 }
 
@@ -58,6 +63,10 @@ export function TimeSeriesChart({
   chartType = "line",
   confidenceLevel = "B",
   source,
+  sources,
+  methodology,
+  methodologyAr,
+  lastUpdated,
   className,
 }: TimeSeriesChartProps) {
   const formattedData = useMemo(() => {
@@ -85,6 +94,21 @@ export function TimeSeriesChart({
             <Badge variant="outline" className={`${confidenceColors[confidenceLevel]} text-white text-xs`}>
               {confidenceLabels[confidenceLevel]}
             </Badge>
+            {sources && sources.length > 0 && (
+              <EvidencePack
+                indicatorName={title}
+                indicatorNameAr={titleAr}
+                value={data[data.length - 1]?.value || data[data.length - 1]?.adenValue || 0}
+                unit={unit}
+                date={data[data.length - 1]?.date || new Date().toISOString()}
+                sources={sources}
+                methodology={methodology}
+                methodologyAr={methodologyAr}
+                lastUpdated={lastUpdated || new Date().toLocaleDateString()}
+                confidence={confidenceLevel === "A" ? "high" : confidenceLevel === "B" || confidenceLevel === "C" ? "medium" : "low"}
+                variant="icon"
+              />
+            )}
           </div>
         </div>
         {source && (

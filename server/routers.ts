@@ -480,6 +480,49 @@ Current context: ${input.context?.sector ? `Sector: ${input.context.sector}` : '
         messages.push({ role: "user", content: input.message });
 
         try {
+          // RAG: Retrieve relevant research publications from database
+          const db = await getDb();
+          let researchContext = "";
+          
+          if (db) {
+            try {
+              // Extract keywords from user message
+              const keywords = input.message.toLowerCase().split(' ').filter(w => w.length > 3).slice(0, 3);
+              
+              if (keywords.length > 0) {
+                // Search in research publications
+                const searchPattern = `%${keywords[0]}%`;
+                const relevantResearch = await db.select({
+                  title: researchPublications.title,
+                  abstract: researchPublications.abstract,
+                  organizationId: researchPublications.organizationId,
+                  publicationDate: researchPublications.publicationDate,
+                  researchCategory: researchPublications.researchCategory,
+                })
+                .from(researchPublications)
+                .where(
+                  or(
+                    like(researchPublications.title, searchPattern),
+                    like(researchPublications.abstract, searchPattern)
+                  )
+                )
+                .limit(3);
+
+                if (relevantResearch.length > 0) {
+                  researchContext = "\n\n**Relevant Research from YETO Database:**\n\n" + relevantResearch.map((r: any, i: number) => 
+                    `${i + 1}. "${r.title}" (${r.publicationDate})\n   ${r.abstract?.substring(0, 200)}...`
+                  ).join("\n\n");
+                }
+              }
+            } catch (dbError) {
+              console.error("RAG retrieval error:", dbError);
+            }
+          }
+
+          // Enhance user message with research context
+          const enhancedMessage = input.message + researchContext;
+          messages[messages.length - 1] = { role: "user", content: enhancedMessage };
+
           const response = await invokeLLM({ messages });
           
           const rawContent = response.choices[0]?.message?.content;

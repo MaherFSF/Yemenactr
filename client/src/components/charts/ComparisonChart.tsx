@@ -12,6 +12,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Info } from "lucide-react";
+import { EvidencePack, type Source } from "@/components/EvidencePack";
 
 interface DataPoint {
   name: string;
@@ -27,6 +28,10 @@ interface ComparisonChartProps {
   unit: string;
   confidenceLevel?: "A" | "B" | "C" | "D";
   source?: string;
+  sources?: Source[];
+  methodology?: string;
+  methodologyAr?: string;
+  lastUpdated?: string;
   className?: string;
 }
 
@@ -51,6 +56,10 @@ export function ComparisonChart({
   unit,
   confidenceLevel = "B",
   source,
+  sources,
+  methodology,
+  methodologyAr,
+  lastUpdated,
   className,
 }: ComparisonChartProps) {
   return (
@@ -65,9 +74,26 @@ export function ComparisonChart({
               </p>
             )}
           </div>
-          <Badge variant="outline" className={`${confidenceColors[confidenceLevel]} text-white text-xs`}>
-            {confidenceLabels[confidenceLevel]}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className={`${confidenceColors[confidenceLevel]} text-white text-xs`}>
+              {confidenceLabels[confidenceLevel]}
+            </Badge>
+            {sources && sources.length > 0 && (
+              <EvidencePack
+                indicatorName={title}
+                indicatorNameAr={titleAr}
+                value={data[0]?.adenValue || 0}
+                unit={unit}
+                date={new Date().toISOString()}
+                sources={sources}
+                methodology={methodology}
+                methodologyAr={methodologyAr}
+                lastUpdated={lastUpdated || new Date().toLocaleDateString()}
+                confidence={confidenceLevel === "A" ? "high" : confidenceLevel === "B" || confidenceLevel === "C" ? "medium" : "low"}
+                variant="icon"
+              />
+            )}
+          </div>
         </div>
         {source && (
           <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">

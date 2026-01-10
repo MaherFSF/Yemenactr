@@ -8,6 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
+import { EvidencePack, type Source } from "@/components/EvidencePack";
 
 interface KPICardProps {
   title: string;
@@ -20,6 +21,9 @@ interface KPICardProps {
   regime?: "aden" | "sanaa" | "mixed";
   confidenceLevel?: "A" | "B" | "C" | "D";
   source?: string;
+  sources?: Source[];
+  methodology?: string;
+  methodologyAr?: string;
   lastUpdated?: string;
   className?: string;
 }
@@ -54,6 +58,9 @@ export function KPICard({
   regime = "mixed",
   confidenceLevel = "B",
   source,
+  sources,
+  methodology,
+  methodologyAr,
   lastUpdated,
   className,
 }: KPICardProps) {
@@ -107,6 +114,22 @@ export function KPICard({
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
+            {sources && sources.length > 0 && (
+              <EvidencePack
+                indicatorName={title}
+                indicatorNameAr={titleAr}
+                value={value}
+                unit={unit}
+                date={new Date().toISOString()}
+                sources={sources}
+                methodology={methodology}
+                methodologyAr={methodologyAr}
+                lastUpdated={lastUpdated || new Date().toLocaleDateString()}
+                confidence={confidenceLevel === "A" ? "high" : confidenceLevel === "B" || confidenceLevel === "C" ? "medium" : "low"}
+                variant="icon"
+                className="h-5 w-5 p-0"
+              />
+            )}
           </div>
         </div>
 
