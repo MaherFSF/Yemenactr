@@ -1,0 +1,113 @@
+{
+  "query": "DESCRIBE time_series; SELECT * FROM time_series ORDER BY date DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute DESCRIBE time_series; SELECT * FROM time_series ORDER BY date DESC LIMIT 5;",
+  "rows": [
+    {
+      "Field": "id",
+      "Type": "int(11)",
+      "Null": "NO",
+      "Key": "PRI",
+      "Default": "NULL",
+      "Extra": "auto_increment"
+    },
+    {
+      "Field": "indicatorCode",
+      "Type": "varchar(100)",
+      "Null": "NO",
+      "Key": "MUL",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "regimeTag",
+      "Type": "enum('aden_irg','sanaa_defacto','mixed','unknown')",
+      "Null": "NO",
+      "Key": "MUL",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "date",
+      "Type": "timestamp",
+      "Null": "NO",
+      "Key": "MUL",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "value",
+      "Type": "decimal(20,6)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "unit",
+      "Type": "varchar(50)",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "confidenceRating",
+      "Type": "enum('A','B','C','D')",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "sourceId",
+      "Type": "int(11)",
+      "Null": "NO",
+      "Key": "MUL",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "datasetId",
+      "Type": "int(11)",
+      "Null": "YES",
+      "Key": "MUL",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "notes",
+      "Type": "text",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    },
+    {
+      "Field": "createdAt",
+      "Type": "timestamp",
+      "Null": "NO",
+      "Key": "",
+      "Default": "CURRENT_TIMESTAMP",
+      "Extra": ""
+    },
+    {
+      "Field": "updatedAt",
+      "Type": "timestamp",
+      "Null": "NO",
+      "Key": "",
+      "Default": "CURRENT_TIMESTAMP",
+      "Extra": "DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+    }
+  ],
+  "messages": [
+    "id\tindicatorCode\tregimeTag\tdate\tvalue\tunit\tconfidenceRating\tsourceId\tdatasetId\tnotes\tcreatedAt\tupdatedAt",
+    "60405\tSANCTIONS_INTENSITY_INDEX\tmixed\t2025-12-29 05:23:32\t0.000000\tindex\tB\t60004\tNULL\tSanctions Intensity Index (0-100) combining OFAC, EU, and UK sanctions\t2025-12-29 05:23:32\t2025-12-29 05:23:32",
+    "60415\tSANCTIONS_INTENSITY_INDEX_ANNUAL\tmixed\t2024-12-31 05:00:00\t78.000000\tindex\tB\t60004\tNULL\tAnnual Sanctions Intensity Index for Yemen 2024\t2025-12-29 05:23:32\t2025-12-29 05:23:32",
+    "60404\tHDX_WFP_FOOD_BASKET\tmixed\t2024-12-31 05:00:00\t125000.000000\tYER\tB\t60003\tNULL\tMinimum food basket cost for Yemen 2024 - WFP VAM estimate\t2025-12-29 05:23:21\t2025-12-29 05:23:21",
+    "60265\tWB_LABOR_FORCE\tmixed\t2024-12-31 05:00:00\t7847788.000000\tpersons\tA\t60001\tNULL\tLabor force, total - World Bank WDI\t2025-12-29 05:22:50\t2025-12-29 05:22:50",
+    "60240\tWB_UNEMPLOYMENT\tmixed\t2024-12-31 05:00:00\t17.086000\tpercent\tA\t60001\tNULL\tUnemployment, total (% of total labor force) - World Bank WDI\t2025-12-29 05:22:49\t2025-12-29 05:22:49"
+  ],
+  "stdout": "Field\tType\tNull\tKey\tDefault\tExtra\nid\tint(11)\tNO\tPRI\tNULL\tauto_increment\nindicatorCode\tvarchar(100)\tNO\tMUL\tNULL\t\nregimeTag\tenum('aden_irg','sanaa_defacto','mixed','unknown')\tNO\tMUL\tNULL\t\ndate\ttimestamp\tNO\tMUL\tNULL\t\nvalue\tdecimal(20,6)\tNO\t\tNULL\t\nunit\tvarchar(50)\tNO\t\tNULL\t\nconfidenceRating\tenum('A','B','C','D')\tNO\t\tNULL\t\nsourceId\tint(11)\tNO\tMUL\tNULL\t\ndatasetId\tint(11)\tYES\tMUL\tNULL\t\nnotes\ttext\tYES\t\tNULL\t\ncreatedAt\ttimestamp\tNO\t\tCURRENT_TIMESTAMP\t\nupdatedAt\ttimestamp\tNO\t\tCURRENT_TIMESTAMP\tDEFAULT_GENERATED on update CURRENT_TIMESTAMP\nid\tindicatorCode\tregimeTag\tdate\tvalue\tunit\tconfidenceRating\tsourceId\tdatasetId\tnotes\tcreatedAt\tupdatedAt\n60405\tSANCTIONS_INTENSITY_INDEX\tmixed\t2025-12-29 05:23:32\t0.000000\tindex\tB\t60004\tNULL\tSanctions Intensity Index (0-100) combining OFAC, EU, and UK sanctions\t2025-12-29 05:23:32\t2025-12-29 05:23:32\n60415\tSANCTIONS_INTENSITY_INDEX_ANNUAL\tmixed\t2024-12-31 05:00:00\t78.000000\tindex\tB\t60004\tNULL\tAnnual Sanctions Intensity Index for Yemen 2024\t2025-12-29 05:23:32\t2025-12-29 05:23:32\n60404\tHDX_WFP_FOOD_BASKET\tmixed\t2024-12-31 05:00:00\t125000.000000\tYER\tB\t60003\tNULL\tMinimum food basket cost for Yemen 2024 - WFP VAM estimate\t2025-12-29 05:23:21\t2025-12-29 05:23:21\n60265\tWB_LABOR_FORCE\tmixed\t2024-12-31 05:00:00\t7847788.000000\tpersons\tA\t60001\tNULL\tLabor force, total - World Bank WDI\t2025-12-29 05:22:50\t2025-12-29 05:22:50\n60240\tWB_UNEMPLOYMENT\tmixed\t2024-12-31 05:00:00\t17.086000\tpercent\tA\t60001\tNULL\tUnemployment, total (% of total labor force) - World Bank WDI\t2025-12-29 05:22:49\t2025-12-29 05:22:49\n",
+  "stderr": "",
+  "execution_time_ms": 90
+}

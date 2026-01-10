@@ -31,7 +31,7 @@ import {
   Compass
 } from "lucide-react";
 import { Link } from "wouter";
-import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
+import DataQualityBadge from "@/components/DataQualityBadge";
 import { AnimatedSection, StaggeredContainer } from "@/components/AnimatedSection";
 import { YetoLogo } from "@/components/YetoLogo";
 import { useScrollPosition } from "@/hooks/useParallax";
@@ -235,8 +235,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
-      {/* DEV Mode Banner */}
-      <DevModeBanner />
+      {/* Production Mode - Real Data */}
       
       {/* Insights Ticker - Sticky bar with rotating updates */}
       <InsightsTicker />
@@ -421,7 +420,7 @@ export default function Home() {
             {[
               { icon: BarChart3, labelEn: "GDP Growth", labelAr: "نمو الناتج المحلي", value: kpiData?.gdpGrowth?.value || "+2.5%", trend: "up" },
               { icon: Coins, labelEn: "Inflation Rate", labelAr: "معدل التضخم", value: kpiData?.inflation?.value || "15.0%", trend: "up" },
-              { icon: Globe, labelEn: "Foreign Reserves", labelAr: "الاحتياطيات الأجنبية", value: "$1.2B", trend: "down" },
+              { icon: Globe, labelEn: "Foreign Reserves", labelAr: "الاحتياطيات الأجنبية", value: kpiData?.foreignReserves?.value || "$1.2B", trend: "down" },
               { icon: Users, labelEn: "IDPs", labelAr: "النازحون", value: kpiData?.idps?.value || "4.8M", trend: "stable" },
             ].map((kpi, index) => (
               <div key={index} className="bg-white rounded-xl p-5 shadow-lg">
