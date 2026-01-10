@@ -40,8 +40,8 @@ import { toast } from "sonner";
 const corrections = [
   {
     id: "COR-2024-001",
-    dateReported: "2024-12-20",
-    dateResolved: "2024-12-22",
+    dateReported: "2026-01-02",
+    dateResolved: "2026-01-04",
     status: "resolved",
     category: "data_error",
     indicator: "Exchange Rate (Aden)",
@@ -56,8 +56,8 @@ const corrections = [
   },
   {
     id: "COR-2024-002",
-    dateReported: "2024-12-18",
-    dateResolved: "2024-12-19",
+    dateReported: "2025-12-31",
+    dateResolved: "2026-01-01",
     status: "resolved",
     category: "source_update",
     indicator: "Inflation Rate (Sana'a)",
@@ -72,7 +72,7 @@ const corrections = [
   },
   {
     id: "COR-2024-003",
-    dateReported: "2024-12-15",
+    dateReported: "2025-12-28",
     dateResolved: null,
     status: "under_review",
     category: "methodology",
@@ -88,8 +88,8 @@ const corrections = [
   },
   {
     id: "COR-2024-004",
-    dateReported: "2024-12-10",
-    dateResolved: "2024-12-12",
+    dateReported: "2025-12-23",
+    dateResolved: "2025-12-25",
     status: "resolved",
     category: "attribution",
     indicator: "Oil Production Data",

@@ -28,9 +28,9 @@ import { toast } from "sonner";
 
 // Mock data for demonstration
 const mockBookmarks = [
-  { id: 1, title: "Yemen Economic Monitor: Navigating Through Uncertainty", year: 2024, organization: "World Bank", category: "macroeconomic_analysis", addedAt: new Date("2024-12-15") },
-  { id: 2, title: "Article IV Consultation - Yemen", year: 2023, organization: "IMF", category: "monetary_policy", addedAt: new Date("2024-12-10") },
-  { id: 3, title: "Yemen Food Security Update", year: 2024, organization: "WFP", category: "food_security", addedAt: new Date("2024-12-05") },
+  { id: 1, title: "Yemen Economic Monitor: Navigating Through Uncertainty", year: 2024, organization: "World Bank", category: "macroeconomic_analysis", addedAt: new Date("2025-12-28") },
+  { id: 2, title: "Article IV Consultation - Yemen", year: 2023, organization: "IMF", category: "monetary_policy", addedAt: new Date("2025-12-23") },
+  { id: 3, title: "Yemen Food Security Update", year: 2024, organization: "WFP", category: "food_security", addedAt: new Date("2025-12-18") },
 ];
 
 const mockReadingLists = [
@@ -40,8 +40,8 @@ const mockReadingLists = [
 ];
 
 const mockAlerts = [
-  { id: 1, type: "new_publication", query: "World Bank Yemen", frequency: "immediate", lastTriggered: new Date("2024-12-20"), active: true },
-  { id: 2, type: "category_update", query: "banking_sector", frequency: "weekly", lastTriggered: new Date("2024-12-15"), active: true },
+  { id: 1, type: "new_publication", query: "World Bank Yemen", frequency: "immediate", lastTriggered: new Date("2026-01-02"), active: true },
+  { id: 2, type: "category_update", query: "banking_sector", frequency: "weekly", lastTriggered: new Date("2025-12-28"), active: true },
   { id: 3, type: "organization", query: "IMF", frequency: "monthly", lastTriggered: new Date("2024-11-30"), active: false },
 ];
 

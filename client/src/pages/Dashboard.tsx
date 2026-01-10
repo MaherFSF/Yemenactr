@@ -341,7 +341,7 @@ export default function Dashboard() {
                               name: "Sample Data Source",
                               nameAr: "مصدر بيانات عينة",
                               type: "estimate",
-                              date: "2024-12-28",
+                              date: "2026-01-10",
                               quality: "C"
                             }
                           ]

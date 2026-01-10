@@ -34,24 +34,24 @@ export default function PartnerPortal() {
   const mySubmissions = [
     {
       id: 1,
-      title: "Q4 2024 Banking Sector Report",
-      submitted: "2024-12-20",
+      title: "Q4 2025 Banking Sector Report",
+      submitted: "2026-01-05",
       status: "approved",
       dataPoints: 45,
       views: 234
     },
     {
       id: 2,
-      title: "Trade Statistics November 2024",
-      submitted: "2024-12-18",
+      title: "Trade Statistics December 2025",
+      submitted: "2026-01-03",
       status: "under_review",
       dataPoints: 32,
       views: 0
     },
     {
       id: 3,
-      title: "Humanitarian Needs Assessment",
-      submitted: "2024-12-15",
+      title: "Humanitarian Needs Assessment Q4 2025",
+      submitted: "2026-01-02",
       status: "pending",
       dataPoints: 67,
       views: 0

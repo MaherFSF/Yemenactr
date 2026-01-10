@@ -1,0 +1,47 @@
+Organization: Central Bank of Yemen - Aden
+
+
+Publication:
+Title: Annual Report 2020
+Date: 2020
+URL: https://english.cby-ye.com/files/634f8f90b9de5.pdf
+
+Key Findings:
+- Real GDP contracted by 8.5% in 2020.
+- Annual inflation rate rose to 35% at the end of 2020.
+- Money supply (M2) increased by 15% in 2020.
+- The US dollar exchange rate against the Yemeni riyal reached 669 riyals per dollar at the end of 2020.
+- The overall balance of the state's general budget in 2020 showed a cash deficit of 782 billion riyals.
+
+Economic Indicators:
+- Gross domestic product (GDP)
+- Consumer price index (CPI)
+- Crude oil export price
+- Exchange rate
+- Monetary aggregates (M1, M2, Monetary base)
+- Government finance (Total revenue, Total expenditure, Budget deficit)
+- External sector (Current account deficit, Exports of goods and services, Oil exports, Imports of goods and services)
+- Public Domestic Debt
+- Balance of Payments
+- Public External Debt
+
+Publication:
+Title: Monetary and Financial Developments September 2024
+Date: September 2024
+URL: https://english.cby-ye.com/files/6735a2223f682.pdf
+
+Key Findings:
+- Broad money supply (M2) increased by 0.3%.
+- The average exchange rate of the Yemeni rial against the US dollar in the parallel market was 1,905.40 YER/USD.
+- The overall budget deficit was YER 262.9 billion.
+- Domestic public debt increased by 0.1%.
+- The consumer price index (CPI) recorded a value of 101.07, indicating a decrease in the monthly inflation rate to 1.45%.
+
+Economic Indicators:
+- Money Supply (M1, M2)
+- CBY Balance Sheet
+- Exchange Rates
+- Interest Rate
+- Budget Deficit Financing
+- Prices and Inflation
+- Domestic Public Debt

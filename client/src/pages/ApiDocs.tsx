@@ -73,7 +73,7 @@ const apiEndpoints = [
         response: `{
   "indicator": "CBY_FX_PARALLEL_ADEN",
   "value": 2050.0,
-  "date": "2024-12-28",
+  "date": "2026-01-10",
   "unit": "YER/USD",
   "confidence": "A",
   "change_24h": 15.5,
@@ -128,7 +128,7 @@ const apiEndpoints = [
   "frequency": "daily",
   "coverage": {
     "start": "2015-01-01",
-    "end": "2024-12-28"
+    "end": "2026-01-10"
   },
   "methodology": "Collected from licensed exchange bureaus",
   "source": {
@@ -162,7 +162,7 @@ const apiEndpoints = [
       "title": "Monthly Economic Report - December 2024",
       "titleAr": "التقرير الاقتصادي الشهري - ديسمبر 2024",
       "category": "monthly_report",
-      "publicationDate": "2024-12-01",
+      "publicationDate": "2025-12-14",
       "language": "en",
       "downloadUrl": "https://api.yeto.org/v1/documents/doc_123/download"
     }
@@ -193,7 +193,7 @@ const apiEndpoints = [
       "id": 1,
       "title": "CBY Aden announces new monetary policy",
       "titleAr": "البنك المركزي في عدن يعلن سياسة نقدية جديدة",
-      "date": "2024-12-15",
+      "date": "2025-12-28",
       "category": "monetary_policy",
       "regime": "aden_irg",
       "impact": "high",
@@ -224,11 +224,11 @@ const apiEndpoints = [
       "indicator": "CBY_FX_PARALLEL",
       "aden_irg": {
         "value": 2050.0,
-        "date": "2024-12-28"
+        "date": "2026-01-10"
       },
       "sanaa_defacto": {
         "value": 535.0,
-        "date": "2024-12-28"
+        "date": "2026-01-10"
       },
       "divergence": 283.18,
       "divergence_percent": 283.18

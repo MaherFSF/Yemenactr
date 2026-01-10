@@ -40,7 +40,7 @@ export default function UserDashboard() {
       value: "1,720",
       unit: "YER/USD",
       change: -2.3,
-      lastUpdated: "2024-12-28",
+      lastUpdated: "2026-01-10",
       sector: isArabic ? "العملة" : "Currency"
     },
     {
@@ -49,7 +49,7 @@ export default function UserDashboard() {
       value: "535",
       unit: "YER/USD",
       change: 0.5,
-      lastUpdated: "2024-12-28",
+      lastUpdated: "2026-01-10",
       sector: isArabic ? "العملة" : "Currency"
     },
     {
@@ -58,7 +58,7 @@ export default function UserDashboard() {
       value: "35.2",
       unit: "%",
       change: 1.8,
-      lastUpdated: "2024-12-15",
+      lastUpdated: "2025-12-28",
       sector: isArabic ? "الأسعار" : "Prices"
     },
     {
@@ -67,7 +67,7 @@ export default function UserDashboard() {
       value: "1.2",
       unit: "B USD",
       change: -5.2,
-      lastUpdated: "2024-12-01",
+      lastUpdated: "2025-12-14",
       sector: isArabic ? "المصرفية" : "Banking"
     }
   ];
@@ -78,24 +78,24 @@ export default function UserDashboard() {
       name: isArabic ? "مقارنة أسعار الصرف" : "Exchange Rate Comparison",
       query: "exchange rate aden sanaa comparison",
       filters: { sector: "currency", regime: "all" },
-      createdAt: "2024-12-20",
-      lastRun: "2024-12-28"
+      createdAt: "2026-01-02",
+      lastRun: "2026-01-10"
     },
     {
       id: "2",
       name: isArabic ? "بيانات التضخم 2024" : "Inflation Data 2024",
       query: "inflation consumer prices 2024",
       filters: { sector: "prices", year: "2024" },
-      createdAt: "2024-12-15",
-      lastRun: "2024-12-27"
+      createdAt: "2025-12-28",
+      lastRun: "2026-01-09"
     },
     {
       id: "3",
       name: isArabic ? "تدفقات المساعدات الإنسانية" : "Humanitarian Aid Flows",
       query: "humanitarian aid UN agencies",
       filters: { sector: "aid", confidence: "A,B" },
-      createdAt: "2024-12-10",
-      lastRun: "2024-12-25"
+      createdAt: "2025-12-23",
+      lastRun: "2026-01-07"
     }
   ];
 
@@ -104,7 +104,7 @@ export default function UserDashboard() {
       id: "1",
       title: isArabic ? "تقرير سوق العملات الأسبوعي" : "Weekly Currency Market Report",
       type: isArabic ? "تقرير مخصص" : "Custom Report",
-      createdAt: "2024-12-27",
+      createdAt: "2026-01-09",
       format: "PDF",
       size: "2.4 MB"
     },
@@ -112,7 +112,7 @@ export default function UserDashboard() {
       id: "2",
       title: isArabic ? "تحليل القطاع المصرفي" : "Banking Sector Analysis",
       type: isArabic ? "تقرير مخصص" : "Custom Report",
-      createdAt: "2024-12-25",
+      createdAt: "2026-01-07",
       format: "XLSX",
       size: "1.8 MB"
     },
@@ -120,7 +120,7 @@ export default function UserDashboard() {
       id: "3",
       title: isArabic ? "مؤشرات الأمن الغذائي" : "Food Security Indicators",
       type: isArabic ? "تصدير بيانات" : "Data Export",
-      createdAt: "2024-12-22",
+      createdAt: "2026-01-04",
       format: "CSV",
       size: "0.5 MB"
     }
@@ -130,25 +130,25 @@ export default function UserDashboard() {
     {
       id: "1",
       action: isArabic ? "عرض لوحة البيانات" : "Viewed Dashboard",
-      timestamp: "2024-12-28 14:30",
+      timestamp: "2026-01-10 14:30",
       details: isArabic ? "لوحة بيانات العملة" : "Currency Dashboard"
     },
     {
       id: "2",
       action: isArabic ? "تصدير بيانات" : "Exported Data",
-      timestamp: "2024-12-28 12:15",
+      timestamp: "2026-01-10 12:15",
       details: isArabic ? "أسعار الصرف - CSV" : "Exchange Rates - CSV"
     },
     {
       id: "3",
       action: isArabic ? "حفظ بحث" : "Saved Search",
-      timestamp: "2024-12-27 16:45",
+      timestamp: "2026-01-09 16:45",
       details: isArabic ? "مقارنة أسعار الصرف" : "Exchange Rate Comparison"
     },
     {
       id: "4",
       action: isArabic ? "إنشاء تقرير" : "Created Report",
-      timestamp: "2024-12-27 10:20",
+      timestamp: "2026-01-09 10:20",
       details: isArabic ? "تقرير سوق العملات الأسبوعي" : "Weekly Currency Market Report"
     }
   ];
@@ -161,7 +161,7 @@ export default function UserDashboard() {
       message: isArabic 
         ? "انخفض سعر صرف الريال في عدن بنسبة 2.3% خلال 24 ساعة" 
         : "YER exchange rate in Aden dropped 2.3% in 24 hours",
-      timestamp: "2024-12-28 08:00"
+      timestamp: "2026-01-10 08:00"
     },
     {
       id: "2",
@@ -170,7 +170,7 @@ export default function UserDashboard() {
       message: isArabic 
         ? "تم تحديث بيانات التضخم لشهر نوفمبر 2024" 
         : "November 2024 inflation data has been updated",
-      timestamp: "2024-12-27 15:30"
+      timestamp: "2026-01-09 15:30"
     }
   ];
 

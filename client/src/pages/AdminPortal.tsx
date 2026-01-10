@@ -56,7 +56,7 @@ export default function AdminPortal() {
       name: "Central Bank of Yemen - Aden",
       nameAr: "البنك المركزي اليمني - عدن",
       status: "healthy",
-      lastSync: "2024-12-28T10:30:00Z",
+      lastSync: "2026-01-10T10:30:00Z",
       recordsToday: 45,
       errorRate: 0.2,
       latency: 1.2
@@ -66,7 +66,7 @@ export default function AdminPortal() {
       name: "Central Bank of Yemen - Sana'a",
       nameAr: "البنك المركزي اليمني - صنعاء",
       status: "warning",
-      lastSync: "2024-12-28T08:15:00Z",
+      lastSync: "2026-01-10T08:15:00Z",
       recordsToday: 28,
       errorRate: 2.5,
       latency: 3.8
@@ -76,7 +76,7 @@ export default function AdminPortal() {
       name: "WFP Market Monitor",
       nameAr: "مراقب أسواق برنامج الأغذية العالمي",
       status: "healthy",
-      lastSync: "2024-12-28T09:45:00Z",
+      lastSync: "2026-01-10T09:45:00Z",
       recordsToday: 156,
       errorRate: 0.1,
       latency: 0.8
@@ -86,7 +86,7 @@ export default function AdminPortal() {
       name: "World Bank Data API",
       nameAr: "واجهة بيانات البنك الدولي",
       status: "healthy",
-      lastSync: "2024-12-28T06:00:00Z",
+      lastSync: "2026-01-10T06:00:00Z",
       recordsToday: 12,
       errorRate: 0,
       latency: 2.1
@@ -96,7 +96,7 @@ export default function AdminPortal() {
       name: "Humanitarian Data Exchange",
       nameAr: "تبادل البيانات الإنسانية",
       status: "error",
-      lastSync: "2024-12-27T22:00:00Z",
+      lastSync: "2026-01-09T22:00:00Z",
       recordsToday: 0,
       errorRate: 100,
       latency: null
@@ -106,7 +106,7 @@ export default function AdminPortal() {
       name: "ACLED Conflict Data",
       nameAr: "بيانات النزاعات ACLED",
       status: "healthy",
-      lastSync: "2024-12-28T07:30:00Z",
+      lastSync: "2026-01-10T07:30:00Z",
       recordsToday: 34,
       errorRate: 0.5,
       latency: 1.5
@@ -124,7 +124,7 @@ export default function AdminPortal() {
       description: "Exchange rate differs by >5% between official CBY-Aden rate and Al-Kuraimi exchange",
       descriptionAr: "يختلف سعر الصرف بأكثر من 5% بين السعر الرسمي للبنك المركزي وصرافة الكريمي",
       indicator: "USD/YER Exchange Rate",
-      timestamp: "2024-12-28T09:15:00Z",
+      timestamp: "2026-01-10T09:15:00Z",
       status: "open"
     },
     {
@@ -133,10 +133,10 @@ export default function AdminPortal() {
       type: "missing_provenance",
       title: "12 data points missing source attribution",
       titleAr: "12 نقطة بيانات بدون إسناد المصدر",
-      description: "Import statistics for September 2024 have incomplete source metadata",
-      descriptionAr: "إحصائيات الاستيراد لسبتمبر 2024 لديها بيانات وصفية غير مكتملة للمصدر",
+      description: "Import statistics for December 2025 have incomplete source metadata",
+      descriptionAr: "إحصائيات الاستيراد لديسمبر 2025 لديها بيانات وصفية غير مكتملة للمصدر",
       indicator: "Import Volume",
-      timestamp: "2024-12-27T14:30:00Z",
+      timestamp: "2026-01-09T14:30:00Z",
       status: "in_progress"
     },
     {
@@ -145,10 +145,10 @@ export default function AdminPortal() {
       type: "stale_data",
       title: "Banking sector deposits data is 45 days old",
       titleAr: "بيانات ودائع القطاع المصرفي عمرها 45 يوماً",
-      description: "Last update was on November 13, 2024. Expected monthly updates.",
-      descriptionAr: "آخر تحديث كان في 13 نوفمبر 2024. التحديثات المتوقعة شهرية.",
+      description: "Last update was on November 26, 2025. Expected monthly updates.",
+      descriptionAr: "آخر تحديث كان في 26 نوفمبر 2025. التحديثات المتوقعة شهرية.",
       indicator: "Bank Deposits",
-      timestamp: "2024-12-26T10:00:00Z",
+      timestamp: "2026-01-08T10:00:00Z",
       status: "open"
     },
     {
@@ -160,7 +160,7 @@ export default function AdminPortal() {
       description: "GDP figure shows 85,000 in English but 85.000 in Arabic (decimal separator issue)",
       descriptionAr: "رقم الناتج المحلي يظهر 85,000 بالإنجليزية لكن 85.000 بالعربية (مشكلة فاصل عشري)",
       indicator: "GDP",
-      timestamp: "2024-12-25T16:45:00Z",
+      timestamp: "2026-01-07T16:45:00Z",
       status: "resolved"
     }
   ];
@@ -183,21 +183,21 @@ export default function AdminPortal() {
   const pendingSubmissions = [
     {
       id: 1,
-      title: "Q4 2024 Banking Liquidity Data",
-      titleAr: "بيانات السيولة المصرفية للربع الرابع 2024",
+      title: "Q4 2025 Banking Liquidity Data",
+      titleAr: "بيانات السيولة المصرفية للربع الرابع 2025",
       contributor: "Central Bank Research Team",
       contributorAr: "فريق أبحاث البنك المركزي",
-      submitted: "2024-12-23",
+      submitted: "2026-01-08",
       dataPoints: 45,
       status: "pending_review"
     },
     {
       id: 2,
-      title: "Port Operations November 2024",
-      titleAr: "عمليات الميناء نوفمبر 2024",
+      title: "Port Operations December 2025",
+      titleAr: "عمليات الميناء ديسمبر 2025",
       contributor: "Aden Port Authority",
       contributorAr: "هيئة ميناء عدن",
-      submitted: "2024-12-22",
+      submitted: "2026-01-07",
       dataPoints: 28,
       status: "pending_review"
     },
@@ -207,7 +207,7 @@ export default function AdminPortal() {
       titleAr: "توزيع المساعدات الإنسانية للربع الرابع",
       contributor: "UN OCHA Yemen",
       contributorAr: "مكتب الأمم المتحدة لتنسيق الشؤون الإنسانية",
-      submitted: "2024-12-21",
+      submitted: "2026-01-06",
       dataPoints: 67,
       status: "under_review"
     },

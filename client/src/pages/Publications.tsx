@@ -43,7 +43,7 @@ const publications = [
     titleAr: "ملخص الإشارات الاقتصادية اليومي",
     descriptionEn: "Key economic indicators and market movements for December 26, 2024",
     descriptionAr: "المؤشرات الاقتصادية الرئيسية وتحركات السوق ليوم 26 ديسمبر 2024",
-    date: "2024-12-26",
+    date: "2026-01-08",
     status: "published",
     highlights: [
       { en: "YER/USD rate stable at 2,070 in Aden", ar: "سعر الريال/الدولار مستقر عند 2,070 في عدن" },
@@ -60,7 +60,7 @@ const publications = [
     titleAr: "مراقب السوق والعملات الأسبوعي",
     descriptionEn: "Comprehensive analysis of currency markets and trade flows for Week 52, 2024",
     descriptionAr: "تحليل شامل لأسواق العملات وتدفقات التجارة للأسبوع 52، 2024",
-    date: "2024-12-22",
+    date: "2026-01-04",
     status: "published",
     highlights: [
       { en: "North-South FX spread widens to 270%", ar: "فجوة سعر الصرف شمال-جنوب تتسع إلى 270%" },
@@ -77,7 +77,7 @@ const publications = [
     titleAr: "الموجز المالي الكلي الشهري",
     descriptionEn: "In-depth analysis of Yemen's macroeconomic conditions for November 2024",
     descriptionAr: "تحليل معمق للأوضاع الاقتصادية الكلية في اليمن لشهر نوفمبر 2024",
-    date: "2024-12-01",
+    date: "2025-12-14",
     status: "published",
     highlights: [
       { en: "Inflation rate reaches 35% YoY in Aden", ar: "معدل التضخم يصل إلى 35% سنوياً في عدن" },
@@ -111,7 +111,7 @@ const publications = [
     titleAr: "ملخص الإشارات الاقتصادية اليومي",
     descriptionEn: "Key economic indicators and market movements for December 25, 2024",
     descriptionAr: "المؤشرات الاقتصادية الرئيسية وتحركات السوق ليوم 25 ديسمبر 2024",
-    date: "2024-12-25",
+    date: "2026-01-07",
     status: "draft",
     highlights: [
       { en: "Markets closed for holiday", ar: "الأسواق مغلقة بمناسبة العطلة" },

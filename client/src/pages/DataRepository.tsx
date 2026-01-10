@@ -42,7 +42,7 @@ export default function DataRepository() {
       sector: "banking",
       regime: "aden",
       dataPoints: 156,
-      lastUpdated: "2024-12-20",
+      lastUpdated: "2026-01-02",
       confidence: "high",
       source: "Central Bank of Aden",
       sourceAr: "البنك المركزي في عدن"
@@ -54,7 +54,7 @@ export default function DataRepository() {
       sector: "trade",
       regime: "both",
       dataPoints: 324,
-      lastUpdated: "2024-12-18",
+      lastUpdated: "2025-12-31",
       confidence: "high",
       source: "Yemen Customs Authority",
       sourceAr: "هيئة الجمارك اليمنية"
@@ -66,7 +66,7 @@ export default function DataRepository() {
       sector: "poverty",
       regime: "both",
       dataPoints: 88,
-      lastUpdated: "2024-12-15",
+      lastUpdated: "2025-12-28",
       confidence: "medium",
       source: "World Bank / UNICEF",
       sourceAr: "البنك الدولي / اليونيسف"
@@ -78,7 +78,7 @@ export default function DataRepository() {
       sector: "banking",
       regime: "sanaa",
       dataPoints: 92,
-      lastUpdated: "2024-12-10",
+      lastUpdated: "2025-12-23",
       confidence: "medium",
       source: "Central Bank of Yemen (Sana'a)",
       sourceAr: "البنك المركزي اليمني (صنعاء)"
@@ -90,7 +90,7 @@ export default function DataRepository() {
       sector: "poverty",
       regime: "both",
       dataPoints: 245,
-      lastUpdated: "2024-12-22",
+      lastUpdated: "2026-01-04",
       confidence: "high",
       source: "UN OCHA",
       sourceAr: "مكتب الأمم المتحدة لتنسيق الشؤون الإنسانية"
@@ -102,7 +102,7 @@ export default function DataRepository() {
       sector: "trade",
       regime: "aden",
       dataPoints: 178,
-      lastUpdated: "2024-12-19",
+      lastUpdated: "2026-01-01",
       confidence: "high",
       source: "Aden Port Authority",
       sourceAr: "هيئة ميناء عدن"

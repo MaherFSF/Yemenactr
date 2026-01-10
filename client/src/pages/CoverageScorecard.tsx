@@ -62,7 +62,7 @@ export default function CoverageScorecard() {
       coverage: 78,
       indicators: 45,
       gaps: 12,
-      lastUpdated: "2024-12-20",
+      lastUpdated: "2026-01-02",
       status: "good",
     },
     {
@@ -71,7 +71,7 @@ export default function CoverageScorecard() {
       coverage: 92,
       indicators: 28,
       gaps: 3,
-      lastUpdated: "2024-12-27",
+      lastUpdated: "2026-01-09",
       status: "excellent",
     },
     {
@@ -80,7 +80,7 @@ export default function CoverageScorecard() {
       coverage: 85,
       indicators: 52,
       gaps: 8,
-      lastUpdated: "2024-12-25",
+      lastUpdated: "2026-01-07",
       status: "good",
     },
     {
@@ -89,7 +89,7 @@ export default function CoverageScorecard() {
       coverage: 65,
       indicators: 38,
       gaps: 18,
-      lastUpdated: "2024-12-15",
+      lastUpdated: "2025-12-28",
       status: "moderate",
     },
     {
@@ -107,7 +107,7 @@ export default function CoverageScorecard() {
       coverage: 88,
       indicators: 41,
       gaps: 5,
-      lastUpdated: "2024-12-22",
+      lastUpdated: "2026-01-04",
       status: "excellent",
     },
     {
@@ -116,7 +116,7 @@ export default function CoverageScorecard() {
       coverage: 72,
       indicators: 25,
       gaps: 9,
-      lastUpdated: "2024-12-18",
+      lastUpdated: "2025-12-31",
       status: "good",
     },
     {
@@ -141,7 +141,7 @@ export default function CoverageScorecard() {
       status: "open",
       whyItMatters: "Critical for inflation analysis and purchasing power comparisons",
       candidateSources: "CBY-Sana'a, Money exchangers, WFP market monitoring",
-      createdAt: "2024-12-01",
+      createdAt: "2025-12-14",
       assignedTo: "Research Team",
     },
     {
@@ -165,7 +165,7 @@ export default function CoverageScorecard() {
       status: "open",
       whyItMatters: "Needed for regional economic analysis and policy recommendations",
       candidateSources: "ILO, World Bank, UNDP",
-      createdAt: "2024-12-10",
+      createdAt: "2025-12-23",
       assignedTo: null,
     },
     {
@@ -177,7 +177,7 @@ export default function CoverageScorecard() {
       status: "blocked",
       whyItMatters: "Key indicator for import capacity and humanitarian access",
       candidateSources: "UNVIM, Port Authority (DFA)",
-      createdAt: "2024-12-05",
+      createdAt: "2025-12-18",
       assignedTo: "Trade Team",
     },
     {
@@ -191,7 +191,7 @@ export default function CoverageScorecard() {
       candidateSources: "PEC, ACAPS, Sector reports",
       createdAt: "2024-11-20",
       assignedTo: "Energy Team",
-      resolvedAt: "2024-12-15",
+      resolvedAt: "2025-12-28",
     },
   ];
 

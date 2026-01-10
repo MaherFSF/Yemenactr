@@ -51,10 +51,10 @@ export default function Compliance() {
 
   // Sanctions lists
   const sanctionsLists = [
-    { id: "ofac", name: "OFAC SDN List", nameAr: "قائمة OFAC SDN", country: "USA", lastUpdated: "2024-12-20" },
-    { id: "un", name: "UN Security Council", nameAr: "مجلس الأمن الدولي", country: "UN", lastUpdated: "2024-12-15" },
-    { id: "eu", name: "EU Sanctions List", nameAr: "قائمة عقوبات الاتحاد الأوروبي", country: "EU", lastUpdated: "2024-12-18" },
-    { id: "uk", name: "UK Sanctions List", nameAr: "قائمة عقوبات المملكة المتحدة", country: "UK", lastUpdated: "2024-12-19" },
+    { id: "ofac", name: "OFAC SDN List", nameAr: "قائمة OFAC SDN", country: "USA", lastUpdated: "2026-01-08" },
+    { id: "un", name: "UN Security Council", nameAr: "مجلس الأمن الدولي", country: "UN", lastUpdated: "2026-01-05" },
+    { id: "eu", name: "EU Sanctions List", nameAr: "قائمة عقوبات الاتحاد الأوروبي", country: "EU", lastUpdated: "2026-01-06" },
+    { id: "uk", name: "UK Sanctions List", nameAr: "قائمة عقوبات المملكة المتحدة", country: "UK", lastUpdated: "2026-01-07" },
   ];
 
   // Sanctioned entities relevant to Yemen
@@ -119,7 +119,7 @@ export default function Compliance() {
   // Recent sanctions updates
   const recentUpdates = [
     {
-      date: "2024-12-20",
+      date: "2026-01-08",
       title: "OFAC updates Yemen-related designations",
       titleAr: "OFAC تحدث التصنيفات المتعلقة باليمن",
       description: "New designations targeting Houthi financial networks",
@@ -127,7 +127,7 @@ export default function Compliance() {
       type: "addition",
     },
     {
-      date: "2024-12-15",
+      date: "2026-01-05",
       title: "UN Panel of Experts report released",
       titleAr: "صدور تقرير فريق خبراء الأمم المتحدة",
       description: "Annual report on Yemen sanctions implementation",
@@ -135,7 +135,7 @@ export default function Compliance() {
       type: "report",
     },
     {
-      date: "2024-12-10",
+      date: "2026-01-03",
       title: "EU extends Yemen sanctions regime",
       titleAr: "الاتحاد الأوروبي يمدد نظام العقوبات على اليمن",
       description: "Sanctions framework extended until February 2026",
@@ -150,7 +150,7 @@ export default function Compliance() {
       level: "high",
       title: "New OFAC designations affecting Yemen trade",
       titleAr: "تصنيفات OFAC جديدة تؤثر على التجارة اليمنية",
-      date: "2024-12-20",
+      date: "2026-01-08",
       action: "Review all transactions with designated entities",
       actionAr: "مراجعة جميع المعاملات مع الكيانات المصنفة",
     },
@@ -158,7 +158,7 @@ export default function Compliance() {
       level: "medium",
       title: "Red Sea shipping insurance requirements updated",
       titleAr: "تحديث متطلبات تأمين الشحن في البحر الأحمر",
-      date: "2024-12-18",
+      date: "2026-01-06",
       action: "Verify insurance coverage for Yemen-bound cargo",
       actionAr: "التحقق من التغطية التأمينية للشحنات المتجهة إلى اليمن",
     },
@@ -166,7 +166,7 @@ export default function Compliance() {
       level: "low",
       title: "Humanitarian exemption guidance clarified",
       titleAr: "توضيح إرشادات الإعفاء الإنساني",
-      date: "2024-12-15",
+      date: "2026-01-05",
       action: "Review updated OFAC humanitarian guidance",
       actionAr: "مراجعة إرشادات OFAC الإنسانية المحدثة",
     },

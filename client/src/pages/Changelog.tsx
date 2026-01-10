@@ -28,7 +28,7 @@ interface ChangelogEntry {
 const changelog: ChangelogEntry[] = [
   {
     version: "1.0.0",
-    date: "2024-12-28",
+    date: "2026-01-10",
     type: "major",
     titleEn: "Initial Public Release",
     titleAr: "الإصدار العام الأول",
@@ -72,7 +72,7 @@ const changelog: ChangelogEntry[] = [
   },
   {
     version: "0.9.0",
-    date: "2024-12-20",
+    date: "2026-01-02",
     type: "minor",
     titleEn: "Beta Release - Partner Testing",
     titleAr: "إصدار تجريبي - اختبار الشركاء",
@@ -101,7 +101,7 @@ const changelog: ChangelogEntry[] = [
   },
   {
     version: "0.8.0",
-    date: "2024-12-10",
+    date: "2025-12-23",
     type: "minor",
     titleEn: "Data Infrastructure Update",
     titleAr: "تحديث البنية التحتية للبيانات",
@@ -130,7 +130,7 @@ const changelog: ChangelogEntry[] = [
   },
   {
     version: "0.7.0",
-    date: "2024-12-01",
+    date: "2025-12-14",
     type: "minor",
     titleEn: "Research & Publications",
     titleAr: "البحث والمنشورات",
