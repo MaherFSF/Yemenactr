@@ -24,42 +24,71 @@ import { Link } from "wouter";
 export default function Infrastructure() {
   const { language } = useLanguage();
 
+  // January 2026 Data - World Bank PPI, UNDP, HRW
   const keyIndicators = [
     {
-      titleEn: "Infrastructure Damage",
-      titleAr: "أضرار البنية التحتية",
-      value: "$20B+",
-      descEn: "Estimated total damage",
-      descAr: "إجمالي الأضرار المقدرة",
+      titleEn: "Total PPI Investment",
+      titleAr: "إجمالي الاستثمار الخاص",
+      value: "$677M",
+      descEn: "1990-2024 total",
+      descAr: "الإجمالي 1990-2024",
       icon: Building,
-      trend: "critical"
+      trend: "neutral"
     },
     {
       titleEn: "Electricity Access",
       titleAr: "الوصول للكهرباء",
       value: "<50%",
-      descEn: "Population with grid access",
-      descAr: "السكان مع وصول للشبكة",
+      descEn: "Few hours/day in Aden",
+      descAr: "ساعات قليلة/يوم في عدن",
       icon: Zap,
       trend: "critical"
     },
     {
-      titleEn: "Water Access",
-      titleAr: "الوصول للمياه",
-      value: "~55%",
-      descEn: "Safe water access",
-      descAr: "الوصول للمياه الآمنة",
+      titleEn: "Water Price Increase",
+      titleAr: "ارتفاع أسعار المياه",
+      value: "+133%",
+      descEn: "Sana'a trucked water (Aug 2023)",
+      descAr: "مياه الصهاريج صنعاء (أغسطس 2023)",
       icon: Droplets,
-      trend: "warning"
+      trend: "critical"
     },
     {
-      titleEn: "Road Network",
-      titleAr: "شبكة الطرق",
-      value: "Degraded",
-      descEn: "Significant damage",
-      descAr: "أضرار كبيرة",
-      icon: Route,
-      trend: "warning"
+      titleEn: "Solar Facilities",
+      titleAr: "المرافق الشمسية",
+      value: "164+",
+      descEn: "Public facilities with solar (UNDP)",
+      descAr: "مرافق عامة بالطاقة الشمسية (UNDP)",
+      icon: Zap,
+      trend: "positive"
+    },
+  ];
+
+  // January 2026 Alerts
+  const alerts = [
+    {
+      titleEn: "Summer 2023: Widespread protests in Aden over electricity and water cuts",
+      titleAr: "صيف 2023: احتجاجات واسعة في عدن بسبب انقطاع الكهرباء والمياه",
+      severity: "high",
+      date: "Aug 2023"
+    },
+    {
+      titleEn: "HRW Report: 'Widespread corruption' in Electricity Ministry",
+      titleAr: "تقرير هيومن رايتس: 'فساد واسع' في وزارة الكهرباء",
+      severity: "high",
+      date: "Nov 2023"
+    },
+    {
+      titleEn: "UNDP: 164+ public facilities now have solar power, benefiting 199,745 people",
+      titleAr: "UNDP: 164+ مرفق عام لديه طاقة شمسية، يستفيد منها 199,745 شخص",
+      severity: "positive",
+      date: "Jan 2025"
+    },
+    {
+      titleEn: "Solar systems projected to reduce 560 tonnes of CO2 emissions annually",
+      titleAr: "الأنظمة الشمسية ستقلل 560 طن من انبعاثات CO2 سنوياً",
+      severity: "positive",
+      date: "Jan 2026"
     },
   ];
 

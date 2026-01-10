@@ -24,42 +24,43 @@ import { Link } from "wouter";
 export default function Investment() {
   const { language } = useLanguage();
 
+  // January 2026 Data - UNCTAD, World Bank, IFC
   const keyIndicators = [
     {
       titleEn: "FDI Inflows",
       titleAr: "تدفقات الاستثمار الأجنبي",
-      value: "Near Zero",
-      change: "-95%",
+      value: "$-337M",
+      change: "Negative",
       trend: "down",
-      periodEn: "Since 2014",
-      periodAr: "منذ 2014",
-      sourceEn: "UNCTAD",
-      sourceAr: "الأونكتاد",
-      confidence: "B"
+      periodEn: "2023 (UNCTAD)",
+      periodAr: "2023 (الأونكتاد)",
+      sourceEn: "UNCTAD 2024",
+      sourceAr: "الأونكتاد 2024",
+      confidence: "A"
     },
     {
-      titleEn: "Business Activity",
-      titleAr: "النشاط التجاري",
-      value: "Severely Constrained",
+      titleEn: "Total PPI Investment",
+      titleAr: "إجمالي الاستثمار الخاص",
+      value: "$677M",
       change: "",
-      trend: "down",
-      periodEn: "2024",
-      periodAr: "2024",
-      sourceEn: "World Bank",
-      sourceAr: "البنك الدولي",
-      confidence: "B"
+      trend: "stable",
+      periodEn: "1990-2024 cumulative",
+      periodAr: "تراكمي 1990-2024",
+      sourceEn: "World Bank PPI",
+      sourceAr: "البنك الدولي PPI",
+      confidence: "A"
     },
     {
-      titleEn: "SME Survival Rate",
-      titleAr: "معدل بقاء المنشآت الصغيرة",
-      value: "~35%",
-      change: "-40%",
-      trend: "down",
-      periodEn: "Of pre-war SMEs",
-      periodAr: "من منشآت ما قبل الحرب",
-      sourceEn: "IFC estimates",
-      sourceAr: "تقديرات مؤسسة التمويل",
-      confidence: "C"
+      titleEn: "PPI Projects",
+      titleAr: "مشاريع الاستثمار الخاص",
+      value: "8",
+      change: "",
+      trend: "stable",
+      periodEn: "Total projects 1990-2024",
+      periodAr: "إجمالي المشاريع 1990-2024",
+      sourceEn: "World Bank PPI",
+      sourceAr: "البنك الدولي PPI",
+      confidence: "A"
     },
     {
       titleEn: "Ease of Doing Business",
@@ -67,11 +68,39 @@ export default function Investment() {
       value: "187/190",
       change: "",
       trend: "stable",
-      periodEn: "Global ranking",
-      periodAr: "الترتيب العالمي",
-      sourceEn: "World Bank (2020)",
-      sourceAr: "البنك الدولي (2020)",
+      periodEn: "Global ranking (2020)",
+      periodAr: "الترتيب العالمي (2020)",
+      sourceEn: "World Bank",
+      sourceAr: "البنك الدولي",
       confidence: "B"
+    },
+  ];
+
+  // January 2026 Alerts
+  const alerts = [
+    {
+      titleEn: "FDI flows negative (-$337M in 2023) - capital flight continues",
+      titleAr: "تدفقات الاستثمار الأجنبي سلبية (-337 مليون دولار في 2023) - هروب رأس المال مستمر",
+      severity: "critical",
+      date: "2023"
+    },
+    {
+      titleEn: "Only 8 PPI projects reached financial closure in 34 years (1990-2024)",
+      titleAr: "8 مشاريع فقط وصلت للإغلاق المالي في 34 عاماً (1990-2024)",
+      severity: "high",
+      date: "Jan 2026"
+    },
+    {
+      titleEn: "Port sector dominates PPI ($410M) - 61% of total investment",
+      titleAr: "قطاع الموانئ يهيمن على PPI (410 مليون دولار) - 61% من الإجمالي",
+      severity: "medium",
+      date: "Jan 2026"
+    },
+    {
+      titleEn: "ICT investment $252M (37%), Electricity only $16M (2%)",
+      titleAr: "استثمار الاتصالات 252 مليون دولار (37%)، الكهرباء 16 مليون فقط (2%)",
+      severity: "medium",
+      date: "Jan 2026"
     },
   ];
 

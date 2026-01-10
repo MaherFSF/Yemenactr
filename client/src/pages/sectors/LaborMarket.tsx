@@ -24,54 +24,83 @@ import { Link } from "wouter";
 export default function LaborMarket() {
   const { language } = useLanguage();
 
+  // January 2026 Data - World Bank, ILO, Statista
   const keyIndicators = [
     {
       titleEn: "Unemployment Rate",
       titleAr: "معدل البطالة",
-      value: "~30%",
-      change: "+8%",
+      value: "17.1%",
+      change: "+2.3%",
       trend: "up",
-      periodEn: "2024 Est.",
-      periodAr: "تقديرات 2024",
-      sourceEn: "World Bank / ILO estimates",
-      sourceAr: "تقديرات البنك الدولي / منظمة العمل الدولية",
-      confidence: "C"
+      periodEn: "2024 (ILO modeled)",
+      periodAr: "2024 (تقديرات ILO)",
+      sourceEn: "World Bank / ILO 2024",
+      sourceAr: "البنك الدولي / ILO 2024",
+      confidence: "B"
     },
     {
       titleEn: "Youth Unemployment",
       titleAr: "بطالة الشباب",
-      value: "~45%",
-      change: "+12%",
+      value: "32.4%",
+      change: "+5.2%",
       trend: "up",
-      periodEn: "Ages 15-24",
-      periodAr: "الأعمار 15-24",
-      sourceEn: "ILO estimates",
-      sourceAr: "تقديرات منظمة العمل الدولية",
-      confidence: "C"
-    },
-    {
-      titleEn: "Public Sector Salary Arrears",
-      titleAr: "متأخرات رواتب القطاع العام",
-      value: "6+ years",
-      change: "",
-      trend: "stable",
-      periodEn: "Sana'a (since 2016)",
-      periodAr: "صنعاء (منذ 2016)",
-      sourceEn: "UN reports",
-      sourceAr: "تقارير الأمم المتحدة",
+      periodEn: "Ages 15-24 (2024)",
+      periodAr: "الأعمار 15-24 (2024)",
+      sourceEn: "Statista 2024",
+      sourceAr: "Statista 2024",
       confidence: "B"
     },
     {
-      titleEn: "Minimum Wage (Official)",
-      titleAr: "الحد الأدنى للأجور (رسمي)",
-      value: "21,000 YER",
-      change: "",
-      trend: "stable",
-      periodEn: "Not enforced",
-      periodAr: "غير مطبق",
-      sourceEn: "Government decree",
-      sourceAr: "مرسوم حكومي",
+      titleEn: "Total Labor Force",
+      titleAr: "إجمالي القوى العاملة",
+      value: "7.85M",
+      change: "+1.2%",
+      trend: "up",
+      periodEn: "2024",
+      periodAr: "2024",
+      sourceEn: "World Bank 2024",
+      sourceAr: "البنك الدولي 2024",
       confidence: "B"
+    },
+    {
+      titleEn: "GDP per Capita Drop",
+      titleAr: "انخفاض نصيب الفرد",
+      value: "-54%",
+      change: "",
+      trend: "down",
+      periodEn: "Since 2015",
+      periodAr: "منذ 2015",
+      sourceEn: "World Bank 2024",
+      sourceAr: "البنك الدولي 2024",
+      confidence: "A"
+    },
+  ];
+
+  // January 2026 Alerts
+  const alerts = [
+    {
+      titleEn: "GDP per capita has fallen 54% since 2015 - World Bank",
+      titleAr: "انخفض نصيب الفرد من الناتج 54% منذ 2015 - البنك الدولي",
+      severity: "critical",
+      date: "Oct 2024"
+    },
+    {
+      titleEn: "2024: Houthi oil export blockade caused 42% drop in IRG fiscal revenues",
+      titleAr: "2024: حصار الحوثيين للنفط أدى لانخفاض 42% في إيرادات الحكومة",
+      severity: "high",
+      date: "2024"
+    },
+    {
+      titleEn: "Public sector salaries in Sana'a unpaid since 2016 (9+ years)",
+      titleAr: "رواتب القطاع العام في صنعاء غير مدفوعة منذ 2016 (+9 سنوات)",
+      severity: "high",
+      date: "Jan 2026"
+    },
+    {
+      titleEn: "Minimum wage (YER 21,000/month) = ~$11/month at current rates",
+      titleAr: "الحد الأدنى للأجور (21,000 ريال/شهر) = ~11$/شهر بالأسعار الحالية",
+      severity: "medium",
+      date: "Jan 2026"
     },
   ];
 

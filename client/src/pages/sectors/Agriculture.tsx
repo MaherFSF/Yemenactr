@@ -23,54 +23,83 @@ import { Link } from "wouter";
 export default function Agriculture() {
   const { language } = useLanguage();
 
+  // January 2026 Data - FAO, World Bank, ACAPS
   const keyIndicators = [
     {
       titleEn: "Agricultural GDP Share",
       titleAr: "حصة الزراعة من الناتج المحلي",
-      value: "~20%",
+      value: "~15%",
       change: "-5%",
       trend: "down",
-      periodEn: "2023 Est.",
-      periodAr: "تقديرات 2023",
-      sourceEn: "FAO / World Bank",
-      sourceAr: "الفاو / البنك الدولي",
-      confidence: "C"
+      periodEn: "2025 Est. (FAO)",
+      periodAr: "تقديرات 2025 (FAO)",
+      sourceEn: "FAO 2025",
+      sourceAr: "الفاو 2025",
+      confidence: "B"
     },
     {
       titleEn: "Agricultural Employment",
       titleAr: "التوظيف الزراعي",
-      value: "~25%",
-      change: "",
-      trend: "stable",
-      periodEn: "Of workforce",
-      periodAr: "من القوى العاملة",
-      sourceEn: "ILO estimates",
-      sourceAr: "تقديرات منظمة العمل",
-      confidence: "C"
-    },
-    {
-      titleEn: "Arable Land",
-      titleAr: "الأراضي الصالحة للزراعة",
-      value: "~3%",
-      change: "",
-      trend: "stable",
-      periodEn: "Of total land",
-      periodAr: "من إجمالي الأراضي",
-      sourceEn: "FAO",
-      sourceAr: "الفاو",
-      confidence: "B"
-    },
-    {
-      titleEn: "Food Import Dependency",
-      titleAr: "الاعتماد على واردات الغذاء",
-      value: "~90%",
+      value: ">50%",
       change: "+5%",
       trend: "up",
-      periodEn: "Of food needs",
-      periodAr: "من احتياجات الغذاء",
-      sourceEn: "WFP",
-      sourceAr: "برنامج الغذاء العالمي",
+      periodEn: "Of workforce (FAO)",
+      periodAr: "من القوى العاملة (FAO)",
+      sourceEn: "FAO 2025",
+      sourceAr: "الفاو 2025",
       confidence: "B"
+    },
+    {
+      titleEn: "Domestic Food Supply",
+      titleAr: "الإنتاج المحلي للغذاء",
+      value: "15-20%",
+      change: "-10%",
+      trend: "down",
+      periodEn: "Of staple food needs",
+      periodAr: "من احتياجات الغذاء الأساسية",
+      sourceEn: "World Bank May 2023",
+      sourceAr: "البنك الدولي مايو 2023",
+      confidence: "A"
+    },
+    {
+      titleEn: "Food Imports (July 2025)",
+      titleAr: "واردات الغذاء (يوليو 2025)",
+      value: "268K MT",
+      change: "-33%",
+      trend: "down",
+      periodEn: "vs July 2024",
+      periodAr: "مقارنة بيوليو 2024",
+      sourceEn: "ACAPS Aug 2025",
+      sourceAr: "ACAPS أغسطس 2025",
+      confidence: "A"
+    },
+  ];
+
+  // January 2026 Alerts
+  const alerts = [
+    {
+      titleEn: "18.1M people (52%) face acute food insecurity (Sep 2025 - Feb 2026)",
+      titleAr: "18.1 مليون شخص (52%) يواجهون انعدام أمن غذائي حاد (سبتمبر 2025 - فبراير 2026)",
+      severity: "critical",
+      date: "Aug 2025"
+    },
+    {
+      titleEn: "67% of households had inadequate food consumption (June 2025)",
+      titleAr: "67% من الأسر لديها استهلاك غذائي غير كافٍ (يونيو 2025)",
+      severity: "critical",
+      date: "Jun 2025"
+    },
+    {
+      titleEn: "Food imports down 33% in July 2025 vs July 2024",
+      titleAr: "انخفضت واردات الغذاء 33% في يوليو 2025 مقارنة بيوليو 2024",
+      severity: "high",
+      date: "Aug 2025"
+    },
+    {
+      titleEn: "Rainfed agriculture covers ~50% of cultivated land - vulnerable to climate",
+      titleAr: "الزراعة المطرية تغطي ~50% من الأراضي المزروعة - عرضة للمناخ",
+      severity: "medium",
+      date: "Jan 2026"
     },
   ];
 

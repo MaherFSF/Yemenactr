@@ -16,18 +16,22 @@ export default function About() {
 
   const team = [
     {
-      nameEn: "Hani Al-Faqih",
-      nameAr: "هاني الفقيه",
-      titleEn: "Chief Operating Officer",
-      titleAr: "الرئيس التنفيذي للعمليات",
-      photo: true,
-    },
-    {
       nameEn: "Maher Faisal Saeed Farea",
       nameAr: "ماهر فيصل سعيد فارع",
       titleEn: "Founder & Chief Executive Officer",
       titleAr: "المؤسس والرئيس التنفيذي",
-      photo: true,
+      photo: "/team/maher-farea.jpeg",
+      bioEn: "Operator-scholar with 15+ years across MENA, the Horn and South Asia. Former UNICEF Programme Specialist who stewarded >$20M portfolios and produced decision-grade briefs for UNSC bodies. MBA from Multimedia University Malaysia.",
+      bioAr: "خبير ميداني وباحث بخبرة تزيد عن 15 عاماً في منطقة الشرق الأوسط وشمال أفريقيا والقرن الأفريقي وجنوب آسيا. أخصائي برامج سابق في اليونيسف أدار محافظ تزيد عن 20 مليون دولار وأعد إحاطات لمجلس الأمن الدولي. ماجستير إدارة أعمال من جامعة الملتيميديا ماليزيا.",
+    },
+    {
+      nameEn: "Hani Hussein Al-Fakih",
+      nameAr: "هاني حسين الفقيه",
+      titleEn: "Chief Operating Officer",
+      titleAr: "الرئيس التنفيذي للعمليات",
+      photo: "/team/hani-alfakih.jpeg",
+      bioEn: "Visionary leader with 15+ years in microfinance, digital transformation, and institutional development. Co-Founder & CEO of Microfinance Academy with 27,000+ graduates. Deputy Managing Director at Yemen Microfinance Network. International Expert certified by Frankfurt School.",
+      bioAr: "قائد رؤيوي بخبرة تزيد عن 15 عاماً في التمويل الأصغر والتحول الرقمي والتطوير المؤسسي. مؤسس مشارك ورئيس تنفيذي لأكاديمية التمويل الأصغر مع أكثر من 27,000 خريج. نائب المدير العام لشبكة التمويل الأصغر اليمنية. خبير دولي معتمد من مدرسة فرانكفورت.",
     },
     {
       nameEn: "Zakaria Kamaly",
@@ -214,8 +218,10 @@ export default function About() {
             {team.map((member, index) => (
               <Card key={index} className="text-center">
                 <CardContent className="pt-6">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold">
-                    {member.photo ? (
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-accent mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
+                    {typeof member.photo === 'string' ? (
+                      <img src={member.photo} alt={language === "ar" ? member.nameAr : member.nameEn} className="w-full h-full object-cover" />
+                    ) : member.photo ? (
                       <Users className="h-12 w-12" />
                     ) : (
                       (language === "ar" ? member.nameAr : member.nameEn).charAt(0)
@@ -224,9 +230,14 @@ export default function About() {
                   <h3 className="font-bold text-lg mb-1">
                     {language === "ar" ? member.nameAr : member.nameEn}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-primary font-medium mb-2">
                     {language === "ar" ? member.titleAr : member.titleEn}
                   </p>
+                  {member.bioEn && (
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      {language === "ar" ? member.bioAr : member.bioEn}
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             ))}

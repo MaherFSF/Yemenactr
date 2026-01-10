@@ -20,7 +20,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 export default function AidFlows() {
   const { language } = useLanguage();
 
-  // Aid funding data
+  // Aid funding data (Updated January 2026 - OCHA)
   const fundingData = [
     { year: "2019", requirements: 4.2, funded: 3.6, gap: 0.6 },
     { year: "2020", requirements: 3.4, funded: 1.9, gap: 1.5 },
@@ -28,6 +28,7 @@ export default function AidFlows() {
     { year: "2022", requirements: 4.3, funded: 2.1, gap: 2.2 },
     { year: "2023", requirements: 4.3, funded: 2.0, gap: 2.3 },
     { year: "2024", requirements: 2.7, funded: 1.2, gap: 1.5 },
+    { year: "2025", requirements: 2.5, funded: 0.48, gap: 2.02 }, // Only 19% funded - lowest in decade
   ];
 
   // Top donors
@@ -62,36 +63,64 @@ export default function AidFlows() {
 
   const kpis = [
     {
-      titleEn: "2024 HRP Requirements",
-      titleAr: "متطلبات الاستجابة 2024",
-      value: "$2.7B",
-      change: -37.2,
-      source: "OCHA FTS",
+      titleEn: "2025 HRP Requirements",
+      titleAr: "متطلبات الاستجابة 2025",
+      value: "$2.5B",
+      change: -7.4,
+      source: "OCHA FTS Jan 2026",
       confidence: "A"
     },
     {
-      titleEn: "2024 Funded",
-      titleAr: "التمويل المستلم 2024",
-      value: "$1.2B",
-      change: -40.0,
-      source: "OCHA FTS",
+      titleEn: "2025 Funded",
+      titleAr: "التمويل المستلم 2025",
+      value: "$0.48B",
+      change: -60.0,
+      source: "OCHA FTS Jan 2026",
       confidence: "A"
     },
     {
       titleEn: "Funding Gap",
       titleAr: "فجوة التمويل",
-      value: "55%",
-      change: 12.0,
-      source: "OCHA FTS",
+      value: "81%",
+      change: 26.0,
+      source: "OCHA - Lowest in decade",
       confidence: "A"
     },
     {
-      titleEn: "People Targeted",
-      titleAr: "المستهدفون",
-      value: "17.3M",
-      change: -15.0,
-      source: "OCHA",
+      titleEn: "People in Need",
+      titleAr: "المحتاجون للمساعدة",
+      value: "23.1M",
+      change: 5.5,
+      source: "OCHA GHO 2026",
       confidence: "A"
+    },
+  ];
+
+  // January 2026 Alerts
+  const alerts = [
+    {
+      titleEn: "CRITICAL: Only 19% of 2025 HRP funded - lowest in over a decade",
+      titleAr: "حرج: تم تمويل 19% فقط من خطة الاستجابة 2025 - الأدنى منذ عقد",
+      severity: "critical",
+      date: "Sep 2025"
+    },
+    {
+      titleEn: "DFA detained 11+ UN national staff in September 2025",
+      titleAr: "احتجزت سلطات صنعاء 11+ موظفاً أممياً في سبتمبر 2025",
+      severity: "high",
+      date: "Sep 2025"
+    },
+    {
+      titleEn: "DFA raided UN compound in Sana'a, detained ~20 employees",
+      titleAr: "داهمت سلطات صنعاء مجمع الأمم المتحدة واحتجزت ~20 موظفاً",
+      severity: "high",
+      date: "Oct 2025"
+    },
+    {
+      titleEn: "4.7 million internally displaced persons (IDPs) in Yemen",
+      titleAr: "4.7 مليون نازح داخلياً في اليمن",
+      severity: "medium",
+      date: "Jan 2026"
     },
   ];
 
