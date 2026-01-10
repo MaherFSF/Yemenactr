@@ -1856,3 +1856,44 @@
 - [ ] Align Partner Portal with 18_partner_contributor_portal.png
 - [ ] Align AI Assistant with 17_ai_assistant_interface_arabic.png
 - [ ] Align Who We Are with who_we_are_english_updated.png
+
+
+## Phase 47: Comprehensive Platform Audit & GitHub Push (Jan 10, 2025)
+
+### Browser Testing - All 62 Routes
+- [ ] Test Homepage (/) - English and Arabic
+- [ ] Test Dashboard (/dashboard) - All KPI cards and charts
+- [ ] Test All 15 Sector Pages - Banking, Trade, Poverty, Macroeconomy, Prices, Currency, Public Finance, Energy, Food Security, Aid Flows, Labor Market, Conflict Economy, Infrastructure, Agriculture, Investment
+- [ ] Test Timeline (/timeline) - 83 events, year navigation, filters
+- [ ] Test Scenario Simulator (/scenario-simulator) - ML forecasting, What-If analysis
+- [ ] Test Research Library (/research) - 273 publications
+- [ ] Test Glossary (/glossary) - 51 terms
+- [ ] Test About (/about) - CauseWay branding
+- [ ] Test AI Assistant (/ai-assistant)
+- [ ] Test Admin Console (/admin)
+- [ ] Test All Resource Pages - Methodology, Data Repository, etc.
+
+### Backend Verification
+- [ ] Check all 44 database tables have correct schema
+- [ ] Verify data integrity across all tables
+- [ ] Check time_series table (1,778 records)
+- [ ] Check research_publications table (273 records)
+- [ ] Check glossary_terms table (51 records)
+- [ ] Check economic_events table
+- [ ] Verify all tRPC endpoints are working
+
+### Code Review
+- [ ] Verify all components compile without errors
+- [ ] Check all API endpoints return correct data
+- [ ] Verify bilingual support in all components
+- [ ] Check all export functions work
+
+### Testing
+- [ ] Run all 153 vitest tests
+- [ ] Fix any failing tests
+- [ ] Verify test coverage
+
+### GitHub Push
+- [ ] Commit all changes
+- [ ] Push to GitHub repository
+- [ ] Verify push successful
