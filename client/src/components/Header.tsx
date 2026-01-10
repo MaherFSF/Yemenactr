@@ -84,7 +84,7 @@ export default function Header() {
   const resources = [
     { nameEn: "Research Portal", nameAr: "بوابة الأبحاث", href: "/research-portal", icon: BookOpen },
     { nameEn: "Research Explorer", nameAr: "مستكشف الأبحاث", href: "/research-explorer", icon: Search },
-    { nameEn: "Research Analytics", nameAr: "تحليلات الأبحاث", href: "/research-visualization", icon: LineChart },
+    { nameEn: "Research Analytics", nameAr: "تحليلات الأبحاث", href: "/research-analytics", icon: LineChart },
     { nameEn: "Research Assistant", nameAr: "مساعد الأبحاث", href: "/research-assistant", icon: MessageSquare },
     { nameEn: "Research Library", nameAr: "مكتبتي البحثية", href: "/research-library", icon: Library },
     { nameEn: "Research Audit", nameAr: "تدقيق الأبحاث", href: "/research-audit", icon: ClipboardCheck },

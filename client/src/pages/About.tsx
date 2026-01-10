@@ -237,32 +237,70 @@ export default function About() {
       {/* CauseWay Section */}
       <section className="py-16 bg-muted/30">
         <div className="container">
-          <Card className="border-2 border-primary/20">
-            <CardContent className="pt-8">
-              <div className="flex flex-col md:flex-row items-center gap-8">
-                <div className="flex-shrink-0">
-                  <div className="w-32 h-32 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                    <Building2 className="h-16 w-16 text-white" />
-                  </div>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">
+              {language === "ar" ? "من نحن - كوزواي" : "About CauseWay"}
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              {language === "ar"
+                ? "الشركة الأم المؤسسة لمرصد الشفافية الاقتصادية اليمني"
+                : "The parent company behind Yemen Economic Transparency Observatory"}
+            </p>
+          </div>
+          <Card className="border-2 border-primary/20 overflow-hidden">
+            <CardContent className="p-0">
+              <div className="flex flex-col lg:flex-row">
+                {/* Logo Section */}
+                <div className="lg:w-1/3 bg-white p-8 flex items-center justify-center border-b lg:border-b-0 lg:border-r">
+                  <img 
+                    src="/causeway-logo.jpeg" 
+                    alt="CauseWay - كوزواي" 
+                    className="max-w-full h-auto max-h-48 object-contain"
+                  />
                 </div>
-                <div className="flex-1">
-                  <h2 className="text-2xl font-bold mb-4">
+                {/* Content Section */}
+                <div className="lg:w-2/3 p-8">
+                  <h2 className="text-2xl font-bold mb-4" style={{ color: '#1B6B3D' }}>
                     {language === "ar" 
-                      ? "مدعوم من CauseWay للاستشارات المالية والمصرفية"
-                      : "Powered by CauseWay Financial & Banking Consultancies"}
+                      ? "كوزواي للاستشارات المالية والمصرفية"
+                      : "CauseWay Financial & Banking Consultancies"}
                   </h2>
-                  <p className="text-muted-foreground leading-relaxed mb-4">
+                  <p className="text-muted-foreground leading-relaxed mb-6">
                     {language === "ar"
-                      ? "YETO هو منتج رئيسي من CauseWay، شركة استشارات رائدة متخصصة في الخدمات المالية والمصرفية والتنمية الاقتصادية في منطقة الشرق الأوسط وشمال أفريقيا."
-                      : "YETO is a flagship product of CauseWay, a leading consultancy firm specializing in financial services, banking, and economic development across the MENA region."}
+                      ? "كوزواي هي شركة استشارات رائدة متخصصة في الخدمات المالية والمصرفية والتنمية الاقتصادية. تأسست بهدف تقديم حلول مبتكرة للتحديات الاقتصادية في منطقة الشرق الأوسط وشمال أفريقيا، مع التركيز بشكل خاص على اليمن. YETO هو المنتج الرئيسي لكوزواي، ويمثل التزامنا بالشفافية والمساءلة في القطاع الاقتصادي."
+                      : "CauseWay is a leading consultancy firm specializing in financial services, banking, and economic development. Founded with the goal of providing innovative solutions to economic challenges in the MENA region, with a particular focus on Yemen. YETO is CauseWay's flagship product, representing our commitment to transparency and accountability in the economic sector."}
                   </p>
-                  <div className="flex flex-col sm:flex-row gap-4 text-sm text-muted-foreground">
+                  <div className="grid sm:grid-cols-2 gap-4 mb-6">
+                    <div className="p-4 bg-[#1B6B3D]/5 rounded-lg">
+                      <h4 className="font-semibold mb-2" style={{ color: '#1B6B3D' }}>
+                        {language === "ar" ? "خدماتنا" : "Our Services"}
+                      </h4>
+                      <ul className="text-sm text-muted-foreground space-y-1">
+                        <li>• {language === "ar" ? "الاستشارات المالية" : "Financial Consulting"}</li>
+                        <li>• {language === "ar" ? "الاستشارات المصرفية" : "Banking Advisory"}</li>
+                        <li>• {language === "ar" ? "تحليل البيانات الاقتصادية" : "Economic Data Analysis"}</li>
+                        <li>• {language === "ar" ? "دراسات الجدوى" : "Feasibility Studies"}</li>
+                      </ul>
+                    </div>
+                    <div className="p-4 bg-[#D4A84B]/10 rounded-lg">
+                      <h4 className="font-semibold mb-2" style={{ color: '#D4A84B' }}>
+                        {language === "ar" ? "مجالات التخصص" : "Areas of Expertise"}
+                      </h4>
+                      <ul className="text-sm text-muted-foreground space-y-1">
+                        <li>• {language === "ar" ? "التنمية الاقتصادية" : "Economic Development"}</li>
+                        <li>• {language === "ar" ? "الشفافية والحوكمة" : "Transparency & Governance"}</li>
+                        <li>• {language === "ar" ? "إدارة المخاطر" : "Risk Management"}</li>
+                        <li>• {language === "ar" ? "التحول الرقمي" : "Digital Transformation"}</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-4 text-sm text-muted-foreground pt-4 border-t">
                     <div className="flex items-center gap-2">
-                      <Mail className="h-4 w-4" />
+                      <Mail className="h-4 w-4" style={{ color: '#1B6B3D' }} />
                       <span>yeto@causewaygrp.com</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
+                      <MapPin className="h-4 w-4" style={{ color: '#1B6B3D' }} />
                       <span>{language === "ar" ? "عدن، اليمن" : "Aden, Yemen"}</span>
                     </div>
                   </div>
