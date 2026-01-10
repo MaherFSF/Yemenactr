@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
+import DataQualityBadge from "@/components/DataQualityBadge";
 import { ConfidenceBadge } from "@/components/DataCard";
 import { ExportButton } from "@/components/ExportButton";
 import SectorExportButtons from "@/components/SectorExportButtons";
@@ -20,7 +20,9 @@ import {
   Scale
 } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ComposedChart, PieChart, Pie, Cell } from 'recharts';
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { Sparkline, RegimeHeatmap, InsightsTicker, CorrelationMatrix } from "@/components/charts/EnhancedVisualizations";
+import { trpc } from "@/lib/trpc";
 
 export default function Banking() {
   const { language } = useLanguage();
@@ -154,7 +156,6 @@ export default function Banking() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-      <DevModeBanner />
       
       {/* Hero Section */}
       <section className="relative h-[400px] overflow-hidden">
@@ -858,6 +859,224 @@ export default function Banking() {
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Enhanced Visualizations Section */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-[#103050] mb-6">
+            {language === "ar" ? "التحليلات المتقدمة" : "Advanced Analytics"}
+          </h2>
+          
+          {/* Insights Ticker */}
+          <Card className="mb-6 overflow-hidden">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-[#107040]" />
+                {language === "ar" ? "رؤى مباشرة" : "Live Insights"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <InsightsTicker
+                insights={[
+                  {
+                    id: "1",
+                    type: "alert",
+                    priority: "critical",
+                    title: "Exchange rate spread reached new record high of 1,360 YER",
+                    titleAr: "فجوة سعر الصرف وصلت إلى مستوى قياسي جديد عند 1,360 ريال",
+                    indicator: "FX Spread",
+                    value: 1360,
+                    change: 34
+                  },
+                  {
+                    id: "2",
+                    type: "warning",
+                    priority: "high",
+                    title: "Foreign reserves declined 22.7% year-over-year",
+                    titleAr: "الاحتياطيات الأجنبية انخفضت بنسبة 22.7% خلال العام",
+                    indicator: "Reserves",
+                    value: 850,
+                    change: -22.7
+                  },
+                  {
+                    id: "3",
+                    type: "positive",
+                    priority: "medium",
+                    title: "Aden inflation rate declining for third consecutive month",
+                    titleAr: "معدل التضخم في عدن يتراجع للشهر الثالث على التوالي",
+                    indicator: "Inflation",
+                    value: 22.5,
+                    change: -2.5
+                  },
+                  {
+                    id: "4",
+                    type: "alert",
+                    priority: "high",
+                    title: "NPL ratio in commercial banks exceeds 45%",
+                    titleAr: "نسبة القروض المتعثرة في البنوك التجارية تتجاوز 45%",
+                    indicator: "NPL",
+                    value: 45,
+                    change: 5
+                  }
+                ]}
+                speed={40}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Regime Comparison Heatmap */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Scale className="h-5 w-5 text-[#C0A030]" />
+                {language === "ar" ? "مقارنة المؤشرات بين النظامين" : "Regime Indicator Comparison"}
+              </CardTitle>
+              <CardDescription>
+                {language === "ar"
+                  ? "مقارنة المؤشرات الاقتصادية الرئيسية بين عدن وصنعاء"
+                  : "Comparing key economic indicators between Aden and Sana'a regimes"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <RegimeHeatmap
+                data={[
+                  {
+                    indicator: "Exchange Rate",
+                    indicatorAr: "سعر الصرف",
+                    adenValue: 1890,
+                    sanaaValue: 530,
+                    divergence: 256.6,
+                    trend: "widening"
+                  },
+                  {
+                    indicator: "Inflation Rate",
+                    indicatorAr: "معدل التضخم",
+                    adenValue: 22.5,
+                    sanaaValue: 16.0,
+                    divergence: 40.6,
+                    trend: "narrowing"
+                  },
+                  {
+                    indicator: "Money Supply Growth",
+                    indicatorAr: "نمو عرض النقود",
+                    adenValue: 18.5,
+                    sanaaValue: 8.2,
+                    divergence: 125.6,
+                    trend: "widening"
+                  },
+                  {
+                    indicator: "Bank Deposits",
+                    indicatorAr: "الودائع المصرفية",
+                    adenValue: -5.2,
+                    sanaaValue: 2.1,
+                    divergence: -347.6,
+                    trend: "widening"
+                  }
+                ]}
+                title="Banking Sector Divergence"
+                titleAr="تباين القطاع المصرفي"
+              />
+            </CardContent>
+          </Card>
+
+          {/* Correlation Matrix */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CreditCard className="h-5 w-5 text-[#103050]" />
+                {language === "ar" ? "مصفوفة الارتباط" : "Correlation Matrix"}
+              </CardTitle>
+              <CardDescription>
+                {language === "ar"
+                  ? "العلاقات الإحصائية بين المؤشرات المصرفية الرئيسية"
+                  : "Statistical relationships between key banking indicators"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CorrelationMatrix
+                indicators={["Exchange Rate", "Inflation", "Reserves", "Money Supply", "NPL Ratio"]}
+                indicatorsAr={["سعر الصرف", "التضخم", "الاحتياطيات", "عرض النقود", "القروض المتعثرة"]}
+                correlations={[
+                  [1.00, 0.85, -0.72, 0.68, 0.45],
+                  [0.85, 1.00, -0.58, 0.72, 0.52],
+                  [-0.72, -0.58, 1.00, -0.45, -0.38],
+                  [0.68, 0.72, -0.45, 1.00, 0.35],
+                  [0.45, 0.52, -0.38, 0.35, 1.00]
+                ]}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Sparkline KPI Summary */}
+          <div className="grid md:grid-cols-4 gap-4 mb-6">
+            <Card className="p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === "ar" ? "اتجاه سعر الصرف" : "FX Trend"}
+                  </p>
+                  <p className="text-2xl font-bold text-[#103050]">1,890</p>
+                </div>
+                <Sparkline 
+                  data={[730, 850, 1050, 1150, 1350, 1550, 1680, 1780, 1890]} 
+                  color="#dc2626"
+                  showTrend={true}
+                />
+              </div>
+              <p className="text-xs text-red-600">↑ 158.9% {language === "ar" ? "منذ 2020" : "since 2020"}</p>
+            </Card>
+
+            <Card className="p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === "ar" ? "اتجاه التضخم" : "Inflation Trend"}
+                  </p>
+                  <p className="text-2xl font-bold text-[#103050]">22.5%</p>
+                </div>
+                <Sparkline 
+                  data={[10, 22, 35, 28, 25, 22.5]} 
+                  color="#16a34a"
+                  showTrend={true}
+                />
+              </div>
+              <p className="text-xs text-green-600">↓ {language === "ar" ? "يتراجع" : "Declining"}</p>
+            </Card>
+
+            <Card className="p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === "ar" ? "الاحتياطيات" : "Reserves"}
+                  </p>
+                  <p className="text-2xl font-bold text-[#103050]">$850M</p>
+                </div>
+                <Sparkline 
+                  data={[4700, 2100, 1200, 850, 1100, 1500, 1200, 1800, 1400, 1100, 850]} 
+                  color="#dc2626"
+                  showTrend={true}
+                />
+              </div>
+              <p className="text-xs text-red-600">↓ 81.9% {language === "ar" ? "منذ 2014" : "since 2014"}</p>
+            </Card>
+
+            <Card className="p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === "ar" ? "عرض النقود" : "Money Supply"}
+                  </p>
+                  <p className="text-2xl font-bold text-[#103050]">7.8T</p>
+                </div>
+                <Sparkline 
+                  data={[4200, 4800, 5600, 6200, 7000, 7800]} 
+                  color="#ca8a04"
+                  showTrend={true}
+                />
+              </div>
+              <p className="text-xs text-amber-600">↑ 85.7% {language === "ar" ? "منذ 2019" : "since 2019"}</p>
+            </Card>
+          </div>
+        </div>
 
         {/* Data Sources */}
         <Card className="bg-gray-50 dark:bg-gray-800">

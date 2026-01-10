@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { Sparkline, RegimeHeatmap, InsightsTicker, CorrelationMatrix } from "@/components/charts/EnhancedVisualizations";
 
 export default function Currency() {
   const { language } = useLanguage();
@@ -392,6 +393,156 @@ export default function Currency() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Enhanced Visualizations Section */}
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-[#103050] mb-6">
+            {language === "ar" ? "التحليلات المتقدمة" : "Advanced Analytics"}
+          </h2>
+          
+          {/* Insights Ticker */}
+          <Card className="mb-6 overflow-hidden">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-[#107040]" />
+                {language === "ar" ? "رؤى العملة" : "Currency Insights"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <InsightsTicker
+                insights={[
+                  {
+                    id: "1",
+                    type: "alert",
+                    priority: "critical",
+                    title: "Aden parallel rate hits record 2,320 YER/USD",
+                    titleAr: "سعر الصرف الموازي في عدن يصل لمستوى قياسي 2,320 ريال/دولار",
+                    indicator: "FX Rate",
+                    value: 2320,
+                    change: 43.2
+                  },
+                  {
+                    id: "2",
+                    type: "warning",
+                    priority: "high",
+                    title: "North-South currency spread exceeds 300%",
+                    titleAr: "فجوة العملة بين الشمال والجنوب تتجاوز 300%",
+                    indicator: "Spread",
+                    value: 313,
+                    change: 25
+                  },
+                  {
+                    id: "3",
+                    type: "info",
+                    priority: "medium",
+                    title: "Sana'a rate stable at 562 YER/USD",
+                    titleAr: "سعر صنعاء مستقر عند 562 ريال/دولار",
+                    indicator: "FX Rate",
+                    value: 562,
+                    change: 5
+                  }
+                ]}
+                speed={45}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Regime Comparison Heatmap */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ArrowUpDown className="h-5 w-5 text-[#C0A030]" />
+                {language === "ar" ? "مقارنة أسعار الصرف" : "Exchange Rate Comparison"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <RegimeHeatmap
+                data={[
+                  {
+                    indicator: "Official Rate",
+                    indicatorAr: "السعر الرسمي",
+                    adenValue: 1800,
+                    sanaaValue: 562,
+                    divergence: 220.3,
+                    trend: "widening"
+                  },
+                  {
+                    indicator: "Parallel Rate",
+                    indicatorAr: "السعر الموازي",
+                    adenValue: 2320,
+                    sanaaValue: 562,
+                    divergence: 312.8,
+                    trend: "widening"
+                  },
+                  {
+                    indicator: "Monthly Volatility",
+                    indicatorAr: "التقلب الشهري",
+                    adenValue: 8.5,
+                    sanaaValue: 1.2,
+                    divergence: 608.3,
+                    trend: "widening"
+                  }
+                ]}
+                title="Currency Divergence"
+                titleAr="تباين العملة"
+              />
+            </CardContent>
+          </Card>
+
+          {/* Sparkline Trends */}
+          <div className="grid md:grid-cols-3 gap-4">
+            <Card className="p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === "ar" ? "عدن - موازي" : "Aden Parallel"}
+                  </p>
+                  <p className="text-2xl font-bold text-[#103050]">2,320</p>
+                </div>
+                <Sparkline 
+                  data={[1620, 1720, 1850, 1980, 2050, 2120, 2180, 2250, 2320]} 
+                  color="#dc2626"
+                  showTrend={true}
+                />
+              </div>
+              <p className="text-xs text-red-600">↑ 43.2% {language === "ar" ? "سنوياً" : "YoY"}</p>
+            </Card>
+
+            <Card className="p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === "ar" ? "صنعاء - موازي" : "Sana'a Parallel"}
+                  </p>
+                  <p className="text-2xl font-bold text-[#103050]">562</p>
+                </div>
+                <Sparkline 
+                  data={[535, 538, 540, 545, 548, 550, 555, 558, 562]} 
+                  color="#16a34a"
+                  showTrend={true}
+                />
+              </div>
+              <p className="text-xs text-green-600">↑ 5.0% {language === "ar" ? "سنوياً" : "YoY"}</p>
+            </Card>
+
+            <Card className="p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === "ar" ? "الفجوة" : "Spread"}
+                  </p>
+                  <p className="text-2xl font-bold text-red-600">313%</p>
+                </div>
+                <Sparkline 
+                  data={[203, 220, 243, 260, 279, 285, 293, 303, 313]} 
+                  color="#dc2626"
+                  showTrend={true}
+                />
+              </div>
+              <p className="text-xs text-red-600">↑ {language === "ar" ? "يتسع" : "Widening"}</p>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

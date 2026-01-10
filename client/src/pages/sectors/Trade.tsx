@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
+import DataQualityBadge from "@/components/DataQualityBadge";
 import { ConfidenceBadge } from "@/components/DataCard";
 import EvidencePackButton from "@/components/EvidencePackButton";
 import { ExportButton } from "@/components/ExportButton";
@@ -27,6 +27,7 @@ import {
   Info
 } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, ComposedChart } from 'recharts';
+import { Sparkline, RegimeHeatmap, InsightsTicker } from "@/components/charts/EnhancedVisualizations";
 import { useState } from "react";
 import { Link } from "wouter";
 
@@ -215,7 +216,6 @@ export default function Trade() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-      <DevModeBanner />
       
       {/* Hero Section with Real Yemen Image */}
       <section className="relative h-[400px] overflow-hidden">
