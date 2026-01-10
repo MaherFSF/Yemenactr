@@ -1325,13 +1325,14 @@ export const economicEventsData: EconomicEvent[] = [
   },
 
   // ============================================
-  // 2026 - Projected
+  // 2026 - January Events (Current)
   // ============================================
   {
     id: "evt-2026-01",
     date: "2026-01-01",
     year: 2026,
     month: 1,
+    day: 1,
     title: "New Year Economic Outlook",
     titleAr: "التوقعات الاقتصادية للعام الجديد",
     description: "IMF projects Yemen's economy could grow 3-4% if peace agreement is finalized.",
@@ -1342,6 +1343,304 @@ export const economicEventsData: EconomicEvent[] = [
       gdpEffect: "Projected 3-4% growth"
     },
     sources: ["IMF"]
+  },
+  {
+    id: "evt-2026-02",
+    date: "2026-01-05",
+    year: 2026,
+    month: 1,
+    day: 5,
+    title: "CBY Aden Suspends 79 Exchange Companies",
+    titleAr: "البنك المركزي عدن يوقف 79 شركة صرافة",
+    description: "Central Bank of Yemen in Aden suspends licenses of 79 exchange companies for violations of monetary regulations and currency speculation.",
+    descriptionAr: "البنك المركزي اليمني في عدن يوقف تراخيص 79 شركة صرافة بسبب مخالفات الأنظمة النقدية والمضاربة على العملة.",
+    category: "banking",
+    severity: "critical",
+    economicImpact: {
+      currencyEffect: "Rial stabilizes at 1,890 YER/USD",
+      tradeEffect: "Reduced informal remittance channels"
+    },
+    sources: ["CBY Aden", "Sana'a Center"]
+  },
+  {
+    id: "evt-2026-03",
+    date: "2026-01-06",
+    year: 2026,
+    month: 1,
+    day: 6,
+    title: "Saudi Arabia Increases Pressure on STC",
+    titleAr: "السعودية تزيد الضغط على المجلس الانتقالي",
+    description: "Saudi Arabia increases diplomatic pressure on Southern Transitional Council (STC) to comply with Riyadh Agreement and integrate forces.",
+    descriptionAr: "السعودية تزيد الضغط الدبلوماسي على المجلس الانتقالي الجنوبي للامتثال لاتفاق الرياض ودمج القوات.",
+    category: "international",
+    severity: "major",
+    economicImpact: {
+      gdpEffect: "Uncertainty in southern economy"
+    },
+    sources: ["Reuters", "Al Jazeera"]
+  },
+  {
+    id: "evt-2026-04",
+    date: "2026-01-07",
+    year: 2026,
+    month: 1,
+    day: 7,
+    title: "Exchange Rate Reaches 1,890 YER/USD in Aden",
+    titleAr: "سعر الصرف يصل 1,890 ريال/دولار في عدن",
+    description: "Official exchange rate in Aden reaches 1,890 YER/USD while parallel market trades at 1,950. Sana'a maintains 530 YER/USD.",
+    descriptionAr: "سعر الصرف الرسمي في عدن يصل 1,890 ريال/دولار بينما السوق الموازي 1,950. صنعاء تحافظ على 530 ريال/دولار.",
+    category: "currency",
+    severity: "critical",
+    economicImpact: {
+      currencyEffect: "257% gap between Aden and Sana'a rates",
+      inflationEffect: "Continued price pressure in south"
+    },
+    sources: ["CBY Aden", "CBY Sana'a"]
+  },
+  {
+    id: "evt-2026-05",
+    date: "2026-01-08",
+    year: 2026,
+    month: 1,
+    day: 8,
+    title: "Aidarus al-Zubaidi Flees to UAE",
+    titleAr: "عيدروس الزبيدي يفر إلى الإمارات",
+    description: "STC President Aidarus al-Zubaidi reportedly flees to UAE amid mounting pressure and imminent dissolution of the council.",
+    descriptionAr: "رئيس المجلس الانتقالي عيدروس الزبيدي يفر إلى الإمارات وسط ضغوط متزايدة وحل وشيك للمجلس.",
+    category: "conflict",
+    severity: "critical",
+    economicImpact: {
+      gdpEffect: "Political uncertainty in Aden",
+      tradeEffect: "Port operations continue normally"
+    },
+    sources: ["Al Jazeera", "Reuters", "Sana'a Center"]
+  },
+  {
+    id: "evt-2026-06",
+    date: "2026-01-09",
+    year: 2026,
+    month: 1,
+    day: 9,
+    title: "Southern Transitional Council Officially Dissolved",
+    titleAr: "حل المجلس الانتقالي الجنوبي رسمياً",
+    description: "Presidential Leadership Council announces official dissolution of Southern Transitional Council (STC), ending years of parallel governance in south Yemen. Forces to be integrated into national military.",
+    descriptionAr: "مجلس القيادة الرئاسي يعلن الحل الرسمي للمجلس الانتقالي الجنوبي، منهياً سنوات من الحكم الموازي في جنوب اليمن. القوات ستُدمج في الجيش الوطني.",
+    category: "conflict",
+    severity: "critical",
+    economicImpact: {
+      gdpEffect: "Potential for unified economic policy",
+      tradeEffect: "Aden port under central government control"
+    },
+    sources: ["Presidential Leadership Council", "Reuters", "Al Jazeera", "Sana'a Center"]
+  },
+  {
+    id: "evt-2026-07",
+    date: "2026-01-09",
+    year: 2026,
+    month: 1,
+    day: 9,
+    title: "CBY Board of Directors Meeting",
+    titleAr: "اجتماع مجلس إدارة البنك المركزي",
+    description: "Central Bank of Yemen Board of Directors convenes emergency meeting to discuss monetary policy following exchange company suspensions and political developments.",
+    descriptionAr: "مجلس إدارة البنك المركزي اليمني يعقد اجتماعاً طارئاً لمناقشة السياسة النقدية بعد إيقاف شركات الصرافة والتطورات السياسية.",
+    category: "banking",
+    severity: "major",
+    economicImpact: {
+      currencyEffect: "Policy coordination on exchange rate"
+    },
+    sources: ["CBY Aden"]
+  },
+  {
+    id: "evt-2026-08",
+    date: "2026-01-09",
+    year: 2026,
+    month: 1,
+    day: 9,
+    title: "Forces Integration Plan Announced",
+    titleAr: "الإعلان عن خطة دمج القوات",
+    description: "Government announces comprehensive plan to integrate former STC forces into national military structure within 90 days.",
+    descriptionAr: "الحكومة تعلن خطة شاملة لدمج قوات المجلس الانتقالي السابق في الهيكل العسكري الوطني خلال 90 يوماً.",
+    category: "conflict",
+    severity: "major",
+    economicImpact: {
+      gdpEffect: "Reduced military spending fragmentation"
+    },
+    sources: ["Yemen Ministry of Defense"]
+  },
+  {
+    id: "evt-2026-09",
+    date: "2026-01-10",
+    year: 2026,
+    month: 1,
+    day: 10,
+    title: "WFP Reports 19.8 Million Food Insecure",
+    titleAr: "برنامج الأغذية العالمي: 19.8 مليون يعانون انعدام الأمن الغذائي",
+    description: "World Food Programme reports 19.8 million Yemenis (58% of population) face food insecurity, with 5.6 million in emergency conditions (IPC Phase 4).",
+    descriptionAr: "برنامج الأغذية العالمي يفيد بأن 19.8 مليون يمني (58% من السكان) يواجهون انعدام الأمن الغذائي، منهم 5.6 مليون في ظروف طوارئ.",
+    category: "food_security",
+    severity: "critical",
+    economicImpact: {
+      gdpEffect: "Humanitarian crisis continues"
+    },
+    sources: ["WFP", "IPC"]
+  },
+  {
+    id: "evt-2026-10",
+    date: "2026-01-10",
+    year: 2026,
+    month: 1,
+    day: 10,
+    title: "Foreign Reserves at $1.15 Billion",
+    titleAr: "الاحتياطيات الأجنبية 1.15 مليار دولار",
+    description: "CBY Aden reports foreign exchange reserves at $1.15 billion, covering approximately 2.5 months of imports.",
+    descriptionAr: "البنك المركزي في عدن يعلن احتياطيات النقد الأجنبي بقيمة 1.15 مليار دولار، تغطي حوالي 2.5 شهر من الواردات.",
+    category: "banking",
+    severity: "major",
+    economicImpact: {
+      currencyEffect: "Limited intervention capacity",
+      tradeEffect: "Import financing constraints"
+    },
+    sources: ["CBY Aden", "IMF"]
+  },
+  {
+    id: "evt-2026-11",
+    date: "2026-01-10",
+    year: 2026,
+    month: 1,
+    day: 10,
+    title: "Inflation Rate at 35% in Aden",
+    titleAr: "معدل التضخم 35% في عدن",
+    description: "Annual inflation rate in government-controlled areas reaches 35%, driven by currency depreciation and import costs.",
+    descriptionAr: "معدل التضخم السنوي في المناطق الخاضعة لسيطرة الحكومة يصل 35%، مدفوعاً بانخفاض قيمة العملة وتكاليف الاستيراد.",
+    category: "fiscal",
+    severity: "critical",
+    economicImpact: {
+      inflationEffect: "35% annual inflation",
+      gdpEffect: "Purchasing power erosion"
+    },
+    sources: ["IMF", "World Bank"]
+  },
+  {
+    id: "evt-2026-12",
+    date: "2026-01-10",
+    year: 2026,
+    month: 1,
+    day: 10,
+    title: "Oil Exports Remain Zero Since October 2022",
+    titleAr: "صادرات النفط تبقى صفراً منذ أكتوبر 2022",
+    description: "Yemen's oil exports continue at zero since Houthi attacks on oil terminals in October 2022, depriving government of primary revenue source.",
+    descriptionAr: "صادرات النفط اليمنية مستمرة عند الصفر منذ هجمات الحوثيين على محطات النفط في أكتوبر 2022، مما يحرم الحكومة من مصدر الإيرادات الرئيسي.",
+    category: "oil",
+    severity: "critical",
+    economicImpact: {
+      gdpEffect: "$1.5 billion annual revenue loss",
+      tradeEffect: "Zero oil exports"
+    },
+    sources: ["World Bank", "IMF"]
+  },
+  {
+    id: "evt-2026-13",
+    date: "2026-01-10",
+    year: 2026,
+    month: 1,
+    day: 10,
+    title: "Red Sea Shipping Crisis Continues",
+    titleAr: "استمرار أزمة الشحن في البحر الأحمر",
+    description: "Houthi attacks on Red Sea shipping continue to disrupt global trade routes, with major shipping companies avoiding the region.",
+    descriptionAr: "هجمات الحوثيين على الشحن في البحر الأحمر تستمر في تعطيل طرق التجارة العالمية، مع تجنب شركات الشحن الكبرى للمنطقة.",
+    category: "trade",
+    severity: "critical",
+    economicImpact: {
+      tradeEffect: "Global shipping rerouting via Cape of Good Hope",
+      gdpEffect: "Reduced Aden port revenues"
+    },
+    sources: ["Reuters", "Lloyd's List"]
+  },
+  {
+    id: "evt-2026-14",
+    date: "2026-01-10",
+    year: 2026,
+    month: 1,
+    day: 10,
+    title: "HDI Remains at 0.424 (Low Human Development)",
+    titleAr: "مؤشر التنمية البشرية يبقى عند 0.424",
+    description: "UNDP Human Development Report confirms Yemen's HDI at 0.424, ranking 183rd out of 193 countries globally.",
+    descriptionAr: "تقرير التنمية البشرية للأمم المتحدة يؤكد مؤشر التنمية البشرية لليمن عند 0.424، في المرتبة 183 من 193 دولة عالمياً.",
+    category: "humanitarian",
+    severity: "critical",
+    economicImpact: {
+      gdpEffect: "Development indicators stagnant"
+    },
+    sources: ["UNDP"]
+  },
+  {
+    id: "evt-2026-15",
+    date: "2026-01-10",
+    year: 2026,
+    month: 1,
+    day: 10,
+    title: "Poverty Rate at 80%",
+    titleAr: "معدل الفقر 80%",
+    description: "World Bank estimates 80% of Yemen's population lives below the poverty line, with 21.6 million requiring humanitarian assistance.",
+    descriptionAr: "البنك الدولي يقدر أن 80% من سكان اليمن يعيشون تحت خط الفقر، مع 21.6 مليون يحتاجون مساعدات إنسانية.",
+    category: "humanitarian",
+    severity: "critical",
+    economicImpact: {
+      gdpEffect: "GDP per capita $577"
+    },
+    sources: ["World Bank", "UNDP"]
+  },
+  {
+    id: "evt-2026-16",
+    date: "2026-01-10",
+    year: 2026,
+    month: 1,
+    day: 10,
+    title: "Fuel Prices Surge in Aden",
+    titleAr: "ارتفاع أسعار الوقود في عدن",
+    description: "Fuel prices in Aden reach 950 YER/liter for petrol and 850 YER/liter for diesel, up 15% from December 2025.",
+    descriptionAr: "أسعار الوقود في عدن تصل 950 ريال/لتر للبنزين و850 ريال/لتر للديزل، بزيادة 15% عن ديسمبر 2025.",
+    category: "oil",
+    severity: "major",
+    economicImpact: {
+      inflationEffect: "Transportation costs increase",
+      gdpEffect: "Business operating costs rise"
+    },
+    sources: ["Yemen Petroleum Company"]
+  },
+  {
+    id: "evt-2026-17",
+    date: "2026-01-10",
+    year: 2026,
+    month: 1,
+    day: 10,
+    title: "Unemployment Estimated at 35%",
+    titleAr: "البطالة تقدر بـ 35%",
+    description: "ILO estimates unemployment rate at 35%, with youth unemployment exceeding 50%. Informal sector employs majority of workforce.",
+    descriptionAr: "منظمة العمل الدولية تقدر معدل البطالة بـ 35%، مع بطالة الشباب تتجاوز 50%. القطاع غير الرسمي يوظف غالبية القوى العاملة.",
+    category: "humanitarian",
+    severity: "critical",
+    economicImpact: {
+      gdpEffect: "Labor market crisis"
+    },
+    sources: ["ILO", "World Bank"]
+  },
+  {
+    id: "evt-2026-18",
+    date: "2026-01-10",
+    year: 2026,
+    month: 1,
+    day: 10,
+    title: "Humanitarian Funding Gap Widens",
+    titleAr: "اتساع فجوة التمويل الإنساني",
+    description: "UN OCHA reports 2026 humanitarian response plan requires $4.5 billion, with only 35% funded to date.",
+    descriptionAr: "مكتب الأمم المتحدة لتنسيق الشؤون الإنسانية يفيد بأن خطة الاستجابة الإنسانية 2026 تتطلب 4.5 مليار دولار، مع تمويل 35% فقط حتى الآن.",
+    category: "humanitarian",
+    severity: "critical",
+    economicImpact: {
+      gdpEffect: "Reduced humanitarian operations"
+    },
+    sources: ["OCHA", "UN"]
   }
 ];
 
