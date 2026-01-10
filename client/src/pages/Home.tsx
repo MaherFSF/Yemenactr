@@ -211,25 +211,25 @@ export default function Home() {
   // Latest updates for news section
   const latestUpdates = [
     {
-      titleEn: "YETO Publishes Quarterly Economic Outlook Report",
-      titleAr: "YETO ينشر تقرير التوقعات الاقتصادية الفصلية",
-      date: "October 26, 2024",
+      titleEn: "CBY Aden Holds First 2026 Board Meeting, Approves Audit Contract",
+      titleAr: "البنك المركزي عدن يعقد أول اجتماع لمجلس إدارته في 2026 ويوافق على عقد التدقيق",
+      date: "January 9, 2026",
       image: "/images/sectors/central-bank.jpg",
-      href: "/research"
+      href: "/sectors/banking"
     },
     {
-      titleEn: "New Data Portal Launched for Real-time Economic Indicators",
-      titleAr: "إطلاق بوابة بيانات جديدة للمؤشرات الاقتصادية الحية",
-      date: "October 18, 2024",
+      titleEn: "STC Dissolution Creates Uncertainty for Southern Economy",
+      titleAr: "حل المجلس الانتقالي يخلق حالة من عدم اليقين للاقتصاد الجنوبي",
+      date: "January 8, 2026",
       image: "/images/sectors/infrastructure.jpg",
-      href: "/dashboard"
+      href: "/sectors/conflict-economy"
     },
     {
-      titleEn: "Research Highlights: Impact of Humanitarian Aid on Local Markets",
-      titleAr: "أبرز الأبحاث: تأثير المساعدات الإنسانية على الأسواق المحلية",
-      date: "October 10, 2024",
+      titleEn: "79 Exchange Companies Licenses Suspended in CBY Regulation Campaign",
+      titleAr: "تعليق تراخيص 79 شركة صرافة في حملة تنظيم البنك المركزي",
+      date: "December 30, 2025",
       image: "/images/sectors/humanitarian-aid.jpg",
-      href: "/research"
+      href: "/sectors/banking"
     }
   ];
 

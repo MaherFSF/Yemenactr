@@ -275,26 +275,27 @@ export default function AIAssistant() {
   };
 
   return (
-    <div className="flex flex-col">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-purple-900/20 via-primary/10 to-purple-900/20 border-b">
-        <div className="container py-12">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-16 h-16 rounded-full bg-purple-500/10 flex items-center justify-center">
-                <Brain className="h-8 w-8 text-purple-500" />
+    <div className="flex flex-col min-h-screen">
+      {/* Hero Section - Enhanced */}
+      <section className="bg-gradient-to-br from-emerald-900/30 via-primary/20 to-emerald-800/30 border-b relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMyMjIiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+        <div className="container py-10 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500/20 to-primary/20 flex items-center justify-center shadow-lg border border-emerald-500/20">
+                <Brain className="h-10 w-10 text-emerald-500" />
               </div>
-              <Badge variant="outline" className="text-sm gap-1">
-                <Sparkles className="h-3 w-3" />
-                {language === "ar" ? "مدعوم بالذكاء الاصطناعي" : "AI-Powered"}
-              </Badge>
             </div>
+            <Badge variant="outline" className="text-sm gap-1 mb-4 bg-background/50 backdrop-blur-sm">
+              <Sparkles className="h-3 w-3 text-emerald-500" />
+              {language === "ar" ? "مدعوم بالذكاء الاصطناعي" : "AI-Powered"}
+            </Badge>
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               {language === "ar" 
                 ? "العقل الواحد"
                 : "One Brain"}
             </h1>
-            <p className="text-xl text-muted-foreground mb-6">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               {language === "ar"
                 ? "مساعدك الذكي للبيانات الاقتصادية اليمنية - كل إجابة موثقة بالمصادر والأدلة"
                 : "Your intelligent assistant for Yemen economic data - every answer backed by sources and evidence"}
@@ -321,7 +322,7 @@ export default function AIAssistant() {
 
               <TabsContent value="chat">
                 {/* Chat Messages */}
-                <Card className="h-[600px] flex flex-col">
+                <Card className="h-[550px] flex flex-col shadow-lg border-2">
                   <CardContent className="flex-1 overflow-y-auto p-6 space-y-6">
                     {messages.map((message) => (
                       <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
@@ -488,9 +489,10 @@ export default function AIAssistant() {
             </Tabs>
 
             {/* Suggested Questions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">
+            <Card className="shadow-md">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5 text-amber-500" />
                   {language === "ar" ? "أسئلة مقترحة" : "Suggested Questions"}
                 </CardTitle>
                 <CardDescription>
@@ -503,15 +505,15 @@ export default function AIAssistant() {
                     <button
                       key={index}
                       onClick={() => setQuery(language === "ar" ? question.ar : question.en)}
-                      className="p-3 text-left border rounded-lg hover:bg-muted/50 transition-colors text-sm group"
+                      className="p-4 text-left border-2 rounded-xl hover:bg-primary/5 hover:border-primary/30 transition-all text-sm group"
                     >
-                      <div className="flex items-start gap-2">
-                        <Badge variant="outline" className="text-xs flex-shrink-0">
-                          {question.category}
-                        </Badge>
-                        <span className="group-hover:text-primary transition-colors">
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="group-hover:text-primary transition-colors leading-relaxed">
                           {language === "ar" ? question.ar : question.en}
                         </span>
+                        <Badge variant="secondary" className="text-xs flex-shrink-0 bg-primary/10 text-primary">
+                          {question.category}
+                        </Badge>
                       </div>
                     </button>
                   ))}
@@ -522,9 +524,10 @@ export default function AIAssistant() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">
+            <Card className="shadow-md">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-emerald-500" />
                   {language === "ar" ? "القدرات" : "Capabilities"}
                 </CardTitle>
               </CardHeader>
@@ -533,15 +536,15 @@ export default function AIAssistant() {
                   {capabilities.map((capability, index) => {
                     const Icon = capability.icon;
                     return (
-                      <div key={index} className="flex gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <div key={index} className="flex gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-emerald-500/20 flex items-center justify-center flex-shrink-0">
                           <Icon className="h-5 w-5 text-primary" />
                         </div>
                         <div>
                           <div className="font-medium mb-1">
                             {language === "ar" ? capability.titleAr : capability.titleEn}
                           </div>
-                          <div className="text-sm text-muted-foreground">
+                          <div className="text-sm text-muted-foreground leading-relaxed">
                             {language === "ar" ? capability.descAr : capability.descEn}
                           </div>
                         </div>
@@ -552,10 +555,10 @@ export default function AIAssistant() {
               </CardContent>
             </Card>
 
-            <Card className="border-purple-200 dark:border-purple-900 bg-purple-50 dark:bg-purple-950/20">
-              <CardHeader>
+            <Card className="border-emerald-200 dark:border-emerald-900 bg-gradient-to-br from-emerald-50 to-primary/5 dark:from-emerald-950/30 dark:to-primary/10 shadow-md">
+              <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-purple-600" />
+                  <FileText className="h-5 w-5 text-emerald-600" />
                   {language === "ar" ? "حزم الأدلة" : "Evidence Packs"}
                 </CardTitle>
               </CardHeader>
@@ -586,9 +589,10 @@ export default function AIAssistant() {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">
+            <Card className="shadow-md">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-blue-500" />
                   {language === "ar" ? "نصائح للاستخدام" : "Usage Tips"}
                 </CardTitle>
               </CardHeader>
