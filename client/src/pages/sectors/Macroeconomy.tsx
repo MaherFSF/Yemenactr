@@ -19,7 +19,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 export default function Macroeconomy() {
   const { language } = useLanguage();
 
-  // Sample GDP data (will be replaced with real data from World Bank/IMF)
+  // GDP data - Updated January 2026 (IMF Article IV Oct 2025 & World Bank Fall 2025 Monitor)
   const gdpData = [
     { year: "2010", gdp: 31.0, gdpPerCapita: 1334 },
     { year: "2011", gdp: 28.5, gdpPerCapita: 1195 },
@@ -35,6 +35,9 @@ export default function Macroeconomy() {
     { year: "2021", gdp: 21.0, gdpPerCapita: 683 },
     { year: "2022", gdp: 23.5, gdpPerCapita: 747 },
     { year: "2023", gdp: 22.8, gdpPerCapita: 707 },
+    { year: "2024", gdp: 19.1, gdpPerCapita: 577 }, // IMF: GDP $19.1B, per capita $577
+    { year: "2025", gdp: 19.3, gdpPerCapita: 571 }, // IMF: 1% growth projected
+    { year: "2026*", gdp: 19.5, gdpPerCapita: 565 }, // IMF projection
   ];
 
   const sectorContribution = [
@@ -48,37 +51,37 @@ export default function Macroeconomy() {
     {
       titleEn: "GDP (Nominal)",
       titleAr: "الناتج المحلي الإجمالي (الاسمي)",
-      value: "$22.8B",
-      change: -3.0,
-      year: "2023",
-      source: "World Bank",
+      value: "$19.1B",
+      change: -16.2,
+      year: "2024",
+      source: "IMF Article IV Oct 2025",
       confidence: "B"
     },
     {
       titleEn: "GDP Per Capita",
       titleAr: "نصيب الفرد من الناتج المحلي",
-      value: "$707",
-      change: -5.4,
-      year: "2023",
-      source: "World Bank",
+      value: "$577",
+      change: -18.4,
+      year: "2024",
+      source: "IMF Article IV Oct 2025",
       confidence: "B"
     },
     {
       titleEn: "GDP Growth",
       titleAr: "نمو الناتج المحلي",
-      value: "-3.0%",
-      change: -3.0,
-      year: "2023",
-      source: "IMF Estimates",
+      value: "+1.0%",
+      change: 1.0,
+      year: "2025",
+      source: "IMF Projection Oct 2025",
       confidence: "C"
     },
     {
       titleEn: "Population",
       titleAr: "عدد السكان",
-      value: "32.3M",
-      change: 2.3,
-      year: "2023",
-      source: "UN DESA",
+      value: "33.8M",
+      change: 2.5,
+      year: "2025",
+      source: "UN DESA 2025",
       confidence: "B"
     },
   ];

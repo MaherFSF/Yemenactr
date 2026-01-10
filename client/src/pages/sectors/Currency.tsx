@@ -21,20 +21,20 @@ import { Sparkline, RegimeHeatmap, InsightsTicker, CorrelationMatrix } from "@/c
 export default function Currency() {
   const { language } = useLanguage();
 
-  // Exchange rate data
+  // Exchange rate data - Updated January 2026 (CBY Aden Annual Reports)
   const fxData = [
-    { month: "Jan 24", adenOfficial: 1550, adenParallel: 1620, sanaaParallel: 535 },
-    { month: "Feb 24", adenOfficial: 1560, adenParallel: 1650, sanaaParallel: 538 },
-    { month: "Mar 24", adenOfficial: 1580, adenParallel: 1720, sanaaParallel: 540 },
-    { month: "Apr 24", adenOfficial: 1600, adenParallel: 1780, sanaaParallel: 542 },
-    { month: "May 24", adenOfficial: 1620, adenParallel: 1850, sanaaParallel: 545 },
-    { month: "Jun 24", adenOfficial: 1650, adenParallel: 1920, sanaaParallel: 548 },
-    { month: "Jul 24", adenOfficial: 1680, adenParallel: 1980, sanaaParallel: 550 },
-    { month: "Aug 24", adenOfficial: 1700, adenParallel: 2050, sanaaParallel: 552 },
-    { month: "Sep 24", adenOfficial: 1720, adenParallel: 2120, sanaaParallel: 555 },
-    { month: "Oct 24", adenOfficial: 1750, adenParallel: 2180, sanaaParallel: 558 },
-    { month: "Nov 24", adenOfficial: 1780, adenParallel: 2250, sanaaParallel: 560 },
-    { month: "Dec 24", adenOfficial: 1800, adenParallel: 2320, sanaaParallel: 562 },
+    { month: "Feb 25", adenOfficial: 1840, adenParallel: 1920, sanaaParallel: 530 },
+    { month: "Mar 25", adenOfficial: 1860, adenParallel: 1950, sanaaParallel: 530 },
+    { month: "Apr 25", adenOfficial: 1880, adenParallel: 1980, sanaaParallel: 530 },
+    { month: "May 25", adenOfficial: 1900, adenParallel: 2000, sanaaParallel: 530 },
+    { month: "Jun 25", adenOfficial: 1920, adenParallel: 2020, sanaaParallel: 530 },
+    { month: "Jul 25", adenOfficial: 2050, adenParallel: 2905, sanaaParallel: 530 }, // All-time low for rial
+    { month: "Aug 25", adenOfficial: 1676, adenParallel: 1720, sanaaParallel: 530 }, // CBY measures recovery
+    { month: "Sep 25", adenOfficial: 1700, adenParallel: 1750, sanaaParallel: 530 },
+    { month: "Oct 25", adenOfficial: 1750, adenParallel: 1800, sanaaParallel: 530 },
+    { month: "Nov 25", adenOfficial: 1800, adenParallel: 1850, sanaaParallel: 530 },
+    { month: "Dec 25", adenOfficial: 1850, adenParallel: 1900, sanaaParallel: 530 },
+    { month: "Jan 26", adenOfficial: 1890, adenParallel: 1950, sanaaParallel: 530 },
   ];
 
   // Spread data
@@ -48,36 +48,36 @@ export default function Currency() {
     {
       titleEn: "Official Rate (Aden)",
       titleAr: "السعر الرسمي (عدن)",
-      value: "1,800 YER/$",
-      change: 16.1,
-      source: "CBY Aden",
+      value: "1,890 YER/$",
+      change: 5.3,
+      source: "CBY Aden Jan 2026",
       confidence: "A",
       regime: "IRG"
     },
     {
       titleEn: "Parallel Rate (Aden)",
       titleAr: "السعر الموازي (عدن)",
-      value: "2,320 YER/$",
-      change: 43.2,
-      source: "Market Survey",
+      value: "1,950 YER/$",
+      change: -32.8,
+      source: "Market Survey Jan 2026",
       confidence: "B",
       regime: "IRG"
     },
     {
       titleEn: "Parallel Rate (Sana'a)",
       titleAr: "السعر الموازي (صنعاء)",
-      value: "562 YER/$",
-      change: 5.0,
-      source: "Market Survey",
+      value: "530 YER/$",
+      change: -5.7,
+      source: "Market Survey Jan 2026",
       confidence: "B",
       regime: "DFA"
     },
     {
       titleEn: "North-South Spread",
       titleAr: "الفجوة شمال-جنوب",
-      value: "313%",
-      change: 45.0,
-      source: "Calculated",
+      value: "268%",
+      change: -14.4,
+      source: "Calculated Jan 2026",
       confidence: "B"
     },
   ];

@@ -44,14 +44,16 @@ export default function Trade() {
     fishing: "/images/yemen/fishing-boats.jpg",
   };
 
-  // Trade Balance Data (2019-2024) - Based on World Bank & IMF estimates
+  // Trade Balance Data (2019-2026) - Based on World Bank Fall 2025 Monitor & IMF estimates
   const tradeBalanceData = [
     { year: "2019", imports: 8200, exports: 1100, balance: -7100 },
     { year: "2020", imports: 6800, exports: 800, balance: -6000 },
     { year: "2021", imports: 7500, exports: 1200, balance: -6300 },
     { year: "2022", imports: 8100, exports: 1500, balance: -6600 },
-    { year: "2023", imports: 7800, exports: 1800, balance: -6000 },
-    { year: "2024", imports: 7200, exports: 2100, balance: -5100 },
+    { year: "2023", imports: 14300, exports: 1800, balance: -12500 }, // World Bank: $12.5B deficit
+    { year: "2024", imports: 15500, exports: 1050, balance: -14450 }, // Oil exports zero since Oct 2022
+    { year: "2025", imports: 16200, exports: 1100, balance: -15100 },
+    { year: "2026*", imports: 16500, exports: 1150, balance: -15350 },
   ];
 
   // Monthly trade data for detailed view
@@ -187,28 +189,35 @@ export default function Trade() {
     },
   ];
 
-  // Key trade alerts
+  // Key trade alerts - January 2026
   const tradeAlerts = [
     {
-      type: "warning",
-      titleEn: "Hodeidah Port: Reduced capacity due to inspection delays",
-      titleAr: "ميناء الحديدة: انخفاض الطاقة الاستيعابية بسبب تأخر التفتيش",
-      dateEn: "Dec 15, 2024",
-      dateAr: "15 ديسمبر 2024"
-    },
-    {
-      type: "info",
-      titleEn: "New trade agreement with Oman increases bilateral trade by 15%",
-      titleAr: "اتفاقية تجارية جديدة مع عُمان تزيد التبادل التجاري بنسبة 15%",
-      dateEn: "Dec 10, 2024",
-      dateAr: "10 ديسمبر 2024"
+      type: "error",
+      titleEn: "Oil exports remain ZERO since October 2022 - Annual revenue loss >$1 billion",
+      titleAr: "صادرات النفط لا تزال صفراً منذ أكتوبر 2022 - خسارة سنوية تتجاوز مليار دولار",
+      dateEn: "Jan 10, 2026",
+      dateAr: "10 يناير 2026"
     },
     {
       type: "error",
-      titleEn: "Red Sea shipping disruptions affecting import costs",
-      titleAr: "اضطرابات الشحن في البحر الأحمر تؤثر على تكاليف الاستيراد",
-      dateEn: "Dec 5, 2024",
-      dateAr: "5 ديسمبر 2024"
+      titleEn: "Red Sea shipping crisis: Container costs $5,000-$10,000 (Houthi attacks)",
+      titleAr: "أزمة الشحن في البحر الأحمر: تكلفة الحاوية 5,000-10,000 دولار (هجمات الحوثيين)",
+      dateEn: "Jan 8, 2026",
+      dateAr: "8 يناير 2026"
+    },
+    {
+      type: "warning",
+      titleEn: "Trade deficit reaches $12.5 billion (2023) - World Bank Fall 2025 Monitor",
+      titleAr: "العجز التجاري يصل إلى 12.5 مليار دولار (2023) - تقرير البنك الدولي خريف 2025",
+      dateEn: "Nov 17, 2025",
+      dateAr: "17 نوفمبر 2025"
+    },
+    {
+      type: "info",
+      titleEn: "Food imports reach 30% of GDP (2024) - highest dependency level",
+      titleAr: "واردات الغذاء تصل إلى 30% من الناتج المحلي (2024) - أعلى مستوى اعتماد",
+      dateEn: "Oct 31, 2025",
+      dateAr: "31 أكتوبر 2025"
     },
   ];
 
@@ -268,15 +277,15 @@ export default function Trade() {
           <Card className="border-l-4 border-l-[#107040]">
             <CardHeader className="pb-3">
               <CardDescription className="flex items-center justify-between">
-                <span>{language === "ar" ? "إجمالي الصادرات (2024)" : "Total Exports (2024)"}</span>
+                <span>{language === "ar" ? "إجمالي الصادرات (2025)" : "Total Exports (2025)"}</span>
                 <DataQualityBadge quality="provisional" size="sm" />
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-[#103050]">$2.1B</div>
-              <div className="flex items-center gap-1 text-sm text-green-600 mt-2">
-                <TrendingUp className="h-4 w-4" />
-                <span>+16.7%</span>
+              <div className="text-3xl font-bold text-[#103050]">$1.1B</div>
+              <div className="flex items-center gap-1 text-sm text-red-600 mt-2">
+                <TrendingDown className="h-4 w-4" />
+                <span>-47.6%</span>
                 <span className="text-muted-foreground">
                   {language === "ar" ? "مقارنة بـ 2023" : "vs 2023"}
                 </span>
@@ -305,15 +314,15 @@ export default function Trade() {
           <Card className="border-l-4 border-l-[#C0A030]">
             <CardHeader className="pb-3">
               <CardDescription className="flex items-center justify-between">
-                <span>{language === "ar" ? "إجمالي الواردات (2024)" : "Total Imports (2024)"}</span>
+                <span>{language === "ar" ? "إجمالي الواردات (2025)" : "Total Imports (2025)"}</span>
                 <DataQualityBadge quality="provisional" size="sm" />
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-[#103050]">$7.2B</div>
-              <div className="flex items-center gap-1 text-sm text-green-600 mt-2">
-                <TrendingDown className="h-4 w-4" />
-                <span>-7.7%</span>
+              <div className="text-3xl font-bold text-[#103050]">$16.2B</div>
+              <div className="flex items-center gap-1 text-sm text-red-600 mt-2">
+                <TrendingUp className="h-4 w-4" />
+                <span>+4.5%</span>
                 <span className="text-muted-foreground">
                   {language === "ar" ? "مقارنة بـ 2023" : "vs 2023"}
                 </span>
@@ -347,12 +356,12 @@ export default function Trade() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-red-600">-$5.1B</div>
-              <div className="flex items-center gap-1 text-sm text-green-600 mt-2">
-                <TrendingUp className="h-4 w-4" />
-                <span>+15%</span>
+              <div className="text-3xl font-bold text-red-600">-$15.1B</div>
+              <div className="flex items-center gap-1 text-sm text-red-600 mt-2">
+                <TrendingDown className="h-4 w-4" />
+                <span>+4.5%</span>
                 <span className="text-muted-foreground">
-                  {language === "ar" ? "تحسن" : "improvement"}
+                  {language === "ar" ? "تدهور" : "worsening"}
                 </span>
               </div>
             </CardContent>

@@ -22,11 +22,12 @@ import { Link } from "wouter";
 export default function ConflictEconomy() {
   const { language } = useLanguage();
 
+  // Updated January 2026 - Including STC dissolution and Nation's Shield takeover
   const keyIndicators = [
     {
       titleEn: "Conflict Duration",
       titleAr: "مدة الصراع",
-      value: "10+ years",
+      value: "11+ years",
       periodEn: "Since 2014",
       periodAr: "منذ 2014",
       icon: Shield,
@@ -35,18 +36,18 @@ export default function ConflictEconomy() {
     {
       titleEn: "Territorial Control",
       titleAr: "السيطرة الإقليمية",
-      value: "Split",
-      periodEn: "Dual governance",
-      periodAr: "حكم مزدوج",
+      value: "Shifting",
+      periodEn: "STC dissolved Jan 2026",
+      periodAr: "حل الانتقالي يناير 2026",
       icon: MapPin,
       color: "text-amber-600"
     },
     {
       titleEn: "Economic Fragmentation",
       titleAr: "التجزئة الاقتصادية",
-      value: "Severe",
-      periodEn: "Dual systems",
-      periodAr: "نظامان مزدوجان",
+      value: "Critical",
+      periodEn: "Dual CBY systems",
+      periodAr: "نظامان بنكيان مزدوجان",
       icon: Scale,
       color: "text-purple-600"
     },
@@ -54,8 +55,8 @@ export default function ConflictEconomy() {
       titleEn: "Humanitarian Impact",
       titleAr: "الأثر الإنساني",
       value: "21.6M",
-      periodEn: "People in need",
-      periodAr: "شخص محتاج",
+      periodEn: "People in need (HNO 2025)",
+      periodAr: "شخص محتاج (2025)",
       icon: AlertTriangle,
       color: "text-orange-600"
     },

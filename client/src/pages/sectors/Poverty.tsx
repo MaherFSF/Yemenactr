@@ -26,7 +26,7 @@ import { LineChart, Line, BarChart, Bar, AreaChart, Area, XAxis, YAxis, Cartesia
 export default function Poverty() {
   const { language } = useLanguage();
 
-  // Poverty Rate Data (2014-2024)
+  // Poverty Rate Data (2014-2026) - Updated January 2026 (UNDP HDR 2025, World Bank Fall 2025)
   const povertyTrendData = [
     { year: "2014", poverty: 48.6, extreme: 18.8, foodInsecurity: 41.0 },
     { year: "2015", poverty: 62.0, extreme: 28.5, foodInsecurity: 53.0 },
@@ -38,17 +38,21 @@ export default function Poverty() {
     { year: "2021", poverty: 80.5, extreme: 46.5, foodInsecurity: 77.0 },
     { year: "2022", poverty: 79.0, extreme: 45.0, foodInsecurity: 75.0 },
     { year: "2023", poverty: 78.0, extreme: 44.0, foodInsecurity: 73.0 },
-    { year: "2024", poverty: 77.0, extreme: 43.0, foodInsecurity: 71.0 },
+    { year: "2024", poverty: 78.5, extreme: 45.0, foodInsecurity: 74.0 }, // World Bank: 78.5% poverty
+    { year: "2025", poverty: 80.0, extreme: 47.0, foodInsecurity: 76.0 }, // Worsening due to FX crisis
+    { year: "2026*", poverty: 81.0, extreme: 48.0, foodInsecurity: 78.0 }, // Projected
   ];
 
-  // HDI Components
+  // HDI Components - Updated January 2026 (UNDP HDR 2025: HDI 0.424, Rank 183/193)
   const hdiData = [
     { year: "2014", hdi: 0.498, health: 0.62, education: 0.38, income: 0.49 },
     { year: "2016", hdi: 0.463, health: 0.58, education: 0.34, income: 0.45 },
     { year: "2018", hdi: 0.447, health: 0.55, education: 0.32, income: 0.43 },
     { year: "2020", hdi: 0.458, health: 0.57, education: 0.33, income: 0.44 },
     { year: "2022", hdi: 0.452, health: 0.55, education: 0.33, income: 0.43 },
-    { year: "2024", hdi: 0.448, health: 0.54, education: 0.32, income: 0.42 },
+    { year: "2024", hdi: 0.424, health: 0.52, education: 0.30, income: 0.40 }, // UNDP HDR 2025
+    { year: "2025", hdi: 0.420, health: 0.51, education: 0.29, income: 0.39 },
+    { year: "2026*", hdi: 0.418, health: 0.50, education: 0.29, income: 0.38 },
   ];
 
   // Food Security IPC Phases

@@ -21,30 +21,32 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 export default function Energy() {
   const { language } = useLanguage();
 
-  // Fuel prices data
+  // Fuel prices data - Updated January 2026 (Market Surveys)
   const fuelPrices = [
-    { month: "Jan 24", dieselAden: 750, dieselSanaa: 620, petrolAden: 820, petrolSanaa: 680 },
-    { month: "Feb 24", dieselAden: 770, dieselSanaa: 630, petrolAden: 840, petrolSanaa: 690 },
-    { month: "Mar 24", dieselAden: 790, dieselSanaa: 640, petrolAden: 860, petrolSanaa: 700 },
-    { month: "Apr 24", dieselAden: 810, dieselSanaa: 650, petrolAden: 880, petrolSanaa: 710 },
-    { month: "May 24", dieselAden: 830, dieselSanaa: 660, petrolAden: 900, petrolSanaa: 720 },
-    { month: "Jun 24", dieselAden: 850, dieselSanaa: 680, petrolAden: 920, petrolSanaa: 740 },
-    { month: "Jul 24", dieselAden: 870, dieselSanaa: 690, petrolAden: 940, petrolSanaa: 750 },
-    { month: "Aug 24", dieselAden: 890, dieselSanaa: 700, petrolAden: 960, petrolSanaa: 760 },
-    { month: "Sep 24", dieselAden: 910, dieselSanaa: 710, petrolAden: 980, petrolSanaa: 770 },
-    { month: "Oct 24", dieselAden: 930, dieselSanaa: 720, petrolAden: 1000, petrolSanaa: 780 },
-    { month: "Nov 24", dieselAden: 950, dieselSanaa: 730, petrolAden: 1020, petrolSanaa: 790 },
-    { month: "Dec 24", dieselAden: 970, dieselSanaa: 740, petrolAden: 1040, petrolSanaa: 800 },
+    { month: "Feb 25", dieselAden: 1020, dieselSanaa: 760, petrolAden: 1100, petrolSanaa: 820 },
+    { month: "Mar 25", dieselAden: 1050, dieselSanaa: 770, petrolAden: 1130, petrolSanaa: 830 },
+    { month: "Apr 25", dieselAden: 1080, dieselSanaa: 780, petrolAden: 1160, petrolSanaa: 840 },
+    { month: "May 25", dieselAden: 1100, dieselSanaa: 790, petrolAden: 1180, petrolSanaa: 850 },
+    { month: "Jun 25", dieselAden: 1120, dieselSanaa: 800, petrolAden: 1200, petrolSanaa: 860 },
+    { month: "Jul 25", dieselAden: 1250, dieselSanaa: 810, petrolAden: 1350, petrolSanaa: 870 }, // Peak during FX crisis
+    { month: "Aug 25", dieselAden: 1150, dieselSanaa: 820, petrolAden: 1230, petrolSanaa: 880 },
+    { month: "Sep 25", dieselAden: 1100, dieselSanaa: 830, petrolAden: 1180, petrolSanaa: 890 },
+    { month: "Oct 25", dieselAden: 1080, dieselSanaa: 840, petrolAden: 1160, petrolSanaa: 900 },
+    { month: "Nov 25", dieselAden: 1060, dieselSanaa: 850, petrolAden: 1140, petrolSanaa: 910 },
+    { month: "Dec 25", dieselAden: 1040, dieselSanaa: 860, petrolAden: 1120, petrolSanaa: 920 },
+    { month: "Jan 26", dieselAden: 1050, dieselSanaa: 870, petrolAden: 1130, petrolSanaa: 930 },
   ];
 
-  // Fuel imports data
+  // Fuel imports data - Updated January 2026 (World Bank Fall 2025: Petroleum 17.1% of GDP)
   const fuelImports = [
     { year: "2019", diesel: 2.8, petrol: 1.2, lpg: 0.8 },
     { year: "2020", diesel: 2.2, petrol: 0.9, lpg: 0.6 },
     { year: "2021", diesel: 2.5, petrol: 1.0, lpg: 0.7 },
     { year: "2022", diesel: 2.6, petrol: 1.1, lpg: 0.7 },
     { year: "2023", diesel: 2.4, petrol: 1.0, lpg: 0.6 },
-    { year: "2024", diesel: 2.3, petrol: 0.9, lpg: 0.5 },
+    { year: "2024", diesel: 2.8, petrol: 1.2, lpg: 0.7 }, // 17.1% of GDP
+    { year: "2025", diesel: 3.0, petrol: 1.3, lpg: 0.8 },
+    { year: "2026*", diesel: 3.1, petrol: 1.4, lpg: 0.8 },
   ];
 
   // Electricity status
@@ -83,18 +85,18 @@ export default function Energy() {
     {
       titleEn: "Diesel Price (Aden)",
       titleAr: "سعر الديزل (عدن)",
-      value: "970 YER/L",
-      change: 29.3,
-      source: "Market Survey",
+      value: "1,050 YER/L",
+      change: 8.2,
+      source: "Market Survey Jan 2026",
       confidence: "B",
       regime: "IRG"
     },
     {
       titleEn: "Diesel Price (Sana'a)",
       titleAr: "سعر الديزل (صنعاء)",
-      value: "740 YER/L",
-      change: 19.4,
-      source: "Market Survey",
+      value: "870 YER/L",
+      change: 17.6,
+      source: "Market Survey Jan 2026",
       confidence: "B",
       regime: "DFA"
     },

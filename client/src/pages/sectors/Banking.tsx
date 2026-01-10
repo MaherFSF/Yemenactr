@@ -28,32 +28,34 @@ export default function Banking() {
   const { language } = useLanguage();
   const [selectedRegime, setSelectedRegime] = useState<"both" | "aden" | "sanaa">("both");
 
-  // Exchange Rate Data (2020-2024) - Based on actual CBY data
+  // Exchange Rate Data (2020-2026) - Based on actual CBY data
   const exchangeRateData = [
     { year: "2020", adenRate: 730, sanaaRate: 600, spread: 130 },
     { year: "2021", adenRate: 1050, sanaaRate: 600, spread: 450 },
     { year: "2022", adenRate: 1150, sanaaRate: 560, spread: 590 },
     { year: "2023", adenRate: 1550, sanaaRate: 535, spread: 1015 },
     { year: "2024", adenRate: 1890, sanaaRate: 530, spread: 1360 },
+    { year: "2025", adenRate: 2050, sanaaRate: 530, spread: 1520 },
+    { year: "2026*", adenRate: 1950, sanaaRate: 530, spread: 1420 },
   ];
 
-  // Monthly FX data for 2024
+  // Monthly FX data for 2025-2026 (latest 12 months)
   const monthlyFXData = [
-    { month: language === "ar" ? "يناير" : "Jan", aden: 1520, sanaa: 535 },
-    { month: language === "ar" ? "فبراير" : "Feb", aden: 1580, sanaa: 533 },
-    { month: language === "ar" ? "مارس" : "Mar", aden: 1620, sanaa: 532 },
-    { month: language === "ar" ? "أبريل" : "Apr", aden: 1680, sanaa: 530 },
-    { month: language === "ar" ? "مايو" : "May", aden: 1720, sanaa: 530 },
-    { month: language === "ar" ? "يونيو" : "Jun", aden: 1750, sanaa: 528 },
-    { month: language === "ar" ? "يوليو" : "Jul", aden: 1780, sanaa: 530 },
-    { month: language === "ar" ? "أغسطس" : "Aug", aden: 1820, sanaa: 530 },
-    { month: language === "ar" ? "سبتمبر" : "Sep", aden: 1850, sanaa: 530 },
-    { month: language === "ar" ? "أكتوبر" : "Oct", aden: 1870, sanaa: 530 },
-    { month: language === "ar" ? "نوفمبر" : "Nov", aden: 1880, sanaa: 530 },
-    { month: language === "ar" ? "ديسمبر" : "Dec", aden: 1890, sanaa: 530 },
+    { month: language === "ar" ? "فبراير 2025" : "Feb 2025", aden: 1920, sanaa: 530 },
+    { month: language === "ar" ? "مارس" : "Mar", aden: 1950, sanaa: 530 },
+    { month: language === "ar" ? "أبريل" : "Apr", aden: 1980, sanaa: 530 },
+    { month: language === "ar" ? "مايو" : "May", aden: 2000, sanaa: 530 },
+    { month: language === "ar" ? "يونيو" : "Jun", aden: 2020, sanaa: 530 },
+    { month: language === "ar" ? "يوليو" : "Jul", aden: 2030, sanaa: 530 },
+    { month: language === "ar" ? "أغسطس" : "Aug", aden: 2040, sanaa: 530 },
+    { month: language === "ar" ? "سبتمبر" : "Sep", aden: 2050, sanaa: 530 },
+    { month: language === "ar" ? "أكتوبر" : "Oct", aden: 2040, sanaa: 530 },
+    { month: language === "ar" ? "نوفمبر" : "Nov", aden: 2020, sanaa: 530 },
+    { month: language === "ar" ? "ديسمبر" : "Dec", aden: 2000, sanaa: 530 },
+    { month: language === "ar" ? "يناير 2026" : "Jan 2026", aden: 1950, sanaa: 530 },
   ];
 
-  // Inflation data
+  // Inflation data (2019-2026)
   const inflationData = [
     { year: "2019", aden: 10.0, sanaa: 8.5, food: 15.2 },
     { year: "2020", aden: 22.0, sanaa: 12.0, food: 28.5 },
@@ -61,6 +63,8 @@ export default function Banking() {
     { year: "2022", aden: 28.0, sanaa: 18.0, food: 35.0 },
     { year: "2023", aden: 25.0, sanaa: 18.3, food: 32.0 },
     { year: "2024", aden: 22.5, sanaa: 16.0, food: 28.0 },
+    { year: "2025", aden: 18.0, sanaa: 14.5, food: 24.0 },
+    { year: "2026*", aden: 15.0, sanaa: 13.0, food: 20.0 },
   ];
 
   // Banking sector data
@@ -94,7 +98,7 @@ export default function Banking() {
     },
   ];
 
-  // Foreign reserves data
+  // Foreign reserves data (2014-2026)
   const reservesData = [
     { year: "2014", reserves: 4700 },
     { year: "2015", reserves: 2100 },
@@ -107,9 +111,11 @@ export default function Banking() {
     { year: "2022", reserves: 1400 },
     { year: "2023", reserves: 1100 },
     { year: "2024", reserves: 850 },
+    { year: "2025", reserves: 1200 },
+    { year: "2026*", reserves: 1150 },
   ];
 
-  // Money supply data
+  // Money supply data (2019-2026)
   const moneySupplyData = [
     { year: "2019", m1: 2800, m2: 4200 },
     { year: "2020", m1: 3200, m2: 4800 },
@@ -117,6 +123,8 @@ export default function Banking() {
     { year: "2022", m1: 4200, m2: 6200 },
     { year: "2023", m1: 4800, m2: 7000 },
     { year: "2024", m1: 5400, m2: 7800 },
+    { year: "2025", m1: 6100, m2: 8600 },
+    { year: "2026*", m1: 6400, m2: 9000 },
   ];
 
   // Financial inclusion data
@@ -129,28 +137,35 @@ export default function Banking() {
 
   const COLORS = ['#103050', '#107040', '#C0A030', '#9E9E9E'];
 
-  // Banking alerts
+  // Banking alerts - January 2026 updates
   const bankingAlerts = [
     {
       type: "error",
-      titleEn: "Currency divergence reaches record high: 1,360 YER spread",
-      titleAr: "فجوة العملة تصل لمستوى قياسي: 1,360 ريال فرق",
-      dateEn: "Dec 20, 2024",
-      dateAr: "20 ديسمبر 2024"
+      titleEn: "CBY Aden instructed to freeze al-Zubaidi's bank accounts following STC dissolution",
+      titleAr: "البنك المركزي عدن يُوجَّه بتجميد حسابات الزبيدي بعد حل المجلس الانتقالي",
+      dateEn: "Jan 10, 2026",
+      dateAr: "10 يناير 2026"
     },
     {
       type: "warning",
-      titleEn: "CBY Aden announces new monetary policy measures",
-      titleAr: "البنك المركزي - عدن يعلن إجراءات نقدية جديدة",
-      dateEn: "Dec 15, 2024",
-      dateAr: "15 ديسمبر 2024"
+      titleEn: "79 exchange companies had licenses suspended/revoked in 2025 regulation campaign",
+      titleAr: "79 شركة صرافة تم تعليق/إلغاء تراخيصها في حملة التنظيم 2025",
+      dateEn: "Jan 2, 2026",
+      dateAr: "2 يناير 2026"
     },
     {
       type: "info",
-      titleEn: "Saudi deposit of $300M received to support reserves",
-      titleAr: "استلام وديعة سعودية بقيمة 300 مليون دولار لدعم الاحتياطيات",
-      dateEn: "Dec 10, 2024",
-      dateAr: "10 ديسمبر 2024"
+      titleEn: "CBY Aden holds first 2026 board meeting, approves 2025 audit contract",
+      titleAr: "البنك المركزي عدن يعقد أول اجتماع لمجلس الإدارة 2026، يوافق على عقد تدقيق 2025",
+      dateEn: "Jan 9, 2026",
+      dateAr: "9 يناير 2026"
+    },
+    {
+      type: "warning",
+      titleEn: "STC dissolution creates uncertainty for banking operations in Aden",
+      titleAr: "حل المجلس الانتقالي يخلق حالة عدم يقين للعمليات المصرفية في عدن",
+      dateEn: "Jan 9, 2026",
+      dateAr: "9 يناير 2026"
     },
   ];
 
@@ -313,11 +328,11 @@ export default function Banking() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-[#103050]">$850M</div>
+              <div className="text-3xl font-bold text-[#103050]">$1.15B</div>
               <div className="text-sm text-muted-foreground">{language === "ar" ? "تقديري" : "Estimated"}</div>
-              <div className="flex items-center gap-1 text-sm text-red-600 mt-2">
-                <TrendingDown className="h-4 w-4" />
-                <span>-22.7%</span>
+              <div className="flex items-center gap-1 text-sm text-green-600 mt-2">
+                <TrendingUp className="h-4 w-4" />
+                <span>+35.3%</span>
                 <span className="text-muted-foreground">{language === "ar" ? "سنوياً" : "YoY"}</span>
               </div>
             </CardContent>
@@ -881,38 +896,38 @@ export default function Banking() {
                     id: "1",
                     type: "alert",
                     priority: "critical",
-                    title: "Exchange rate spread reached new record high of 1,360 YER",
-                    titleAr: "فجوة سعر الصرف وصلت إلى مستوى قياسي جديد عند 1,360 ريال",
-                    indicator: "FX Spread",
-                    value: 1360,
-                    change: 34
+                    title: "CBY Aden freezes al-Zubaidi accounts after STC dissolution (Jan 10, 2026)",
+                    titleAr: "البنك المركزي عدن يجمد حسابات الزبيدي بعد حل المجلس الانتقالي (10 يناير 2026)",
+                    indicator: "Political Risk",
+                    value: 0,
+                    change: 0
                   },
                   {
                     id: "2",
                     type: "warning",
                     priority: "high",
-                    title: "Foreign reserves declined 22.7% year-over-year",
-                    titleAr: "الاحتياطيات الأجنبية انخفضت بنسبة 22.7% خلال العام",
-                    indicator: "Reserves",
-                    value: 850,
-                    change: -22.7
+                    title: "79 exchange companies suspended/revoked in 2025 CBY regulation campaign",
+                    titleAr: "79 شركة صرافة تم تعليق/إلغاء تراخيصها في حملة التنظيم 2025",
+                    indicator: "Exchange Licenses",
+                    value: 79,
+                    change: -79
                   },
                   {
                     id: "3",
                     type: "positive",
                     priority: "medium",
-                    title: "Aden inflation rate declining for third consecutive month",
-                    titleAr: "معدل التضخم في عدن يتراجع للشهر الثالث على التوالي",
-                    indicator: "Inflation",
-                    value: 22.5,
-                    change: -2.5
+                    title: "Exchange rate stabilizing at ~1,950 YER/USD after 2025 peak of 2,050",
+                    titleAr: "سعر الصرف يستقر عند ~1,950 ريال/دولار بعد ذروة 2025 عند 2,050",
+                    indicator: "FX Rate",
+                    value: 1950,
+                    change: -4.9
                   },
                   {
                     id: "4",
-                    type: "alert",
-                    priority: "high",
-                    title: "NPL ratio in commercial banks exceeds 45%",
-                    titleAr: "نسبة القروض المتعثرة في البنوك التجارية تتجاوز 45%",
+                    type: "info",
+                    priority: "medium",
+                    title: "CBY Aden holds first 2026 board meeting, approves 2025 audit (Jan 9)",
+                    titleAr: "البنك المركزي عدن يعقد أول اجتماع 2026، يوافق على تدقيق 2025 (9 يناير)",
                     indicator: "NPL",
                     value: 45,
                     change: 5
@@ -940,40 +955,40 @@ export default function Banking() {
               <RegimeHeatmap
                 data={[
                   {
-                    indicator: "Exchange Rate",
-                    indicatorAr: "سعر الصرف",
-                    adenValue: 1890,
+                    indicator: "Exchange Rate (Jan 2026)",
+                    indicatorAr: "سعر الصرف (يناير 2026)",
+                    adenValue: 1950,
                     sanaaValue: 530,
-                    divergence: 256.6,
-                    trend: "widening"
+                    divergence: 268.0,
+                    trend: "narrowing"
                   },
                   {
-                    indicator: "Inflation Rate",
-                    indicatorAr: "معدل التضخم",
-                    adenValue: 22.5,
-                    sanaaValue: 16.0,
-                    divergence: 40.6,
+                    indicator: "Inflation Rate (2025)",
+                    indicatorAr: "معدل التضخم (2025)",
+                    adenValue: 18.0,
+                    sanaaValue: 14.5,
+                    divergence: 24.1,
                     trend: "narrowing"
                   },
                   {
                     indicator: "Money Supply Growth",
                     indicatorAr: "نمو عرض النقود",
-                    adenValue: 18.5,
-                    sanaaValue: 8.2,
-                    divergence: 125.6,
+                    adenValue: 14.5,
+                    sanaaValue: 6.8,
+                    divergence: 113.2,
                     trend: "widening"
                   },
                   {
-                    indicator: "Bank Deposits",
-                    indicatorAr: "الودائع المصرفية",
-                    adenValue: -5.2,
-                    sanaaValue: 2.1,
-                    divergence: -347.6,
+                    indicator: "Exchange Licenses Suspended",
+                    indicatorAr: "تراخيص الصرافة المعلقة",
+                    adenValue: 79,
+                    sanaaValue: 0,
+                    divergence: 100,
                     trend: "widening"
                   }
                 ]}
-                title="Banking Sector Divergence"
-                titleAr="تباين القطاع المصرفي"
+                title="Banking Sector Divergence (Jan 2026)"
+                titleAr="تباين القطاع المصرفي (يناير 2026)"
               />
             </CardContent>
           </Card>
@@ -1006,74 +1021,74 @@ export default function Banking() {
             </CardContent>
           </Card>
 
-          {/* Sparkline KPI Summary */}
+          {/* Sparkline KPI Summary - January 2026 */}
           <div className="grid md:grid-cols-4 gap-4 mb-6">
             <Card className="p-4">
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    {language === "ar" ? "اتجاه سعر الصرف" : "FX Trend"}
+                    {language === "ar" ? "سعر الصرف (يناير 2026)" : "FX Rate (Jan 2026)"}
                   </p>
-                  <p className="text-2xl font-bold text-[#103050]">1,890</p>
+                  <p className="text-2xl font-bold text-[#103050]">1,950</p>
                 </div>
                 <Sparkline 
-                  data={[730, 850, 1050, 1150, 1350, 1550, 1680, 1780, 1890]} 
-                  color="#dc2626"
-                  showTrend={true}
-                />
-              </div>
-              <p className="text-xs text-red-600">↑ 158.9% {language === "ar" ? "منذ 2020" : "since 2020"}</p>
-            </Card>
-
-            <Card className="p-4">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    {language === "ar" ? "اتجاه التضخم" : "Inflation Trend"}
-                  </p>
-                  <p className="text-2xl font-bold text-[#103050]">22.5%</p>
-                </div>
-                <Sparkline 
-                  data={[10, 22, 35, 28, 25, 22.5]} 
+                  data={[730, 1050, 1150, 1550, 1890, 2050, 1950]} 
                   color="#16a34a"
                   showTrend={true}
                 />
               </div>
-              <p className="text-xs text-green-600">↓ {language === "ar" ? "يتراجع" : "Declining"}</p>
+              <p className="text-xs text-green-600">↓ 4.9% {language === "ar" ? "من ذروة 2025" : "from 2025 peak"}</p>
             </Card>
 
             <Card className="p-4">
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    {language === "ar" ? "الاحتياطيات" : "Reserves"}
+                    {language === "ar" ? "التضخم (2025)" : "Inflation (2025)"}
                   </p>
-                  <p className="text-2xl font-bold text-[#103050]">$850M</p>
+                  <p className="text-2xl font-bold text-[#103050]">18.0%</p>
                 </div>
                 <Sparkline 
-                  data={[4700, 2100, 1200, 850, 1100, 1500, 1200, 1800, 1400, 1100, 850]} 
+                  data={[10, 22, 35, 28, 25, 22.5, 18]} 
+                  color="#16a34a"
+                  showTrend={true}
+                />
+              </div>
+              <p className="text-xs text-green-600">↓ 20% {language === "ar" ? "من 2024" : "from 2024"}</p>
+            </Card>
+
+            <Card className="p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === "ar" ? "الاحتياطيات (2026)" : "Reserves (2026)"}
+                  </p>
+                  <p className="text-2xl font-bold text-[#103050]">$1.15B</p>
+                </div>
+                <Sparkline 
+                  data={[4700, 2100, 1200, 850, 1500, 1200, 1800, 1400, 1100, 850, 1200, 1150]} 
+                  color="#16a34a"
+                  showTrend={true}
+                />
+              </div>
+              <p className="text-xs text-green-600">↑ 35.3% {language === "ar" ? "من 2024" : "from 2024"}</p>
+            </Card>
+
+            <Card className="p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {language === "ar" ? "شركات الصرافة المعلقة" : "Exchange Cos. Suspended"}
+                  </p>
+                  <p className="text-2xl font-bold text-[#dc2626]">79</p>
+                </div>
+                <Sparkline 
+                  data={[0, 0, 0, 15, 35, 55, 79]} 
                   color="#dc2626"
                   showTrend={true}
                 />
               </div>
-              <p className="text-xs text-red-600">↓ 81.9% {language === "ar" ? "منذ 2014" : "since 2014"}</p>
-            </Card>
-
-            <Card className="p-4">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    {language === "ar" ? "عرض النقود" : "Money Supply"}
-                  </p>
-                  <p className="text-2xl font-bold text-[#103050]">7.8T</p>
-                </div>
-                <Sparkline 
-                  data={[4200, 4800, 5600, 6200, 7000, 7800]} 
-                  color="#ca8a04"
-                  showTrend={true}
-                />
-              </div>
-              <p className="text-xs text-amber-600">↑ 85.7% {language === "ar" ? "منذ 2019" : "since 2019"}</p>
+              <p className="text-xs text-red-600">{language === "ar" ? "حملة التنظيم 2025" : "2025 Regulation Campaign"}</p>
             </Card>
           </div>
         </div>

@@ -20,7 +20,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 export default function PublicFinance() {
   const { language } = useLanguage();
 
-  // Revenue data
+  // Revenue data - Updated January 2026 (IMF Article IV Oct 2025)
   const revenueData = [
     { year: "2014", oil: 4.2, customs: 1.8, taxes: 1.2, other: 0.8 },
     { year: "2015", oil: 1.5, customs: 0.8, taxes: 0.6, other: 0.4 },
@@ -31,7 +31,10 @@ export default function PublicFinance() {
     { year: "2020", oil: 0.9, customs: 0.5, taxes: 0.4, other: 0.2 },
     { year: "2021", oil: 1.1, customs: 0.6, taxes: 0.5, other: 0.3 },
     { year: "2022", oil: 1.4, customs: 0.7, taxes: 0.5, other: 0.3 },
-    { year: "2023", oil: 1.2, customs: 0.6, taxes: 0.4, other: 0.3 },
+    { year: "2023", oil: 0.0, customs: 0.6, taxes: 0.4, other: 0.3 }, // Oil exports suspended Oct 2022
+    { year: "2024", oil: 0.0, customs: 0.7, taxes: 0.5, other: 0.3 }, // Oil revenue ZERO
+    { year: "2025", oil: 0.0, customs: 0.8, taxes: 0.5, other: 0.4 }, // Continued oil suspension
+    { year: "2026*", oil: 0.0, customs: 0.8, taxes: 0.5, other: 0.4 },
   ];
 
   // Expenditure breakdown
@@ -43,15 +46,15 @@ export default function PublicFinance() {
     { name: language === "ar" ? "أخرى" : "Other", value: 7, color: "#9CA3AF" },
   ];
 
-  // Salary payment status
+  // Salary payment status - Updated January 2026
   const salaryStatus = [
     { 
       regionEn: "Aden (IRG)", 
       regionAr: "عدن (الشرعية)",
       status: "Irregular",
       statusAr: "غير منتظم",
-      lastPayment: "Nov 2024",
-      arrears: "3-4 months"
+      lastPayment: "Dec 2025",
+      arrears: "2-3 months"
     },
     { 
       regionEn: "Sana'a (DFA)", 
@@ -59,14 +62,14 @@ export default function PublicFinance() {
       status: "Suspended",
       statusAr: "متوقف",
       lastPayment: "Aug 2016",
-      arrears: "8+ years"
+      arrears: "9+ years"
     },
     { 
       regionEn: "Marib", 
       regionAr: "مأرب",
       status: "Regular",
       statusAr: "منتظم",
-      lastPayment: "Dec 2024",
+      lastPayment: "Jan 2026",
       arrears: "None"
     },
   ];

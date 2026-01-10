@@ -20,23 +20,25 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 export default function FoodSecurity() {
   const { language } = useLanguage();
 
-  // IPC data
+  // IPC data - Updated January 2026 (WFP/OCHA HNO 2025)
   const ipcData = [
-    { phase: language === "ar" ? "المرحلة 1 - الحد الأدنى" : "Phase 1 - Minimal", population: 3.2, color: "#22C55E" },
-    { phase: language === "ar" ? "المرحلة 2 - إجهاد" : "Phase 2 - Stressed", population: 8.5, color: "#EAB308" },
-    { phase: language === "ar" ? "المرحلة 3 - أزمة" : "Phase 3 - Crisis", population: 11.2, color: "#F97316" },
-    { phase: language === "ar" ? "المرحلة 4 - طوارئ" : "Phase 4 - Emergency", population: 5.8, color: "#EF4444" },
-    { phase: language === "ar" ? "المرحلة 5 - مجاعة" : "Phase 5 - Famine", population: 0.3, color: "#7F1D1D" },
+    { phase: language === "ar" ? "المرحلة 1 - الحد الأدنى" : "Phase 1 - Minimal", population: 2.8, color: "#22C55E" },
+    { phase: language === "ar" ? "المرحلة 2 - إجهاد" : "Phase 2 - Stressed", population: 7.2, color: "#EAB308" },
+    { phase: language === "ar" ? "المرحلة 3 - أزمة" : "Phase 3 - Crisis", population: 12.5, color: "#F97316" },
+    { phase: language === "ar" ? "المرحلة 4 - طوارئ" : "Phase 4 - Emergency", population: 6.8, color: "#EF4444" },
+    { phase: language === "ar" ? "المرحلة 5 - مجاعة" : "Phase 5 - Famine", population: 0.5, color: "#7F1D1D" },
   ];
 
-  // Food insecurity trends
+  // Food insecurity trends - Updated January 2026 (IPC/WFP)
   const trendData = [
     { year: "2019", acute: 15.9, severe: 10.2 },
     { year: "2020", acute: 16.2, severe: 11.3 },
     { year: "2021", acute: 16.1, severe: 11.0 },
     { year: "2022", acute: 17.4, severe: 12.5 },
     { year: "2023", acute: 17.6, severe: 12.8 },
-    { year: "2024", acute: 17.0, severe: 11.5 },
+    { year: "2024", acute: 17.8, severe: 12.2 },
+    { year: "2025", acute: 19.8, severe: 13.5 }, // 19.8M food insecure (IPC Dec 2025)
+    { year: "2026*", acute: 20.5, severe: 14.2 }, // Projected worsening
   ];
 
   // Malnutrition by governorate
@@ -53,33 +55,33 @@ export default function FoodSecurity() {
     {
       titleEn: "Food Insecure",
       titleAr: "انعدام الأمن الغذائي",
-      value: "17.0M",
-      change: -3.4,
-      source: "IPC",
+      value: "19.8M",
+      change: 11.2,
+      source: "IPC Dec 2025",
       confidence: "A"
     },
     {
       titleEn: "Acute Malnutrition",
       titleAr: "سوء التغذية الحاد",
-      value: "2.2M",
-      change: 5.0,
-      source: "UNICEF",
+      value: "2.5M",
+      change: 13.6,
+      source: "UNICEF 2025",
       confidence: "A"
     },
     {
       titleEn: "Children SAM",
       titleAr: "الأطفال - سوء تغذية حاد",
-      value: "540K",
-      change: 8.0,
-      source: "UNICEF",
+      value: "620K",
+      change: 14.8,
+      source: "UNICEF 2025",
       confidence: "A"
     },
     {
       titleEn: "Aid Dependent",
       titleAr: "المعتمدون على المساعدات",
       value: "21.6M",
-      change: 2.0,
-      source: "OCHA",
+      change: 0.0,
+      source: "OCHA HNO 2025",
       confidence: "A"
     },
   ];
