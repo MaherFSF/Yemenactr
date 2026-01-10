@@ -18,6 +18,22 @@ import {
   publicChangelogService,
 } from './governance';
 import { runPlatformAccuracyChecks } from './services/accuracyChecker';
+import {
+  detectAnomaly,
+  forecastTimeSeries,
+  analyzeCorrelation,
+  analyzeRegimeDivergence,
+  generateSmartInsights,
+  type DataPoint as AnalyticsDataPoint,
+} from './analytics-engine';
+import {
+  AutoPublicationEngine as NewAutoPublicationEngine,
+  generateDailySignals,
+  generateWeeklyMonitor,
+  generateMonthlyBrief,
+  PUBLICATION_CONFIGS,
+} from './publication-engine';
+import type { DataPoint as PublicationDataPoint } from './analytics-engine';
 import { signalDetector } from './services/signalDetector';
 import { dailyScheduler } from './services/dailyScheduler';
 import {
@@ -1876,6 +1892,127 @@ Answer the user's question based on this research. Be specific and cite sources 
           ...p,
           organizationName: p.organizationId ? orgMap[p.organizationId] : null,
         }));
+      }),
+  }),
+
+  // ============================================================================
+  // ADVANCED ANALYTICS
+  // ============================================================================
+  
+  analytics: router({
+    detectAnomaly: publicProcedure
+      .input(z.object({
+        indicatorCode: z.string(),
+        currentValue: z.number(),
+        historicalValues: z.array(z.number()),
+      }))
+      .query(async ({ input }) => {
+        return detectAnomaly(input.currentValue, input.historicalValues, input.indicatorCode);
+      }),
+    
+    forecast: publicProcedure
+      .input(z.object({
+        data: z.array(z.object({
+          date: z.string(),
+          value: z.number(),
+        })),
+        horizonDays: z.number().default(30),
+      }))
+      .query(async ({ input }) => {
+        return forecastTimeSeries(input.data, input.horizonDays);
+      }),
+    
+    correlation: publicProcedure
+      .input(z.object({
+        indicator1Name: z.string(),
+        indicator2Name: z.string(),
+        data1: z.array(z.object({ date: z.string(), value: z.number() })),
+        data2: z.array(z.object({ date: z.string(), value: z.number() })),
+        maxLagDays: z.number().default(30),
+      }))
+      .query(async ({ input }) => {
+        return analyzeCorrelation(
+          { name: input.indicator1Name, data: input.data1 as AnalyticsDataPoint[] },
+          { name: input.indicator2Name, data: input.data2 as AnalyticsDataPoint[] },
+          input.maxLagDays
+        );
+      }),
+    
+    regimeDivergence: publicProcedure
+      .input(z.object({
+        indicator: z.string(),
+        adenData: z.array(z.object({ date: z.string(), value: z.number() })),
+        sanaaData: z.array(z.object({ date: z.string(), value: z.number() })),
+      }))
+      .query(async ({ input }) => {
+        return analyzeRegimeDivergence(input.indicator, input.adenData, input.sanaaData);
+      }),
+    
+    smartInsights: publicProcedure
+      .input(z.object({
+        indicators: z.array(z.object({
+          name: z.string(),
+          nameAr: z.string(),
+          data: z.array(z.object({ date: z.string(), value: z.number() })),
+        })),
+      }))
+      .query(async ({ input }) => {
+        return generateSmartInsights(input.indicators);
+      }),
+  }),
+
+  // ============================================================================
+  // AUTO-PUBLICATION ENGINE
+  // ============================================================================
+  
+  autoPublish: router({
+    getConfigs: publicProcedure.query(async () => {
+      return PUBLICATION_CONFIGS;
+    }),
+    
+    generateDaily: protectedProcedure
+      .input(z.object({
+        indicatorData: z.record(z.string(), z.array(z.object({
+          date: z.string(),
+          value: z.number(),
+        }))),
+      }))
+      .mutation(async ({ input }) => {
+        const dataMap = new Map<string, AnalyticsDataPoint[]>();
+        Object.entries(input.indicatorData).forEach(([key, data]) => {
+          dataMap.set(key, data as AnalyticsDataPoint[]);
+        });
+        return generateDailySignals(dataMap);
+      }),
+    
+    generateWeekly: protectedProcedure
+      .input(z.object({
+        indicatorData: z.record(z.string(), z.array(z.object({
+          date: z.string(),
+          value: z.number(),
+        }))),
+      }))
+      .mutation(async ({ input }) => {
+        const dataMap = new Map<string, AnalyticsDataPoint[]>();
+        Object.entries(input.indicatorData).forEach(([key, data]) => {
+          dataMap.set(key, data as AnalyticsDataPoint[]);
+        });
+        return generateWeeklyMonitor(dataMap);
+      }),
+    
+    generateMonthly: protectedProcedure
+      .input(z.object({
+        indicatorData: z.record(z.string(), z.array(z.object({
+          date: z.string(),
+          value: z.number(),
+        }))),
+      }))
+      .mutation(async ({ input }) => {
+        const dataMap = new Map<string, AnalyticsDataPoint[]>();
+        Object.entries(input.indicatorData).forEach(([key, data]) => {
+          dataMap.set(key, data as AnalyticsDataPoint[]);
+        });
+        return generateMonthlyBrief(dataMap);
       }),
   }),
 });
