@@ -367,6 +367,122 @@ export const appRouter = router({
       .query(async () => {
         return await getSectorMetrics();
       }),
+
+    // Get all indicators for a specific sector with their latest values
+    getSectorData: publicProcedure
+      .input(z.object({
+        sectorCode: z.string(),
+        regimeTag: z.enum(["aden_irg", "sanaa_defacto", "both"]).default("both"),
+      }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { indicators: [], timeSeries: [], alerts: [], sources: [] };
+
+        try {
+          // Get all indicators for this sector
+          const [indicatorRows] = await db.execute(
+            sql`SELECT code, nameEn, nameAr, unit, frequency, descriptionEn, descriptionAr 
+                FROM indicators WHERE sector = ${input.sectorCode} AND isActive = 1`
+          );
+          const indicators = indicatorRows as unknown as any[];
+
+          // Get latest time series values for each indicator
+          const timeSeriesData: any[] = [];
+          for (const ind of indicators) {
+            if (input.regimeTag === "both" || input.regimeTag === "aden_irg") {
+              const [adenData] = await db.execute(
+                sql`SELECT ts.*, s.publisher as sourceName, s.url as sourceUrl
+                    FROM time_series ts
+                    LEFT JOIN sources s ON ts.sourceId = s.id
+                    WHERE ts.indicatorCode = ${ind.code} AND ts.regimeTag = 'aden_irg'
+                    ORDER BY ts.date DESC LIMIT 24`
+              );
+              timeSeriesData.push(...(adenData as unknown as any[]).map(d => ({ ...d, indicator: ind })));
+            }
+            if (input.regimeTag === "both" || input.regimeTag === "sanaa_defacto") {
+              const [sanaaData] = await db.execute(
+                sql`SELECT ts.*, s.publisher as sourceName, s.url as sourceUrl
+                    FROM time_series ts
+                    LEFT JOIN sources s ON ts.sourceId = s.id
+                    WHERE ts.indicatorCode = ${ind.code} AND ts.regimeTag = 'sanaa_defacto'
+                    ORDER BY ts.date DESC LIMIT 24`
+              );
+              timeSeriesData.push(...(sanaaData as unknown as any[]).map(d => ({ ...d, indicator: ind })));
+            }
+          }
+
+          // Get recent economic events for this sector
+          const [alertRows] = await db.execute(
+            sql`SELECT * FROM economic_events 
+                WHERE category LIKE ${`%${input.sectorCode}%`} OR category LIKE '%banking%' OR category LIKE '%financial%'
+                ORDER BY eventDate DESC LIMIT 10`
+          );
+
+          // Get sources used in this sector
+          const [sourceRows] = await db.execute(
+            sql`SELECT DISTINCT s.* FROM sources s
+                JOIN time_series ts ON ts.sourceId = s.id
+                JOIN indicators i ON ts.indicatorCode = i.code
+                WHERE i.sector = ${input.sectorCode}`
+          );
+
+          return {
+            indicators,
+            timeSeries: timeSeriesData,
+            alerts: alertRows as unknown as any[],
+            sources: sourceRows as unknown as any[],
+          };
+        } catch (error) {
+          console.error('[Sectors] Failed to get sector data:', error);
+          return { indicators: [], timeSeries: [], alerts: [], sources: [] };
+        }
+      }),
+
+    // Get time series for specific indicators with historical data
+    getIndicatorTimeSeries: publicProcedure
+      .input(z.object({
+        indicatorCodes: z.array(z.string()),
+        regimeTag: z.enum(["aden_irg", "sanaa_defacto", "both"]).default("both"),
+        startYear: z.number().optional(),
+        endYear: z.number().optional(),
+      }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+
+        try {
+          const results: any[] = [];
+          for (const code of input.indicatorCodes) {
+            const regimes = input.regimeTag === "both" 
+              ? ["aden_irg", "sanaa_defacto"] 
+              : [input.regimeTag];
+            
+            for (const regime of regimes) {
+              let query = sql`SELECT ts.*, i.nameEn, i.nameAr, i.unit, s.publisher as sourceName, s.url as sourceUrl
+                              FROM time_series ts
+                              JOIN indicators i ON ts.indicatorCode = i.code
+                              LEFT JOIN sources s ON ts.sourceId = s.id
+                              WHERE ts.indicatorCode = ${code} AND ts.regimeTag = ${regime}`;
+              
+              if (input.startYear) {
+                query = sql`${query} AND YEAR(ts.date) >= ${input.startYear}`;
+              }
+              if (input.endYear) {
+                query = sql`${query} AND YEAR(ts.date) <= ${input.endYear}`;
+              }
+              
+              query = sql`${query} ORDER BY ts.date ASC`;
+              
+              const [rows] = await db.execute(query);
+              results.push(...(rows as unknown as any[]));
+            }
+          }
+          return results;
+        } catch (error) {
+          console.error('[Sectors] Failed to get indicator time series:', error);
+          return [];
+        }
+      }),
   }),
 
   // ============================================================================
@@ -391,6 +507,159 @@ export const appRouter = router({
     getStats: publicProcedure
       .query(async () => {
         return await getPlatformStats();
+      }),
+  }),
+
+  // ============================================================================
+  // DYNAMIC REPORT GENERATION
+  // ============================================================================
+
+  // ============================================================================
+  // ALERT SYSTEM & MONITORING
+  // ============================================================================
+
+  alerts: router({
+    // Get all active alerts
+    getActive: publicProcedure
+      .query(async () => {
+        const { alertSystemService } = await import('./services/alertSystem');
+        return await alertSystemService.getActiveAlerts();
+      }),
+
+    // Get alert summary for dashboard
+    getSummary: publicProcedure
+      .query(async () => {
+        const { alertSystemService } = await import('./services/alertSystem');
+        return await alertSystemService.getAlertSummary();
+      }),
+
+    // Compare regimes for specific indicators
+    compareRegimes: publicProcedure
+      .input(z.object({
+        indicatorCodes: z.array(z.string()),
+      }))
+      .query(async ({ input }) => {
+        const { comparativeAnalysisService } = await import('./services/alertSystem');
+        return await comparativeAnalysisService.compareRegimes(input.indicatorCodes);
+      }),
+
+    // Get year-over-year comparison
+    compareYearOverYear: publicProcedure
+      .input(z.object({
+        indicatorCode: z.string(),
+        regimeTag: z.string(),
+      }))
+      .query(async ({ input }) => {
+        const { comparativeAnalysisService } = await import('./services/alertSystem');
+        return await comparativeAnalysisService.compareYearOverYear(input.indicatorCode, input.regimeTag);
+      }),
+
+    // Get divergence analysis
+    getDivergenceAnalysis: publicProcedure
+      .query(async () => {
+        const { comparativeAnalysisService } = await import('./services/alertSystem');
+        return await comparativeAnalysisService.getDivergenceAnalysis();
+      }),
+
+    // Get recent alerts (from signal detector)
+    getRecent: protectedProcedure
+      .input(z.object({ limit: z.number().default(50) }).optional())
+      .query(async ({ input }) => {
+        return await signalDetector.getAlerts(input?.limit || 50);
+      }),
+
+    // Run signal detection
+    runDetection: adminProcedure
+      .mutation(async () => {
+        return await signalDetector.run();
+      }),
+
+    // Mark alert as read
+    markRead: protectedProcedure
+      .input(z.object({ alertId: z.number() }))
+      .mutation(async ({ input }) => {
+        return await signalDetector.markRead(input.alertId);
+      }),
+
+    // Get alert thresholds
+    getThresholds: protectedProcedure
+      .query(() => {
+        return signalDetector.thresholds;
+      }),
+
+    // Get unread count
+    getUnreadCount: protectedProcedure
+      .query(async () => {
+        const alerts = await signalDetector.getAlerts(100);
+        return alerts.filter(a => !a.isRead).length;
+      }),
+  }),
+
+  reports: router({
+    // Get available report templates
+    getTemplates: publicProcedure
+      .query(async () => {
+        const { REPORT_TEMPLATES } = await import('./services/reportGenerator');
+        return Object.entries(REPORT_TEMPLATES).map(([key, template]) => ({
+          id: key,
+          titleEn: template.titleEn,
+          titleAr: template.titleAr,
+          sections: template.sections,
+          defaultIndicators: template.defaultIndicators,
+        }));
+      }),
+
+    // Generate a custom report
+    generate: publicProcedure
+      .input(z.object({
+        type: z.enum(["monthly", "quarterly", "yearly", "custom"]),
+        title: z.string().optional(),
+        titleAr: z.string().optional(),
+        dateStart: z.date(),
+        dateEnd: z.date(),
+        sectors: z.array(z.string()).default([]),
+        indicators: z.array(z.string()).default([]),
+        regimeTag: z.enum(["aden_irg", "sanaa_defacto", "both"]).default("both"),
+        includeCharts: z.boolean().default(true),
+        includeComparison: z.boolean().default(true),
+        includeSources: z.boolean().default(true),
+        language: z.enum(["en", "ar", "both"]).default("en"),
+      }))
+      .mutation(async ({ input }) => {
+        const { reportGeneratorService, REPORT_TEMPLATES } = await import('./services/reportGenerator');
+        const template = input.type !== "custom" ? REPORT_TEMPLATES[input.type] : null;
+        
+        const config = {
+          type: input.type,
+          title: input.title || template?.titleEn || "Custom Report",
+          titleAr: input.titleAr || template?.titleAr || "تقرير مخصص",
+          dateStart: input.dateStart,
+          dateEnd: input.dateEnd,
+          sectors: input.sectors,
+          indicators: input.indicators.length > 0 ? input.indicators : (template?.defaultIndicators || []),
+          regimeTag: input.regimeTag,
+          includeCharts: input.includeCharts,
+          includeComparison: input.includeComparison,
+          includeSources: input.includeSources,
+          language: input.language,
+        };
+
+        return await reportGeneratorService.generateReport(config);
+      }),
+
+    // Get available indicators for report building
+    getAvailableIndicators: publicProcedure
+      .input(z.object({
+        sector: z.string().optional(),
+      }))
+      .query(async () => {
+        const db = await getDb();
+        if (!db) return [];
+
+        const [rows] = await db.execute(
+          sql`SELECT code, nameEn, nameAr, unit, sector, frequency FROM indicators WHERE isActive = 1 ORDER BY sector, nameEn`
+        );
+        return rows as unknown as any[];
       }),
   }),
 
@@ -1766,44 +2035,7 @@ Answer the user's question based on this research. Be specific and cite sources 
       }),
   }),
 
-  // ============================================================================
-  // ALERTS
-  // ============================================================================
-  
-  alerts: router({
-    // Get recent alerts
-    getRecent: protectedProcedure
-      .input(z.object({ limit: z.number().default(50) }).optional())
-      .query(async ({ input }) => {
-        return await signalDetector.getAlerts(input?.limit || 50);
-      }),
-
-    // Run signal detection
-    runDetection: adminProcedure
-      .mutation(async () => {
-        return await signalDetector.run();
-      }),
-
-    // Mark alert as read
-    markRead: protectedProcedure
-      .input(z.object({ alertId: z.number() }))
-      .mutation(async ({ input }) => {
-        return await signalDetector.markRead(input.alertId);
-      }),
-
-    // Get alert thresholds
-    getThresholds: protectedProcedure
-      .query(() => {
-        return signalDetector.thresholds;
-      }),
-
-    // Get unread count
-    getUnreadCount: protectedProcedure
-      .query(async () => {
-        const alerts = await signalDetector.getAlerts(100);
-        return alerts.filter(a => !a.isRead).length;
-      }),
-  }),
+  // Note: alerts router defined earlier in file with alert system procedures
 
   // ============================================================================
   // RESEARCH PORTAL

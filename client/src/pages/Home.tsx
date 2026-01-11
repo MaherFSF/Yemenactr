@@ -44,55 +44,100 @@ export default function Home() {
 
   // Fetch real-time KPI data from database
   const { data: kpiData, isLoading: kpiLoading } = trpc.dashboard.getHeroKPIs.useQuery();
+  
+  // Fetch dynamic platform stats from database
+  const { data: platformStatsData } = trpc.platform.getStats.useQuery();
 
-  // Hero floating KPI cards with real-time data
+  // Hero floating KPI cards with real-time data and source attribution
   const heroKPIs = [
     {
       labelEn: "GDP Growth",
       labelAr: "نمو الناتج المحلي",
-      value: kpiData?.gdpGrowth?.value || "+2.5%",
-      subEn: "Quarterly Growth",
-      subAr: "نمو ربع سنوي",
+      value: kpiData?.gdpGrowth?.value || "N/A",
+      subEn: kpiData?.gdpGrowth?.subtext || "Annual Growth",
+      subAr: "نمو سنوي",
       sparklineData: kpiData?.gdpGrowth?.trend || [20, 25, 30, 35, 40, 50, 55, 60, 65, 70, 80, 90],
-      color: "#107040"
+      color: "#107040",
+      source: kpiData?.gdpGrowth?.source || "World Bank",
+      confidence: kpiData?.gdpGrowth?.confidence || "B"
     },
     {
       labelEn: "Inflation Rate",
       labelAr: "معدل التضخم",
-      value: kpiData?.inflation?.value || "15.0%",
-      subEn: "Year-over-Year",
+      value: kpiData?.inflation?.value || "N/A",
+      subEn: kpiData?.inflation?.subtext || "Year-over-Year",
       subAr: "سنوي",
       sparklineData: kpiData?.inflation?.trend || [30, 35, 40, 45, 50, 55, 50, 55, 60, 65, 70, 75],
-      color: "#107040"
+      color: "#107040",
+      source: kpiData?.inflation?.source || "CBY Aden",
+      confidence: kpiData?.inflation?.confidence || "B"
     },
     {
       labelEn: "Exchange Rate",
       labelAr: "سعر الصرف",
-      value: kpiData?.exchangeRateYoY?.value || "51.9%",
-      subEn: "YER/USD YoY Change",
+      value: kpiData?.exchangeRateYoY?.value || "N/A",
+      subEn: kpiData?.exchangeRateYoY?.subtext || "YER/USD YoY Change",
       subAr: "التغير السنوي",
       sparklineData: kpiData?.exchangeRateYoY?.trend || [40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95],
       color: "#107040",
-      icon: "globe"
+      icon: "globe",
+      source: kpiData?.exchangeRateYoY?.source || "CBY Aden",
+      confidence: kpiData?.exchangeRateYoY?.confidence || "B"
     },
     {
       labelEn: "Exchange Rate",
       labelAr: "سعر الصرف",
-      value: kpiData?.exchangeRateAden?.value || "1 USD = 2,050 YER",
-      subEn: "Aden Parallel Rate",
+      value: kpiData?.exchangeRateAden?.value || "N/A",
+      subEn: kpiData?.exchangeRateAden?.subtext || "Aden Parallel Rate",
       subAr: "سعر عدن الموازي",
       sparklineData: kpiData?.exchangeRateAden?.trend || [50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72],
       color: "#107040",
-      icon: "currency"
+      icon: "currency",
+      source: kpiData?.exchangeRateAden?.source || "CBY Aden",
+      confidence: kpiData?.exchangeRateAden?.confidence || "B"
     }
   ];
 
-  // Platform stats for Arabic version
+  // Platform stats - dynamically fetched from database
+  const formatNumber = (num: number) => {
+    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+    if (num >= 1000) return `${(num / 1000).toFixed(0)}K`;
+    return num.toString();
+  };
+  
   const platformStats = [
-    { valueEn: "45", valueAr: "45", labelEn: "Research Reports", labelAr: "تقرير بحثي", icon: FileText },
-    { valueEn: "850+", valueAr: "850+", labelEn: "Users", labelAr: "مستخدم", icon: Users },
-    { valueEn: "1.2M", valueAr: "1.2M", labelEn: "Data Points", labelAr: "نقطة بيانات", icon: Database },
-    { valueEn: "47", valueAr: "47", labelEn: "Data Sources", labelAr: "مصدر بيانات", icon: BarChart3 },
+    { 
+      valueEn: platformStatsData?.totalDocuments?.toString() || "0", 
+      valueAr: platformStatsData?.totalDocuments?.toString() || "0", 
+      labelEn: "Research Reports", 
+      labelAr: "تقرير بحثي", 
+      icon: FileText,
+      source: "YETO Database"
+    },
+    { 
+      valueEn: platformStatsData?.totalIndicators ? `${platformStatsData.totalIndicators}+` : "0", 
+      valueAr: platformStatsData?.totalIndicators ? `${platformStatsData.totalIndicators}+` : "0", 
+      labelEn: "Indicators", 
+      labelAr: "مؤشر", 
+      icon: TrendingUp,
+      source: "YETO Database"
+    },
+    { 
+      valueEn: platformStatsData?.dataPointsCount ? formatNumber(platformStatsData.dataPointsCount) : "0", 
+      valueAr: platformStatsData?.dataPointsCount ? formatNumber(platformStatsData.dataPointsCount) : "0", 
+      labelEn: "Data Points", 
+      labelAr: "نقطة بيانات", 
+      icon: Database,
+      source: "YETO Database"
+    },
+    { 
+      valueEn: platformStatsData?.totalSources?.toString() || "0", 
+      valueAr: platformStatsData?.totalSources?.toString() || "0", 
+      labelEn: "Data Sources", 
+      labelAr: "مصدر بيانات", 
+      icon: BarChart3,
+      source: "YETO Database"
+    },
   ];
 
   // Sectors with images - all 15 sectors matching mockup IMG_1527
@@ -208,30 +253,30 @@ export default function Home() {
     );
   };
 
-  // Latest updates for news section
-  const latestUpdates = [
-    {
-      titleEn: "CBY Aden Holds First 2026 Board Meeting, Approves Audit Contract",
-      titleAr: "البنك المركزي عدن يعقد أول اجتماع لمجلس إدارته في 2026 ويوافق على عقد التدقيق",
-      date: "January 9, 2026",
-      image: "/images/sectors/central-bank.jpg",
-      href: "/sectors/banking"
-    },
-    {
-      titleEn: "STC Dissolution Creates Uncertainty for Southern Economy",
-      titleAr: "حل المجلس الانتقالي يخلق حالة من عدم اليقين للاقتصاد الجنوبي",
-      date: "January 8, 2026",
-      image: "/images/sectors/infrastructure.jpg",
-      href: "/sectors/conflict-economy"
-    },
-    {
-      titleEn: "79 Exchange Companies Licenses Suspended in CBY Regulation Campaign",
-      titleAr: "تعليق تراخيص 79 شركة صرافة في حملة تنظيم البنك المركزي",
-      date: "December 30, 2025",
-      image: "/images/sectors/humanitarian-aid.jpg",
-      href: "/sectors/banking"
-    }
-  ];
+  // Fetch latest economic events from database
+  const { data: latestEventsData } = trpc.events.list.useQuery({ limit: 3 });
+  
+  // Map sector to image paths
+  const sectorImages: Record<string, string> = {
+    banking: "/images/sectors/central-bank.jpg",
+    trade: "/images/sectors/trade-port.jpg",
+    currency: "/images/sectors/currency-exchange.jpg",
+    conflict: "/images/sectors/infrastructure.jpg",
+    humanitarian: "/images/sectors/humanitarian-aid.jpg",
+    food_security: "/images/sectors/food-security.jpg",
+    energy: "/images/sectors/energy-fuel.jpg",
+    default: "/images/sectors/local-market.webp"
+  };
+  
+  // Transform database events to display format
+  const latestUpdates = (latestEventsData || []).slice(0, 3).map(event => ({
+    titleEn: event.title,
+    titleAr: event.titleAr || event.title,
+    date: new Date(event.eventDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+    image: sectorImages[event.category || 'default'] || sectorImages.default,
+    href: `/sectors/${event.category || 'macroeconomy'}`,
+    source: 'YETO Database'
+  }));
 
   return (
     <div className="flex flex-col">

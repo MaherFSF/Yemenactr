@@ -417,25 +417,90 @@ export interface SectorMetrics {
 }
 
 export async function getSectorMetrics(): Promise<SectorMetrics[]> {
-  // Return sample sector metrics for now
-  // In production, this would aggregate from the database
-  return [
-    { sectorCode: "banking", sectorName: "Banking & Finance", sectorNameAr: "القطاع المصرفي", indicatorCount: 45, latestUpdate: new Date(), dataQuality: "high" },
-    { sectorCode: "trade", sectorName: "Trade & Commerce", sectorNameAr: "التجارة", indicatorCount: 38, latestUpdate: new Date(), dataQuality: "medium" },
-    { sectorCode: "macroeconomy", sectorName: "Macroeconomy", sectorNameAr: "الاقتصاد الكلي", indicatorCount: 52, latestUpdate: new Date(), dataQuality: "high" },
-    { sectorCode: "prices", sectorName: "Prices & Inflation", sectorNameAr: "الأسعار والتضخم", indicatorCount: 67, latestUpdate: new Date(), dataQuality: "high" },
-    { sectorCode: "currency", sectorName: "Currency & Exchange", sectorNameAr: "العملة والصرف", indicatorCount: 28, latestUpdate: new Date(), dataQuality: "high" },
-    { sectorCode: "public_finance", sectorName: "Public Finance", sectorNameAr: "المالية العامة", indicatorCount: 35, latestUpdate: new Date(), dataQuality: "low" },
-    { sectorCode: "energy", sectorName: "Energy & Fuel", sectorNameAr: "الطاقة والوقود", indicatorCount: 42, latestUpdate: new Date(), dataQuality: "medium" },
-    { sectorCode: "food_security", sectorName: "Food Security", sectorNameAr: "الأمن الغذائي", indicatorCount: 58, latestUpdate: new Date(), dataQuality: "high" },
-    { sectorCode: "aid_flows", sectorName: "Aid Flows", sectorNameAr: "تدفقات المساعدات", indicatorCount: 31, latestUpdate: new Date(), dataQuality: "high" },
-    { sectorCode: "labor", sectorName: "Labor Market", sectorNameAr: "سوق العمل", indicatorCount: 24, latestUpdate: new Date(), dataQuality: "low" },
-    { sectorCode: "conflict", sectorName: "Conflict Economy", sectorNameAr: "اقتصاد الصراع", indicatorCount: 19, latestUpdate: new Date(), dataQuality: "medium" },
-    { sectorCode: "infrastructure", sectorName: "Infrastructure", sectorNameAr: "البنية التحتية", indicatorCount: 33, latestUpdate: new Date(), dataQuality: "low" },
-    { sectorCode: "agriculture", sectorName: "Agriculture", sectorNameAr: "الزراعة", indicatorCount: 41, latestUpdate: new Date(), dataQuality: "medium" },
-    { sectorCode: "investment", sectorName: "Investment", sectorNameAr: "الاستثمار", indicatorCount: 22, latestUpdate: new Date(), dataQuality: "low" },
-    { sectorCode: "poverty", sectorName: "Poverty & Development", sectorNameAr: "الفقر والتنمية", indicatorCount: 47, latestUpdate: new Date(), dataQuality: "medium" },
+  const db = await getDb();
+  
+  // Sector definitions with translations
+  const sectorDefs = [
+    { code: "banking", nameEn: "Banking & Finance", nameAr: "القطاع المصرفي" },
+    { code: "trade", nameEn: "Trade & Commerce", nameAr: "التجارة" },
+    { code: "macroeconomy", nameEn: "Macroeconomy", nameAr: "الاقتصاد الكلي" },
+    { code: "prices", nameEn: "Prices & Inflation", nameAr: "الأسعار والتضخم" },
+    { code: "currency", nameEn: "Currency & Exchange", nameAr: "العملة والصرف" },
+    { code: "public_finance", nameEn: "Public Finance", nameAr: "المالية العامة" },
+    { code: "energy", nameEn: "Energy & Fuel", nameAr: "الطاقة والوقود" },
+    { code: "food_security", nameEn: "Food Security", nameAr: "الأمن الغذائي" },
+    { code: "humanitarian", nameEn: "Humanitarian", nameAr: "الإنساني" },
+    { code: "labor", nameEn: "Labor Market", nameAr: "سوق العمل" },
+    { code: "conflict", nameEn: "Conflict Economy", nameAr: "اقتصاد الصراع" },
+    { code: "infrastructure", nameEn: "Infrastructure", nameAr: "البنية التحتية" },
+    { code: "agriculture", nameEn: "Agriculture", nameAr: "الزراعة" },
+    { code: "investment", nameEn: "Investment", nameAr: "الاستثمار" },
+    { code: "poverty", nameEn: "Poverty & Development", nameAr: "الفقر والتنمية" },
   ];
+
+  if (!db) {
+    // Return defaults if no database
+    return sectorDefs.map(s => ({
+      sectorCode: s.code,
+      sectorName: s.nameEn,
+      sectorNameAr: s.nameAr,
+      indicatorCount: 0,
+      latestUpdate: new Date(),
+      dataQuality: "low" as const
+    }));
+  }
+
+  try {
+    // Query actual indicator counts per sector from database
+    const [sectorCounts] = await db.execute(
+      sql`SELECT sector, COUNT(*) as count FROM indicators WHERE isActive = 1 GROUP BY sector`
+    );
+    
+    // Query latest time series update per sector
+    const [latestUpdates] = await db.execute(
+      sql`SELECT i.sector, MAX(ts.date) as latestDate, AVG(CASE ts.confidenceRating WHEN 'A' THEN 4 WHEN 'B' THEN 3 WHEN 'C' THEN 2 ELSE 1 END) as avgConfidence
+          FROM time_series ts
+          JOIN indicators i ON ts.indicatorCode = i.code
+          GROUP BY i.sector`
+    );
+
+    const countMap: Record<string, number> = {};
+    const updateMap: Record<string, { date: Date; quality: string }> = {};
+
+    for (const row of (sectorCounts as unknown as any[])) {
+      countMap[row.sector] = Number(row.count);
+    }
+
+    for (const row of (latestUpdates as unknown as any[])) {
+      const avgConf = Number(row.avgConfidence);
+      let quality: "high" | "medium" | "low" = "low";
+      if (avgConf >= 3.5) quality = "high";
+      else if (avgConf >= 2.5) quality = "medium";
+      updateMap[row.sector] = {
+        date: row.latestDate ? new Date(row.latestDate) : new Date(),
+        quality
+      };
+    }
+
+    return sectorDefs.map(s => ({
+      sectorCode: s.code,
+      sectorName: s.nameEn,
+      sectorNameAr: s.nameAr,
+      indicatorCount: countMap[s.code] || 0,
+      latestUpdate: updateMap[s.code]?.date || new Date(),
+      dataQuality: (updateMap[s.code]?.quality || "low") as "high" | "medium" | "low"
+    }));
+  } catch (error) {
+    console.error('[Database] Failed to get sector metrics:', error);
+    return sectorDefs.map(s => ({
+      sectorCode: s.code,
+      sectorName: s.nameEn,
+      sectorNameAr: s.nameAr,
+      indicatorCount: 0,
+      latestUpdate: new Date(),
+      dataQuality: "low" as const
+    }));
+  }
 }
 
 // ============================================================================
@@ -532,17 +597,70 @@ export interface PlatformStats {
 export async function getPlatformStats(): Promise<PlatformStats> {
   const db = await getDb();
   
-  // Return sample stats - in production this would aggregate from the database
-  return {
-    totalIndicators: 500,
-    totalSources: 100,
-    totalDocuments: 250,
-    totalEvents: 180,
-    coverageStartYear: 2014,
-    coverageEndYear: new Date().getFullYear(),
-    lastUpdated: new Date(),
-    dataPointsCount: 15000,
-  };
+  if (!db) {
+    return {
+      totalIndicators: 0,
+      totalSources: 0,
+      totalDocuments: 0,
+      totalEvents: 0,
+      coverageStartYear: 2014,
+      coverageEndYear: new Date().getFullYear(),
+      lastUpdated: new Date(),
+      dataPointsCount: 0,
+    };
+  }
+
+  try {
+    const [indicatorResult] = await db.execute(
+      sql`SELECT COUNT(DISTINCT indicatorCode) as count FROM time_series`
+    );
+    const [sourceResult] = await db.execute(
+      sql`SELECT COUNT(*) as count FROM sources`
+    );
+    const [documentResult] = await db.execute(
+      sql`SELECT COUNT(*) as count FROM documents`
+    );
+    const [eventResult] = await db.execute(
+      sql`SELECT COUNT(*) as count FROM economic_events`
+    );
+    const [dataPointResult] = await db.execute(
+      sql`SELECT COUNT(*) as count FROM time_series`
+    );
+    const [dateRangeResult] = await db.execute(
+      sql`SELECT MIN(YEAR(date)) as minYear, MAX(YEAR(date)) as maxYear FROM time_series`
+    );
+
+    const totalIndicators = Number((indicatorResult as any)[0]?.count) || 0;
+    const totalSources = Number((sourceResult as any)[0]?.count) || 0;
+    const totalDocuments = Number((documentResult as any)[0]?.count) || 0;
+    const totalEvents = Number((eventResult as any)[0]?.count) || 0;
+    const dataPointsCount = Number((dataPointResult as any)[0]?.count) || 0;
+    const minYear = Number((dateRangeResult as any)[0]?.minYear) || 2014;
+    const maxYear = Number((dateRangeResult as any)[0]?.maxYear) || new Date().getFullYear();
+
+    return {
+      totalIndicators,
+      totalSources,
+      totalDocuments,
+      totalEvents,
+      coverageStartYear: minYear,
+      coverageEndYear: maxYear,
+      lastUpdated: new Date(),
+      dataPointsCount,
+    };
+  } catch (error) {
+    console.error('[Database] Failed to get platform stats:', error);
+    return {
+      totalIndicators: 0,
+      totalSources: 0,
+      totalDocuments: 0,
+      totalEvents: 0,
+      coverageStartYear: 2014,
+      coverageEndYear: new Date().getFullYear(),
+      lastUpdated: new Date(),
+      dataPointsCount: 0,
+    };
+  }
 }
 
 // ============================================================================
