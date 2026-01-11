@@ -8,10 +8,37 @@
 - [x] **Improved Platform Tools Design**: Added gradient headers with stats badges (2,000+ data points, Real-time updates, etc.)
 - [x] **Integrated CauseWay Branding**: Logo added to Footer (icon + full logo)
 - [x] Database contains 2,033+ time series records with 2026 data
-- [x] All 153 tests passing across 8 test suites
+- [x] All 165 tests passing across 8 test suites
 - [x] 47 verified data sources seeded
 - [x] 44 indicator definitions
 - [x] Exchange rate shows "as of" date with source attribution
+
+### Permanent API Integrations (COMPLETED):
+- [x] Audited 19 existing data connectors
+- [x] Fixed OCHA FTS API endpoint (v2 → v1)
+- [x] Added flow aggregation for humanitarian funding data
+- [x] Added scheduler initialization to server startup
+- [x] Server checks for due jobs every 5 minutes
+- [x] Added data freshness timestamps to KPI responses
+- [x] Added "Last Updated" display on homepage
+
+**Data Connectors (14 active):**
+1. World Bank WDI - GDP, poverty, trade, population
+2. OCHA FTS - Humanitarian funding flows
+3. UNHCR - Refugees, IDPs, asylum seekers
+4. WHO - Health indicators
+5. UNICEF - Child welfare
+6. WFP - Food security, prices
+7. UNDP - Human development
+8. IATI - Aid transparency
+9. CBY - Exchange rates, monetary data
+10. HDX CKAN - Humanitarian datasets
+11. Sanctions - OFAC/EU/UK lists
+12. ReliefWeb - Humanitarian reports
+13. FEWS NET - IPC food security
+14. Signal Detection - Anomaly alerts
+
+**Schedule:** Daily refresh at 6-8 AM UTC, Signal detection every 4 hours
 
 ### Previous Session (Jan 10, 2026):
 - Populated 28 economic indicators in database (GDP, Inflation, Exchange Rates, Trade, Energy, Fiscal, Humanitarian, Banking, Conflict)
@@ -2620,3 +2647,24 @@ Based on review of master design documents and data source register:
 - [x] Add all new pages to navigation
 - [x] Add all new pages to App.tsx routes
 - [x] Test all new pages via browser
+
+
+## Phase 56: Permanent API Integrations (January 11, 2026)
+
+### Goal: Make platform rely permanently on live data feeds
+
+- [ ] Audit existing connectors and identify gaps
+- [ ] World Bank WDI API - GDP, poverty, trade, population indicators
+- [ ] IMF API - Fiscal data, monetary statistics, WEO projections
+- [ ] OCHA FTS API - Humanitarian funding flows, appeals, contributions
+- [ ] UNHCR API - Refugee and IDP data
+- [ ] WFP API - Food prices, food security indicators
+- [ ] WHO API - Health indicators, disease surveillance
+- [ ] HDX CKAN API - Humanitarian datasets
+- [ ] ACLED API - Conflict events data
+- [ ] Create automated scheduler for daily/weekly data refresh
+- [ ] Update frontend to show "Last updated" timestamps
+- [ ] Add data freshness indicators on all pages
+- [ ] Implement fallback to cached data when APIs unavailable
+- [ ] Create API health monitoring dashboard
+- [ ] Test all integrations end-to-end

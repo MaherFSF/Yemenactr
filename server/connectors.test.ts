@@ -329,3 +329,136 @@ describe('Data Validation', () => {
     expect(Array.isArray(qaReport.warnings)).toBe(true);
   });
 });
+
+
+// ============================================
+// Daily Scheduler Tests
+// ============================================
+
+import { DEFAULT_JOBS } from './services/dailyScheduler';
+import { WORLD_BANK_INDICATORS } from './connectors/worldBankConnector';
+
+describe('Daily Scheduler Configuration', () => {
+  it('should have default jobs configured', () => {
+    expect(DEFAULT_JOBS).toBeDefined();
+    expect(Array.isArray(DEFAULT_JOBS)).toBe(true);
+    expect(DEFAULT_JOBS.length).toBeGreaterThan(0);
+  });
+
+  it('should have World Bank job configured', () => {
+    const worldBankJob = DEFAULT_JOBS.find(j => j.id === 'world_bank_daily');
+    expect(worldBankJob).toBeDefined();
+    expect(worldBankJob?.enabled).toBe(true);
+    expect(worldBankJob?.connector).toBe('world_bank');
+  });
+
+  it('should have UNHCR job configured', () => {
+    const unhcrJob = DEFAULT_JOBS.find(j => j.id === 'unhcr_daily');
+    expect(unhcrJob).toBeDefined();
+    expect(unhcrJob?.enabled).toBe(true);
+    expect(unhcrJob?.connector).toBe('unhcr');
+  });
+
+  it('should have valid cron expressions for all jobs', () => {
+    for (const job of DEFAULT_JOBS) {
+      // Cron expression should have 6 parts (seconds minutes hours day month weekday)
+      const parts = job.cronExpression.split(' ');
+      expect(parts.length).toBe(6);
+      
+      // Seconds should be 0
+      expect(parts[0]).toBe('0');
+    }
+  });
+
+  it('should have unique job IDs', () => {
+    const ids = DEFAULT_JOBS.map(j => j.id);
+    const uniqueIds = new Set(ids);
+    expect(uniqueIds.size).toBe(ids.length);
+  });
+
+  it('should have all data refresh jobs with fetch functions', () => {
+    const dataRefreshJobs = DEFAULT_JOBS.filter(j => j.type === 'data_refresh');
+    
+    for (const job of dataRefreshJobs) {
+      expect(job.fetchFn).toBeDefined();
+      expect(typeof job.fetchFn).toBe('function');
+    }
+  });
+
+  it('should have signal detection job configured', () => {
+    const signalJob = DEFAULT_JOBS.find(j => j.id === 'signal_detection');
+    expect(signalJob).toBeDefined();
+    expect(signalJob?.type).toBe('signal_detection');
+    expect(signalJob?.enabled).toBe(true);
+    // Signal detection runs every 4 hours
+    expect(signalJob?.cronExpression).toContain('*/4');
+  });
+
+  it('should have connectors for all major data sources', () => {
+    const connectorIds = DEFAULT_JOBS
+      .filter(j => j.connector)
+      .map(j => j.connector);
+    
+    // Required data sources
+    const requiredSources = [
+      'world_bank',
+      'unhcr',
+      'who',
+      'unicef',
+      'wfp',
+      'undp',
+      'iati',
+      'cby',
+      'hdx',
+      'sanctions',
+      'reliefweb',
+      'fews_net',
+    ];
+    
+    for (const source of requiredSources) {
+      expect(connectorIds).toContain(source);
+    }
+  });
+
+  it('should schedule data refresh jobs at appropriate times', () => {
+    // Data refresh jobs should run in the morning (6-8 AM UTC)
+    const dataRefreshJobs = DEFAULT_JOBS.filter(j => j.type === 'data_refresh');
+    
+    for (const job of dataRefreshJobs) {
+      const parts = job.cronExpression.split(' ');
+      const hour = parseInt(parts[2]);
+      expect(hour).toBeGreaterThanOrEqual(6);
+      expect(hour).toBeLessThanOrEqual(8);
+    }
+  });
+});
+
+describe('World Bank Indicator Definitions', () => {
+  it('should have correct indicator definitions', () => {
+    expect(WORLD_BANK_INDICATORS).toBeDefined();
+    expect(WORLD_BANK_INDICATORS.GDP_CURRENT_USD).toBeDefined();
+    expect(WORLD_BANK_INDICATORS.GDP_CURRENT_USD.code).toBe('NY.GDP.MKTP.CD');
+    expect(WORLD_BANK_INDICATORS.GDP_CURRENT_USD.category).toBe('economy');
+  });
+
+  it('should have all required indicator categories', () => {
+    const categories = new Set(
+      Object.values(WORLD_BANK_INDICATORS).map(i => i.category)
+    );
+    
+    expect(categories.has('economy')).toBe(true);
+    expect(categories.has('trade')).toBe(true);
+    expect(categories.has('poverty')).toBe(true);
+    expect(categories.has('population')).toBe(true);
+    expect(categories.has('health')).toBe(true);
+  });
+
+  it('should have valid World Bank indicator codes', () => {
+    for (const [key, indicator] of Object.entries(WORLD_BANK_INDICATORS)) {
+      // World Bank codes follow pattern: XX.XXX.XXXX.XX
+      expect(indicator.code).toMatch(/^[A-Z]{2}\.[A-Z0-9]+\.[A-Z0-9]+/);
+      expect(indicator.name).toBeTruthy();
+      expect(indicator.unit).toBeTruthy();
+    }
+  });
+});

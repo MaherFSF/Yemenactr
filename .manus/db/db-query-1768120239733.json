@@ -1,0 +1,120 @@
+{
+  "query": "SELECT indicatorCode, COUNT(*) as count, MAX(date) as latest_date FROM time_series WHERE indicatorCode LIKE 'WB_%' GROUP BY indicatorCode ORDER BY indicatorCode;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT indicatorCode, COUNT(*) as count, MAX(date) as latest_date FROM time_series WHERE indicatorCode LIKE 'WB_%' GROUP BY indicatorCode ORDER BY indicatorCode;",
+  "rows": [
+    {
+      "indicatorCode": "WB_CURRENT_ACCOUNT",
+      "count": "12",
+      "latest_date": "2016-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_EXPORTS_GDP",
+      "count": "19",
+      "latest_date": "2018-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_FDI_INFLOWS",
+      "count": "19",
+      "latest_date": "2018-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_GDP_CURRENT_USD",
+      "count": "19",
+      "latest_date": "2018-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_GDP_GROWTH",
+      "count": "19",
+      "latest_date": "2018-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_GDP_PER_CAPITA",
+      "count": "19",
+      "latest_date": "2018-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_GINI_INDEX",
+      "count": "2",
+      "latest_date": "2014-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_GNI_PER_CAPITA",
+      "count": "19",
+      "latest_date": "2018-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_HEALTH_EXPENDITURE",
+      "count": "23",
+      "latest_date": "2022-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_IMPORTS_GDP",
+      "count": "19",
+      "latest_date": "2018-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_INFANT_MORTALITY",
+      "count": "24",
+      "latest_date": "2023-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_INFLATION_CPI",
+      "count": "15",
+      "latest_date": "2014-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_INFLATION_GDP_DEFLATOR",
+      "count": "19",
+      "latest_date": "2018-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_LABOR_FORCE",
+      "count": "25",
+      "latest_date": "2024-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_LIFE_EXPECTANCY",
+      "count": "24",
+      "latest_date": "2023-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_POPULATION",
+      "count": "25",
+      "latest_date": "2024-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_POPULATION_GROWTH",
+      "count": "25",
+      "latest_date": "2024-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_POVERTY_190",
+      "count": "2",
+      "latest_date": "2014-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_POVERTY_HEADCOUNT",
+      "count": "2",
+      "latest_date": "2014-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_REMITTANCES",
+      "count": "19",
+      "latest_date": "2018-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_TRADE_BALANCE",
+      "count": "19",
+      "latest_date": "2018-12-31 05:00:00"
+    },
+    {
+      "indicatorCode": "WB_UNEMPLOYMENT",
+      "count": "25",
+      "latest_date": "2024-12-31 05:00:00"
+    }
+  ],
+  "messages": [],
+  "stdout": "indicatorCode\tcount\tlatest_date\nWB_CURRENT_ACCOUNT\t12\t2016-12-31 05:00:00\nWB_EXPORTS_GDP\t19\t2018-12-31 05:00:00\nWB_FDI_INFLOWS\t19\t2018-12-31 05:00:00\nWB_GDP_CURRENT_USD\t19\t2018-12-31 05:00:00\nWB_GDP_GROWTH\t19\t2018-12-31 05:00:00\nWB_GDP_PER_CAPITA\t19\t2018-12-31 05:00:00\nWB_GINI_INDEX\t2\t2014-12-31 05:00:00\nWB_GNI_PER_CAPITA\t19\t2018-12-31 05:00:00\nWB_HEALTH_EXPENDITURE\t23\t2022-12-31 05:00:00\nWB_IMPORTS_GDP\t19\t2018-12-31 05:00:00\nWB_INFANT_MORTALITY\t24\t2023-12-31 05:00:00\nWB_INFLATION_CPI\t15\t2014-12-31 05:00:00\nWB_INFLATION_GDP_DEFLATOR\t19\t2018-12-31 05:00:00\nWB_LABOR_FORCE\t25\t2024-12-31 05:00:00\nWB_LIFE_EXPECTANCY\t24\t2023-12-31 05:00:00\nWB_POPULATION\t25\t2024-12-31 05:00:00\nWB_POPULATION_GROWTH\t25\t2024-12-31 05:00:00\nWB_POVERTY_190\t2\t2014-12-31 05:00:00\nWB_POVERTY_HEADCOUNT\t2\t2014-12-31 05:00:00\nWB_REMITTANCES\t19\t2018-12-31 05:00:00\nWB_TRADE_BALANCE\t19\t2018-12-31 05:00:00\nWB_UNEMPLOYMENT\t25\t2024-12-31 05:00:00\n",
+  "stderr": "",
+  "execution_time_ms": 811
+}

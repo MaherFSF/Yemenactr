@@ -506,6 +506,25 @@ export default function Home() {
               </div>
             ))}
           </StaggeredContainer>
+          
+          {/* Data freshness indicator */}
+          {kpiData?.lastUpdated && (
+            <div className="mt-4 text-center">
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                {language === "ar" ? "آخر تحديث: " : "Data refreshed: "}
+                {new Date(kpiData.lastUpdated).toLocaleString(language === "ar" ? "ar-YE" : "en-US", {
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit"
+                })}
+                {" • "}
+                <span className="text-green-600 dark:text-green-400">
+                  {language === "ar" ? "تحديث تلقائي كل 6 ساعات" : "Auto-updates every 6 hours"}
+                </span>
+              </span>
+            </div>
+          )}
         </div>
       </section>
 

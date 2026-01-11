@@ -7,6 +7,7 @@ import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { initializeSchedulerJobs, runDueJobs } from "../services/dailyScheduler";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -57,8 +58,22 @@ async function startServer() {
     console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
   }
 
-  server.listen(port, () => {
+  server.listen(port, async () => {
     console.log(`Server running on http://localhost:${port}/`);
+    
+    // Initialize scheduler jobs in database
+    await initializeSchedulerJobs();
+    
+    // Check for due jobs every 5 minutes
+    setInterval(async () => {
+      try {
+        await runDueJobs();
+      } catch (error) {
+        console.error('[Scheduler] Error running due jobs:', error);
+      }
+    }, 5 * 60 * 1000); // 5 minutes
+    
+    console.log('[Scheduler] Automated data refresh enabled');
   });
 }
 

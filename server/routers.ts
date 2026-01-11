@@ -365,6 +365,12 @@ export const appRouter = router({
             confidence: "C",
           },
           lastUpdated: new Date().toISOString(),
+          dataFreshness: {
+            exchangeRate: fxAden ? fxAden.date.toISOString() : null,
+            inflation: inflationAden ? inflationAden.date.toISOString() : null,
+            gdp: gdpGrowth ? gdpGrowth.date.toISOString() : null,
+            idps: idpData ? idpData.date.toISOString() : null,
+          },
         };
       }),
   }),
