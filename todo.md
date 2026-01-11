@@ -2598,3 +2598,16 @@ Based on review of master design documents and data source register:
 - [ ] Populate complete historical data 2010-2026 for all indicators
 - [ ] Test all dynamic data displays via browser
 - [ ] Verify Arabic translations for all data
+
+
+## Phase 53: New Critical Pages Added (Jan 11, 2026)
+- [x] Create Sanctions page with OFAC/UN data
+- [x] Create Corporate Registry page
+- [x] Create Remittances page with World Bank data
+- [x] Create Public Debt page with IMF estimates
+- [x] Create Humanitarian Funding page with OCHA FTS data
+- [x] Create Regional Economic Zones page
+- [x] Create Economic Actors page
+- [x] Add all new pages to navigation
+- [x] Add all new pages to App.tsx routes
+- [x] Test all new pages via browser
