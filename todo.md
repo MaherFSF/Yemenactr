@@ -2569,3 +2569,32 @@ Based on review of master design documents and data source register:
 - [x] Merged duplicate alerts router - fixed TypeScript error
 - [x] All 153 tests passing
 - [x] Functional audit completed - all dynamic data displaying correctly
+
+
+## Phase 52: Comprehensive Dynamic Data Feeding - January 11, 2026
+- [ ] Fix outdated exchange rate on landing page (currently showing old data)
+- [ ] Connect World Bank WDI API for GDP, inflation, trade, poverty indicators
+- [ ] Connect IMF WEO API for macroeconomic forecasts and fiscal data
+- [ ] Connect OCHA FTS API for humanitarian funding flows
+- [ ] Connect WFP VAM API for food security data
+- [ ] Connect UNDP HDI API for human development indicators
+- [ ] Connect UNHCR API for refugee and IDP statistics
+- [ ] Connect WHO GHO API for health indicators
+- [ ] Connect UNICEF API for child welfare data
+- [ ] Connect IATI API for aid transparency data
+- [ ] Connect HDX CKAN API for humanitarian datasets
+- [ ] Connect ReliefWeb API for situation reports
+- [ ] Connect FEWS NET API for IPC classifications
+- [ ] Connect sanctions APIs (OFAC, EU, UK)
+- [ ] Add Sana'a Center publications feed
+- [ ] Add Brookings Yemen research feed
+- [ ] Add CSIS Yemen research feed
+- [ ] Add Chatham House research feed
+- [ ] Add Carnegie Endowment research feed
+- [ ] Add Crisis Group reports feed
+- [ ] Connect CBY Aden data sources
+- [ ] Connect CBY Sana'a data sources
+- [ ] Add Gulf fund data (Saudi, UAE development agencies)
+- [ ] Populate complete historical data 2010-2026 for all indicators
+- [ ] Test all dynamic data displays via browser
+- [ ] Verify Arabic translations for all data

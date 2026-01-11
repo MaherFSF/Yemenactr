@@ -1,0 +1,230 @@
+{
+  "query": "SELECT code, nameEn, sector FROM indicators ORDER BY sector, code LIMIT 50;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT code, nameEn, sector FROM indicators ORDER BY sector, code LIMIT 50;",
+  "rows": [
+    {
+      "code": "BANK_DEPOSITS",
+      "nameEn": "Bank Deposits",
+      "sector": "banking"
+    },
+    {
+      "code": "MONEY_SUPPLY_M2",
+      "nameEn": "Money Supply (M2)",
+      "sector": "banking"
+    },
+    {
+      "code": "REMITTANCES",
+      "nameEn": "Remittances",
+      "sector": "banking"
+    },
+    {
+      "code": "CONFLICT_EVENTS",
+      "nameEn": "Conflict Events",
+      "sector": "conflict"
+    },
+    {
+      "code": "CONFLICT_FATALITIES",
+      "nameEn": "Conflict Fatalities",
+      "sector": "conflict"
+    },
+    {
+      "code": "EXCHANGE_RATE_ADEN",
+      "nameEn": "Aden Exchange Rate",
+      "sector": "currency"
+    },
+    {
+      "code": "EXCHANGE_RATE_OFFICIAL",
+      "nameEn": "Official Exchange Rate",
+      "sector": "currency"
+    },
+    {
+      "code": "EXCHANGE_RATE_PARALLEL",
+      "nameEn": "Parallel Market Exchange Rate",
+      "sector": "currency"
+    },
+    {
+      "code": "EXCHANGE_RATE_SANAA",
+      "nameEn": "Sanaa Exchange Rate",
+      "sector": "currency"
+    },
+    {
+      "code": "fx_rate_aden_parallel",
+      "nameEn": "Exchange Rate - Aden",
+      "sector": "currency"
+    },
+    {
+      "code": "fx_rate_sanaa",
+      "nameEn": "Exchange Rate - Sana'a",
+      "sector": "currency"
+    },
+    {
+      "code": "FUEL_PRICES",
+      "nameEn": "Fuel Prices",
+      "sector": "energy"
+    },
+    {
+      "code": "OIL_EXPORTS",
+      "nameEn": "Oil Exports",
+      "sector": "energy"
+    },
+    {
+      "code": "OIL_PRODUCTION",
+      "nameEn": "Oil Production",
+      "sector": "energy"
+    },
+    {
+      "code": "BUDGET_DEFICIT",
+      "nameEn": "Budget Deficit",
+      "sector": "fiscal"
+    },
+    {
+      "code": "FOREIGN_RESERVES",
+      "nameEn": "Foreign Exchange Reserves",
+      "sector": "fiscal"
+    },
+    {
+      "code": "GOVT_EXPENDITURE",
+      "nameEn": "Government Expenditure",
+      "sector": "fiscal"
+    },
+    {
+      "code": "GOVT_REVENUE",
+      "nameEn": "Government Revenue",
+      "sector": "fiscal"
+    },
+    {
+      "code": "FOOD_INSECURITY",
+      "nameEn": "Food Insecurity Rate",
+      "sector": "humanitarian"
+    },
+    {
+      "code": "hrp_requirements_usd",
+      "nameEn": "HRP Requirements",
+      "sector": "humanitarian"
+    },
+    {
+      "code": "HUMANITARIAN_NEEDS",
+      "nameEn": "People in Need",
+      "sector": "humanitarian"
+    },
+    {
+      "code": "IDPS",
+      "nameEn": "Internally Displaced Persons",
+      "sector": "humanitarian"
+    },
+    {
+      "code": "MALNUTRITION_RATE",
+      "nameEn": "Acute Malnutrition Rate",
+      "sector": "humanitarian"
+    },
+    {
+      "code": "people_in_need",
+      "nameEn": "People in Need",
+      "sector": "humanitarian"
+    },
+    {
+      "code": "unemployment_rate",
+      "nameEn": "Unemployment Rate",
+      "sector": "labor"
+    },
+    {
+      "code": "GDP_GROWTH",
+      "nameEn": "GDP Growth Rate",
+      "sector": "macroeconomy"
+    },
+    {
+      "code": "gdp_growth_annual",
+      "nameEn": "GDP Growth Rate",
+      "sector": "macroeconomy"
+    },
+    {
+      "code": "GDP_NOMINAL",
+      "nameEn": "Nominal GDP",
+      "sector": "macroeconomy"
+    },
+    {
+      "code": "gdp_nominal_usd",
+      "nameEn": "GDP (Nominal, USD)",
+      "sector": "macroeconomy"
+    },
+    {
+      "code": "GDP_PER_CAPITA",
+      "nameEn": "GDP Per Capita",
+      "sector": "macroeconomy"
+    },
+    {
+      "code": "gdp_per_capita_usd",
+      "nameEn": "GDP per Capita",
+      "sector": "macroeconomy"
+    },
+    {
+      "code": "population_total",
+      "nameEn": "Total Population",
+      "sector": "macroeconomy"
+    },
+    {
+      "code": "hdi_score",
+      "nameEn": "Human Development Index",
+      "sector": "poverty"
+    },
+    {
+      "code": "poverty_rate",
+      "nameEn": "Poverty Rate",
+      "sector": "poverty"
+    },
+    {
+      "code": "CPI_INFLATION",
+      "nameEn": "Consumer Price Inflation",
+      "sector": "prices"
+    },
+    {
+      "code": "FOOD_INFLATION",
+      "nameEn": "Food Price Inflation",
+      "sector": "prices"
+    },
+    {
+      "code": "inflation_cpi_aden",
+      "nameEn": "Inflation Rate - Aden",
+      "sector": "prices"
+    },
+    {
+      "code": "inflation_cpi_sanaa",
+      "nameEn": "Inflation Rate - Sana'a",
+      "sector": "prices"
+    },
+    {
+      "code": "EXPORTS",
+      "nameEn": "Total Exports",
+      "sector": "trade"
+    },
+    {
+      "code": "exports_total_usd",
+      "nameEn": "Total Exports",
+      "sector": "trade"
+    },
+    {
+      "code": "IMPORTS",
+      "nameEn": "Total Imports",
+      "sector": "trade"
+    },
+    {
+      "code": "imports_total_usd",
+      "nameEn": "Total Imports",
+      "sector": "trade"
+    },
+    {
+      "code": "remittances_inflow_usd",
+      "nameEn": "Remittance Inflows",
+      "sector": "trade"
+    },
+    {
+      "code": "TRADE_BALANCE",
+      "nameEn": "Trade Balance",
+      "sector": "trade"
+    }
+  ],
+  "messages": [],
+  "stdout": "code\tnameEn\tsector\nBANK_DEPOSITS\tBank Deposits\tbanking\nMONEY_SUPPLY_M2\tMoney Supply (M2)\tbanking\nREMITTANCES\tRemittances\tbanking\nCONFLICT_EVENTS\tConflict Events\tconflict\nCONFLICT_FATALITIES\tConflict Fatalities\tconflict\nEXCHANGE_RATE_ADEN\tAden Exchange Rate\tcurrency\nEXCHANGE_RATE_OFFICIAL\tOfficial Exchange Rate\tcurrency\nEXCHANGE_RATE_PARALLEL\tParallel Market Exchange Rate\tcurrency\nEXCHANGE_RATE_SANAA\tSanaa Exchange Rate\tcurrency\nfx_rate_aden_parallel\tExchange Rate - Aden\tcurrency\nfx_rate_sanaa\tExchange Rate - Sana'a\tcurrency\nFUEL_PRICES\tFuel Prices\tenergy\nOIL_EXPORTS\tOil Exports\tenergy\nOIL_PRODUCTION\tOil Production\tenergy\nBUDGET_DEFICIT\tBudget Deficit\tfiscal\nFOREIGN_RESERVES\tForeign Exchange Reserves\tfiscal\nGOVT_EXPENDITURE\tGovernment Expenditure\tfiscal\nGOVT_REVENUE\tGovernment Revenue\tfiscal\nFOOD_INSECURITY\tFood Insecurity Rate\thumanitarian\nhrp_requirements_usd\tHRP Requirements\thumanitarian\nHUMANITARIAN_NEEDS\tPeople in Need\thumanitarian\nIDPS\tInternally Displaced Persons\thumanitarian\nMALNUTRITION_RATE\tAcute Malnutrition Rate\thumanitarian\npeople_in_need\tPeople in Need\thumanitarian\nunemployment_rate\tUnemployment Rate\tlabor\nGDP_GROWTH\tGDP Growth Rate\tmacroeconomy\ngdp_growth_annual\tGDP Growth Rate\tmacroeconomy\nGDP_NOMINAL\tNominal GDP\tmacroeconomy\ngdp_nominal_usd\tGDP (Nominal, USD)\tmacroeconomy\nGDP_PER_CAPITA\tGDP Per Capita\tmacroeconomy\ngdp_per_capita_usd\tGDP per Capita\tmacroeconomy\npopulation_total\tTotal Population\tmacroeconomy\nhdi_score\tHuman Development Index\tpoverty\npoverty_rate\tPoverty Rate\tpoverty\nCPI_INFLATION\tConsumer Price Inflation\tprices\nFOOD_INFLATION\tFood Price Inflation\tprices\ninflation_cpi_aden\tInflation Rate - Aden\tprices\ninflation_cpi_sanaa\tInflation Rate - Sana'a\tprices\nEXPORTS\tTotal Exports\ttrade\nexports_total_usd\tTotal Exports\ttrade\nIMPORTS\tTotal Imports\ttrade\nimports_total_usd\tTotal Imports\ttrade\nremittances_inflow_usd\tRemittance Inflows\ttrade\nTRADE_BALANCE\tTrade Balance\ttrade\n",
+  "stderr": "",
+  "execution_time_ms": 65
+}

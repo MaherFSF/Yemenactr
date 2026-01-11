@@ -64,6 +64,13 @@ import ResearchVisualization from "./pages/ResearchVisualization";
 import ResearchAssistant from "./pages/ResearchAssistant";
 import ResearchLibrary from "./pages/ResearchLibrary";
 import ResearchAudit from "./pages/ResearchAudit";
+import Sanctions from "./pages/Sanctions";
+import CorporateRegistry from "./pages/CorporateRegistry";
+import Remittances from "./pages/Remittances";
+import PublicDebt from "./pages/PublicDebt";
+import HumanitarianFunding from "./pages/HumanitarianFunding";
+import RegionalZones from "./pages/RegionalZones";
+import EconomicActors from "./pages/EconomicActors";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -133,6 +140,13 @@ function Router() {
       <Route path={"/scenario-simulator"} component={ScenarioSimulator} />
       <Route path={"/comparison"} component={ComparisonTool} />
       <Route path={"/indicators"} component={IndicatorCatalog} />
+      <Route path="/sanctions" component={Sanctions} />
+      <Route path="/corporate-registry" component={CorporateRegistry} />
+      <Route path="/remittances" component={Remittances} />
+      <Route path="/public-debt" component={PublicDebt} />
+      <Route path="/humanitarian-funding" component={HumanitarianFunding} />
+      <Route path="/regional-zones" component={RegionalZones} />
+      <Route path="/economic-actors" component={EconomicActors} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

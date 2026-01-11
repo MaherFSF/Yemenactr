@@ -1,0 +1,150 @@
+{
+  "query": "SELECT ts.value, ts.date, ts.regimeTag, i.nameEn, s.publisher \nFROM time_series ts \nJOIN indicators i ON ts.indicatorCode = i.code \nLEFT JOIN sources s ON ts.sourceId = s.id \nWHERE i.code LIKE '%fx%' OR i.code LIKE '%exchange%' \nORDER BY ts.date DESC \nLIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT ts.value, ts.date, ts.regimeTag, i.nameEn, s.publisher \nFROM time_series ts \nJOIN indicators i ON ts.indicatorCode = i.code \nLEFT JOIN sources s ON ts.sourceId = s.id \nWHERE i.code LIKE '%fx%' OR i.code LIKE '%exchange%' \nORDER BY ts.date DESC \nLIMIT 20;",
+  "rows": [
+    {
+      "value": "530.000000",
+      "date": "2026-12-31 00:00:00",
+      "regimeTag": "sanaa_defacto",
+      "nameEn": "Exchange Rate - Sana'a",
+      "publisher": "Market Survey"
+    },
+    {
+      "value": "1890.000000",
+      "date": "2026-12-31 00:00:00",
+      "regimeTag": "aden_irg",
+      "nameEn": "Exchange Rate - Aden",
+      "publisher": "CBY Aden"
+    },
+    {
+      "value": "530.000000",
+      "date": "2025-12-31 00:00:00",
+      "regimeTag": "sanaa_defacto",
+      "nameEn": "Exchange Rate - Sana'a",
+      "publisher": "Market Survey"
+    },
+    {
+      "value": "2050.000000",
+      "date": "2025-12-31 00:00:00",
+      "regimeTag": "aden_irg",
+      "nameEn": "Exchange Rate - Aden",
+      "publisher": "CBY Aden"
+    },
+    {
+      "value": "530.000000",
+      "date": "2024-12-31 00:00:00",
+      "regimeTag": "sanaa_defacto",
+      "nameEn": "Exchange Rate - Sana'a",
+      "publisher": "Market Survey"
+    },
+    {
+      "value": "1890.000000",
+      "date": "2024-12-31 00:00:00",
+      "regimeTag": "aden_irg",
+      "nameEn": "Exchange Rate - Aden",
+      "publisher": "CBY Aden"
+    },
+    {
+      "value": "535.000000",
+      "date": "2023-12-31 00:00:00",
+      "regimeTag": "sanaa_defacto",
+      "nameEn": "Exchange Rate - Sana'a",
+      "publisher": "Market Survey"
+    },
+    {
+      "value": "1550.000000",
+      "date": "2023-12-31 00:00:00",
+      "regimeTag": "aden_irg",
+      "nameEn": "Exchange Rate - Aden",
+      "publisher": "CBY Aden"
+    },
+    {
+      "value": "560.000000",
+      "date": "2022-12-31 00:00:00",
+      "regimeTag": "sanaa_defacto",
+      "nameEn": "Exchange Rate - Sana'a",
+      "publisher": "Market Survey"
+    },
+    {
+      "value": "1150.000000",
+      "date": "2022-12-31 00:00:00",
+      "regimeTag": "aden_irg",
+      "nameEn": "Exchange Rate - Aden",
+      "publisher": "CBY Aden"
+    },
+    {
+      "value": "600.000000",
+      "date": "2021-12-31 00:00:00",
+      "regimeTag": "sanaa_defacto",
+      "nameEn": "Exchange Rate - Sana'a",
+      "publisher": "Market Survey"
+    },
+    {
+      "value": "1050.000000",
+      "date": "2021-12-31 00:00:00",
+      "regimeTag": "aden_irg",
+      "nameEn": "Exchange Rate - Aden",
+      "publisher": "CBY Aden"
+    },
+    {
+      "value": "600.000000",
+      "date": "2020-12-31 00:00:00",
+      "regimeTag": "sanaa_defacto",
+      "nameEn": "Exchange Rate - Sana'a",
+      "publisher": "Market Survey"
+    },
+    {
+      "value": "730.000000",
+      "date": "2020-12-31 00:00:00",
+      "regimeTag": "aden_irg",
+      "nameEn": "Exchange Rate - Aden",
+      "publisher": "CBY Aden"
+    },
+    {
+      "value": "590.000000",
+      "date": "2019-12-31 00:00:00",
+      "regimeTag": "sanaa_defacto",
+      "nameEn": "Exchange Rate - Sana'a",
+      "publisher": "Market Survey"
+    },
+    {
+      "value": "590.000000",
+      "date": "2019-12-31 00:00:00",
+      "regimeTag": "aden_irg",
+      "nameEn": "Exchange Rate - Aden",
+      "publisher": "CBY Aden"
+    },
+    {
+      "value": "560.000000",
+      "date": "2018-12-31 00:00:00",
+      "regimeTag": "sanaa_defacto",
+      "nameEn": "Exchange Rate - Sana'a",
+      "publisher": "Market Survey"
+    },
+    {
+      "value": "520.000000",
+      "date": "2018-12-31 00:00:00",
+      "regimeTag": "aden_irg",
+      "nameEn": "Exchange Rate - Aden",
+      "publisher": "CBY Aden"
+    },
+    {
+      "value": "450.000000",
+      "date": "2017-12-31 00:00:00",
+      "regimeTag": "sanaa_defacto",
+      "nameEn": "Exchange Rate - Sana'a",
+      "publisher": "Market Survey"
+    },
+    {
+      "value": "420.000000",
+      "date": "2017-12-31 00:00:00",
+      "regimeTag": "aden_irg",
+      "nameEn": "Exchange Rate - Aden",
+      "publisher": "CBY Aden"
+    }
+  ],
+  "messages": [],
+  "stdout": "value\tdate\tregimeTag\tnameEn\tpublisher\n530.000000\t2026-12-31 00:00:00\tsanaa_defacto\tExchange Rate - Sana'a\tMarket Survey\n1890.000000\t2026-12-31 00:00:00\taden_irg\tExchange Rate - Aden\tCBY Aden\n530.000000\t2025-12-31 00:00:00\tsanaa_defacto\tExchange Rate - Sana'a\tMarket Survey\n2050.000000\t2025-12-31 00:00:00\taden_irg\tExchange Rate - Aden\tCBY Aden\n530.000000\t2024-12-31 00:00:00\tsanaa_defacto\tExchange Rate - Sana'a\tMarket Survey\n1890.000000\t2024-12-31 00:00:00\taden_irg\tExchange Rate - Aden\tCBY Aden\n535.000000\t2023-12-31 00:00:00\tsanaa_defacto\tExchange Rate - Sana'a\tMarket Survey\n1550.000000\t2023-12-31 00:00:00\taden_irg\tExchange Rate - Aden\tCBY Aden\n560.000000\t2022-12-31 00:00:00\tsanaa_defacto\tExchange Rate - Sana'a\tMarket Survey\n1150.000000\t2022-12-31 00:00:00\taden_irg\tExchange Rate - Aden\tCBY Aden\n600.000000\t2021-12-31 00:00:00\tsanaa_defacto\tExchange Rate - Sana'a\tMarket Survey\n1050.000000\t2021-12-31 00:00:00\taden_irg\tExchange Rate - Aden\tCBY Aden\n600.000000\t2020-12-31 00:00:00\tsanaa_defacto\tExchange Rate - Sana'a\tMarket Survey\n730.000000\t2020-12-31 00:00:00\taden_irg\tExchange Rate - Aden\tCBY Aden\n590.000000\t2019-12-31 00:00:00\tsanaa_defacto\tExchange Rate - Sana'a\tMarket Survey\n590.000000\t2019-12-31 00:00:00\taden_irg\tExchange Rate - Aden\tCBY Aden\n560.000000\t2018-12-31 00:00:00\tsanaa_defacto\tExchange Rate - Sana'a\tMarket Survey\n520.000000\t2018-12-31 00:00:00\taden_irg\tExchange Rate - Aden\tCBY Aden\n450.000000\t2017-12-31 00:00:00\tsanaa_defacto\tExchange Rate - Sana'a\tMarket Survey\n420.000000\t2017-12-31 00:00:00\taden_irg\tExchange Rate - Aden\tCBY Aden\n",
+  "stderr": "",
+  "execution_time_ms": 116
+}

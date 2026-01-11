@@ -39,7 +39,13 @@ import {
   LineChart,
   MessageSquare,
   Library,
-  ClipboardCheck
+  ClipboardCheck,
+  ShieldAlert,
+  Send,
+  Landmark,
+  HeartHandshake,
+  MapPin,
+  Network
 } from "lucide-react";
 import { useState } from "react";
 import GlobalSearch from "@/components/GlobalSearch";
@@ -70,6 +76,13 @@ export default function Header() {
     { nameEn: "Agriculture", nameAr: "الزراعة", href: "/sectors/agriculture", icon: TreePine },
     { nameEn: "Investment", nameAr: "الاستثمار", href: "/sectors/investment", icon: Factory },
     { nameEn: "Poverty & Development", nameAr: "الفقر والتنمية", href: "/sectors/poverty", icon: Users },
+    { nameEn: "Sanctions", nameAr: "العقوبات", href: "/sanctions", icon: ShieldAlert },
+    { nameEn: "Remittances", nameAr: "التحويلات", href: "/remittances", icon: Send },
+    { nameEn: "Public Debt", nameAr: "الدين العام", href: "/public-debt", icon: Landmark },
+    { nameEn: "Humanitarian Funding", nameAr: "التمويل الإنساني", href: "/humanitarian-funding", icon: HeartHandshake },
+    { nameEn: "Regional Zones", nameAr: "المناطق الاقتصادية", href: "/regional-zones", icon: MapPin },
+    { nameEn: "Economic Actors", nameAr: "الفاعلون الاقتصاديون", href: "/economic-actors", icon: Network },
+    { nameEn: "Corporate Registry", nameAr: "سجل الشركات", href: "/corporate-registry", icon: Building },
   ];
 
   const tools = [
