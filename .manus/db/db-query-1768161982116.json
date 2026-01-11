@@ -1,0 +1,130 @@
+{
+  "query": "SELECT \n  SUBSTRING_INDEX(indicatorCode, '_', 1) as source,\n  COUNT(*) as record_count,\n  MIN(YEAR(date)) as earliest_year,\n  MAX(YEAR(date)) as latest_year\nFROM time_series \nGROUP BY SUBSTRING_INDEX(indicatorCode, '_', 1)\nORDER BY record_count DESC\nLIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT \n  SUBSTRING_INDEX(indicatorCode, '_', 1) as source,\n  COUNT(*) as record_count,\n  MIN(YEAR(date)) as earliest_year,\n  MAX(YEAR(date)) as latest_year\nFROM time_series \nGROUP BY SUBSTRING_INDEX(indicatorCode, '_', 1)\nORDER BY record_count DESC\nLIMIT 20;",
+  "rows": [
+    {
+      "source": "WB",
+      "record_count": "744",
+      "earliest_year": "1970",
+      "latest_year": "2024"
+    },
+    {
+      "source": "WHO",
+      "record_count": "290",
+      "earliest_year": "1970",
+      "latest_year": "2024"
+    },
+    {
+      "source": "UNDP",
+      "record_count": "240",
+      "earliest_year": "2010",
+      "latest_year": "2024"
+    },
+    {
+      "source": "WFP",
+      "record_count": "225",
+      "earliest_year": "2010",
+      "latest_year": "2024"
+    },
+    {
+      "source": "CBY",
+      "record_count": "201",
+      "earliest_year": "2010",
+      "latest_year": "2024"
+    },
+    {
+      "source": "UNICEF",
+      "record_count": "180",
+      "earliest_year": "2010",
+      "latest_year": "2024"
+    },
+    {
+      "source": "IATI",
+      "record_count": "180",
+      "earliest_year": "2010",
+      "latest_year": "2024"
+    },
+    {
+      "source": "UNHCR",
+      "record_count": "167",
+      "earliest_year": "1970",
+      "latest_year": "2025"
+    },
+    {
+      "source": "fx",
+      "record_count": "131",
+      "earliest_year": "2010",
+      "latest_year": "2026"
+    },
+    {
+      "source": "gdp",
+      "record_count": "51",
+      "earliest_year": "2010",
+      "latest_year": "2026"
+    },
+    {
+      "source": "FEWS",
+      "record_count": "35",
+      "earliest_year": "2015",
+      "latest_year": "2026"
+    },
+    {
+      "source": "inflation",
+      "record_count": "30",
+      "earliest_year": "2010",
+      "latest_year": "2026"
+    },
+    {
+      "source": "IDPS",
+      "record_count": "17",
+      "earliest_year": "2010",
+      "latest_year": "2026"
+    },
+    {
+      "source": "imports",
+      "record_count": "17",
+      "earliest_year": "2010",
+      "latest_year": "2026"
+    },
+    {
+      "source": "hdi",
+      "record_count": "17",
+      "earliest_year": "2010",
+      "latest_year": "2026"
+    },
+    {
+      "source": "population",
+      "record_count": "17",
+      "earliest_year": "2010",
+      "latest_year": "2026"
+    },
+    {
+      "source": "remittances",
+      "record_count": "17",
+      "earliest_year": "2010",
+      "latest_year": "2026"
+    },
+    {
+      "source": "unemployment",
+      "record_count": "17",
+      "earliest_year": "2010",
+      "latest_year": "2026"
+    },
+    {
+      "source": "exports",
+      "record_count": "17",
+      "earliest_year": "2010",
+      "latest_year": "2026"
+    },
+    {
+      "source": "FOREIGN",
+      "record_count": "17",
+      "earliest_year": "2010",
+      "latest_year": "2026"
+    }
+  ],
+  "messages": [],
+  "stdout": "source\trecord_count\tearliest_year\tlatest_year\nWB\t744\t1970\t2024\nWHO\t290\t1970\t2024\nUNDP\t240\t2010\t2024\nWFP\t225\t2010\t2024\nCBY\t201\t2010\t2024\nUNICEF\t180\t2010\t2024\nIATI\t180\t2010\t2024\nUNHCR\t167\t1970\t2025\nfx\t131\t2010\t2026\ngdp\t51\t2010\t2026\nFEWS\t35\t2015\t2026\ninflation\t30\t2010\t2026\nIDPS\t17\t2010\t2026\nimports\t17\t2010\t2026\nhdi\t17\t2010\t2026\npopulation\t17\t2010\t2026\nremittances\t17\t2010\t2026\nunemployment\t17\t2010\t2026\nexports\t17\t2010\t2026\nFOREIGN\t17\t2010\t2026\n",
+  "stderr": "",
+  "execution_time_ms": 995
+}
