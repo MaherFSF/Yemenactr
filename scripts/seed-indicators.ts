@@ -10,7 +10,7 @@
  * and follows the "no figure without reference" principle.
  */
 
-import { getDb } from "../server/_core/db";
+import { getDb } from "../server/db";
 import { sql } from "drizzle-orm";
 
 // ============================================================================

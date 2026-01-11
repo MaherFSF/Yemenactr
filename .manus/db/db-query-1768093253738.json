@@ -1,0 +1,150 @@
+{
+  "query": "SELECT indicatorCode, regimeTag, value, date, sourceId FROM time_series WHERE indicatorCode LIKE '%fx_rate%' ORDER BY date DESC LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT indicatorCode, regimeTag, value, date, sourceId FROM time_series WHERE indicatorCode LIKE '%fx_rate%' ORDER BY date DESC LIMIT 20;",
+  "rows": [
+    {
+      "indicatorCode": "fx_rate_sanaa",
+      "regimeTag": "sanaa_defacto",
+      "value": "530.000000",
+      "date": "2026-12-31 00:00:00",
+      "sourceId": "90015"
+    },
+    {
+      "indicatorCode": "fx_rate_aden_parallel",
+      "regimeTag": "aden_irg",
+      "value": "1890.000000",
+      "date": "2026-12-31 00:00:00",
+      "sourceId": "30007"
+    },
+    {
+      "indicatorCode": "fx_rate_sanaa",
+      "regimeTag": "sanaa_defacto",
+      "value": "530.000000",
+      "date": "2025-12-31 00:00:00",
+      "sourceId": "90015"
+    },
+    {
+      "indicatorCode": "fx_rate_aden_parallel",
+      "regimeTag": "aden_irg",
+      "value": "2050.000000",
+      "date": "2025-12-31 00:00:00",
+      "sourceId": "30007"
+    },
+    {
+      "indicatorCode": "fx_rate_sanaa",
+      "regimeTag": "sanaa_defacto",
+      "value": "530.000000",
+      "date": "2024-12-31 00:00:00",
+      "sourceId": "90015"
+    },
+    {
+      "indicatorCode": "fx_rate_aden_parallel",
+      "regimeTag": "aden_irg",
+      "value": "1890.000000",
+      "date": "2024-12-31 00:00:00",
+      "sourceId": "30007"
+    },
+    {
+      "indicatorCode": "FX_RATE_PARALLEL",
+      "regimeTag": "sanaa_defacto",
+      "value": "535.010000",
+      "date": "2024-12-22 05:00:00",
+      "sourceId": "2"
+    },
+    {
+      "indicatorCode": "FX_RATE_PARALLEL",
+      "regimeTag": "aden_irg",
+      "value": "2230.880000",
+      "date": "2024-12-22 05:00:00",
+      "sourceId": "1"
+    },
+    {
+      "indicatorCode": "FX_RATE_PARALLEL",
+      "regimeTag": "sanaa_defacto",
+      "value": "532.970000",
+      "date": "2024-12-15 05:00:00",
+      "sourceId": "2"
+    },
+    {
+      "indicatorCode": "FX_RATE_PARALLEL",
+      "regimeTag": "aden_irg",
+      "value": "2226.840000",
+      "date": "2024-12-15 05:00:00",
+      "sourceId": "1"
+    },
+    {
+      "indicatorCode": "FX_RATE_PARALLEL",
+      "regimeTag": "sanaa_defacto",
+      "value": "533.160000",
+      "date": "2024-12-08 05:00:00",
+      "sourceId": "2"
+    },
+    {
+      "indicatorCode": "FX_RATE_PARALLEL",
+      "regimeTag": "aden_irg",
+      "value": "2217.890000",
+      "date": "2024-12-08 05:00:00",
+      "sourceId": "1"
+    },
+    {
+      "indicatorCode": "FX_RATE_PARALLEL",
+      "regimeTag": "sanaa_defacto",
+      "value": "534.160000",
+      "date": "2024-12-01 05:00:00",
+      "sourceId": "2"
+    },
+    {
+      "indicatorCode": "FX_RATE_PARALLEL",
+      "regimeTag": "aden_irg",
+      "value": "2206.230000",
+      "date": "2024-12-01 05:00:00",
+      "sourceId": "1"
+    },
+    {
+      "indicatorCode": "FX_RATE_PARALLEL",
+      "regimeTag": "sanaa_defacto",
+      "value": "532.330000",
+      "date": "2024-11-22 05:00:00",
+      "sourceId": "2"
+    },
+    {
+      "indicatorCode": "FX_RATE_PARALLEL",
+      "regimeTag": "aden_irg",
+      "value": "2190.340000",
+      "date": "2024-11-22 05:00:00",
+      "sourceId": "1"
+    },
+    {
+      "indicatorCode": "FX_RATE_PARALLEL",
+      "regimeTag": "sanaa_defacto",
+      "value": "530.060000",
+      "date": "2024-11-15 05:00:00",
+      "sourceId": "2"
+    },
+    {
+      "indicatorCode": "FX_RATE_PARALLEL",
+      "regimeTag": "aden_irg",
+      "value": "2183.180000",
+      "date": "2024-11-15 05:00:00",
+      "sourceId": "1"
+    },
+    {
+      "indicatorCode": "FX_RATE_PARALLEL",
+      "regimeTag": "sanaa_defacto",
+      "value": "527.870000",
+      "date": "2024-11-08 05:00:00",
+      "sourceId": "2"
+    },
+    {
+      "indicatorCode": "FX_RATE_PARALLEL",
+      "regimeTag": "aden_irg",
+      "value": "2182.490000",
+      "date": "2024-11-08 05:00:00",
+      "sourceId": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "indicatorCode\tregimeTag\tvalue\tdate\tsourceId\nfx_rate_sanaa\tsanaa_defacto\t530.000000\t2026-12-31 00:00:00\t90015\nfx_rate_aden_parallel\taden_irg\t1890.000000\t2026-12-31 00:00:00\t30007\nfx_rate_sanaa\tsanaa_defacto\t530.000000\t2025-12-31 00:00:00\t90015\nfx_rate_aden_parallel\taden_irg\t2050.000000\t2025-12-31 00:00:00\t30007\nfx_rate_sanaa\tsanaa_defacto\t530.000000\t2024-12-31 00:00:00\t90015\nfx_rate_aden_parallel\taden_irg\t1890.000000\t2024-12-31 00:00:00\t30007\nFX_RATE_PARALLEL\tsanaa_defacto\t535.010000\t2024-12-22 05:00:00\t2\nFX_RATE_PARALLEL\taden_irg\t2230.880000\t2024-12-22 05:00:00\t1\nFX_RATE_PARALLEL\tsanaa_defacto\t532.970000\t2024-12-15 05:00:00\t2\nFX_RATE_PARALLEL\taden_irg\t2226.840000\t2024-12-15 05:00:00\t1\nFX_RATE_PARALLEL\tsanaa_defacto\t533.160000\t2024-12-08 05:00:00\t2\nFX_RATE_PARALLEL\taden_irg\t2217.890000\t2024-12-08 05:00:00\t1\nFX_RATE_PARALLEL\tsanaa_defacto\t534.160000\t2024-12-01 05:00:00\t2\nFX_RATE_PARALLEL\taden_irg\t2206.230000\t2024-12-01 05:00:00\t1\nFX_RATE_PARALLEL\tsanaa_defacto\t532.330000\t2024-11-22 05:00:00\t2\nFX_RATE_PARALLEL\taden_irg\t2190.340000\t2024-11-22 05:00:00\t1\nFX_RATE_PARALLEL\tsanaa_defacto\t530.060000\t2024-11-15 05:00:00\t2\nFX_RATE_PARALLEL\taden_irg\t2183.180000\t2024-11-15 05:00:00\t1\nFX_RATE_PARALLEL\tsanaa_defacto\t527.870000\t2024-11-08 05:00:00\t2\nFX_RATE_PARALLEL\taden_irg\t2182.490000\t2024-11-08 05:00:00\t1\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}

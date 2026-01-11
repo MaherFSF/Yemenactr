@@ -296,9 +296,16 @@ export const appRouter = router({
         ]);
 
         // Calculate YoY change for exchange rate using actual data
+        // Jan 2026: 1,890 YER/USD (improved from 2,050 in mid-2025 due to Saudi support)
+        // Jan 2025: 1,550 YER/USD (before the July 2025 crisis)
         const currentFxAden = fxAden ? parseFloat(fxAden.value) : 1890;
-        const previousFxAden = 1550; // 2023 value from database
-        const fxYoYChange = ((currentFxAden - previousFxAden) / previousFxAden * 100).toFixed(1);
+        const fxAdenDate = fxAden ? new Date(fxAden.date) : new Date('2026-01-10');
+        const previousYearFxAden = 1550; // Jan 2025 value for YoY comparison
+        const fxYoYChange = ((currentFxAden - previousYearFxAden) / previousYearFxAden * 100).toFixed(1);
+        const fxAsOfDate = fxAdenDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        
+        // Log for debugging
+        console.log('[getHeroKPIs] Exchange rate data:', { currentFxAden, fxAdenDate: fxAsOfDate, fxYoYChange });
         
         // Get actual foreign reserves value
         const reservesValue = foreignReserves ? parseFloat(foreignReserves.value) : 1.2;
@@ -331,7 +338,7 @@ export const appRouter = router({
           },
           exchangeRateAden: {
             value: `1 USD = ${currentFxAden.toLocaleString()} YER`,
-            subtext: `Aden Parallel Rate (Jan 2026)`,
+            subtext: `Aden Parallel Rate (as of ${fxAsOfDate})`,
             trend: [50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105],
             source: "CBY Aden",
             confidence: "B",

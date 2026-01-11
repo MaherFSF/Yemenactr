@@ -185,7 +185,10 @@ export default function Home() {
       titleAr: "مستودع بيانات شامل",
       descEn: "Access verified economic indicators with complete provenance tracking and confidence ratings",
       descAr: "الوصول إلى المؤشرات الاقتصادية الموثقة مع تتبع كامل للمصادر",
-      href: "/data-repository"
+      href: "/data-repository",
+      stats: "2,000+ data points",
+      statsAr: "أكثر من 2000 نقطة بيانات",
+      color: "from-emerald-500 to-teal-600"
     },
     {
       icon: BarChart3,
@@ -193,39 +196,54 @@ export default function Home() {
       titleAr: "تحليلات تفاعلية",
       descEn: "Explore data through customizable dashboards and regime-specific comparisons",
       descAr: "استكشف البيانات من خلال لوحات معلومات قابلة للتخصيص",
-      href: "/dashboard"
+      href: "/dashboard",
+      stats: "Real-time updates",
+      statsAr: "تحديثات فورية",
+      color: "from-blue-500 to-indigo-600"
     },
     {
       icon: Brain,
       titleEn: "AI-Powered Assistant",
       titleAr: "مساعد ذكي",
-      descEn: "Ask questions in natural language and get evidence-backed answers",
-      descAr: "اطرح أسئلة بلغة طبيعية واحصل على إجابات مدعومة بالأدلة",
-      href: "/ai-assistant"
+      descEn: "Ask questions in natural language and get evidence-backed answers with source citations",
+      descAr: "اطرح أسئلة بلغة طبيعية واحصل على إجابات مدعومة بالأدلة والمصادر",
+      href: "/ai-assistant",
+      stats: "Evidence-backed",
+      statsAr: "مدعوم بالأدلة",
+      color: "from-purple-500 to-pink-600"
     },
     {
       icon: FileText,
       titleEn: "Custom Report Builder",
       titleAr: "منشئ التقارير",
-      descEn: "Generate professional reports with selected indicators and analysis",
-      descAr: "إنشاء تقارير احترافية مع المؤشرات والتحليلات المختارة",
-      href: "/report-builder"
+      descEn: "Generate professional reports with selected indicators, charts, and analysis",
+      descAr: "إنشاء تقارير احترافية مع المؤشرات والرسوم البيانية والتحليلات",
+      href: "/report-builder",
+      stats: "PDF/Excel export",
+      statsAr: "تصدير PDF/Excel",
+      color: "from-amber-500 to-orange-600"
     },
     {
       icon: TrendingUp,
       titleEn: "Scenario Simulator",
       titleAr: "محاكي السيناريوهات",
-      descEn: "Model policy impacts and forecast economic outcomes",
+      descEn: "Model policy impacts and forecast economic outcomes with ML-powered predictions",
       descAr: "نمذجة تأثيرات السياسات والتنبؤ بالنتائج الاقتصادية",
-      href: "/scenario-simulator"
+      href: "/scenario-simulator",
+      stats: "What-if analysis",
+      statsAr: "تحليل ماذا لو",
+      color: "from-green-500 to-emerald-600"
     },
     {
       icon: Search,
       titleEn: "Research Library",
       titleAr: "مكتبة الأبحاث",
-      descEn: "Browse reports, policy briefs, and academic publications",
-      descAr: "تصفح التقارير والملخصات السياسية والمنشورات الأكاديمية",
-      href: "/research"
+      descEn: "Browse reports, policy briefs, and academic publications from 50+ sources",
+      descAr: "تصفح التقارير والملخصات السياسية والمنشورات الأكاديمية من أكثر من 50 مصدر",
+      href: "/research",
+      stats: "500+ publications",
+      statsAr: "أكثر من 500 منشور",
+      color: "from-cyan-500 to-blue-600"
     },
   ];
 
@@ -254,7 +272,7 @@ export default function Home() {
   };
 
   // Fetch latest economic events from database
-  const { data: latestEventsData } = trpc.events.list.useQuery({ limit: 3 });
+  const { data: latestEventsData } = trpc.events.list.useQuery({ limit: 6 });
   
   // Map sector to image paths
   const sectorImages: Record<string, string> = {
@@ -269,7 +287,7 @@ export default function Home() {
   };
   
   // Transform database events to display format
-  const latestUpdates = (latestEventsData || []).slice(0, 3).map(event => ({
+  const latestUpdates = (latestEventsData || []).slice(0, 6).map(event => ({
     titleEn: event.title,
     titleAr: event.titleAr || event.title,
     date: new Date(event.eventDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
@@ -442,7 +460,7 @@ export default function Home() {
                     <div className="flex items-center gap-1">
                       <span className="text-xs text-gray-500">YER/USD</span>
                     </div>
-                    <div className="text-xl font-bold text-[#107040] mb-1">{kpiData?.exchangeRateAden?.value || "1 USD = 2,050 YER"}</div>
+                    <div className="text-xl font-bold text-[#107040] mb-1">{kpiData?.exchangeRateAden?.value || "1 USD = 1,890 YER"}</div>
                     <div className="text-xs text-gray-500 mb-2">
                       {language === "ar" ? "سعر عدن الموازي" : "Aden Parallel Rate"}
                     </div>
@@ -533,7 +551,7 @@ export default function Home() {
             </h2>
           </AnimatedSection>
 
-          <StaggeredContainer staggerDelay={150} className="grid md:grid-cols-3 gap-6">
+          <StaggeredContainer staggerDelay={150} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {latestUpdates.map((update, index) => (
               <Link key={index} href={update.href}>
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full">
@@ -578,19 +596,28 @@ export default function Home() {
           <StaggeredContainer staggerDelay={100} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, index) => (
               <Link key={index} href={feature.href}>
-                <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group border-2 hover:border-[#107040]/30">
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
-                      <div className="p-3 rounded-lg bg-[#107040]/10 group-hover:bg-[#107040]/20 transition-colors">
-                        <feature.icon className="h-6 w-6 text-[#107040]" />
+                <Card className="h-full hover:shadow-xl transition-all duration-300 cursor-pointer group border-0 overflow-hidden bg-white dark:bg-gray-800">
+                  <CardContent className="p-0">
+                    {/* Gradient header */}
+                    <div className={`bg-gradient-to-r ${feature.color} p-4 flex items-center justify-between`}>
+                      <div className="p-3 rounded-xl bg-white/20 backdrop-blur-sm">
+                        <feature.icon className="h-6 w-6 text-white" />
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-[#103050] dark:text-white mb-2 group-hover:text-[#107040] transition-colors">
-                          {language === "ar" ? feature.titleAr : feature.titleEn}
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {language === "ar" ? feature.descAr : feature.descEn}
-                        </p>
+                      <span className="text-xs font-medium text-white/90 bg-white/20 px-3 py-1 rounded-full">
+                        {language === "ar" ? feature.statsAr : feature.stats}
+                      </span>
+                    </div>
+                    {/* Content */}
+                    <div className="p-5">
+                      <h3 className="font-bold text-lg text-[#103050] dark:text-white mb-2 group-hover:text-[#107040] transition-colors">
+                        {language === "ar" ? feature.titleAr : feature.titleEn}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        {language === "ar" ? feature.descAr : feature.descEn}
+                      </p>
+                      <div className="mt-4 flex items-center text-[#107040] font-medium text-sm group-hover:translate-x-1 transition-transform">
+                        {language === "ar" ? "استكشف" : "Explore"}
+                        <ArrowRight className={`h-4 w-4 ${language === 'ar' ? 'mr-2 rotate-180' : 'ml-2'}`} />
                       </div>
                     </div>
                   </CardContent>

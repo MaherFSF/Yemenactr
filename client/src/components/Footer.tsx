@@ -44,12 +44,11 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 relative">
-                <div className="absolute top-0 left-0 w-5 h-5 bg-[#107040] rounded-sm"></div>
-                <div className="absolute top-0 right-0 w-5 h-5 bg-[#C0A030] rounded-sm"></div>
-                <div className="absolute bottom-0 left-0 w-5 h-5 bg-white rounded-sm"></div>
-                <div className="absolute bottom-0 right-0 w-4 h-4 bg-[#4A90E2] rounded-full"></div>
-              </div>
+              <img 
+                src="/images/causeway-icon.png" 
+                alt="CauseWay" 
+                className="w-10 h-10 object-contain"
+              />
               <div>
                 <span className="text-xl font-bold">
                   {language === "ar" ? "يتو" : "YETO"}
@@ -148,9 +147,13 @@ export default function Footer() {
               © {new Date().getFullYear()} {language === "ar" ? "يتو. جميع الحقوق محفوظة." : "YETO. All rights reserved."}
             </p>
             <div className="flex items-center gap-4">
-              <span>
+              <span className="flex items-center gap-2">
                 {language === "ar" ? "بدعم من" : "Powered by"}{" "}
-                <span className="font-semibold text-white">CauseWay</span>
+                <img 
+                  src="/images/causeway-logo.png" 
+                  alt="CauseWay" 
+                  className="h-5 inline-block"
+                />
               </span>
               <span className="text-white/30">|</span>
               <Link href="/methodology">

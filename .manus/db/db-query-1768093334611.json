@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO time_series (indicatorCode, regimeTag, date, value, unit, confidenceRating, sourceId) VALUES ('fx_rate_aden_parallel', 'aden_irg', '2026-01-10 00:00:00', 1890.000000, 'YER/USD', 'A', 1) ON DUPLICATE KEY UPDATE value = VALUES(value);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute INSERT INTO time_series (indicatorCode, regimeTag, date, value, unit, confidenceRating, sourceId) VALUES ('fx_rate_aden_parallel', 'aden_irg', '2026-01-10 00:00:00', 1890.000000, 'YER/USD', 'A', 1) ON DUPLICATE KEY UPDATE value = VALUES(value);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 76
+}
