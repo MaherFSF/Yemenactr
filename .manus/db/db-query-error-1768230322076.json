@@ -1,0 +1,8 @@
+{
+  "query": "INSERT INTO webhooks (name, type, url, enabled, events, createdAt) VALUES\n('YETO Alerts Slack Channel', 'slack', 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX', 1, '[\"critical_alert\",\"connector_failure\"]', NOW()),\n('Data Team Discord', 'discord', 'https://discord.com/api/webhooks/000000000000000000/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', 1, '[\"stale_data\",\"new_publication\"]', NOW()),\n('Monitoring System', 'http', 'https://monitoring.yeto.org/api/webhooks/alerts', 0, '[\"all\"]', NOW())",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute INSERT INTO webhooks (name, type, url, enabled, events, createdAt) VALUES\n('YETO Alerts Slack Channel', 'slack', 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX', 1, '[\"critical_alert\",\"connector_failure\"]', NOW()),\n('Data Team Discord', 'discord', 'https://discord.com/api/webhooks/000000000000000000/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', 1, '[\"stale_data\",\"new_publication\"]', NOW()),\n('Monitoring System', 'http', 'https://monitoring.yeto.org/api/webhooks/alerts', 0, '[\"all\"]', NOW())",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1265 (01000) at line 1: Data truncated for column 'type' at row 3"
+  ]
+}

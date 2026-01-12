@@ -1,0 +1,100 @@
+{
+  "query": "SELECT id, type, severity, title, description, indicatorCode, isRead FROM alerts ORDER BY createdAt DESC LIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT id, type, severity, title, description, indicatorCode, isRead FROM alerts ORDER BY createdAt DESC LIMIT 10",
+  "rows": [
+    {
+      "id": "120007",
+      "type": "connector_failure",
+      "severity": "critical",
+      "title": "World Bank API Connection Failed",
+      "description": "Unable to fetch data from World Bank WDI API. Connection timed out after 30 seconds.",
+      "indicatorCode": "WB_GDP",
+      "isRead": "0"
+    },
+    {
+      "id": "120005",
+      "type": "warning",
+      "severity": "warning",
+      "title": "IDP Increase Above 10%: Current value 63852580.00 changed by threshold 10",
+      "description": "{\"thresholdId\":\"idp_increase_10pct\",\"indicatorCode\":\"UNHCR_IDPS\",\"currentValue\":63852580,\"previousValue\":4795983,\"changePercent\":1231.3762788567014,\"threshold\":10}",
+      "indicatorCode": "UNHCR_IDPS",
+      "isRead": "0"
+    },
+    {
+      "id": "120006",
+      "type": "warning",
+      "severity": "warning",
+      "title": "Sanctions Intensity High: Current value 90.00 exceeds threshold 70",
+      "description": "{\"thresholdId\":\"sanctions_intensity_high\",\"indicatorCode\":\"SANCTIONS_INTENSITY_INDEX\",\"currentValue\":90,\"previousValue\":90,\"changePercent\":0,\"threshold\":70}",
+      "indicatorCode": "SANCTIONS_INTENSITY_INDEX",
+      "isRead": "0"
+    },
+    {
+      "id": "120004",
+      "type": "warning",
+      "severity": "warning",
+      "title": "Food Insecurity Above 50%: Current value 53.90 exceeds threshold 50",
+      "description": "{\"thresholdId\":\"food_insecurity_50pct\",\"indicatorCode\":\"FEWS_FOOD_INSECURITY_RATE\",\"currentValue\":53.9,\"previousValue\":53.9,\"changePercent\":0,\"threshold\":50}",
+      "indicatorCode": "FEWS_FOOD_INSECURITY_RATE",
+      "isRead": "0"
+    },
+    {
+      "id": "120001",
+      "type": "warning",
+      "severity": "warning",
+      "title": "Food Insecurity Above 50%: Current value 53.90 exceeds threshold 50",
+      "description": "{\"thresholdId\":\"food_insecurity_50pct\",\"indicatorCode\":\"FEWS_FOOD_INSECURITY_RATE\",\"currentValue\":53.9,\"previousValue\":53.9,\"changePercent\":0,\"threshold\":50}",
+      "indicatorCode": "FEWS_FOOD_INSECURITY_RATE",
+      "isRead": "0"
+    },
+    {
+      "id": "120003",
+      "type": "warning",
+      "severity": "warning",
+      "title": "Sanctions Intensity High: Current value 90.00 exceeds threshold 70",
+      "description": "{\"thresholdId\":\"sanctions_intensity_high\",\"indicatorCode\":\"SANCTIONS_INTENSITY_INDEX\",\"currentValue\":90,\"previousValue\":90,\"changePercent\":0,\"threshold\":70}",
+      "indicatorCode": "SANCTIONS_INTENSITY_INDEX",
+      "isRead": "0"
+    },
+    {
+      "id": "120002",
+      "type": "warning",
+      "severity": "warning",
+      "title": "IDP Increase Above 10%: Current value 63852580.00 changed by threshold 10",
+      "description": "{\"thresholdId\":\"idp_increase_10pct\",\"indicatorCode\":\"UNHCR_IDPS\",\"currentValue\":63852580,\"previousValue\":4795983,\"changePercent\":1231.3762788567014,\"threshold\":10}",
+      "indicatorCode": "UNHCR_IDPS",
+      "isRead": "0"
+    },
+    {
+      "id": "120011",
+      "type": "stale_data",
+      "severity": "critical",
+      "title": "WHO Health Data Critical (16 days)",
+      "description": "Health indicators from WHO GHO have not been updated in 16 days, exceeding the 14-day critical threshold.",
+      "indicatorCode": "WHO_HEALTH",
+      "isRead": "0"
+    },
+    {
+      "id": "120014",
+      "type": "connector_failure",
+      "severity": "warning",
+      "title": "WFP API Authentication Required",
+      "description": "WFP VAM API requires authentication. Please configure API credentials.",
+      "indicatorCode": "WFP_FOOD",
+      "isRead": "0"
+    },
+    {
+      "id": "90003",
+      "type": "warning",
+      "severity": "warning",
+      "title": "Sanctions Intensity High: Current value 90.00 exceeds threshold 70",
+      "description": "{\"thresholdId\":\"sanctions_intensity_high\",\"indicatorCode\":\"SANCTIONS_INTENSITY_INDEX\",\"currentValue\":90,\"previousValue\":0,\"changePercent\":null,\"threshold\":70}",
+      "indicatorCode": "SANCTIONS_INTENSITY_INDEX",
+      "isRead": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttype\tseverity\ttitle\tdescription\tindicatorCode\tisRead\n120007\tconnector_failure\tcritical\tWorld Bank API Connection Failed\tUnable to fetch data from World Bank WDI API. Connection timed out after 30 seconds.\tWB_GDP\t0\n120005\twarning\twarning\tIDP Increase Above 10%: Current value 63852580.00 changed by threshold 10\t{\"thresholdId\":\"idp_increase_10pct\",\"indicatorCode\":\"UNHCR_IDPS\",\"currentValue\":63852580,\"previousValue\":4795983,\"changePercent\":1231.3762788567014,\"threshold\":10}\tUNHCR_IDPS\t0\n120006\twarning\twarning\tSanctions Intensity High: Current value 90.00 exceeds threshold 70\t{\"thresholdId\":\"sanctions_intensity_high\",\"indicatorCode\":\"SANCTIONS_INTENSITY_INDEX\",\"currentValue\":90,\"previousValue\":90,\"changePercent\":0,\"threshold\":70}\tSANCTIONS_INTENSITY_INDEX\t0\n120004\twarning\twarning\tFood Insecurity Above 50%: Current value 53.90 exceeds threshold 50\t{\"thresholdId\":\"food_insecurity_50pct\",\"indicatorCode\":\"FEWS_FOOD_INSECURITY_RATE\",\"currentValue\":53.9,\"previousValue\":53.9,\"changePercent\":0,\"threshold\":50}\tFEWS_FOOD_INSECURITY_RATE\t0\n120001\twarning\twarning\tFood Insecurity Above 50%: Current value 53.90 exceeds threshold 50\t{\"thresholdId\":\"food_insecurity_50pct\",\"indicatorCode\":\"FEWS_FOOD_INSECURITY_RATE\",\"currentValue\":53.9,\"previousValue\":53.9,\"changePercent\":0,\"threshold\":50}\tFEWS_FOOD_INSECURITY_RATE\t0\n120003\twarning\twarning\tSanctions Intensity High: Current value 90.00 exceeds threshold 70\t{\"thresholdId\":\"sanctions_intensity_high\",\"indicatorCode\":\"SANCTIONS_INTENSITY_INDEX\",\"currentValue\":90,\"previousValue\":90,\"changePercent\":0,\"threshold\":70}\tSANCTIONS_INTENSITY_INDEX\t0\n120002\twarning\twarning\tIDP Increase Above 10%: Current value 63852580.00 changed by threshold 10\t{\"thresholdId\":\"idp_increase_10pct\",\"indicatorCode\":\"UNHCR_IDPS\",\"currentValue\":63852580,\"previousValue\":4795983,\"changePercent\":1231.3762788567014,\"threshold\":10}\tUNHCR_IDPS\t0\n120011\tstale_data\tcritical\tWHO Health Data Critical (16 days)\tHealth indicators from WHO GHO have not been updated in 16 days, exceeding the 14-day critical threshold.\tWHO_HEALTH\t0\n120014\tconnector_failure\twarning\tWFP API Authentication Required\tWFP VAM API requires authentication. Please configure API credentials.\tWFP_FOOD\t0\n90003\twarning\twarning\tSanctions Intensity High: Current value 90.00 exceeds threshold 70\t{\"thresholdId\":\"sanctions_intensity_high\",\"indicatorCode\":\"SANCTIONS_INTENSITY_INDEX\",\"currentValue\":90,\"previousValue\":0,\"changePercent\":null,\"threshold\":70}\tSANCTIONS_INTENSITY_INDEX\t0\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}

@@ -23,18 +23,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
-// Types for alerts
+// Types for alerts (matches API response)
 interface Alert {
   id: number;
   type: string;
   severity: string;
   title: string;
-  description: string | null;
-  indicatorCode: string | null;
-  isRead: boolean;
-  acknowledgedBy: number | null;
-  acknowledgedAt: Date | null;
-  createdAt: Date;
+  message: string | null;  // API returns 'message' not 'description'
+  source: string | null;   // API returns 'source' not 'indicatorCode'
+  acknowledged: boolean;   // API returns 'acknowledged' not 'isRead'
+  acknowledgedAt: string | null;
+  resolved: boolean;
+  resolvedAt: string | null;
+  createdAt: string;
 }
 
 export default function AlertHistory() {
@@ -43,11 +44,7 @@ export default function AlertHistory() {
 
   // Fetch alerts from database
   // @ts-ignore - tRPC types may not be fully generated yet
-  const { data: alerts, isLoading, refetch } = trpc.admin.getAlerts?.useQuery?.() || { 
-    data: undefined, 
-    isLoading: true, 
-    refetch: () => {} 
-  };
+  const { data: alerts, isLoading, refetch } = trpc.admin.getAlerts.useQuery({ status: filter, limit: 100 });
 
   // Mutation to acknowledge alert
   // @ts-ignore
@@ -76,7 +73,7 @@ export default function AlertHistory() {
   // Filter and search alerts
   const filteredAlerts = (alerts || []).filter((alert: Alert) => {
     // Apply type filter
-    if (filter === "unread" && alert.isRead) return false;
+    if (filter === "unread" && alert.acknowledged) return false;
     if (filter === "critical" && alert.severity !== "critical") return false;
     if (filter === "warning" && alert.severity !== "warning") return false;
     
@@ -85,8 +82,8 @@ export default function AlertHistory() {
       const query = searchQuery.toLowerCase();
       return (
         alert.title.toLowerCase().includes(query) ||
-        alert.description?.toLowerCase().includes(query) ||
-        alert.indicatorCode?.toLowerCase().includes(query)
+        alert.message?.toLowerCase().includes(query) ||
+        alert.source?.toLowerCase().includes(query)
       );
     }
     return true;
@@ -95,7 +92,7 @@ export default function AlertHistory() {
   // Stats
   const stats = {
     total: (alerts || []).length,
-    unread: (alerts || []).filter((a: Alert) => !a.isRead).length,
+    unread: (alerts || []).filter((a: Alert) => !a.acknowledged).length,
     critical: (alerts || []).filter((a: Alert) => a.severity === "critical").length,
     warning: (alerts || []).filter((a: Alert) => a.severity === "warning").length,
   };
@@ -310,7 +307,7 @@ export default function AlertHistory() {
                   <div 
                     key={alert.id} 
                     className={`flex gap-4 p-4 border rounded-lg transition-all hover:shadow-md ${
-                      !alert.isRead ? "bg-blue-50/50 dark:bg-blue-900/10 border-blue-200" : ""
+                      !alert.acknowledged ? "bg-blue-50/50 dark:bg-blue-900/10 border-blue-200" : ""
                     } ${
                       alert.severity === "critical" ? "border-l-4 border-l-red-500" :
                       alert.severity === "warning" ? "border-l-4 border-l-yellow-500" : ""
@@ -325,7 +322,7 @@ export default function AlertHistory() {
                         <h4 className="font-medium truncate">{alert.title}</h4>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           {getSeverityBadge(alert.severity)}
-                          {!alert.isRead && (
+                          {!alert.acknowledged && (
                             <Badge variant="outline" className="bg-blue-500/10 text-blue-600 text-xs">
                               New
                             </Badge>
@@ -333,21 +330,21 @@ export default function AlertHistory() {
                         </div>
                       </div>
                       
-                      {alert.description && (
+                      {alert.message && (
                         <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
-                          {alert.description}
+                          {alert.message}
                         </p>
                       )}
                       
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
-                          {formatTimeAgo(alert.createdAt)}
+                          {formatTimeAgo(new Date(alert.createdAt))}
                         </span>
-                        {alert.indicatorCode && (
+                        {alert.source && (
                           <span className="flex items-center gap-1">
                             <Filter className="w-3 h-3" />
-                            {alert.indicatorCode}
+                            {alert.source}
                           </span>
                         )}
                         {alert.acknowledgedAt && (
@@ -360,11 +357,11 @@ export default function AlertHistory() {
                     </div>
                     
                     <div className="flex flex-col gap-2 flex-shrink-0">
-                      {!alert.isRead && (
+                      {!alert.acknowledged && (
                         <Button 
                           variant="outline" 
                           size="sm"
-                          onClick={() => acknowledgeAlert?.mutate?.({ alertId: alert.id })}
+                          onClick={() => acknowledgeAlert?.mutate?.({ id: alert.id })}
                         >
                           Acknowledge
                         </Button>
@@ -373,7 +370,7 @@ export default function AlertHistory() {
                         variant="ghost" 
                         size="sm"
                         className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                        onClick={() => resolveAlert?.mutate?.({ alertId: alert.id })}
+                        onClick={() => resolveAlert?.mutate?.({ id: alert.id })}
                       >
                         <CheckCircle2 className="w-4 h-4 mr-1" />
                         Resolve

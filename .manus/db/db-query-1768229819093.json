@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `webhook_event_types` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `code` varchar(100) NOT NULL UNIQUE,\n  `name` varchar(255) NOT NULL,\n  `description` text,\n  `category` enum('alerts','data','system','publications') NOT NULL,\n  `isActive` boolean DEFAULT true NOT NULL,\n  CONSTRAINT `webhook_event_types_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute CREATE TABLE IF NOT EXISTS `webhook_event_types` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `code` varchar(100) NOT NULL UNIQUE,\n  `name` varchar(255) NOT NULL,\n  `description` text,\n  `category` enum('alerts','data','system','publications') NOT NULL,\n  `isActive` boolean DEFAULT true NOT NULL,\n  CONSTRAINT `webhook_event_types_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 193
+}

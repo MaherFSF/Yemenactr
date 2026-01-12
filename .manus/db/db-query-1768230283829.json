@@ -1,0 +1,20 @@
+{
+  "query": "SELECT \n  (SELECT COUNT(*) FROM time_series) as time_series_count,\n  (SELECT COUNT(*) FROM economic_events) as events_count,\n  (SELECT COUNT(*) FROM research_publications) as publications_count,\n  (SELECT COUNT(*) FROM indicators) as indicators_count,\n  (SELECT COUNT(*) FROM glossary_terms) as glossary_count,\n  (SELECT COUNT(*) FROM webhooks) as webhooks_count,\n  (SELECT COUNT(*) FROM connector_thresholds) as thresholds_count,\n  (SELECT COUNT(*) FROM alerts) as alerts_count",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT \n  (SELECT COUNT(*) FROM time_series) as time_series_count,\n  (SELECT COUNT(*) FROM economic_events) as events_count,\n  (SELECT COUNT(*) FROM research_publications) as publications_count,\n  (SELECT COUNT(*) FROM indicators) as indicators_count,\n  (SELECT COUNT(*) FROM glossary_terms) as glossary_count,\n  (SELECT COUNT(*) FROM webhooks) as webhooks_count,\n  (SELECT COUNT(*) FROM connector_thresholds) as thresholds_count,\n  (SELECT COUNT(*) FROM alerts) as alerts_count",
+  "rows": [
+    {
+      "time_series_count": "3331",
+      "events_count": "173",
+      "publications_count": "273",
+      "indicators_count": "66",
+      "glossary_count": "51",
+      "webhooks_count": "0",
+      "thresholds_count": "12",
+      "alerts_count": "17"
+    }
+  ],
+  "messages": [],
+  "stdout": "time_series_count\tevents_count\tpublications_count\tindicators_count\tglossary_count\twebhooks_count\tthresholds_count\talerts_count\n3331\t173\t273\t66\t51\t0\t12\t17\n",
+  "stderr": "",
+  "execution_time_ms": 68
+}

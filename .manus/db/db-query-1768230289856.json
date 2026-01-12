@@ -1,0 +1,42 @@
+{
+  "query": "SELECT 'time_series' as tbl, COUNT(*) as cnt FROM time_series\nUNION ALL SELECT 'economic_events', COUNT(*) FROM economic_events\nUNION ALL SELECT 'research_publications', COUNT(*) FROM research_publications\nUNION ALL SELECT 'indicators', COUNT(*) FROM indicators\nUNION ALL SELECT 'glossary_terms', COUNT(*) FROM glossary_terms\nUNION ALL SELECT 'webhooks', COUNT(*) FROM webhooks\nUNION ALL SELECT 'connector_thresholds', COUNT(*) FROM connector_thresholds\nUNION ALL SELECT 'alerts', COUNT(*) FROM alerts",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT 'time_series' as tbl, COUNT(*) as cnt FROM time_series\nUNION ALL SELECT 'economic_events', COUNT(*) FROM economic_events\nUNION ALL SELECT 'research_publications', COUNT(*) FROM research_publications\nUNION ALL SELECT 'indicators', COUNT(*) FROM indicators\nUNION ALL SELECT 'glossary_terms', COUNT(*) FROM glossary_terms\nUNION ALL SELECT 'webhooks', COUNT(*) FROM webhooks\nUNION ALL SELECT 'connector_thresholds', COUNT(*) FROM connector_thresholds\nUNION ALL SELECT 'alerts', COUNT(*) FROM alerts",
+  "rows": [
+    {
+      "tbl": "research_publications",
+      "cnt": "273"
+    },
+    {
+      "tbl": "indicators",
+      "cnt": "66"
+    },
+    {
+      "tbl": "economic_events",
+      "cnt": "173"
+    },
+    {
+      "tbl": "glossary_terms",
+      "cnt": "51"
+    },
+    {
+      "tbl": "webhooks",
+      "cnt": "0"
+    },
+    {
+      "tbl": "time_series",
+      "cnt": "3331"
+    },
+    {
+      "tbl": "connector_thresholds",
+      "cnt": "12"
+    },
+    {
+      "tbl": "alerts",
+      "cnt": "17"
+    }
+  ],
+  "messages": [],
+  "stdout": "tbl\tcnt\nresearch_publications\t273\nindicators\t66\neconomic_events\t173\nglossary_terms\t51\nwebhooks\t0\ntime_series\t3331\nconnector_thresholds\t12\nalerts\t17\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

@@ -1382,6 +1382,448 @@ Answer the user's question based on this research. Be specific and cite sources 
         
         return { jobId: input.jobId, jobName: `Job ${input.jobId}`, duration, status: "success" };
       }),
+
+    // ============================================================================
+    // WEBHOOK MANAGEMENT
+    // ============================================================================
+
+    // Get all webhooks
+    getWebhooks: adminProcedure
+      .query(async () => {
+        const db = await getDb();
+        try {
+          const result = await db.execute(sql`
+            SELECT id, name, type, url, enabled, events, headers, lastTriggered, failureCount, createdAt
+            FROM webhooks
+            ORDER BY createdAt DESC
+          `);
+          // Handle TiDB result format
+          const webhooks = Array.isArray(result) && Array.isArray(result[0]) ? result[0] : result;
+          return (webhooks as any[]).map(w => ({
+            id: w.id,
+            name: w.name,
+            type: w.type,
+            url: w.url,
+            enabled: Boolean(w.enabled),
+            events: typeof w.events === 'string' ? JSON.parse(w.events) : (w.events || []),
+            headers: w.headers ? (typeof w.headers === 'string' ? JSON.parse(w.headers) : w.headers) : null,
+            lastTriggered: w.lastTriggered ? new Date(w.lastTriggered).toISOString() : null,
+            failureCount: w.failureCount || 0,
+            createdAt: new Date(w.createdAt).toISOString(),
+          }));
+        } catch (error) {
+          return [];
+        }
+      }),
+
+    // Create webhook
+    createWebhook: adminProcedure
+      .input(z.object({
+        name: z.string().min(1),
+        type: z.enum(["slack", "discord", "email", "custom"]),
+        url: z.string().min(1),
+        events: z.array(z.string()),
+        headers: z.record(z.string()).optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const db = await getDb();
+        const result = await db.execute(sql`
+          INSERT INTO webhooks (name, type, url, events, headers, enabled, createdBy)
+          VALUES (${input.name}, ${input.type}, ${input.url}, ${JSON.stringify(input.events)}, ${input.headers ? JSON.stringify(input.headers) : null}, true, ${ctx.user?.id || null})
+        `);
+        return { success: true, id: (result as any).insertId };
+      }),
+
+    // Update webhook
+    updateWebhook: adminProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().min(1).optional(),
+        url: z.string().min(1).optional(),
+        events: z.array(z.string()).optional(),
+        enabled: z.boolean().optional(),
+        headers: z.record(z.string()).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        const updates: string[] = [];
+        if (input.name !== undefined) updates.push(`name = '${input.name}'`);
+        if (input.url !== undefined) updates.push(`url = '${input.url}'`);
+        if (input.events !== undefined) updates.push(`events = '${JSON.stringify(input.events)}'`);
+        if (input.enabled !== undefined) updates.push(`enabled = ${input.enabled}`);
+        if (input.headers !== undefined) updates.push(`headers = '${JSON.stringify(input.headers)}'`);
+        
+        if (updates.length > 0) {
+          await db.execute(sql.raw(`UPDATE webhooks SET ${updates.join(', ')}, updatedAt = NOW() WHERE id = ${input.id}`));
+        }
+        return { success: true, id: input.id };
+      }),
+
+    // Delete webhook
+    deleteWebhook: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        await db.execute(sql`DELETE FROM webhooks WHERE id = ${input.id}`);
+        return { success: true };
+      }),
+
+    // Toggle webhook enabled status
+    toggleWebhook: adminProcedure
+      .input(z.object({ id: z.number(), enabled: z.boolean() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        await db.execute(sql`UPDATE webhooks SET enabled = ${input.enabled}, updatedAt = NOW() WHERE id = ${input.id}`);
+        return { success: true, id: input.id, enabled: input.enabled };
+      }),
+
+    // Test webhook
+    testWebhook: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        const webhooks = await db.execute(sql`SELECT * FROM webhooks WHERE id = ${input.id}`);
+        const webhook = (webhooks as any[])[0];
+        
+        if (!webhook) {
+          return { success: false, error: "Webhook not found" };
+        }
+
+        const testPayload = {
+          event: "test",
+          timestamp: new Date().toISOString(),
+          message: "This is a test notification from YETO",
+          platform: "YETO - Yemen Economic Transparency Observatory",
+        };
+
+        try {
+          const startTime = Date.now();
+          let response;
+          
+          if (webhook.type === "slack") {
+            response = await fetch(webhook.url, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                text: ":white_check_mark: *YETO Test Notification*\nThis is a test message from the Yemen Economic Transparency Observatory.",
+                attachments: [{
+                  color: "#107040",
+                  fields: [{ title: "Status", value: "Connection successful", short: true }],
+                }],
+              }),
+            });
+          } else if (webhook.type === "discord") {
+            response = await fetch(webhook.url, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                embeds: [{
+                  title: ":white_check_mark: YETO Test Notification",
+                  description: "This is a test message from the Yemen Economic Transparency Observatory.",
+                  color: 0x107040,
+                  fields: [{ name: "Status", value: "Connection successful", inline: true }],
+                  timestamp: new Date().toISOString(),
+                }],
+              }),
+            });
+          } else {
+            response = await fetch(webhook.url, {
+              method: "POST",
+              headers: { "Content-Type": "application/json", ...(webhook.headers || {}) },
+              body: JSON.stringify(testPayload),
+            });
+          }
+
+          const duration = Date.now() - startTime;
+          const success = response.ok;
+          
+          // Log the delivery
+          await db.execute(sql`
+            INSERT INTO webhook_delivery_logs (webhookId, eventType, payload, responseStatus, success, duration)
+            VALUES (${input.id}, 'test', ${JSON.stringify(testPayload)}, ${response.status}, ${success}, ${duration})
+          `);
+
+          if (success) {
+            await db.execute(sql`UPDATE webhooks SET lastTriggered = NOW(), failureCount = 0 WHERE id = ${input.id}`);
+          } else {
+            await db.execute(sql`UPDATE webhooks SET failureCount = failureCount + 1 WHERE id = ${input.id}`);
+          }
+
+          return { success, status: response.status, duration };
+        } catch (error: any) {
+          await db.execute(sql`
+            INSERT INTO webhook_delivery_logs (webhookId, eventType, payload, success, errorMessage)
+            VALUES (${input.id}, 'test', ${JSON.stringify(testPayload)}, false, ${error.message})
+          `);
+          await db.execute(sql`UPDATE webhooks SET failureCount = failureCount + 1 WHERE id = ${input.id}`);
+          return { success: false, error: error.message };
+        }
+      }),
+
+    // Get webhook event types
+    getWebhookEventTypes: adminProcedure
+      .query(async () => {
+        const db = await getDb();
+        try {
+          const result = await db.execute(sql`SELECT * FROM webhook_event_types WHERE isActive = true ORDER BY category, name`);
+          // Handle TiDB result format
+          const types = Array.isArray(result) && Array.isArray(result[0]) ? result[0] : result;
+          if (!types || (types as any[]).length === 0) {
+            return [
+              { code: "connector_failure", name: "Connector Failure", description: "When a data connector fails", category: "alerts" },
+              { code: "stale_data_warning", name: "Stale Data Warning", description: "When data exceeds warning threshold", category: "alerts" },
+              { code: "stale_data_critical", name: "Stale Data Critical", description: "When data exceeds critical threshold", category: "alerts" },
+              { code: "new_data_available", name: "New Data Available", description: "When new data is ingested", category: "data" },
+              { code: "new_publication", name: "New Publication", description: "When a new publication is added", category: "publications" },
+              { code: "anomaly_detected", name: "Anomaly Detected", description: "When unusual data patterns are detected", category: "alerts" },
+            ];
+          }
+          return (types as any[]).map(t => ({
+            code: t.code,
+            name: t.name,
+            description: t.description,
+            category: t.category,
+          }));
+        } catch (error) {
+          return [
+            { code: "connector_failure", name: "Connector Failure", description: "When a data connector fails", category: "alerts" },
+            { code: "stale_data_warning", name: "Stale Data Warning", description: "When data exceeds warning threshold", category: "alerts" },
+            { code: "new_data_available", name: "New Data Available", description: "When new data is ingested", category: "data" },
+            { code: "new_publication", name: "New Publication", description: "When a new publication is added", category: "publications" },
+          ];
+        }
+      }),
+
+    // Get webhook delivery logs
+    getWebhookDeliveryLogs: adminProcedure
+      .input(z.object({
+        webhookId: z.number().optional(),
+        limit: z.number().min(1).max(100).default(50),
+      }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        try {
+          let query = sql`
+            SELECT l.*, w.name as webhookName, w.type as webhookType
+            FROM webhook_delivery_logs l
+            JOIN webhooks w ON l.webhookId = w.id
+          `;
+          if (input.webhookId) {
+            query = sql`
+              SELECT l.*, w.name as webhookName, w.type as webhookType
+              FROM webhook_delivery_logs l
+              JOIN webhooks w ON l.webhookId = w.id
+              WHERE l.webhookId = ${input.webhookId}
+            `;
+          }
+          const logs = await db.execute(sql`${query} ORDER BY l.deliveredAt DESC LIMIT ${input.limit}`);
+          return (logs as any[]).map(l => ({
+            id: l.id,
+            webhookId: l.webhookId,
+            webhookName: l.webhookName,
+            webhookType: l.webhookType,
+            eventType: l.eventType,
+            payload: typeof l.payload === 'string' ? JSON.parse(l.payload) : l.payload,
+            responseStatus: l.responseStatus,
+            success: Boolean(l.success),
+            errorMessage: l.errorMessage,
+            deliveredAt: new Date(l.deliveredAt).toISOString(),
+            duration: l.duration,
+          }));
+        } catch (error) {
+          return [];
+        }
+      }),
+
+    // ============================================================================
+    // CONNECTOR THRESHOLDS
+    // ============================================================================
+
+    // Get connector thresholds
+    getConnectorThresholds: adminProcedure
+      .query(async () => {
+        const db = await getDb();
+        try {
+          const result = await db.execute(sql`SELECT * FROM connector_thresholds ORDER BY connectorCode`);
+          // Handle TiDB result format
+          const thresholds = Array.isArray(result) && Array.isArray(result[0]) ? result[0] : result;
+          if (!thresholds || (thresholds as any[]).length === 0) {
+            // Return default thresholds for all connectors
+            return [
+              { id: 1, connectorCode: 'world_bank', warningDays: 7, criticalDays: 14, enabled: true, updatedAt: new Date().toISOString() },
+              { id: 2, connectorCode: 'unhcr', warningDays: 7, criticalDays: 14, enabled: true, updatedAt: new Date().toISOString() },
+              { id: 3, connectorCode: 'who', warningDays: 7, criticalDays: 14, enabled: true, updatedAt: new Date().toISOString() },
+              { id: 4, connectorCode: 'wfp', warningDays: 7, criticalDays: 14, enabled: true, updatedAt: new Date().toISOString() },
+              { id: 5, connectorCode: 'ocha_fts', warningDays: 7, criticalDays: 14, enabled: true, updatedAt: new Date().toISOString() },
+              { id: 6, connectorCode: 'unicef', warningDays: 7, criticalDays: 14, enabled: true, updatedAt: new Date().toISOString() },
+              { id: 7, connectorCode: 'undp', warningDays: 14, criticalDays: 30, enabled: true, updatedAt: new Date().toISOString() },
+              { id: 8, connectorCode: 'iati', warningDays: 7, criticalDays: 14, enabled: false, updatedAt: new Date().toISOString() },
+              { id: 9, connectorCode: 'cby', warningDays: 1, criticalDays: 3, enabled: true, updatedAt: new Date().toISOString() },
+              { id: 10, connectorCode: 'hdx', warningDays: 7, criticalDays: 14, enabled: true, updatedAt: new Date().toISOString() },
+              { id: 11, connectorCode: 'fews_net', warningDays: 7, criticalDays: 14, enabled: true, updatedAt: new Date().toISOString() },
+              { id: 12, connectorCode: 'reliefweb', warningDays: 3, criticalDays: 7, enabled: false, updatedAt: new Date().toISOString() },
+            ];
+          }
+          return (thresholds as any[]).map(t => ({
+            id: t.id,
+            connectorCode: t.connectorCode,
+            warningDays: t.warningDays,
+            criticalDays: t.criticalDays,
+            enabled: Boolean(t.enabled),
+            updatedAt: new Date(t.updatedAt).toISOString(),
+          }));
+        } catch (error) {
+          return [];
+        }
+      }),
+
+    // Update connector threshold
+    updateConnectorThreshold: adminProcedure
+      .input(z.object({
+        connectorCode: z.string(),
+        warningDays: z.number().min(1).max(365),
+        criticalDays: z.number().min(1).max(365),
+        enabled: z.boolean(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const db = await getDb();
+        await db.execute(sql`
+          INSERT INTO connector_thresholds (connectorCode, warningDays, criticalDays, enabled, updatedBy)
+          VALUES (${input.connectorCode}, ${input.warningDays}, ${input.criticalDays}, ${input.enabled}, ${ctx.user?.id || null})
+          ON DUPLICATE KEY UPDATE 
+            warningDays = ${input.warningDays},
+            criticalDays = ${input.criticalDays},
+            enabled = ${input.enabled},
+            updatedBy = ${ctx.user?.id || null}
+        `);
+        return { success: true, connectorCode: input.connectorCode };
+      }),
+
+    // Reset all thresholds to defaults
+    resetConnectorThresholds: adminProcedure
+      .mutation(async () => {
+        const db = await getDb();
+        const defaults = [
+          { code: 'world_bank', warning: 30, critical: 90 },
+          { code: 'unhcr', warning: 14, critical: 30 },
+          { code: 'who', warning: 30, critical: 60 },
+          { code: 'ocha_fts', warning: 7, critical: 14 },
+          { code: 'wfp', warning: 7, critical: 14 },
+          { code: 'cby', warning: 1, critical: 3 },
+          { code: 'hdx', warning: 14, critical: 30 },
+          { code: 'fews_net', warning: 30, critical: 60 },
+          { code: 'reliefweb', warning: 3, critical: 7 },
+          { code: 'sanctions', warning: 7, critical: 14 },
+          { code: 'unicef', warning: 30, critical: 60 },
+          { code: 'undp', warning: 90, critical: 180 },
+        ];
+        
+        for (const d of defaults) {
+          await db.execute(sql`
+            UPDATE connector_thresholds 
+            SET warningDays = ${d.warning}, criticalDays = ${d.critical}, enabled = true
+            WHERE connectorCode = ${d.code}
+          `);
+        }
+        return { success: true };
+      }),
+
+    // ============================================================================
+    // ALERTS MANAGEMENT
+    // ============================================================================
+
+    // Get all alerts
+    getAlerts: adminProcedure
+      .input(z.object({
+        status: z.enum(["all", "unread", "critical", "warning"]).default("all"),
+        limit: z.number().min(1).max(100).default(50),
+      }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        try {
+          let whereClause = "1=1";
+          if (input.status === "unread") whereClause = "isRead = 0";
+          if (input.status === "critical") whereClause = "severity = 'critical'";
+          if (input.status === "warning") whereClause = "severity = 'warning'";
+          
+          const result = await db.execute(sql.raw(`
+            SELECT * FROM alerts 
+            WHERE ${whereClause}
+            ORDER BY createdAt DESC 
+            LIMIT ${input.limit}
+          `));
+          // Handle TiDB result format - data is in first element of array
+          const alerts = Array.isArray(result) && Array.isArray(result[0]) ? result[0] : result;
+          return (alerts as any[]).map(a => {
+            let createdAtStr = new Date().toISOString();
+            try {
+              if (a.createdAt) {
+                const d = new Date(a.createdAt);
+                if (!isNaN(d.getTime())) createdAtStr = d.toISOString();
+              }
+            } catch {}
+            return {
+              id: a.id,
+              type: a.type || 'system',
+              severity: a.severity || 'info',
+              title: a.title || 'Alert',
+              message: a.description || '',
+              source: a.indicatorCode || null,
+              acknowledged: Boolean(a.isRead),
+              acknowledgedAt: null,
+              resolved: Boolean(a.isRead),
+              resolvedAt: null,
+              createdAt: createdAtStr,
+            };
+          });
+        } catch (error) {
+          console.error('Error fetching alerts:', error);
+          return [];
+        }
+      }),
+
+    // Acknowledge alert
+    acknowledgeAlert: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        await db.execute(sql`UPDATE alerts SET acknowledged = true, acknowledgedAt = NOW() WHERE id = ${input.id}`);
+        return { success: true };
+      }),
+
+    // Resolve alert
+    resolveAlert: adminProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        const db = await getDb();
+        await db.execute(sql`UPDATE alerts SET resolved = true, resolvedAt = NOW() WHERE id = ${input.id}`);
+        return { success: true };
+      }),
+
+    // Get alert counts
+    getAlertCounts: adminProcedure
+      .query(async () => {
+        const db = await getDb();
+        try {
+          const counts = await db.execute(sql`
+            SELECT 
+              COUNT(*) as total,
+              SUM(CASE WHEN isRead = 0 THEN 1 ELSE 0 END) as unread,
+              SUM(CASE WHEN severity = 'critical' THEN 1 ELSE 0 END) as critical,
+              SUM(CASE WHEN severity = 'warning' THEN 1 ELSE 0 END) as warnings
+            FROM alerts
+          `);
+          const c = (counts as any[])[0] || {};
+          return {
+            total: Number(c.total) || 0,
+            unread: Number(c.unread) || 0,
+            critical: Number(c.critical) || 0,
+            warnings: Number(c.warnings) || 0,
+          };
+        } catch (error) {
+          return { total: 0, unread: 0, critical: 0, warnings: 0 };
+        }
+      }),
   }),
 
   // ============================================================================

@@ -254,6 +254,18 @@ export default function Header() {
               {language === "ar" ? "الاشتراكات" : "Pricing"}
             </a>
           </Link>
+
+          {/* Admin Hub Link */}
+          <Link href="/admin-hub">
+            <a className={`px-3 py-2 text-sm font-medium rounded-md transition-colors flex items-center gap-1 ${
+              location.startsWith("/admin") 
+                ? "text-[#107040] bg-[#107040]/10" 
+                : "text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5"
+            }`}>
+              <Shield className="h-4 w-4" />
+              {language === "ar" ? "الإدارة" : "Admin"}
+            </a>
+          </Link>
         </nav>
 
         {/* Right Side Actions */}

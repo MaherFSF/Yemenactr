@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `email_notification_queue` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `recipientEmail` varchar(320) NOT NULL,\n  `recipientName` varchar(255),\n  `subject` varchar(500) NOT NULL,\n  `htmlBody` text NOT NULL,\n  `textBody` text,\n  `priority` enum('low','normal','high','critical') DEFAULT 'normal' NOT NULL,\n  `status` enum('pending','sending','sent','failed') DEFAULT 'pending' NOT NULL,\n  `attempts` int DEFAULT 0 NOT NULL,\n  `lastAttempt` timestamp,\n  `sentAt` timestamp,\n  `errorMessage` text,\n  `metadata` json,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  CONSTRAINT `email_notification_queue_id` PRIMARY KEY(`id`),\n  INDEX `status_idx` (`status`),\n  INDEX `priority_idx` (`priority`),\n  INDEX `created_at_idx` (`createdAt`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute CREATE TABLE IF NOT EXISTS `email_notification_queue` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `recipientEmail` varchar(320) NOT NULL,\n  `recipientName` varchar(255),\n  `subject` varchar(500) NOT NULL,\n  `htmlBody` text NOT NULL,\n  `textBody` text,\n  `priority` enum('low','normal','high','critical') DEFAULT 'normal' NOT NULL,\n  `status` enum('pending','sending','sent','failed') DEFAULT 'pending' NOT NULL,\n  `attempts` int DEFAULT 0 NOT NULL,\n  `lastAttempt` timestamp,\n  `sentAt` timestamp,\n  `errorMessage` text,\n  `metadata` json,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  CONSTRAINT `email_notification_queue_id` PRIMARY KEY(`id`),\n  INDEX `status_idx` (`status`),\n  INDEX `priority_idx` (`priority`),\n  INDEX `created_at_idx` (`createdAt`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 199
+}

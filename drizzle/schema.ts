@@ -1322,3 +1322,106 @@ export const researchIngestionSources = mysqlTable("research_ingestion_sources",
 
 export type ResearchIngestionSource = typeof researchIngestionSources.$inferSelect;
 export type InsertResearchIngestionSource = typeof researchIngestionSources.$inferInsert;
+
+
+// ============================================================================
+// WEBHOOKS & NOTIFICATIONS
+// ============================================================================
+
+export const webhooks = mysqlTable("webhooks", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  type: mysqlEnum("type", ["slack", "discord", "email", "custom"]).notNull(),
+  url: text("url").notNull(), // Webhook URL or email address
+  enabled: boolean("enabled").default(true).notNull(),
+  events: json("events").$type<string[]>().notNull(), // Array of event types to subscribe to
+  headers: json("headers").$type<Record<string, string>>(), // Custom headers for HTTP webhooks
+  lastTriggered: timestamp("lastTriggered"),
+  failureCount: int("failureCount").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  createdBy: int("createdBy").references(() => users.id),
+}, (table) => ({
+  typeIdx: index("type_idx").on(table.type),
+  enabledIdx: index("enabled_idx").on(table.enabled),
+}));
+
+export type Webhook = typeof webhooks.$inferSelect;
+export type InsertWebhook = typeof webhooks.$inferInsert;
+
+export const webhookEventTypes = mysqlTable("webhook_event_types", {
+  id: int("id").autoincrement().primaryKey(),
+  code: varchar("code", { length: 100 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  category: mysqlEnum("category", ["alerts", "data", "system", "publications"]).notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+});
+
+export type WebhookEventType = typeof webhookEventTypes.$inferSelect;
+export type InsertWebhookEventType = typeof webhookEventTypes.$inferInsert;
+
+export const webhookDeliveryLogs = mysqlTable("webhook_delivery_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  webhookId: int("webhookId").notNull().references(() => webhooks.id),
+  eventType: varchar("eventType", { length: 100 }).notNull(),
+  payload: json("payload").$type<Record<string, unknown>>().notNull(),
+  responseStatus: int("responseStatus"),
+  responseBody: text("responseBody"),
+  success: boolean("success").notNull(),
+  errorMessage: text("errorMessage"),
+  deliveredAt: timestamp("deliveredAt").defaultNow().notNull(),
+  duration: int("duration"), // milliseconds
+}, (table) => ({
+  webhookIdx: index("webhook_idx").on(table.webhookId),
+  eventTypeIdx: index("event_type_idx").on(table.eventType),
+  deliveredAtIdx: index("delivered_at_idx").on(table.deliveredAt),
+}));
+
+export type WebhookDeliveryLog = typeof webhookDeliveryLogs.$inferSelect;
+export type InsertWebhookDeliveryLog = typeof webhookDeliveryLogs.$inferInsert;
+
+// ============================================================================
+// CONNECTOR THRESHOLDS
+// ============================================================================
+
+export const connectorThresholds = mysqlTable("connector_thresholds", {
+  id: int("id").autoincrement().primaryKey(),
+  connectorCode: varchar("connectorCode", { length: 100 }).notNull().unique(),
+  warningDays: int("warningDays").default(7).notNull(),
+  criticalDays: int("criticalDays").default(14).notNull(),
+  enabled: boolean("enabled").default(true).notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  updatedBy: int("updatedBy").references(() => users.id),
+});
+
+export type ConnectorThreshold = typeof connectorThresholds.$inferSelect;
+export type InsertConnectorThreshold = typeof connectorThresholds.$inferInsert;
+
+// ============================================================================
+// EMAIL NOTIFICATIONS
+// ============================================================================
+
+export const emailNotificationQueue = mysqlTable("email_notification_queue", {
+  id: int("id").autoincrement().primaryKey(),
+  recipientEmail: varchar("recipientEmail", { length: 320 }).notNull(),
+  recipientName: varchar("recipientName", { length: 255 }),
+  subject: varchar("subject", { length: 500 }).notNull(),
+  htmlBody: text("htmlBody").notNull(),
+  textBody: text("textBody"),
+  priority: mysqlEnum("priority", ["low", "normal", "high", "critical"]).default("normal").notNull(),
+  status: mysqlEnum("status", ["pending", "sending", "sent", "failed"]).default("pending").notNull(),
+  attempts: int("attempts").default(0).notNull(),
+  lastAttempt: timestamp("lastAttempt"),
+  sentAt: timestamp("sentAt"),
+  errorMessage: text("errorMessage"),
+  metadata: json("metadata").$type<Record<string, unknown>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  statusIdx: index("status_idx").on(table.status),
+  priorityIdx: index("priority_idx").on(table.priority),
+  createdAtIdx: index("created_at_idx").on(table.createdAt),
+}));
+
+export type EmailNotification = typeof emailNotificationQueue.$inferSelect;
+export type InsertEmailNotification = typeof emailNotificationQueue.$inferInsert;
