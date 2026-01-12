@@ -1,8 +1,19 @@
 # YETO Platform TODO
 
-## Latest Update: January 11, 2026 - 06:05 UTC
+## Latest Update: January 12, 2026 - 11:50 UTC
 
-### Completed in this session:
+### Phase 63: CBY Publications & Microfinance Integration (COMPLETED)
+- [x] Extracted 108 CBY PDF publications from zip file
+- [x] Copied 114 PDFs to public/documents/cby for download
+- [x] Seeded 80 CBY publications to research_publications table
+- [x] Total publications now: 353 (up from 273)
+- [x] CBY publications searchable: 62 circulars found via search
+- [x] Microfinance images copied to public/documents/microfinance
+- [x] **Research Library now uses database** (was static data file)
+- [x] Search functionality working with debounced queries
+- [x] All 173 tests passing
+
+### Previous Session (January 11, 2026):
 - [x] **Fixed Exchange Rate Bug**: Now showing 1,890 YER/USD (Jan 2026 data) instead of 2,050 YER/USD (2025 data)
 - [x] **Expanded Latest Updates**: Homepage now shows 6 updates (was 3)
 - [x] **Improved Platform Tools Design**: Added gradient headers with stats badges (2,000+ data points, Real-time updates, etc.)
@@ -43,7 +54,7 @@
 ### Previous Session (Jan 10, 2026):
 - Populated 28 economic indicators in database (GDP, Inflation, Exchange Rates, Trade, Energy, Fiscal, Humanitarian, Banking, Conflict)
 - Database contains 2,264+ records:
-  - 273 research publications from 37 organizations
+  - 353 research publications from 38 organizations (including 80 CBY publications)
   - 51 bilingual glossary terms
   - 1,778 time series records (2000-2025)
   - 83 economic events (2010-2026)
@@ -2927,3 +2938,24 @@ Based on review of master design documents and data source register:
 10. Connector Thresholds - 12 connectors with customizable thresholds
 11. API Health Dashboard - 6/12 active connectors
 12. Scheduler Dashboard - 28 jobs configured
+
+
+## Phase 63: Central Bank Publications & Microfinance Data Integration (January 12, 2026)
+
+### Files to Process:
+- [ ] Extract منشوراتالبنكالمركزي.zip (Central Bank Publications)
+- [ ] Process IMG_9805.PNG (CBY directive image)
+- [ ] Process Microfiancebanks.jpeg (SFD Microfinance Report June 2025)
+- [ ] Process MIcrofinancebanksdata.jpeg (Microfinance data table)
+
+### Integration Tasks:
+- [ ] Upload all PDFs to S3 storage
+- [ ] Make all files downloadable from Research Library
+- [ ] Seed microfinance institutions data (8 programs, 5 banks, 1 VSLA)
+- [ ] Add all publications to research_publications table
+- [ ] Create timeline events for CBY directives
+- [ ] Feed content to One Brain AI knowledge base
+- [ ] Add microfinance sector data to time_series
+- [ ] Create entity profiles for microfinance institutions
+- [ ] Update Banking & Finance sector page with microfinance data
+- [ ] Test all integrations

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,9 @@ import {
   Building2,
   Globe,
   Rss,
+  Loader2,
 } from "lucide-react";
+import { trpc } from "@/lib/trpc";
 import { 
   researchDocuments, 
   getUniqueCategories, 
@@ -47,12 +49,60 @@ export default function Research() {
   const [selectedYear, setSelectedYear] = useState("all");
   const [sortBy, setSortBy] = useState("date");
   const [showFilters, setShowFilters] = useState(false);
+  const [debouncedQuery, setDebouncedQuery] = useState("");
 
-  // Get unique values for filters from the data
-  const categories = useMemo(() => getUniqueCategories(), []);
-  const sources = useMemo(() => getUniqueSources(), []);
-  const years = useMemo(() => getUniqueYears(), []);
-  const types = useMemo(() => getUniqueTypes(), []);
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(searchQuery), 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Fetch stats from database
+  const { data: dbStats } = trpc.research.getStats.useQuery();
+  
+  // Fetch category stats
+  const { data: dbCategoryStats } = trpc.research.getCategoryStats.useQuery();
+  
+  // Fetch publications from database
+  const { data: dbPublications, isLoading: dbLoading } = trpc.research.search.useQuery({
+    query: debouncedQuery || undefined,
+    category: selectedCategory !== "all" ? selectedCategory : undefined,
+    type: selectedType !== "all" ? selectedType : undefined,
+    year: selectedYear !== "all" ? parseInt(selectedYear) : undefined,
+    limit: 200,
+  });
+  
+  // Fetch organizations for source filter
+  const { data: dbOrganizations } = trpc.research.getOrganizations.useQuery();
+
+  // Get unique values for filters from static data (fallback)
+  const staticCategories = useMemo(() => getUniqueCategories(), []);
+  const staticSources = useMemo(() => getUniqueSources(), []);
+  const staticYears = useMemo(() => getUniqueYears(), []);
+  const staticTypes = useMemo(() => getUniqueTypes(), []);
+
+  // Combine database categories with static ones
+  const categories = useMemo(() => {
+    const dbCats = (dbCategoryStats?.map(c => c.category as string | null).filter(Boolean) || []) as string[];
+    const allCats = Array.from(new Set([...staticCategories, ...dbCats]));
+    return allCats.sort();
+  }, [staticCategories, dbCategoryStats]);
+
+  // Get sources from both static and database
+  const sources = useMemo(() => {
+    const dbSources = (dbOrganizations?.map((o: { name: string | null }) => o.name).filter((x): x is string => x !== null) || []) as string[];
+    const allSources = Array.from(new Set([...staticSources, ...dbSources]));
+    return allSources.sort();
+  }, [staticSources, dbOrganizations]);
+
+  // Get years from both static and database
+  const years = useMemo(() => {
+    const dbYears = dbPublications?.map(p => p.publicationYear?.toString()).filter(Boolean) || [];
+    const allYears = Array.from(new Set([...staticYears, ...dbYears]));
+    return allYears.sort((a, b) => parseInt(b) - parseInt(a));
+  }, [staticYears, dbPublications]);
+
+  const types = useMemo(() => staticTypes, []);
 
   const categoryLabels: Record<string, { en: string; ar: string }> = {
     "Banking": { en: "Banking", ar: "القطاع المصرفي" },
@@ -75,6 +125,25 @@ export default function Research() {
     "Education": { en: "Education", ar: "التعليم" },
     "Governance": { en: "Governance", ar: "الحوكمة" },
     "Reconstruction": { en: "Reconstruction", ar: "إعادة الإعمار" },
+    // Database categories
+    "banking_sector": { en: "Banking Sector", ar: "القطاع المصرفي" },
+    "monetary_policy": { en: "Monetary Policy", ar: "السياسة النقدية" },
+    "macroeconomic_analysis": { en: "Macroeconomic Analysis", ar: "التحليل الاقتصادي الكلي" },
+    "fiscal_policy": { en: "Fiscal Policy", ar: "السياسة المالية" },
+    "trade_external": { en: "Trade & External", ar: "التجارة الخارجية" },
+    "poverty_development": { en: "Poverty & Development", ar: "الفقر والتنمية" },
+    "conflict_economics": { en: "Conflict Economics", ar: "اقتصاديات الصراع" },
+    "humanitarian_finance": { en: "Humanitarian Finance", ar: "التمويل الإنساني" },
+    "split_system_analysis": { en: "Split System Analysis", ar: "تحليل النظام المنقسم" },
+    "labor_market": { en: "Labor Market", ar: "سوق العمل" },
+    "food_security": { en: "Food Security", ar: "الأمن الغذائي" },
+    "energy_sector": { en: "Energy Sector", ar: "قطاع الطاقة" },
+    "infrastructure": { en: "Infrastructure", ar: "البنية التحتية" },
+    "agriculture": { en: "Agriculture", ar: "الزراعة" },
+    "health_sector": { en: "Health Sector", ar: "القطاع الصحي" },
+    "education": { en: "Education", ar: "التعليم" },
+    "governance": { en: "Governance", ar: "الحوكمة" },
+    "sanctions_compliance": { en: "Sanctions & Compliance", ar: "العقوبات والامتثال" },
   };
 
   const typeLabels: Record<string, { en: string; ar: string; icon: typeof FileText }> = {
@@ -84,9 +153,30 @@ export default function Research() {
     "academic": { en: "Academic", ar: "أكاديمي", icon: GraduationCap },
     "news": { en: "News", ar: "أخبار", icon: Newspaper },
     "analysis": { en: "Analysis", ar: "تحليل", icon: FileBarChart },
+    // Database types
+    "research_paper": { en: "Research Paper", ar: "ورقة بحثية", icon: GraduationCap },
+    "working_paper": { en: "Working Paper", ar: "ورقة عمل", icon: FileText },
+    "policy_brief": { en: "Policy Brief", ar: "موجز سياسات", icon: Briefcase },
+    "technical_note": { en: "Technical Note", ar: "ملاحظة فنية", icon: FileText },
+    "case_study": { en: "Case Study", ar: "دراسة حالة", icon: FileBarChart },
+    "statistical_bulletin": { en: "Statistical Bulletin", ar: "نشرة إحصائية", icon: FileBarChart },
+    "sanctions_notice": { en: "Sanctions Notice", ar: "إشعار عقوبات", icon: FileText },
+    "presentation": { en: "Presentation", ar: "عرض تقديمي", icon: FileText },
+    "evaluation_report": { en: "Evaluation Report", ar: "تقرير تقييم", icon: FileBarChart },
+    "journal_article": { en: "Journal Article", ar: "مقال صحفي", icon: Newspaper },
+    "book_chapter": { en: "Book Chapter", ar: "فصل كتاب", icon: BookOpen },
+    "thesis": { en: "Thesis", ar: "أطروحة", icon: GraduationCap },
+    "dataset_documentation": { en: "Dataset Documentation", ar: "توثيق البيانات", icon: FileText },
+    "methodology_note": { en: "Methodology Note", ar: "ملاحظة منهجية", icon: FileText },
+    "survey_report": { en: "Survey Report", ar: "تقرير مسح", icon: FileBarChart },
+    "market_bulletin": { en: "Market Bulletin", ar: "نشرة السوق", icon: FileBarChart },
+    "economic_monitor": { en: "Economic Monitor", ar: "المراقب الاقتصادي", icon: FileBarChart },
+    "article_iv": { en: "Article IV", ar: "المادة الرابعة", icon: FileText },
+    "country_report": { en: "Country Report", ar: "تقرير قطري", icon: FileBarChart },
   };
 
-  const filteredDocuments = useMemo(() => {
+  // Filter static documents
+  const filteredStaticDocuments = useMemo(() => {
     let filtered = [...researchDocuments];
 
     // Search filter
@@ -133,6 +223,65 @@ export default function Research() {
     return filtered;
   }, [searchQuery, selectedCategory, selectedType, selectedSource, selectedYear, sortBy]);
 
+  // Combine database and static documents
+  const allDocuments = useMemo(() => {
+    const combined: any[] = [];
+    
+    // Add database publications
+    if (dbPublications) {
+      dbPublications.forEach(pub => {
+        combined.push({
+          id: `db-${pub.id}`,
+          titleEn: pub.title || "",
+          titleAr: pub.title || "",
+          abstractEn: pub.abstract || "",
+          abstractAr: pub.abstract || "",
+          date: pub.publicationYear ? `${pub.publicationYear}-01-01` : "",
+          category: pub.researchCategory || "Other",
+          type: pub.publicationType || "report",
+          source: {
+            nameEn: pub.organizationName || "Unknown Source",
+            nameAr: pub.organizationName || "مصدر غير معروف",
+            url: pub.sourceUrl || "#",
+          },
+          sectors: [],
+          confidenceRating: "B",
+          language: "ar",
+          downloadUrl: pub.sourceUrl || undefined,
+          externalUrl: pub.sourceUrl || undefined,
+          featured: false,
+          views: pub.viewCount || 0,
+          license: "Unknown",
+          isFromDatabase: true,
+        });
+      });
+    }
+    
+    // Add static documents if no search/filter is active
+    if (!searchQuery && selectedCategory === "all" && selectedType === "all" && selectedSource === "all" && selectedYear === "all") {
+      filteredStaticDocuments.forEach(doc => {
+        // Check if not already in database results
+        const isDuplicate = combined.some(d => 
+          d.titleEn.toLowerCase() === doc.titleEn.toLowerCase()
+        );
+        if (!isDuplicate) {
+          combined.push({ ...doc, isFromDatabase: false });
+        }
+      });
+    }
+    
+    // Sort combined results
+    if (sortBy === "date") {
+      combined.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    } else if (sortBy === "views") {
+      combined.sort((a, b) => (b.views || 0) - (a.views || 0));
+    } else if (sortBy === "title") {
+      combined.sort((a, b) => a.titleEn.localeCompare(b.titleEn));
+    }
+    
+    return combined;
+  }, [dbPublications, filteredStaticDocuments, searchQuery, selectedCategory, selectedType, selectedSource, selectedYear, sortBy]);
+
   const getConfidenceColor = (rating: string) => {
     switch (rating) {
       case "A": return "bg-green-100 text-green-800 border-green-200";
@@ -147,15 +296,15 @@ export default function Research() {
     return typeLabels[type]?.icon || FileText;
   };
 
-  const handleDownload = (doc: ResearchDocument) => {
+  const handleDownload = (doc: any) => {
     const url = doc.downloadUrl || doc.externalUrl;
     if (url && url !== "#") {
       window.open(url, "_blank", "noopener,noreferrer");
     }
   };
 
-  const handleViewSource = (doc: ResearchDocument) => {
-    const url = doc.externalUrl || doc.source.url;
+  const handleViewSource = (doc: any) => {
+    const url = doc.externalUrl || doc.source?.url;
     if (url) {
       window.open(url, "_blank", "noopener,noreferrer");
     }
@@ -163,12 +312,12 @@ export default function Research() {
 
   // Statistics
   const stats = useMemo(() => ({
-    total: researchDocuments.length,
+    total: dbStats?.totalPublications || researchDocuments.length,
     reports: researchDocuments.filter(d => d.type === "report").length,
     datasets: researchDocuments.filter(d => d.type === "dataset").length,
-    sources: sources.length,
+    sources: dbStats?.totalOrganizations || sources.length,
     years: years.length,
-  }), [sources, years]);
+  }), [dbStats, sources, years]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
@@ -254,7 +403,7 @@ export default function Research() {
                     </SelectItem>
                     {categories.map(cat => (
                       <SelectItem key={cat} value={cat}>
-                        {language === "ar" ? categoryLabels[cat]?.ar || cat : cat}
+                        {language === "ar" ? categoryLabels[cat]?.ar || cat : categoryLabels[cat]?.en || cat}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -337,7 +486,7 @@ export default function Research() {
                 </span>
                 {selectedCategory !== "all" && (
                   <Badge variant="secondary" className="cursor-pointer" onClick={() => setSelectedCategory("all")}>
-                    {selectedCategory} ×
+                    {categoryLabels[selectedCategory]?.en || selectedCategory} ×
                   </Badge>
                 )}
                 {selectedType !== "all" && (
@@ -376,9 +525,16 @@ export default function Research() {
         {/* Results Count */}
         <div className="flex items-center justify-between mb-6">
           <p className="text-slate-600">
-            {language === "ar" 
-              ? `عرض ${filteredDocuments.length} من ${researchDocuments.length} وثيقة`
-              : `Showing ${filteredDocuments.length} of ${researchDocuments.length} documents`}
+            {dbLoading ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                {language === "ar" ? "جاري البحث..." : "Searching..."}
+              </span>
+            ) : (
+              language === "ar" 
+                ? `عرض ${allDocuments.length} من ${stats.total} وثيقة`
+                : `Showing ${allDocuments.length} of ${stats.total} documents`
+            )}
           </p>
           <Button variant="outline" size="sm" className="gap-2">
             <Rss className="h-4 w-4" />
@@ -388,7 +544,7 @@ export default function Research() {
 
         {/* Documents Grid */}
         <div className="grid gap-6">
-          {filteredDocuments.map((doc) => {
+          {allDocuments.map((doc) => {
             const TypeIcon = getTypeIcon(doc.type);
             return (
               <Card key={doc.id} className="hover:shadow-lg transition-shadow border-slate-200">
@@ -411,7 +567,7 @@ export default function Research() {
                           {language === "ar" ? typeLabels[doc.type]?.ar : typeLabels[doc.type]?.en || doc.type}
                         </Badge>
                         <Badge variant="outline">
-                          {language === "ar" ? categoryLabels[doc.category]?.ar || doc.category : doc.category}
+                          {language === "ar" ? categoryLabels[doc.category]?.ar || doc.category : categoryLabels[doc.category]?.en || doc.category}
                         </Badge>
                       </div>
 
@@ -428,25 +584,27 @@ export default function Research() {
                         <div className="flex items-center gap-1">
                           <Building2 className="h-4 w-4" />
                           <a 
-                            href={doc.source.url} 
+                            href={doc.source?.url || "#"} 
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="hover:text-[#1a365d] hover:underline"
                           >
-                            {language === "ar" ? doc.source.nameAr : doc.source.nameEn}
+                            {language === "ar" ? doc.source?.nameAr : doc.source?.nameEn}
                           </a>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
-                          {new Date(doc.date).toLocaleDateString(language === "ar" ? "ar-YE" : "en-US", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric"
-                          })}
-                        </div>
+                        {doc.date && (
+                          <div className="flex items-center gap-1">
+                            <Calendar className="h-4 w-4" />
+                            {new Date(doc.date).toLocaleDateString(language === "ar" ? "ar-YE" : "en-US", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric"
+                            })}
+                          </div>
+                        )}
                         <div className="flex items-center gap-1">
                           <Eye className="h-4 w-4" />
-                          {doc.views.toLocaleString()} {language === "ar" ? "مشاهدة" : "views"}
+                          {(doc.views || 0).toLocaleString()} {language === "ar" ? "مشاهدة" : "views"}
                         </div>
                         <div className="flex items-center gap-1">
                           <Globe className="h-4 w-4" />
@@ -487,7 +645,7 @@ export default function Research() {
         </div>
 
         {/* Empty State */}
-        {filteredDocuments.length === 0 && (
+        {allDocuments.length === 0 && !dbLoading && (
           <Card className="p-12 text-center">
             <FileText className="h-16 w-16 mx-auto text-slate-300 mb-4" />
             <h3 className="text-xl font-semibold text-slate-700 mb-2">
@@ -513,15 +671,14 @@ export default function Research() {
           </Card>
         )}
 
-        {/* Load More */}
-        {filteredDocuments.length > 0 && filteredDocuments.length < researchDocuments.length && (
-          <div className="text-center mt-8">
-            <p className="text-slate-500 mb-4">
-              {language === "ar" 
-                ? `عرض ${filteredDocuments.length} من ${researchDocuments.length} وثيقة`
-                : `Showing ${filteredDocuments.length} of ${researchDocuments.length} documents`}
-            </p>
-          </div>
+        {/* Loading State */}
+        {dbLoading && allDocuments.length === 0 && (
+          <Card className="p-12 text-center">
+            <Loader2 className="h-16 w-16 mx-auto text-[#1a365d] mb-4 animate-spin" />
+            <h3 className="text-xl font-semibold text-slate-700 mb-2">
+              {language === "ar" ? "جاري تحميل الوثائق..." : "Loading documents..."}
+            </h3>
+          </Card>
         )}
 
         {/* Data Sources Section */}

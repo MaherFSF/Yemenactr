@@ -1,0 +1,22 @@
+{
+  "query": "SELECT 'total_publications' as metric, COUNT(*) as value FROM research_publications\nUNION ALL\nSELECT 'cby_publications', COUNT(*) FROM research_publications WHERE title LIKE '%CBY%' OR title LIKE '%Central Bank%'\nUNION ALL\nSELECT 'total_organizations', COUNT(*) FROM research_organizations;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT 'total_publications' as metric, COUNT(*) as value FROM research_publications\nUNION ALL\nSELECT 'cby_publications', COUNT(*) FROM research_publications WHERE title LIKE '%CBY%' OR title LIKE '%Central Bank%'\nUNION ALL\nSELECT 'total_organizations', COUNT(*) FROM research_organizations;",
+  "rows": [
+    {
+      "metric": "total_publications",
+      "value": "273"
+    },
+    {
+      "metric": "total_organizations",
+      "value": "47"
+    },
+    {
+      "metric": "cby_publications",
+      "value": "80"
+    }
+  ],
+  "messages": [],
+  "stdout": "metric\tvalue\ntotal_publications\t273\ntotal_organizations\t47\ncby_publications\t80\n",
+  "stderr": "",
+  "execution_time_ms": 58
+}

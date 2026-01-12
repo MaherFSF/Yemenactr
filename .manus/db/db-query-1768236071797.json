@@ -1,0 +1,37 @@
+{
+  "query": "SELECT COUNT(*) as total_publications FROM research_publications;\nSELECT COUNT(*) as cby_publications FROM research_publications WHERE title LIKE '%CBY%' OR title LIKE '%Central Bank%';\nSELECT id, name FROM research_organizations WHERE name LIKE '%Central Bank%' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT COUNT(*) as total_publications FROM research_publications;\nSELECT COUNT(*) as cby_publications FROM research_publications WHERE title LIKE '%CBY%' OR title LIKE '%Central Bank%';\nSELECT id, name FROM research_organizations WHERE name LIKE '%Central Bank%' LIMIT 5;",
+  "rows": [
+    {
+      "total_publications": "273"
+    },
+    {
+      "total_publications": "cby_publications"
+    },
+    {
+      "total_publications": "80"
+    },
+    {
+      "total_publications": "id\tname"
+    },
+    {
+      "total_publications": "30008\tCentral Bank of Yemen"
+    },
+    {
+      "total_publications": "9\tCentral Bank of Yemen - Aden"
+    },
+    {
+      "total_publications": "90007\tCentral Bank of Yemen - Aden"
+    },
+    {
+      "total_publications": "10\tCentral Bank of Yemen - Sana'a"
+    },
+    {
+      "total_publications": "90008\tCentral Bank of Yemen - Sanaa"
+    }
+  ],
+  "messages": [],
+  "stdout": "total_publications\n273\ncby_publications\n80\nid\tname\n30008\tCentral Bank of Yemen\n9\tCentral Bank of Yemen - Aden\n90007\tCentral Bank of Yemen - Aden\n10\tCentral Bank of Yemen - Sana'a\n90008\tCentral Bank of Yemen - Sanaa\n",
+  "stderr": "",
+  "execution_time_ms": 70
+}

@@ -1,0 +1,22 @@
+{
+  "query": "SELECT DISTINCT impactLevel FROM economic_events LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT DISTINCT impactLevel FROM economic_events LIMIT 10;",
+  "rows": [
+    {
+      "impactLevel": "medium"
+    },
+    {
+      "impactLevel": "high"
+    },
+    {
+      "impactLevel": "low"
+    },
+    {
+      "impactLevel": "critical"
+    }
+  ],
+  "messages": [],
+  "stdout": "impactLevel\nmedium\nhigh\nlow\ncritical\n",
+  "stderr": "",
+  "execution_time_ms": 86
+}

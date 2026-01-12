@@ -1,0 +1,150 @@
+{
+  "query": "SELECT id, title, publicationType, researchCategory, publicationYear FROM research_publications WHERE title LIKE '%CBY%' OR title LIKE '%Central Bank%' ORDER BY publicationYear DESC LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT id, title, publicationType, researchCategory, publicationYear FROM research_publications WHERE title LIKE '%CBY%' OR title LIKE '%Central Bank%' ORDER BY publicationYear DESC LIMIT 20;",
+  "rows": [
+    {
+      "id": "273",
+      "title": "Central Bank of Yemen Quarterly Bulletin Q4 2025",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2025"
+    },
+    {
+      "id": "272",
+      "title": "Central Bank of Yemen Quarterly Bulletin Q3 2025",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2025"
+    },
+    {
+      "id": "271",
+      "title": "Central Bank of Yemen Quarterly Bulletin Q2 2025",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2025"
+    },
+    {
+      "id": "270",
+      "title": "Central Bank of Yemen Quarterly Bulletin Q1 2025",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2025"
+    },
+    {
+      "id": "269",
+      "title": "Central Bank of Yemen Annual Report 2025",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2025"
+    },
+    {
+      "id": "268",
+      "title": "Central Bank of Yemen Quarterly Bulletin Q4 2024",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2024"
+    },
+    {
+      "id": "267",
+      "title": "Central Bank of Yemen Quarterly Bulletin Q3 2024",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2024"
+    },
+    {
+      "id": "266",
+      "title": "Central Bank of Yemen Quarterly Bulletin Q2 2024",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2024"
+    },
+    {
+      "id": "265",
+      "title": "Central Bank of Yemen Quarterly Bulletin Q1 2024",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2024"
+    },
+    {
+      "id": "264",
+      "title": "Central Bank of Yemen Annual Report 2024",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2024"
+    },
+    {
+      "id": "263",
+      "title": "Central Bank of Yemen Quarterly Bulletin Q4 2023",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2023"
+    },
+    {
+      "id": "262",
+      "title": "Central Bank of Yemen Quarterly Bulletin Q3 2023",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2023"
+    },
+    {
+      "id": "261",
+      "title": "Central Bank of Yemen Quarterly Bulletin Q2 2023",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2023"
+    },
+    {
+      "id": "260",
+      "title": "Central Bank of Yemen Quarterly Bulletin Q1 2023",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2023"
+    },
+    {
+      "id": "259",
+      "title": "Central Bank of Yemen Annual Report 2023",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2023"
+    },
+    {
+      "id": "258",
+      "title": "Central Bank of Yemen Quarterly Bulletin Q4 2022",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2022"
+    },
+    {
+      "id": "257",
+      "title": "Central Bank of Yemen Quarterly Bulletin Q3 2022",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2022"
+    },
+    {
+      "id": "256",
+      "title": "Central Bank of Yemen Quarterly Bulletin Q2 2022",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2022"
+    },
+    {
+      "id": "255",
+      "title": "Central Bank of Yemen Quarterly Bulletin Q1 2022",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2022"
+    },
+    {
+      "id": "254",
+      "title": "Central Bank of Yemen Annual Report 2022",
+      "publicationType": "statistical_bulletin",
+      "researchCategory": "monetary_policy",
+      "publicationYear": "2022"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tpublicationType\tresearchCategory\tpublicationYear\n273\tCentral Bank of Yemen Quarterly Bulletin Q4 2025\tstatistical_bulletin\tmonetary_policy\t2025\n272\tCentral Bank of Yemen Quarterly Bulletin Q3 2025\tstatistical_bulletin\tmonetary_policy\t2025\n271\tCentral Bank of Yemen Quarterly Bulletin Q2 2025\tstatistical_bulletin\tmonetary_policy\t2025\n270\tCentral Bank of Yemen Quarterly Bulletin Q1 2025\tstatistical_bulletin\tmonetary_policy\t2025\n269\tCentral Bank of Yemen Annual Report 2025\tstatistical_bulletin\tmonetary_policy\t2025\n268\tCentral Bank of Yemen Quarterly Bulletin Q4 2024\tstatistical_bulletin\tmonetary_policy\t2024\n267\tCentral Bank of Yemen Quarterly Bulletin Q3 2024\tstatistical_bulletin\tmonetary_policy\t2024\n266\tCentral Bank of Yemen Quarterly Bulletin Q2 2024\tstatistical_bulletin\tmonetary_policy\t2024\n265\tCentral Bank of Yemen Quarterly Bulletin Q1 2024\tstatistical_bulletin\tmonetary_policy\t2024\n264\tCentral Bank of Yemen Annual Report 2024\tstatistical_bulletin\tmonetary_policy\t2024\n263\tCentral Bank of Yemen Quarterly Bulletin Q4 2023\tstatistical_bulletin\tmonetary_policy\t2023\n262\tCentral Bank of Yemen Quarterly Bulletin Q3 2023\tstatistical_bulletin\tmonetary_policy\t2023\n261\tCentral Bank of Yemen Quarterly Bulletin Q2 2023\tstatistical_bulletin\tmonetary_policy\t2023\n260\tCentral Bank of Yemen Quarterly Bulletin Q1 2023\tstatistical_bulletin\tmonetary_policy\t2023\n259\tCentral Bank of Yemen Annual Report 2023\tstatistical_bulletin\tmonetary_policy\t2023\n258\tCentral Bank of Yemen Quarterly Bulletin Q4 2022\tstatistical_bulletin\tmonetary_policy\t2022\n257\tCentral Bank of Yemen Quarterly Bulletin Q3 2022\tstatistical_bulletin\tmonetary_policy\t2022\n256\tCentral Bank of Yemen Quarterly Bulletin Q2 2022\tstatistical_bulletin\tmonetary_policy\t2022\n255\tCentral Bank of Yemen Quarterly Bulletin Q1 2022\tstatistical_bulletin\tmonetary_policy\t2022\n254\tCentral Bank of Yemen Annual Report 2022\tstatistical_bulletin\tmonetary_policy\t2022\n",
+  "stderr": "",
+  "execution_time_ms": 54
+}
