@@ -72,6 +72,10 @@ import HumanitarianFunding from "./pages/HumanitarianFunding";
 import RegionalZones from "./pages/RegionalZones";
 import EconomicActors from "./pages/EconomicActors";
 import ApiHealthDashboard from "./pages/admin/ApiHealthDashboard";
+import AlertHistory from "./pages/admin/AlertHistory";
+import AdminHub from "./pages/admin/AdminHub";
+import WebhookSettings from "./pages/admin/WebhookSettings";
+import ConnectorThresholds from "./pages/admin/ConnectorThresholds";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -137,6 +141,10 @@ function Router() {
       <Route path="/admin/scheduler" component={SchedulerDashboard} />
       <Route path="/admin/alerts" component={AlertsDashboard} />
           <Route path="/admin/api-health" component={ApiHealthDashboard} />
+          <Route path="/admin/alert-history" component={AlertHistory} />
+          <Route path="/admin-hub" component={AdminHub} />
+          <Route path="/admin/webhooks" component={WebhookSettings} />
+          <Route path="/admin/connector-thresholds" component={ConnectorThresholds} />
       <Route path={"/partner"} component={PartnerPortal} />
       <Route path={"/ai-assistant"} component={AIAssistant} />
       <Route path={"/scenario-simulator"} component={ScenarioSimulator} />

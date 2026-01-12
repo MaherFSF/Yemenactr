@@ -2731,3 +2731,52 @@ Based on review of master design documents and data source register:
 - Auto-refresh indicator with icon
 - Alerts stored in database for tracking
 - Email notifications to project owner
+
+## Phase 60: Advanced Features & Page Accessibility (January 12, 2026)
+- [ ] Create Alert History admin page with resolution tracking
+- [ ] Add Slack/Discord webhook notification channels
+- [ ] Implement per-connector customizable thresholds
+- [ ] Create admin navigation hub for all hidden pages
+- [ ] Make all admin pages accessible from main navigation
+- [ ] Browser test all major pages systematically
+- [ ] Ensure unique and impressive design for new pages
+- [ ] Save checkpoint
+
+
+## Phase 60: Advanced Features & Page Accessibility (January 12, 2026) - COMPLETED
+- [x] Create Alert History admin page with resolution tracking
+  - Beautiful gradient header with stats cards
+  - Filter tabs (All, Unread, Critical, Warnings)
+  - Search functionality
+  - Acknowledge and resolve buttons
+- [x] Add Slack webhook notification channel
+  - Pre-configured YETO Alerts Channel
+  - Event subscription (Critical Alerts, Connector Failures)
+  - Test button functionality
+- [x] Add Discord webhook notification channel
+  - Pre-configured Data Team Discord
+  - Event subscription (Stale Data, New Publications)
+  - Enable/disable toggle
+- [x] Add custom HTTP webhook support
+  - Add Webhook form with URL validation
+  - Event type selection grid
+  - Delivery logs tab
+- [x] Implement per-connector customizable thresholds
+  - 12 connectors with individual sliders
+  - Warning and Critical threshold controls
+  - Visual timeline showing current data age
+  - Summary stats (8 Healthy, 1 Warning, 0 Critical, 3 Disabled)
+- [x] Create Admin Hub navigation page at /admin-hub
+  - Stunning gradient header with quick stats
+  - 14 admin page cards organized by category
+  - Quick action buttons
+- [x] Make all admin pages accessible via navigation
+- [x] Browser test all major pages:
+  - Homepage: Working with freshness badge
+  - Admin Hub: Working with all links
+  - Alert History: Working with filters
+  - Webhook Settings: Working with Slack/Discord
+  - Connector Thresholds: Working with sliders
+  - API Health Dashboard: Working with 6/12 active connectors
+- [x] All 173 tests passing
+- [x] Save checkpoint
