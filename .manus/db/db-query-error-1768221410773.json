@@ -1,0 +1,8 @@
+{
+  "query": "SELECT \n  CASE \n    WHEN source LIKE '%World Bank%' OR source LIKE '%WB%' THEN 'world-bank'\n    WHEN source LIKE '%UNHCR%' THEN 'unhcr'\n    WHEN source LIKE '%WHO%' THEN 'who-gho'\n    WHEN source LIKE '%OCHA%' OR source LIKE '%FTS%' THEN 'ocha-fts'\n    WHEN source LIKE '%HDX%' THEN 'hdx'\n    WHEN source LIKE '%FEWS%' THEN 'fews-net'\n    WHEN source LIKE '%UNICEF%' THEN 'unicef'\n    ELSE 'other'\n  END as connector_id,\n  COUNT(*) as record_count,\n  MAX(YEAR(date)) as latest_year\nFROM time_series\nGROUP BY connector_id\nORDER BY record_count DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT \n  CASE \n    WHEN source LIKE '%World Bank%' OR source LIKE '%WB%' THEN 'world-bank'\n    WHEN source LIKE '%UNHCR%' THEN 'unhcr'\n    WHEN source LIKE '%WHO%' THEN 'who-gho'\n    WHEN source LIKE '%OCHA%' OR source LIKE '%FTS%' THEN 'ocha-fts'\n    WHEN source LIKE '%HDX%' THEN 'hdx'\n    WHEN source LIKE '%FEWS%' THEN 'fews-net'\n    WHEN source LIKE '%UNICEF%' THEN 'unicef'\n    ELSE 'other'\n  END as connector_id,\n  COUNT(*) as record_count,\n  MAX(YEAR(date)) as latest_year\nFROM time_series\nGROUP BY connector_id\nORDER BY record_count DESC;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'source' in 'group statement'"
+  ]
+}

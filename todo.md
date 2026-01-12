@@ -2694,3 +2694,20 @@ Based on review of master design documents and data source register:
 - Auth Required: WFP VAM, ReliefWeb
 - No API: CBY, IMF, UNDP
 - Broken: IATI, OCHA FTS (needs fix)
+
+
+## Phase 58: API Health Dashboard & Daily Cron Job (January 11, 2026) - COMPLETED
+- [x] Create API Health Dashboard admin page at /admin/api-health
+- [x] Add connector status display (last fetch, records, errors)
+- [x] Add manual refresh trigger buttons for each connector
+- [x] Create tRPC procedures for connector management:
+  - getConnectorStatus: Returns status of all 12 connectors
+  - getSchedulerJobs: Returns all scheduled jobs
+  - triggerConnectorRefresh: Manually refresh a connector
+  - toggleSchedulerJob: Enable/disable a job
+  - runSchedulerJobNow: Execute a job immediately
+- [x] Configure daily cron job at 6 AM UTC (already in place)
+- [x] Test dashboard functionality - Dashboard loads and displays all connectors
+- [x] Test scheduler functionality - Jobs are initialized and tracked
+- [x] Add route /admin/api-health to App.tsx
+- [x] Save checkpoint

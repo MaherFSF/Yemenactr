@@ -71,6 +71,7 @@ import PublicDebt from "./pages/PublicDebt";
 import HumanitarianFunding from "./pages/HumanitarianFunding";
 import RegionalZones from "./pages/RegionalZones";
 import EconomicActors from "./pages/EconomicActors";
+import ApiHealthDashboard from "./pages/admin/ApiHealthDashboard";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -135,6 +136,7 @@ function Router() {
       <Route path="/accuracy" component={AccuracyDashboard} />
       <Route path="/admin/scheduler" component={SchedulerDashboard} />
       <Route path="/admin/alerts" component={AlertsDashboard} />
+          <Route path="/admin/api-health" component={ApiHealthDashboard} />
       <Route path={"/partner"} component={PartnerPortal} />
       <Route path={"/ai-assistant"} component={AIAssistant} />
       <Route path={"/scenario-simulator"} component={ScenarioSimulator} />
