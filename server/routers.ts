@@ -371,6 +371,30 @@ export const appRouter = router({
             gdp: gdpGrowth ? gdpGrowth.date.toISOString() : null,
             idps: idpData ? idpData.date.toISOString() : null,
           },
+          // Enhanced freshness info for badges
+          freshnessInfo: {
+            mostRecentUpdate: (() => {
+              const dates = [
+                fxAden?.date,
+                inflationAden?.date,
+                gdpGrowth?.date,
+                idpData?.date,
+              ].filter(Boolean) as Date[];
+              if (dates.length === 0) return null;
+              return new Date(Math.max(...dates.map(d => d.getTime()))).toISOString();
+            })(),
+            hoursAgo: (() => {
+              const dates = [
+                fxAden?.date,
+                inflationAden?.date,
+                gdpGrowth?.date,
+                idpData?.date,
+              ].filter(Boolean) as Date[];
+              if (dates.length === 0) return null;
+              const mostRecent = Math.max(...dates.map(d => d.getTime()));
+              return Math.floor((Date.now() - mostRecent) / (1000 * 60 * 60));
+            })(),
+          },
         };
       }),
   }),

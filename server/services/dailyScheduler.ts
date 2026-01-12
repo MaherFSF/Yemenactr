@@ -187,6 +187,16 @@ export const DEFAULT_JOBS: SchedulerJobConfig[] = [
     description: 'Run signal detection and generate alerts for threshold breaches',
     enabled: true,
   },
+  
+  // Connector health check (run daily at 7 AM UTC)
+  {
+    id: 'connector_health_check',
+    name: 'Connector Health Check',
+    type: 'backup', // Using backup type for maintenance tasks
+    cronExpression: '0 0 7 * * *',
+    description: 'Check connector health and send alerts for failures or stale data (>7 days)',
+    enabled: true,
+  },
 ];
 
 // ============================================
@@ -303,6 +313,11 @@ export async function runJob(jobId: string): Promise<JobRunResult> {
     if (job.type === 'signal_detection') {
       const result = await runSignalDetection();
       recordsProcessed = result.signalsDetected;
+    } else if (job.id === 'connector_health_check') {
+      // Import and run health check
+      const { runHealthCheckAndAlert } = await import('./connectorHealthAlerts');
+      const result = await runHealthCheckAndAlert();
+      recordsProcessed = result.alertsSent;
     } else if (job.fetchFn) {
       const result = await job.fetchFn();
       recordsProcessed = result.recordsIngested;

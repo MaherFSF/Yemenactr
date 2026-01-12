@@ -507,22 +507,52 @@ export default function Home() {
             ))}
           </StaggeredContainer>
           
-          {/* Data freshness indicator */}
-          {kpiData?.lastUpdated && (
+          {/* Data freshness indicator with enhanced badge */}
+          {kpiData && (
             <div className="mt-4 text-center">
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                {language === "ar" ? "آخر تحديث: " : "Data refreshed: "}
-                {new Date(kpiData.lastUpdated).toLocaleString(language === "ar" ? "ar-YE" : "en-US", {
-                  month: "short",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit"
-                })}
-                {" • "}
-                <span className="text-green-600 dark:text-green-400">
-                  {language === "ar" ? "تحديث تلقائي كل 6 ساعات" : "Auto-updates every 6 hours"}
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-sm border border-gray-200 dark:border-gray-700">
+                {/* Freshness status dot */}
+                <span className={`w-2 h-2 rounded-full animate-pulse ${
+                  (kpiData as any).freshnessInfo?.hoursAgo !== null && (kpiData as any).freshnessInfo?.hoursAgo < 24
+                    ? "bg-green-500"
+                    : (kpiData as any).freshnessInfo?.hoursAgo !== null && (kpiData as any).freshnessInfo?.hoursAgo < 168
+                    ? "bg-yellow-500"
+                    : "bg-red-500"
+                }`} />
+                
+                {/* Freshness label */}
+                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                  {language === "ar" ? "آخر تحديث: " : "Updated: "}
+                  {(kpiData as any).freshnessInfo?.hoursAgo !== null ? (
+                    (kpiData as any).freshnessInfo?.hoursAgo < 1 ? (
+                      language === "ar" ? "الآن" : "Just now"
+                    ) : (kpiData as any).freshnessInfo?.hoursAgo < 24 ? (
+                      language === "ar" 
+                        ? `منذ ${(kpiData as any).freshnessInfo?.hoursAgo} ساعة`
+                        : `${(kpiData as any).freshnessInfo?.hoursAgo}h ago`
+                    ) : (kpiData as any).freshnessInfo?.hoursAgo < 48 ? (
+                      language === "ar" ? "أمس" : "Yesterday"
+                    ) : (
+                      language === "ar"
+                        ? `منذ ${Math.floor((kpiData as any).freshnessInfo?.hoursAgo / 24)} يوم`
+                        : `${Math.floor((kpiData as any).freshnessInfo?.hoursAgo / 24)}d ago`
+                    )
+                  ) : (
+                    language === "ar" ? "غير معروف" : "Unknown"
+                  )}
                 </span>
-              </span>
+                
+                {/* Separator */}
+                <span className="text-gray-300 dark:text-gray-600">|</span>
+                
+                {/* Auto-update indicator */}
+                <span className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  {language === "ar" ? "تحديث تلقائي" : "Auto-refresh"}
+                </span>
+              </div>
             </div>
           )}
         </div>

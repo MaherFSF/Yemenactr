@@ -2711,3 +2711,23 @@ Based on review of master design documents and data source register:
 - [x] Test scheduler functionality - Jobs are initialized and tracked
 - [x] Add route /admin/api-health to App.tsx
 - [x] Save checkpoint
+
+
+## Phase 59: Connector Health Alerts & Data Freshness Badges (January 12, 2026) - COMPLETED
+- [x] Create connector health alert service (connectorHealthAlerts.ts)
+- [x] Add email notification for connector failures (via notifyOwner)
+- [x] Add stale data detection (>7 days warning, >14 days critical)
+- [x] Email admins when data becomes stale
+- [x] Add "Updated X hours ago" badge to homepage KPI cards
+- [x] Test alert notifications (8 new tests)
+- [x] Test freshness badge display (verified in browser)
+- [x] All 173 tests passing
+- [x] Save checkpoint
+
+**Features Implemented:**
+- Health check runs daily at 7 AM UTC
+- Color-coded status dot (green/yellow/red)
+- Real-time freshness label (Just now, Xh ago, Yesterday, Xd ago)
+- Auto-refresh indicator with icon
+- Alerts stored in database for tracking
+- Email notifications to project owner
