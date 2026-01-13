@@ -22,7 +22,7 @@
 - [x] All 173 tests passing
 
 **Pending:**
-- [ ] CBY PDF download links in Research Library
+- [x] CBY PDF download links in Research Library (114 PDFs in /documents/cby/)
 - [ ] Microfinance sector page
 - [ ] Enhanced admin console matching mockup
 - [ ] Main dashboard with real-time alerts
@@ -3050,3 +3050,47 @@ Based on review of master design documents and data source register:
 - [ ] DOCX export
 - [ ] Data pack export (CSV/Excel/JSON)
 
+
+
+## Phase 65: Comprehensive Audit & Enhancement (January 13, 2026)
+
+### Critical Fixes
+- [ ] Add CBY PDF download links to Research Library publications (114 PDFs)
+- [ ] Seed CBY Directives data to cby_directives table
+- [ ] Set Arabic as default language (homepage should load in Arabic)
+- [ ] Fix all broken links across the platform
+- [ ] Ensure bilingual consistency (Arabic AND English) for all pages
+
+### Homepage Improvements
+- [ ] More prestigious, solid design impression
+- [ ] Different hero images (not reusing same images)
+- [ ] Better visual hierarchy and professional appearance
+
+### From Mockup Analysis (Yyyy.pdf)
+- [ ] Research Library showing confidence ratings (A, B) on each document
+- [ ] Download buttons working for all documents
+- [ ] View counts displayed on documents
+- [ ] Featured/highlighted documents section
+
+### From Pasted_content_09.txt - Integrity Ledger System
+- [ ] Create integrity_claims table
+- [ ] Create integrity_evidence_items table
+- [ ] Create integrity_transforms table
+- [ ] Create integrity_log table (append-only)
+- [ ] Implement "Verify" button for KPIs and charts
+- [ ] Generate QR codes for PDF exports
+
+### From Pasted_content_10.txt - Missing Features
+- [ ] Chart container component with export controls
+- [ ] Global search component
+- [ ] Data gap recording system
+- [ ] "Show me how you know this" feature
+- [ ] Donor profile pages
+- [ ] Bank profile pages
+- [ ] MFI profile pages
+- [ ] Money exchanger profile pages
+- [ ] Port profile pages
+- [ ] Company profile pages (including Hayel Saeed Anam Group)
+- [ ] QA dashboards (outliers, contradictions, missing periods)
+- [ ] Validation feedback system for Partner Portal
+- [ ] Publishing workflow with approval

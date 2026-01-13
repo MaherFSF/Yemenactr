@@ -591,6 +591,54 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Trusted Data Sources Section */}
+      <section className="py-12 bg-white dark:bg-gray-950 border-y border-gray-100 dark:border-gray-800">
+        <div className="container">
+          <AnimatedSection animation="fadeInUp" className="text-center mb-8">
+            <h2 className="text-lg font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              {language === "ar" ? "مصادر البيانات الموثوقة" : "Trusted Data Sources"}
+            </h2>
+          </AnimatedSection>
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 opacity-70 hover:opacity-100 transition-opacity">
+            <div className="flex flex-col items-center gap-2">
+              <div className="h-12 w-24 flex items-center justify-center">
+                <span className="text-xl font-bold text-[#003366]">World Bank</span>
+              </div>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="h-12 w-24 flex items-center justify-center">
+                <span className="text-xl font-bold text-[#003366]">IMF</span>
+              </div>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="h-12 w-24 flex items-center justify-center">
+                <span className="text-xl font-bold text-[#0072BC]">OCHA</span>
+              </div>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="h-12 w-24 flex items-center justify-center">
+                <span className="text-xl font-bold text-[#CF4A00]">WFP</span>
+              </div>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="h-12 w-24 flex items-center justify-center">
+                <span className="text-lg font-bold text-[#103050]">CBY Aden</span>
+              </div>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="h-12 w-24 flex items-center justify-center">
+                <span className="text-xl font-bold text-[#00AEEF]">UNHCR</span>
+              </div>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="h-12 w-24 flex items-center justify-center">
+                <span className="text-lg font-bold text-[#E31837]">Sana'a Center</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Latest Updates Section - Matching mockup IMG_1499 */}
       <section id="updates" className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="container">
