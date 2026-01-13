@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS evidence_excerpts (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  documentId INT NOT NULL,\n  excerptText TEXT NOT NULL,\n  excerptTextAr TEXT,\n  pageNumber INT,\n  startOffset INT,\n  endOffset INT,\n  highlightCoordinates JSON,\n  extractionMethod ENUM('manual','ocr','llm','api') DEFAULT 'manual' NOT NULL,\n  extractedByUserId INT,\n  verifiedByUserId INT,\n  verifiedAt TIMESTAMP NULL,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,\n  INDEX excerpt_document_idx (documentId),\n  INDEX excerpt_page_idx (pageNumber),\n  FOREIGN KEY (documentId) REFERENCES evidence_documents(id)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute CREATE TABLE IF NOT EXISTS evidence_excerpts (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  documentId INT NOT NULL,\n  excerptText TEXT NOT NULL,\n  excerptTextAr TEXT,\n  pageNumber INT,\n  startOffset INT,\n  endOffset INT,\n  highlightCoordinates JSON,\n  extractionMethod ENUM('manual','ocr','llm','api') DEFAULT 'manual' NOT NULL,\n  extractedByUserId INT,\n  verifiedByUserId INT,\n  verifiedAt TIMESTAMP NULL,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,\n  INDEX excerpt_document_idx (documentId),\n  INDEX excerpt_page_idx (pageNumber),\n  FOREIGN KEY (documentId) REFERENCES evidence_documents(id)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 273
+}

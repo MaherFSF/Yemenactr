@@ -65,10 +65,14 @@ import {
   getDb,
 } from "./db";
 import { researchPublications, researchOrganizations } from "../drizzle/schema";
+import { truthLayerRouter } from "./routers/truthLayer";
+import { autopilotRouter } from "./routers/autopilot";
 import { sql, desc, eq, like, or, and, inArray } from "drizzle-orm";
 
 export const appRouter = router({
   system: systemRouter,
+  truthLayer: truthLayerRouter,
+  autopilot: autopilotRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

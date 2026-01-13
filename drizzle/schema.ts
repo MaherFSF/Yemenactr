@@ -1829,3 +1829,1015 @@ export const partnerContributions = mysqlTable("partner_contributions", {
 
 export type PartnerContribution = typeof partnerContributions.$inferSelect;
 export type InsertPartnerContribution = typeof partnerContributions.$inferInsert;
+
+
+// ============================================================================
+// TRUTH LAYER - EVIDENCE GRAPH
+// ============================================================================
+
+/**
+ * Evidence Sources - Registry of whitelisted data publishers
+ * Categories: humanitarian, IFI, sanctions, domestic, partner
+ */
+export const evidenceSources = mysqlTable("evidence_sources", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  nameAr: varchar("nameAr", { length: 255 }),
+  acronym: varchar("acronym", { length: 50 }),
+  category: mysqlEnum("category", [
+    "humanitarian",      // OCHA, UNHCR, WFP, etc.
+    "ifi",              // World Bank, IMF
+    "un_agency",        // UN agencies
+    "sanctions",        // OFAC, EU, UK sanctions
+    "domestic_aden",    // CBY Aden, IRG ministries
+    "domestic_sanaa",   // CBY Sana'a, DFA authorities
+    "academic",         // Universities, research institutes
+    "think_tank",       // Policy research organizations
+    "media",            // Verified news sources
+    "partner",          // Verified partner contributors
+    "other"
+  ]).notNull(),
+  isWhitelisted: boolean("isWhitelisted").default(true).notNull(),
+  trustLevel: mysqlEnum("trustLevel", ["high", "medium", "low", "unverified"]).default("medium").notNull(),
+  baseUrl: text("baseUrl"),
+  apiEndpoint: text("apiEndpoint"),
+  apiType: mysqlEnum("apiType", ["rest", "graphql", "sdmx", "ckan", "manual", "none"]),
+  updateFrequency: mysqlEnum("updateFrequency", ["realtime", "daily", "weekly", "monthly", "quarterly", "annual", "irregular"]),
+  lastVerifiedAt: timestamp("lastVerifiedAt"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  nameIdx: index("evidence_source_name_idx").on(table.name),
+  categoryIdx: index("evidence_source_category_idx").on(table.category),
+  whitelistIdx: index("evidence_source_whitelist_idx").on(table.isWhitelisted),
+}));
+
+export type EvidenceSource = typeof evidenceSources.$inferSelect;
+export type InsertEvidenceSource = typeof evidenceSources.$inferInsert;
+
+/**
+ * Evidence Documents - PDFs, reports, publications with storage and hashing
+ */
+export const evidenceDocuments = mysqlTable("evidence_documents", {
+  id: int("id").autoincrement().primaryKey(),
+  sourceId: int("sourceId").notNull().references(() => evidenceSources.id),
+  title: varchar("title", { length: 500 }).notNull(),
+  titleAr: varchar("titleAr", { length: 500 }),
+  documentType: mysqlEnum("documentType", [
+    "report",
+    "circular",
+    "law",
+    "decree",
+    "statistical_bulletin",
+    "press_release",
+    "dataset_metadata",
+    "academic_paper",
+    "news_article",
+    "other"
+  ]).notNull(),
+  publicationDate: timestamp("publicationDate"),
+  retrievalDate: timestamp("retrievalDate").notNull(),
+  sourceUrl: text("sourceUrl"),
+  storageKey: varchar("storageKey", { length: 255 }), // S3 key
+  storageUrl: text("storageUrl"), // S3 URL
+  contentHash: varchar("contentHash", { length: 64 }), // SHA-256 for reproducibility
+  mimeType: varchar("mimeType", { length: 100 }),
+  fileSize: int("fileSize"),
+  pageCount: int("pageCount"),
+  language: mysqlEnum("language", ["en", "ar", "both"]).default("en").notNull(),
+  regimeTag: mysqlEnum("regimeTag", ["aden_irg", "sanaa_defacto", "mixed", "unknown"]),
+  license: varchar("license", { length: 100 }),
+  isProcessed: boolean("isProcessed").default(false).notNull(),
+  processingStatus: mysqlEnum("processingStatus", ["pending", "processing", "completed", "failed"]).default("pending").notNull(),
+  extractedText: text("extractedText"),
+  metadata: json("metadata").$type<Record<string, unknown>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  sourceIdx: index("evidence_doc_source_idx").on(table.sourceId),
+  typeIdx: index("evidence_doc_type_idx").on(table.documentType),
+  pubDateIdx: index("evidence_doc_pub_date_idx").on(table.publicationDate),
+  hashIdx: index("evidence_doc_hash_idx").on(table.contentHash),
+}));
+
+export type EvidenceDocument = typeof evidenceDocuments.$inferSelect;
+export type InsertEvidenceDocument = typeof evidenceDocuments.$inferInsert;
+
+/**
+ * Evidence Excerpts - Anchored passages/snippets from documents
+ */
+export const evidenceExcerpts = mysqlTable("evidence_excerpts", {
+  id: int("id").autoincrement().primaryKey(),
+  documentId: int("documentId").notNull().references(() => evidenceDocuments.id),
+  excerptText: text("excerptText").notNull(),
+  excerptTextAr: text("excerptTextAr"),
+  pageNumber: int("pageNumber"),
+  startOffset: int("startOffset"), // Character offset in document
+  endOffset: int("endOffset"),
+  highlightCoordinates: json("highlightCoordinates").$type<{ x: number; y: number; width: number; height: number }[]>(),
+  extractionMethod: mysqlEnum("extractionMethod", ["manual", "ocr", "llm", "api"]).default("manual").notNull(),
+  extractedByUserId: int("extractedByUserId").references(() => users.id),
+  verifiedByUserId: int("verifiedByUserId").references(() => users.id),
+  verifiedAt: timestamp("verifiedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  documentIdx: index("excerpt_document_idx").on(table.documentId),
+  pageIdx: index("excerpt_page_idx").on(table.pageNumber),
+}));
+
+export type EvidenceExcerpt = typeof evidenceExcerpts.$inferSelect;
+export type InsertEvidenceExcerpt = typeof evidenceExcerpts.$inferInsert;
+
+/**
+ * Evidence Datasets - Dataset metadata with schema and update tracking
+ */
+export const evidenceDatasets = mysqlTable("evidence_datasets", {
+  id: int("id").autoincrement().primaryKey(),
+  sourceId: int("sourceId").notNull().references(() => evidenceSources.id),
+  name: varchar("name", { length: 255 }).notNull(),
+  nameAr: varchar("nameAr", { length: 255 }),
+  description: text("description"),
+  descriptionAr: text("descriptionAr"),
+  datasetType: mysqlEnum("datasetType", [
+    "time_series",
+    "cross_section",
+    "panel",
+    "geospatial",
+    "event_log",
+    "registry",
+    "other"
+  ]).notNull(),
+  schema: json("schema").$type<{ columns: { name: string; type: string; description: string }[] }>(),
+  timeCoverageStart: timestamp("timeCoverageStart"),
+  timeCoverageEnd: timestamp("timeCoverageEnd"),
+  geographicScope: varchar("geographicScope", { length: 100 }),
+  regimeTag: mysqlEnum("regimeTag", ["aden_irg", "sanaa_defacto", "mixed", "unknown"]),
+  updateFrequency: mysqlEnum("updateFrequency", ["realtime", "daily", "weekly", "monthly", "quarterly", "annual", "irregular"]),
+  lastUpdatedAt: timestamp("lastUpdatedAt"),
+  recordCount: int("recordCount"),
+  apiEndpoint: text("apiEndpoint"),
+  downloadUrl: text("downloadUrl"),
+  license: varchar("license", { length: 100 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  sourceIdx: index("evidence_dataset_source_idx").on(table.sourceId),
+  typeIdx: index("evidence_dataset_type_idx").on(table.datasetType),
+  nameIdx: index("evidence_dataset_name_idx").on(table.name),
+}));
+
+export type EvidenceDataset = typeof evidenceDatasets.$inferSelect;
+export type InsertEvidenceDataset = typeof evidenceDatasets.$inferInsert;
+
+/**
+ * Evidence Observations - Individual data points from datasets
+ */
+export const evidenceObservations = mysqlTable("evidence_observations", {
+  id: int("id").autoincrement().primaryKey(),
+  datasetId: int("datasetId").notNull().references(() => evidenceDatasets.id),
+  indicatorCode: varchar("indicatorCode", { length: 100 }).notNull(),
+  periodStart: timestamp("periodStart").notNull(),
+  periodEnd: timestamp("periodEnd"),
+  value: decimal("value", { precision: 20, scale: 6 }),
+  valueText: varchar("valueText", { length: 255 }), // For non-numeric values
+  unit: varchar("unit", { length: 50 }),
+  regimeTag: mysqlEnum("regimeTag", ["aden_irg", "sanaa_defacto", "mixed", "unknown"]),
+  geography: varchar("geography", { length: 100 }),
+  ingestionJobId: int("ingestionJobId"),
+  rawValue: text("rawValue"), // Original value before transformation
+  transformationApplied: text("transformationApplied"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  datasetIdx: index("observation_dataset_idx").on(table.datasetId),
+  indicatorIdx: index("observation_indicator_idx").on(table.indicatorCode),
+  periodIdx: index("observation_period_idx").on(table.periodStart),
+  regimeIdx: index("observation_regime_idx").on(table.regimeTag),
+}));
+
+export type EvidenceObservation = typeof evidenceObservations.$inferSelect;
+export type InsertEvidenceObservation = typeof evidenceObservations.$inferInsert;
+
+// ============================================================================
+// TRUTH LAYER - CLAIM LEDGER
+// ============================================================================
+
+/**
+ * Claims - The atomic truth objects
+ * Every factual statement displayed must be a Claim with provenance
+ */
+export const claims = mysqlTable("claims", {
+  id: varchar("id", { length: 36 }).primaryKey(), // UUID for stable references
+  claimType: mysqlEnum("claimType", [
+    "metric_value",        // Numeric indicator value
+    "event_statement",     // Something happened
+    "regulation_statement", // A rule/law/directive
+    "narrative_statement", // Descriptive text
+    "model_parameter"      // Simulation parameter
+  ]).notNull(),
+  
+  // Subject-Predicate-Object structure
+  subjectType: mysqlEnum("subjectType", ["indicator", "entity", "event", "regulation", "geography"]).notNull(),
+  subjectId: varchar("subjectId", { length: 100 }).notNull(), // Reference to indicator_code, entity_id, etc.
+  subjectLabel: varchar("subjectLabel", { length: 255 }), // Human-readable label
+  subjectLabelAr: varchar("subjectLabelAr", { length: 255 }),
+  
+  predicate: mysqlEnum("predicate", [
+    "equals",
+    "increased_by",
+    "decreased_by",
+    "changed_to",
+    "announced",
+    "implemented",
+    "estimated_at",
+    "reported_as",
+    "projected_to",
+    "other"
+  ]).notNull(),
+  
+  // Object (the value)
+  objectValue: decimal("objectValue", { precision: 20, scale: 6 }),
+  objectText: text("objectText"), // For non-numeric claims
+  objectUnit: varchar("objectUnit", { length: 50 }),
+  objectFrequency: varchar("objectFrequency", { length: 50 }), // e.g., "monthly", "annual"
+  objectBaseYear: int("objectBaseYear"),
+  
+  // Geography and regime
+  geography: varchar("geography", { length: 100 }),
+  regimeTag: mysqlEnum("regimeTag", ["aden_irg", "sanaa_defacto", "mixed", "unknown"]).notNull(),
+  
+  // Time dimension
+  timeStart: timestamp("timeStart"),
+  timeEnd: timestamp("timeEnd"),
+  asOfDate: timestamp("asOfDate"), // When this claim was valid
+  
+  // Computation lineage
+  computationLineage: json("computationLineage").$type<{
+    steps: { operation: string; input: string; output: string }[];
+    rawValue?: string;
+    transformations?: string[];
+  }>(),
+  
+  // Confidence
+  confidenceGrade: mysqlEnum("confidenceGrade", ["A", "B", "C", "D"]).notNull(),
+  confidenceRationale: text("confidenceRationale"),
+  
+  // Conflict status
+  conflictStatus: mysqlEnum("conflictStatus", ["none", "disputed", "resolved"]).default("none").notNull(),
+  conflictNotes: text("conflictNotes"),
+  
+  // Visibility
+  visibility: mysqlEnum("visibility", ["public", "registered", "pro", "admin"]).default("public").notNull(),
+  
+  // Audit
+  createdBy: mysqlEnum("createdBy", ["system_ingestion", "contributor", "analyst", "admin"]).notNull(),
+  createdByUserId: int("createdByUserId").references(() => users.id),
+  verifiedByUserId: int("verifiedByUserId").references(() => users.id),
+  verifiedAt: timestamp("verifiedAt"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  typeIdx: index("claim_type_idx").on(table.claimType),
+  subjectIdx: index("claim_subject_idx").on(table.subjectType, table.subjectId),
+  regimeIdx: index("claim_regime_idx").on(table.regimeTag),
+  timeIdx: index("claim_time_idx").on(table.timeStart, table.timeEnd),
+  confidenceIdx: index("claim_confidence_idx").on(table.confidenceGrade),
+  conflictIdx: index("claim_conflict_idx").on(table.conflictStatus),
+}));
+
+export type Claim = typeof claims.$inferSelect;
+export type InsertClaim = typeof claims.$inferInsert;
+
+/**
+ * Claim Evidence Links - Links claims to their evidence
+ */
+export const claimEvidenceLinks = mysqlTable("claim_evidence_links", {
+  id: int("id").autoincrement().primaryKey(),
+  claimId: varchar("claimId", { length: 36 }).notNull().references(() => claims.id),
+  evidenceType: mysqlEnum("evidenceType", ["document", "excerpt", "dataset", "observation"]).notNull(),
+  evidenceId: int("evidenceId").notNull(), // FK to evidence_documents, evidence_excerpts, etc.
+  relevanceScore: decimal("relevanceScore", { precision: 3, scale: 2 }), // 0.00 to 1.00
+  isPrimary: boolean("isPrimary").default(false).notNull(), // Primary source for this claim
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  claimIdx: index("claim_evidence_claim_idx").on(table.claimId),
+  evidenceIdx: index("claim_evidence_evidence_idx").on(table.evidenceType, table.evidenceId),
+}));
+
+export type ClaimEvidenceLink = typeof claimEvidenceLinks.$inferSelect;
+export type InsertClaimEvidenceLink = typeof claimEvidenceLinks.$inferInsert;
+
+/**
+ * Claim Sets - Groups of claims used in views/reports
+ */
+export const claimSets = mysqlTable("claim_sets", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  purpose: mysqlEnum("purpose", ["page_view", "report", "export", "api_response"]).notNull(),
+  pageRoute: varchar("pageRoute", { length: 255 }), // e.g., "/sectors/banking"
+  evidenceSetHash: varchar("evidenceSetHash", { length: 64 }), // Hash of all evidence used
+  claimIds: json("claimIds").$type<string[]>(),
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+  generatedByUserId: int("generatedByUserId").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  purposeIdx: index("claim_set_purpose_idx").on(table.purpose),
+  pageIdx: index("claim_set_page_idx").on(table.pageRoute),
+}));
+
+export type ClaimSet = typeof claimSets.$inferSelect;
+export type InsertClaimSet = typeof claimSets.$inferInsert;
+
+/**
+ * Conflicts - When multiple sources disagree
+ */
+export const conflicts = mysqlTable("conflicts", {
+  id: int("id").autoincrement().primaryKey(),
+  conflictType: mysqlEnum("conflictType", [
+    "value_mismatch",
+    "date_mismatch",
+    "source_contradiction",
+    "methodology_difference"
+  ]).notNull(),
+  subjectType: varchar("subjectType", { length: 50 }).notNull(),
+  subjectId: varchar("subjectId", { length: 100 }).notNull(),
+  description: text("description").notNull(),
+  descriptionAr: text("descriptionAr"),
+  
+  // Conflicting claims
+  claimIds: json("claimIds").$type<string[]>(),
+  
+  // Resolution
+  status: mysqlEnum("status", ["detected", "under_review", "resolved", "accepted"]).default("detected").notNull(),
+  resolution: text("resolution"),
+  resolvedClaimId: varchar("resolvedClaimId", { length: 36 }),
+  resolvedByUserId: int("resolvedByUserId").references(() => users.id),
+  resolvedAt: timestamp("resolvedAt"),
+  
+  // Severity
+  severity: mysqlEnum("severity", ["low", "medium", "high", "critical"]).default("medium").notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  typeIdx: index("conflict_type_idx").on(table.conflictType),
+  subjectIdx: index("conflict_subject_idx").on(table.subjectType, table.subjectId),
+  statusIdx: index("conflict_status_idx").on(table.status),
+  severityIdx: index("conflict_severity_idx").on(table.severity),
+}));
+
+export type Conflict = typeof conflicts.$inferSelect;
+export type InsertConflict = typeof conflicts.$inferInsert;
+
+/**
+ * Confidence Scores - Detailed confidence computation
+ */
+export const confidenceScores = mysqlTable("confidence_scores", {
+  id: int("id").autoincrement().primaryKey(),
+  claimId: varchar("claimId", { length: 36 }).notNull().references(() => claims.id),
+  
+  // Score components
+  sourceReliability: decimal("sourceReliability", { precision: 3, scale: 2 }), // 0.00 to 1.00
+  dataRecency: decimal("dataRecency", { precision: 3, scale: 2 }),
+  methodologyClarity: decimal("methodologyClarity", { precision: 3, scale: 2 }),
+  corroborationLevel: decimal("corroborationLevel", { precision: 3, scale: 2 }),
+  
+  // Overall
+  overallScore: decimal("overallScore", { precision: 3, scale: 2 }).notNull(),
+  grade: mysqlEnum("grade", ["A", "B", "C", "D"]).notNull(),
+  
+  // Computation
+  computationMethod: varchar("computationMethod", { length: 100 }),
+  computationDetails: json("computationDetails").$type<Record<string, unknown>>(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  claimIdx: index("confidence_claim_idx").on(table.claimId),
+  gradeIdx: index("confidence_grade_idx").on(table.grade),
+}));
+
+export type ConfidenceScore = typeof confidenceScores.$inferSelect;
+export type InsertConfidenceScore = typeof confidenceScores.$inferInsert;
+
+// ============================================================================
+// TRUTH LAYER - ENTITIES & REGULATIONS
+// ============================================================================
+
+/**
+ * Entities - All actors/organizations/banks/regions
+ */
+export const entities = mysqlTable("entities", {
+  id: int("id").autoincrement().primaryKey(),
+  entityType: mysqlEnum("entityType", [
+    "central_bank",
+    "commercial_bank",
+    "mfi",
+    "exchange_company",
+    "government_ministry",
+    "customs_authority",
+    "tax_authority",
+    "un_agency",
+    "ingo",
+    "donor",
+    "company",
+    "political_party",
+    "armed_group",
+    "governorate",
+    "city",
+    "other"
+  ]).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  nameAr: varchar("nameAr", { length: 255 }),
+  acronym: varchar("acronym", { length: 50 }),
+  description: text("description"),
+  descriptionAr: text("descriptionAr"),
+  
+  // Affiliation
+  regimeTag: mysqlEnum("regimeTag", ["aden_irg", "sanaa_defacto", "mixed", "neutral", "unknown"]),
+  parentEntityId: int("parentEntityId"), // For hierarchical relationships
+  
+  // Contact/Location
+  headquarters: varchar("headquarters", { length: 255 }),
+  website: text("website"),
+  
+  // Status
+  status: mysqlEnum("status", ["active", "inactive", "dissolved", "sanctioned", "unknown"]).default("active").notNull(),
+  establishedDate: timestamp("establishedDate"),
+  dissolvedDate: timestamp("dissolvedDate"),
+  
+  // Metadata
+  logoUrl: text("logoUrl"),
+  metadata: json("metadata").$type<Record<string, unknown>>(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  typeIdx: index("entity_type_idx").on(table.entityType),
+  nameIdx: index("entity_name_idx").on(table.name),
+  regimeIdx: index("entity_regime_idx").on(table.regimeTag),
+  statusIdx: index("entity_status_idx").on(table.status),
+}));
+
+export type Entity = typeof entities.$inferSelect;
+export type InsertEntity = typeof entities.$inferInsert;
+
+/**
+ * Entity Links - Relationships between entities
+ */
+export const entityLinks = mysqlTable("entity_links", {
+  id: int("id").autoincrement().primaryKey(),
+  sourceEntityId: int("sourceEntityId").notNull().references(() => entities.id),
+  targetEntityId: int("targetEntityId").notNull().references(() => entities.id),
+  relationshipType: mysqlEnum("relationshipType", [
+    "parent_of",
+    "subsidiary_of",
+    "partner_with",
+    "regulates",
+    "funds",
+    "contracts_with",
+    "competes_with",
+    "affiliated_with",
+    "other"
+  ]).notNull(),
+  description: text("description"),
+  startDate: timestamp("startDate"),
+  endDate: timestamp("endDate"),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  sourceIdx: index("entity_link_source_idx").on(table.sourceEntityId),
+  targetIdx: index("entity_link_target_idx").on(table.targetEntityId),
+  typeIdx: index("entity_link_type_idx").on(table.relationshipType),
+}));
+
+export type EntityLink = typeof entityLinks.$inferSelect;
+export type InsertEntityLink = typeof entityLinks.$inferInsert;
+
+/**
+ * Regulations - Directives/laws/circulars
+ */
+export const regulations = mysqlTable("regulations", {
+  id: int("id").autoincrement().primaryKey(),
+  regulationType: mysqlEnum("regulationType", [
+    "law",
+    "decree",
+    "circular",
+    "directive",
+    "resolution",
+    "guideline",
+    "memorandum",
+    "other"
+  ]).notNull(),
+  
+  // Identification
+  referenceNumber: varchar("referenceNumber", { length: 100 }), // e.g., "Circular No. 54 of 2021"
+  title: varchar("title", { length: 500 }).notNull(),
+  titleAr: varchar("titleAr", { length: 500 }),
+  
+  // Content
+  summary: text("summary"),
+  summaryAr: text("summaryAr"),
+  fullText: text("fullText"),
+  fullTextAr: text("fullTextAr"),
+  
+  // Issuing authority
+  issuingEntityId: int("issuingEntityId").references(() => entities.id),
+  issuingAuthority: varchar("issuingAuthority", { length: 255 }),
+  
+  // Dates
+  issuedDate: timestamp("issuedDate"),
+  effectiveDate: timestamp("effectiveDate"),
+  expiryDate: timestamp("expiryDate"),
+  
+  // Scope
+  regimeTag: mysqlEnum("regimeTag", ["aden_irg", "sanaa_defacto", "mixed", "unknown"]),
+  affectedSectors: json("affectedSectors").$type<string[]>(),
+  affectedIndicators: json("affectedIndicators").$type<string[]>(),
+  
+  // Status
+  status: mysqlEnum("status", ["draft", "active", "superseded", "repealed", "expired"]).default("active").notNull(),
+  supersededById: int("supersededById"),
+  
+  // Evidence
+  documentId: int("documentId").references(() => evidenceDocuments.id),
+  sourceUrl: text("sourceUrl"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  typeIdx: index("regulation_type_idx").on(table.regulationType),
+  refIdx: index("regulation_ref_idx").on(table.referenceNumber),
+  issuedIdx: index("regulation_issued_idx").on(table.issuedDate),
+  regimeIdx: index("regulation_regime_idx").on(table.regimeTag),
+  statusIdx: index("regulation_status_idx").on(table.status),
+}));
+
+export type Regulation = typeof regulations.$inferSelect;
+export type InsertRegulation = typeof regulations.$inferInsert;
+
+// ============================================================================
+// AUTOPILOT OS - COVERAGE & TICKETS
+// ============================================================================
+
+/**
+ * Coverage Cells - Track completeness by year × sector × governorate × actor
+ */
+export const coverageCells = mysqlTable("coverage_cells", {
+  id: int("id").autoincrement().primaryKey(),
+  year: int("year").notNull(),
+  sector: varchar("sector", { length: 100 }).notNull(),
+  governorate: varchar("governorate", { length: 100 }),
+  actorType: varchar("actorType", { length: 100 }),
+  regimeTag: mysqlEnum("regimeTag", ["aden_irg", "sanaa_defacto", "mixed", "unknown"]),
+  
+  // Coverage metrics
+  totalExpectedItems: int("totalExpectedItems").default(0).notNull(),
+  totalAvailableItems: int("totalAvailableItems").default(0).notNull(),
+  coverageScore: decimal("coverageScore", { precision: 5, scale: 2 }), // 0.00 to 100.00
+  
+  // Breakdown
+  indicatorsCovered: int("indicatorsCovered").default(0).notNull(),
+  indicatorsExpected: int("indicatorsExpected").default(0).notNull(),
+  eventsCovered: int("eventsCovered").default(0).notNull(),
+  eventsExpected: int("eventsExpected").default(0).notNull(),
+  documentsCovered: int("documentsCovered").default(0).notNull(),
+  documentsExpected: int("documentsExpected").default(0).notNull(),
+  regulationsCovered: int("regulationsCovered").default(0).notNull(),
+  regulationsExpected: int("regulationsExpected").default(0).notNull(),
+  
+  // Quality
+  averageConfidence: decimal("averageConfidence", { precision: 3, scale: 2 }),
+  lastUpdatedAt: timestamp("lastUpdatedAt"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  yearIdx: index("coverage_year_idx").on(table.year),
+  sectorIdx: index("coverage_sector_idx").on(table.sector),
+  govIdx: index("coverage_gov_idx").on(table.governorate),
+  regimeIdx: index("coverage_regime_idx").on(table.regimeTag),
+  scoreIdx: index("coverage_score_idx").on(table.coverageScore),
+}));
+
+export type CoverageCell = typeof coverageCells.$inferSelect;
+export type InsertCoverageCell = typeof coverageCells.$inferInsert;
+
+/**
+ * Coverage Items - Individual items tracked in coverage
+ */
+export const coverageItems = mysqlTable("coverage_items", {
+  id: int("id").autoincrement().primaryKey(),
+  cellId: int("cellId").notNull().references(() => coverageCells.id),
+  itemType: mysqlEnum("itemType", ["indicator", "event", "document", "regulation", "actor", "page"]).notNull(),
+  itemId: varchar("itemId", { length: 100 }).notNull(),
+  itemLabel: varchar("itemLabel", { length: 255 }),
+  
+  // Status
+  status: mysqlEnum("status", ["available", "missing", "partial", "outdated"]).notNull(),
+  lastAvailableDate: timestamp("lastAvailableDate"),
+  
+  // Quality
+  confidenceGrade: mysqlEnum("confidenceGrade", ["A", "B", "C", "D"]),
+  dataGapTicketId: int("dataGapTicketId"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  cellIdx: index("coverage_item_cell_idx").on(table.cellId),
+  typeIdx: index("coverage_item_type_idx").on(table.itemType),
+  statusIdx: index("coverage_item_status_idx").on(table.status),
+}));
+
+export type CoverageItem = typeof coverageItems.$inferSelect;
+export type InsertCoverageItem = typeof coverageItems.$inferInsert;
+
+/**
+ * Fix Tickets - Issues found by QA that need fixing
+ */
+export const fixTickets = mysqlTable("fix_tickets", {
+  id: int("id").autoincrement().primaryKey(),
+  ticketType: mysqlEnum("ticketType", [
+    "hardcoded_value",
+    "broken_link",
+    "missing_provenance",
+    "export_failure",
+    "translation_missing",
+    "ui_inconsistency",
+    "performance_issue",
+    "security_issue",
+    "other"
+  ]).notNull(),
+  
+  // Location
+  filePath: varchar("filePath", { length: 500 }),
+  lineNumber: int("lineNumber"),
+  pageRoute: varchar("pageRoute", { length: 255 }),
+  componentName: varchar("componentName", { length: 100 }),
+  
+  // Details
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  detectedValue: text("detectedValue"),
+  expectedBehavior: text("expectedBehavior"),
+  
+  // Severity
+  severity: mysqlEnum("severity", ["low", "medium", "high", "critical"]).default("medium").notNull(),
+  
+  // Status
+  status: mysqlEnum("status", ["open", "in_progress", "resolved", "wont_fix", "duplicate"]).default("open").notNull(),
+  
+  // Resolution
+  resolvedByUserId: int("resolvedByUserId").references(() => users.id),
+  resolvedAt: timestamp("resolvedAt"),
+  resolutionNotes: text("resolutionNotes"),
+  
+  // Detection
+  detectedByJobId: int("detectedByJobId"),
+  detectedAt: timestamp("detectedAt").defaultNow().notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  typeIdx: index("fix_ticket_type_idx").on(table.ticketType),
+  severityIdx: index("fix_ticket_severity_idx").on(table.severity),
+  statusIdx: index("fix_ticket_status_idx").on(table.status),
+  pageIdx: index("fix_ticket_page_idx").on(table.pageRoute),
+}));
+
+export type FixTicket = typeof fixTickets.$inferSelect;
+export type InsertFixTicket = typeof fixTickets.$inferInsert;
+
+// ============================================================================
+// AUTOPILOT OS - JOBS & RUNS
+// ============================================================================
+
+/**
+ * Ingestion Runs - Track data ingestion jobs
+ */
+export const ingestionRuns = mysqlTable("ingestion_runs", {
+  id: int("id").autoincrement().primaryKey(),
+  sourceId: int("sourceId").notNull().references(() => evidenceSources.id),
+  connectorName: varchar("connectorName", { length: 100 }).notNull(),
+  
+  // Timing
+  startedAt: timestamp("startedAt").notNull(),
+  completedAt: timestamp("completedAt"),
+  duration: int("duration"), // milliseconds
+  
+  // Results
+  status: mysqlEnum("status", ["running", "success", "partial", "failed"]).notNull(),
+  recordsFetched: int("recordsFetched").default(0).notNull(),
+  recordsCreated: int("recordsCreated").default(0).notNull(),
+  recordsUpdated: int("recordsUpdated").default(0).notNull(),
+  recordsSkipped: int("recordsSkipped").default(0).notNull(),
+  claimsCreated: int("claimsCreated").default(0).notNull(),
+  
+  // Errors
+  errorMessage: text("errorMessage"),
+  errorDetails: json("errorDetails").$type<Record<string, unknown>>(),
+  
+  // Coverage impact
+  coverageCellsUpdated: int("coverageCellsUpdated").default(0).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  sourceIdx: index("ingestion_source_idx").on(table.sourceId),
+  connectorIdx: index("ingestion_connector_idx").on(table.connectorName),
+  statusIdx: index("ingestion_status_idx").on(table.status),
+  startedIdx: index("ingestion_started_idx").on(table.startedAt),
+}));
+
+export type IngestionRun = typeof ingestionRuns.$inferSelect;
+export type InsertIngestionRun = typeof ingestionRuns.$inferInsert;
+
+/**
+ * QA Runs - Track QA/integrity check runs
+ */
+export const qaRuns = mysqlTable("qa_runs", {
+  id: int("id").autoincrement().primaryKey(),
+  runType: mysqlEnum("runType", [
+    "full_scan",
+    "hardcode_detection",
+    "click_audit",
+    "provenance_check",
+    "export_integrity",
+    "translation_check"
+  ]).notNull(),
+  
+  // Timing
+  startedAt: timestamp("startedAt").notNull(),
+  completedAt: timestamp("completedAt"),
+  duration: int("duration"),
+  
+  // Results
+  status: mysqlEnum("status", ["running", "pass", "pass_warn", "fail"]).notNull(),
+  totalChecks: int("totalChecks").default(0).notNull(),
+  passedChecks: int("passedChecks").default(0).notNull(),
+  warningChecks: int("warningChecks").default(0).notNull(),
+  failedChecks: int("failedChecks").default(0).notNull(),
+  
+  // Tickets created
+  ticketsCreated: int("ticketsCreated").default(0).notNull(),
+  
+  // Report
+  reportPath: varchar("reportPath", { length: 255 }), // e.g., "/qa/integrity-report.json"
+  reportSummary: json("reportSummary").$type<Record<string, unknown>>(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  typeIdx: index("qa_type_idx").on(table.runType),
+  statusIdx: index("qa_status_idx").on(table.status),
+  startedIdx: index("qa_started_idx").on(table.startedAt),
+}));
+
+export type QaRun = typeof qaRuns.$inferSelect;
+export type InsertQaRun = typeof qaRuns.$inferInsert;
+
+/**
+ * Publish Runs - Track publishing events
+ */
+export const publishRuns = mysqlTable("publish_runs", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Timing
+  startedAt: timestamp("startedAt").notNull(),
+  completedAt: timestamp("completedAt"),
+  
+  // Status
+  status: mysqlEnum("status", ["pending", "running", "success", "failed", "blocked"]).notNull(),
+  blockedReason: text("blockedReason"),
+  
+  // QA Gate
+  qaRunId: int("qaRunId").references(() => qaRuns.id),
+  qaStatus: mysqlEnum("qaStatus", ["pass", "pass_warn", "fail"]),
+  
+  // Changes
+  pagesUpdated: int("pagesUpdated").default(0).notNull(),
+  claimsPublished: int("claimsPublished").default(0).notNull(),
+  
+  // Changelog
+  changelogSummary: text("changelogSummary"),
+  changelogDetails: json("changelogDetails").$type<{
+    newPages: string[];
+    updatedPages: string[];
+    newClaims: number;
+    updatedClaims: number;
+  }>(),
+  
+  // Approval
+  approvedByUserId: int("approvedByUserId").references(() => users.id),
+  approvedAt: timestamp("approvedAt"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  statusIdx: index("publish_status_idx").on(table.status),
+  startedIdx: index("publish_started_idx").on(table.startedAt),
+}));
+
+export type PublishRun = typeof publishRuns.$inferSelect;
+export type InsertPublishRun = typeof publishRuns.$inferInsert;
+
+/**
+ * Page Build Runs - Track auto-generated page builds
+ */
+export const pageBuildRuns = mysqlTable("page_build_runs", {
+  id: int("id").autoincrement().primaryKey(),
+  pageType: mysqlEnum("pageType", [
+    "year_page",
+    "sector_page",
+    "actor_page",
+    "regulation_page",
+    "governorate_page",
+    "report_page"
+  ]).notNull(),
+  pageIdentifier: varchar("pageIdentifier", { length: 255 }).notNull(), // e.g., "2024", "banking", "cby-aden"
+  pageRoute: varchar("pageRoute", { length: 255 }),
+  
+  // Timing
+  startedAt: timestamp("startedAt").notNull(),
+  completedAt: timestamp("completedAt"),
+  
+  // Status
+  status: mysqlEnum("status", ["running", "success", "failed", "skipped"]).notNull(),
+  
+  // Content
+  claimsUsed: int("claimsUsed").default(0).notNull(),
+  evidenceSetHash: varchar("evidenceSetHash", { length: 64 }),
+  
+  // Errors
+  errorMessage: text("errorMessage"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  typeIdx: index("page_build_type_idx").on(table.pageType),
+  identifierIdx: index("page_build_identifier_idx").on(table.pageIdentifier),
+  statusIdx: index("page_build_status_idx").on(table.status),
+}));
+
+export type PageBuildRun = typeof pageBuildRuns.$inferSelect;
+export type InsertPageBuildRun = typeof pageBuildRuns.$inferInsert;
+
+/**
+ * Translation Jobs - Track translation work
+ */
+export const translationJobs = mysqlTable("translation_jobs", {
+  id: int("id").autoincrement().primaryKey(),
+  targetType: mysqlEnum("targetType", ["claim", "document", "page", "regulation", "entity"]).notNull(),
+  targetId: varchar("targetId", { length: 100 }).notNull(),
+  sourceLanguage: mysqlEnum("sourceLanguage", ["en", "ar"]).notNull(),
+  targetLanguage: mysqlEnum("targetLanguage", ["en", "ar"]).notNull(),
+  
+  // Status
+  status: mysqlEnum("status", ["pending", "in_progress", "review", "completed", "failed"]).default("pending").notNull(),
+  
+  // Content
+  sourceText: text("sourceText"),
+  translatedText: text("translatedText"),
+  
+  // Quality
+  translationMethod: mysqlEnum("translationMethod", ["human", "machine", "hybrid"]),
+  reviewedByUserId: int("reviewedByUserId").references(() => users.id),
+  reviewedAt: timestamp("reviewedAt"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  targetIdx: index("translation_target_idx").on(table.targetType, table.targetId),
+  statusIdx: index("translation_status_idx").on(table.status),
+}));
+
+export type TranslationJob = typeof translationJobs.$inferSelect;
+export type InsertTranslationJob = typeof translationJobs.$inferInsert;
+
+// ============================================================================
+// AUTOPILOT OS - SETTINGS & EVENTS
+// ============================================================================
+
+/**
+ * Autopilot Settings - Configuration for autopilot behavior
+ */
+export const autopilotSettings = mysqlTable("autopilot_settings", {
+  id: int("id").autoincrement().primaryKey(),
+  settingKey: varchar("settingKey", { length: 100 }).notNull().unique(),
+  settingValue: text("settingValue").notNull(),
+  settingType: mysqlEnum("settingType", ["boolean", "number", "string", "json"]).notNull(),
+  description: text("description"),
+  category: mysqlEnum("category", [
+    "ingestion",
+    "qa",
+    "publishing",
+    "coverage",
+    "notifications",
+    "general"
+  ]).notNull(),
+  updatedByUserId: int("updatedByUserId").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  keyIdx: index("autopilot_setting_key_idx").on(table.settingKey),
+  categoryIdx: index("autopilot_setting_category_idx").on(table.category),
+}));
+
+export type AutopilotSetting = typeof autopilotSettings.$inferSelect;
+export type InsertAutopilotSetting = typeof autopilotSettings.$inferInsert;
+
+/**
+ * Autopilot Events - Log of autopilot activities
+ */
+export const autopilotEvents = mysqlTable("autopilot_events", {
+  id: int("id").autoincrement().primaryKey(),
+  eventType: mysqlEnum("eventType", [
+    "ingestion_started",
+    "ingestion_completed",
+    "qa_started",
+    "qa_completed",
+    "page_generated",
+    "report_generated",
+    "publish_started",
+    "publish_completed",
+    "ticket_created",
+    "ticket_resolved",
+    "setting_changed",
+    "autopilot_paused",
+    "autopilot_resumed",
+    "error"
+  ]).notNull(),
+  
+  // Details
+  summary: varchar("summary", { length: 500 }).notNull(),
+  details: json("details").$type<Record<string, unknown>>(),
+  
+  // Related entities
+  relatedJobId: int("relatedJobId"),
+  relatedTicketId: int("relatedTicketId"),
+  relatedPageRoute: varchar("relatedPageRoute", { length: 255 }),
+  
+  // User
+  triggeredByUserId: int("triggeredByUserId").references(() => users.id),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  typeIdx: index("autopilot_event_type_idx").on(table.eventType),
+  createdIdx: index("autopilot_event_created_idx").on(table.createdAt),
+}));
+
+export type AutopilotEvent = typeof autopilotEvents.$inferSelect;
+export type InsertAutopilotEvent = typeof autopilotEvents.$inferInsert;
+
+// ============================================================================
+// TRUTH LAYER - INTEGRITY REPORTS
+// ============================================================================
+
+/**
+ * Integrity Reports - Store QA scan results
+ */
+export const integrityReports = mysqlTable("integrity_reports", {
+  id: int("id").autoincrement().primaryKey(),
+  qaRunId: int("qaRunId").references(() => qaRuns.id),
+  reportType: mysqlEnum("reportType", [
+    "hardcode_scan",
+    "provenance_coverage",
+    "click_audit",
+    "export_integrity",
+    "full_integrity"
+  ]).notNull(),
+  
+  // Scores
+  overallScore: decimal("overallScore", { precision: 5, scale: 2 }), // 0-100
+  provenanceCoverage: decimal("provenanceCoverage", { precision: 5, scale: 2 }),
+  hardcodeViolations: int("hardcodeViolations").default(0).notNull(),
+  brokenClicks: int("brokenClicks").default(0).notNull(),
+  exportFailures: int("exportFailures").default(0).notNull(),
+  translationGaps: int("translationGaps").default(0).notNull(),
+  
+  // Details
+  reportJson: json("reportJson").$type<{
+    summary: Record<string, unknown>;
+    violations: Array<{
+      type: string;
+      severity: string;
+      location: string;
+      details: string;
+    }>;
+  }>(),
+  
+  // File paths
+  jsonReportPath: varchar("jsonReportPath", { length: 255 }),
+  markdownReportPath: varchar("markdownReportPath", { length: 255 }),
+  
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+}, (table) => ({
+  qaRunIdx: index("integrity_qa_run_idx").on(table.qaRunId),
+  typeIdx: index("integrity_type_idx").on(table.reportType),
+  generatedIdx: index("integrity_generated_idx").on(table.generatedAt),
+}));
+
+export type IntegrityReport = typeof integrityReports.$inferSelect;
+export type InsertIntegrityReport = typeof integrityReports.$inferInsert;

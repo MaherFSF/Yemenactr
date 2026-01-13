@@ -7,6 +7,7 @@ interface LanguageContextType {
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
   dir: "rtl" | "ltr";
+  isRTL: boolean;
   formatNumber: (num: number) => string;
   formatDate: (date: Date | string) => string;
   formatCurrency: (amount: number, currency?: string) => string;
@@ -1058,7 +1059,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }, [language, dir]);
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, dir, formatNumber, formatDate, formatCurrency }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, dir, isRTL: dir === 'rtl', formatNumber, formatDate, formatCurrency }}>
       {children}
     </LanguageContext.Provider>
   );

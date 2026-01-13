@@ -3094,3 +3094,132 @@ Based on review of master design documents and data source register:
 - [ ] QA dashboards (outliers, contradictions, missing periods)
 - [ ] Validation feedback system for Partner Portal
 - [ ] Publishing workflow with approval
+
+
+## Phase 65: YETO Autopilot OS & Truth Layer Implementation (IN PROGRESS)
+
+### Discovery Pack (D1)
+- [x] Create /docs/INVENTORY.md - full inventory of routes/pages/tools/components/DB tables/jobs
+- [x] Create /docs/BASELINE_SNAPSHOT.md - current routes, exports, DB schema, test coverage
+- [x] Create /docs/HARDCODE_REPORT.md - scan for hardcoded content with file paths
+
+### Truth Layer V1 (D2)
+- [ ] Create Evidence Graph DB tables (evidence_sources, evidence_documents, evidence_excerpts, evidence_datasets, evidence_observations)
+- [ ] Create Claim Ledger DB tables (claims, claim_evidence_links, conflicts, confidence_scores, claim_sets)
+- [ ] Create Entity/Regulation tables (entities, entity_links, regulations)
+- [ ] Implement ClaimValue component (renders claim with confidence badge)
+- [ ] Implement ProvenanceBadge component (compact source + confidence grade)
+- [ ] Implement LineageDrawer component (full provenance details)
+- [ ] Build Truth Control Room admin page
+- [ ] Implement Integrity Compiler producing /qa/integrity-report.json
+
+### Autopilot OS Components
+- [ ] Build Coverage Governor (gap detector with Coverage Map)
+- [ ] Build Coverage Scorecard (0-100 by year/sector/governorate/actor)
+- [ ] Implement Data Gap Tickets system
+- [ ] Build Ingestion Orchestrator (manages schedules, validates freshness)
+- [ ] Build Page Factory (auto-generates year/sector/actor/regulation/governorate pages)
+- [ ] Build QA + Publish Gate (nightly click-audit crawler)
+- [ ] Build Autopilot Control Room admin UI
+
+### Autopilot Control Room Features
+- [ ] Live status cards (ingestion runs, fresh datasets %, coverage score, open tickets)
+- [ ] Coverage Map UI (heatmap by year × sector, Aden/Sana'a toggle)
+- [ ] Autopilot actions (run ingestion/QA/page generation/reports/publish)
+- [ ] Autopilot digest (daily/weekly summary)
+- [ ] Full audit trails (ingestion logs, Evidence Tribunal verdicts, page diffs)
+
+### Click Audit (D4)
+- [ ] Implement crawler that enumerates all routes/actions
+- [ ] Report failures in /qa/click-report.json
+- [ ] Create Fix Tickets for broken actions
+
+### Deliverables
+- [ ] D1: Discovery Pack committed with tag baseline-inventory
+- [ ] D2: Truth Layer V1 committed with tag milestone-truth-layer-v1
+- [ ] D3: Demo one existing page wrapped with ClaimValue components
+- [ ] D4: Click Audit V1 committed with tag milestone-click-audit-v1
+- [ ] D5: Truth Control Room visible to admin
+
+
+## Phase 65: YETO Autopilot OS & Truth Layer (IN PROGRESS)
+
+### D1: Discovery Pack (COMPLETED)
+- [x] Create /docs/INVENTORY.md - full inventory of routes/pages/tools/components/DB tables/jobs
+- [x] Create /docs/BASELINE_SNAPSHOT.md - current routes, exports, DB schema, test coverage
+- [x] Create /docs/HARDCODE_REPORT.md - scan for hardcoded content with file paths
+
+### D2: Truth Layer V1 - Database Schema (COMPLETED)
+- [x] Create evidence_sources table (whitelisted publishers)
+- [x] Create evidence_documents table (PDFs, reports with hashing)
+- [x] Create evidence_excerpts table (anchored passages)
+- [x] Create evidence_datasets table (dataset metadata)
+- [x] Create evidence_observations table (individual data points)
+- [x] Create claims table (atomic truth objects)
+- [x] Create claim_evidence_links table
+- [x] Create claim_sets table (groups for views/reports)
+- [x] Create conflicts table (source disagreements)
+- [x] Create claim_confidence_scores table
+- [x] Create entities table (actors/organizations)
+- [x] Create entity_links table (relationships)
+- [x] Create regulations table (laws/circulars)
+- [x] Create coverage_cells table (year × sector × governorate)
+- [x] Create coverage_items table (individual tracked items)
+- [x] Create fix_tickets table (QA issues)
+- [x] Create ingestion_runs table (data ingestion tracking)
+- [x] Create qa_runs table (QA job tracking)
+- [x] Create publish_runs table (publishing events)
+- [x] Create page_build_runs table (auto-generated pages)
+- [x] Create autopilot_settings table (configuration)
+- [x] Create autopilot_events table (activity log)
+- [x] Create integrity_reports table (QA scan results)
+
+### D3: Truth Layer V1 - APIs (COMPLETED)
+- [x] Create claimLedger tRPC router (getClaim, createClaim, updateClaim)
+- [x] Create evidenceGraph tRPC router (getEvidence, linkEvidence)
+- [x] Create conflicts tRPC router (detectConflicts, resolveConflict)
+- [x] Create confidence tRPC router (computeConfidence, getScore)
+- [x] Create autopilot tRPC router (coverage, ingestion, QA, tickets, pub### D4: Truth Layer V1 - UI Components (COMPLETED)
+- [x] Create ClaimValue component (renders value with provenance badge)
+- [x] Create ProvenanceBadge component (A-D confidence with tooltip)
+- [x] Create LineageDrawer component (shows computation steps)
+- [x] Create ConflictAlert component (disputed value indicator - integrated in ClaimValue)
+- [x] Create EvidenceCard component (displays evidence with download - integrated in LineageDrawer)
+##### D5: Integrity Compiler (COMPLETED)
+- [x] Create hardcode scanner (detect static values in code)
+- [x] Create provenance checker (verify all values have claims)
+- [x] Create coverage checker (verify data coverage by year/sector)
+- [x] Create translation checker (ensure bilingual coverage)
+- [x] Create QA report generator with fix ticket creation (find missing AR/EN)
+- [ ] Create QA report generator (JSON + Markdown output)
+
+### D6: Autopilot Control Room (COMPLETED)
+- [x] Create /admin/autopilot route
+- [x] Build ingestion status dashboard
+- [x] Build QA status dashboard
+- [x] Build coverage map visualization
+- [x] Build fix ticket queue
+- [x] Build publish gate controls
+- [x] Build settings panel
+
+### D7: Coverage Governor (COMPLETED)
+- [x] Create coverage scanner (year × sector × governorate)
+- [x] Create gap detection algorithm
+- [x] Create coverage map component
+- [x] Create data gap ticket generator
+- [x] Implement coverage scoring
+
+### D8: Page Factory (COMPLETED)
+- [x] Create year page template
+- [x] Create sector page template
+- [x] Create actor page template
+- [x] Create regulation page template
+- [x] Create governorate page template
+- [x] Implement auto-generation from claims
+
+### D9: Click Audit Crawler (COMPLETED)
+- [x] Create route crawler
+- [x] Create link validator
+- [x] Create button tester
+- [x] Create export verifier
+- [x] Generate click audit report

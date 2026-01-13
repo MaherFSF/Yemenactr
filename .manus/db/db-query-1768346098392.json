@@ -1,0 +1,73 @@
+{
+  "query": "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'coverage_cells';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'coverage_cells';",
+  "rows": [
+    {
+      "COLUMN_NAME": "id"
+    },
+    {
+      "COLUMN_NAME": "year"
+    },
+    {
+      "COLUMN_NAME": "sector"
+    },
+    {
+      "COLUMN_NAME": "governorate"
+    },
+    {
+      "COLUMN_NAME": "actorType"
+    },
+    {
+      "COLUMN_NAME": "regimeTag"
+    },
+    {
+      "COLUMN_NAME": "totalExpectedItems"
+    },
+    {
+      "COLUMN_NAME": "totalAvailableItems"
+    },
+    {
+      "COLUMN_NAME": "coverageScore"
+    },
+    {
+      "COLUMN_NAME": "indicatorsCovered"
+    },
+    {
+      "COLUMN_NAME": "indicatorsExpected"
+    },
+    {
+      "COLUMN_NAME": "eventsCovered"
+    },
+    {
+      "COLUMN_NAME": "eventsExpected"
+    },
+    {
+      "COLUMN_NAME": "documentsCovered"
+    },
+    {
+      "COLUMN_NAME": "documentsExpected"
+    },
+    {
+      "COLUMN_NAME": "regulationsCovered"
+    },
+    {
+      "COLUMN_NAME": "regulationsExpected"
+    },
+    {
+      "COLUMN_NAME": "averageConfidence"
+    },
+    {
+      "COLUMN_NAME": "lastUpdatedAt"
+    },
+    {
+      "COLUMN_NAME": "createdAt"
+    },
+    {
+      "COLUMN_NAME": "updatedAt"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\nid\nyear\nsector\ngovernorate\nactorType\nregimeTag\ntotalExpectedItems\ntotalAvailableItems\ncoverageScore\nindicatorsCovered\nindicatorsExpected\neventsCovered\neventsExpected\ndocumentsCovered\ndocumentsExpected\nregulationsCovered\nregulationsExpected\naverageConfidence\nlastUpdatedAt\ncreatedAt\nupdatedAt\n",
+  "stderr": "",
+  "execution_time_ms": 54
+}

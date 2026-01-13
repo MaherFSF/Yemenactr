@@ -76,6 +76,7 @@ import AlertHistory from "./pages/admin/AlertHistory";
 import AdminHub from "./pages/admin/AdminHub";
 import WebhookSettings from "./pages/admin/WebhookSettings";
 import ConnectorThresholds from "./pages/admin/ConnectorThresholds";
+import AutopilotControlRoom from "./pages/admin/AutopilotControlRoom";
 import GovernorDashboard from "./pages/GovernorDashboard";
 import DeputyGovernorDashboard from "./pages/DeputyGovernorDashboard";
 
@@ -141,12 +142,13 @@ function Router() {
       <Route path="/data-exchange" component={DataExchangeHub} />
       <Route path="/accuracy" component={AccuracyDashboard} />
       <Route path="/admin/scheduler" component={SchedulerDashboard} />
-      <Route path="/admin/alerts" component={AlertsDashboard} />
+          <Route path="/admin/alerts" component={AlertsDashboard} />
           <Route path="/admin/api-health" component={ApiHealthDashboard} />
           <Route path="/admin/alert-history" component={AlertHistory} />
           <Route path="/admin-hub" component={AdminHub} />
           <Route path="/admin/webhooks" component={WebhookSettings} />
-          <Route path={"/admin/connector-thresholds"} component={ConnectorThresholds} />
+          <Route path="/admin/connector-thresholds" component={ConnectorThresholds} />
+          <Route path="/admin/autopilot" component={AutopilotControlRoom} />
       <Route path={"/executive/governor"} component={GovernorDashboard} />
       <Route path={"/executive/deputy-governor"} component={DeputyGovernorDashboard} />
       <Route path={"/partner"} component={PartnerPortal} />
