@@ -1,6 +1,31 @@
 # YETO Platform TODO
 
-## Latest Update: January 12, 2026 - 11:50 UTC
+## Latest Update: January 13, 2026 - 16:15 UTC
+
+### Phase 64: Production-Quality Upgrade (IN PROGRESS)
+
+**Completed:**
+- [x] Banking Sector Dashboard with real database data (17 banks)
+- [x] Commercial banks table with $18.7B total assets
+- [x] Bank status tracking (operational, limited, distressed)
+- [x] Banks under monitoring section (CAC Bank OFAC, CACB NPL issues)
+- [x] Governor Executive Dashboard with AI agent integration
+- [x] Deputy Governor Bank Supervision Dashboard
+- [x] Enhanced AI Economic Assistant with Export/Share buttons
+- [x] Suggested Questions sidebar in AI Assistant
+- [x] Partner Contribution Portal (data upload workflow)
+- [x] ProvenanceBadge component (A-E confidence levels)
+- [x] ReportGenerator component for executive briefings
+- [x] Database tables: commercial_banks, cby_directives, banking_sector_metrics
+- [x] Database tables: executive_profiles, executive_alerts, executive_reports
+- [x] Database tables: partner_organizations, partner_contributions
+- [x] All 173 tests passing
+
+**Pending:**
+- [ ] CBY PDF download links in Research Library
+- [ ] Microfinance sector page
+- [ ] Enhanced admin console matching mockup
+- [ ] Main dashboard with real-time alerts
 
 ### Phase 63: CBY Publications & Microfinance Integration (COMPLETED)
 - [x] Extracted 108 CBY PDF publications from zip file
@@ -2959,3 +2984,69 @@ Based on review of master design documents and data source register:
 - [ ] Create entity profiles for microfinance institutions
 - [ ] Update Banking & Finance sector page with microfinance data
 - [ ] Test all integrations
+
+
+## Phase 64: Production-Quality Upgrade (January 12, 2026)
+
+### Priority 1: CBY PDF Downloads
+- [ ] Link CBY publications in database to actual PDF files in /documents/cby/
+- [ ] Add download buttons to Research Library for CBY documents
+- [ ] Verify all 114 PDF files are accessible
+
+### Priority 2: Banking & Finance Sector Dashboard (Mockup Match)
+- [ ] Create /sectors/banking-finance route
+- [ ] Hero banner with Aden Central Bank imagery + YETO/CauseWay branding
+- [ ] Top KPI strip: NPL, CAR, total assets, banks count (Aden vs Sana'a)
+- [ ] Left filter panel: regime toggle, bank type, status, sanctions filter
+- [ ] Central table: bank list with badges, jurisdiction, assets, CAR, status
+- [ ] Right column: CBY directives list, key events timeline, sector reports
+- [ ] Bottom tool cards: compliance, policy simulator, risk analysis, bank comparison
+- [ ] All data DB-driven with provenance badges
+
+### Priority 3: Partner Contribution Portal
+- [ ] Create /contribute route for data partners
+- [ ] Organization header with CBY Aden branding
+- [ ] Stats cards: published datasets, pending review, active contributions
+- [ ] Upload widget: dataset type, time period, notes, submit
+- [ ] Notifications panel with reminders
+- [ ] Submissions table with status pills and actions
+- [ ] Audit trail logging
+
+### Priority 4: Governor Executive Dashboard
+- [ ] Create /executive/governor route (RBAC protected)
+- [ ] KPI cockpit: reserves, FX gap, inflation, liquidity, banking stability
+- [ ] Policy & circulars center (searchable + tagged)
+- [ ] Decision simulator presets
+- [ ] Daily/weekly/monthly briefing generator
+- [ ] Alerts with thresholds + evidence
+- [ ] Governor AI Agent: strategic advisor with evidence-only responses
+
+### Priority 5: Deputy Governor Bank Supervision Dashboard
+- [ ] Create /executive/deputy route (RBAC protected)
+- [ ] Supervision dashboard: liquidity, NPL, FX exposure, compliance risk
+- [ ] Institution profiles with status and sanctions exposure
+- [ ] Enforcement/actions log
+- [ ] Deputy AI Agent: supervision risk briefs
+
+### Priority 6: Enhanced AI Economic Assistant
+- [ ] Upgrade assistant UI with suggested questions panel
+- [ ] Add inline charts and tables in responses
+- [ ] Implement citation system with source links
+- [ ] Add confidence/limitations section
+- [ ] Export analysis PDF button
+- [ ] Evidence pack generation
+
+### Priority 7: Provenance Badges & Dynamic Data
+- [ ] Create ProvenanceBadge component (compact)
+- [ ] Create ProvenanceDrawer component (full metadata)
+- [ ] Attach provenance to all KPIs/charts/tables
+- [ ] Show "Latest ingested up to: {date}" on all pages
+
+### Priority 8: Report Generation Engine
+- [ ] Create report_templates table
+- [ ] Create report_runs table
+- [ ] Build report wizard UI
+- [ ] PDF export with branding
+- [ ] DOCX export
+- [ ] Data pack export (CSV/Excel/JSON)
+

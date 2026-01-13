@@ -3039,6 +3039,351 @@ Answer the user's question based on this research. Be specific and cite sources 
         return generateMonthlyBrief(dataMap);
       }),
   }),
+
+  // ============================================================================
+  // BANKING SECTOR
+  // ============================================================================
+  
+  banking: router({
+    getBanks: publicProcedure
+      .input(z.object({
+        jurisdiction: z.enum(['aden', 'sanaa', 'both', 'all']).optional(),
+        bankType: z.enum(['commercial', 'islamic', 'specialized', 'microfinance', 'all']).optional(),
+        status: z.enum(['operational', 'limited', 'distressed', 'suspended', 'liquidation', 'all']).optional(),
+        search: z.string().optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        const mysql = await import('mysql2/promise');
+        const conn = await mysql.createConnection(process.env.DATABASE_URL!);
+        let query = `
+          SELECT id, name, nameAr, acronym, swiftCode, bankType, jurisdiction, 
+                 ownership, operationalStatus, sanctionsStatus, totalAssets,
+                 capitalAdequacyRatio, nonPerformingLoans, liquidityRatio,
+                 branchCount, headquarters, foundedYear, isUnderWatch, watchReason,
+                 notes, confidenceRating, metricsAsOf
+          FROM commercial_banks WHERE 1=1
+        `;
+        const params: any[] = [];
+        
+        if (input?.jurisdiction && input.jurisdiction !== 'all') {
+          if (input.jurisdiction === 'both') {
+            query += ` AND jurisdiction = 'both'`;
+          } else {
+            query += ` AND (jurisdiction = ? OR jurisdiction = 'both')`;
+            params.push(input.jurisdiction);
+          }
+        }
+        if (input?.bankType && input.bankType !== 'all') {
+          query += ` AND bankType = ?`;
+          params.push(input.bankType);
+        }
+        if (input?.status && input.status !== 'all') {
+          query += ` AND operationalStatus = ?`;
+          params.push(input.status);
+        }
+        if (input?.search) {
+          query += ` AND (name LIKE ? OR nameAr LIKE ? OR acronym LIKE ?)`;
+          const searchTerm = `%${input.search}%`;
+          params.push(searchTerm, searchTerm, searchTerm);
+        }
+        query += ` ORDER BY totalAssets DESC`;
+        
+        const [rows] = await conn.execute(query, params);
+        await conn.end();
+        return rows as any[];
+      }),
+    
+    getBankById: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const mysql = await import('mysql2/promise');
+        const conn = await mysql.createConnection(process.env.DATABASE_URL!);
+        const [rows] = await conn.execute(
+          `SELECT * FROM commercial_banks WHERE id = ?`,
+          [input.id]
+        );
+        await conn.end();
+        return (rows as any[])[0] || null;
+      }),
+    
+    getSectorMetrics: publicProcedure
+      .input(z.object({
+        jurisdiction: z.enum(['aden', 'sanaa', 'national']).optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        const mysql = await import('mysql2/promise');
+        const conn = await mysql.createConnection(process.env.DATABASE_URL!);
+        
+        // Get latest metrics
+        let query = `
+          SELECT * FROM banking_sector_metrics 
+          WHERE 1=1
+        `;
+        const params: any[] = [];
+        
+        if (input?.jurisdiction) {
+          query += ` AND jurisdiction = ?`;
+          params.push(input.jurisdiction);
+        }
+        query += ` ORDER BY date DESC LIMIT 10`;
+        
+        const [metrics] = await conn.execute(query, params);
+        
+        // Calculate aggregates from banks
+        const [adenStats] = await conn.execute(`
+          SELECT 
+            COUNT(*) as bankCount,
+            SUM(totalAssets) as totalAssets,
+            AVG(capitalAdequacyRatio) as avgCAR,
+            AVG(nonPerformingLoans) as avgNPL,
+            SUM(branchCount) as totalBranches
+          FROM commercial_banks 
+          WHERE jurisdiction IN ('aden', 'both')
+        `);
+        
+        const [sanaaStats] = await conn.execute(`
+          SELECT 
+            COUNT(*) as bankCount,
+            SUM(totalAssets) as totalAssets,
+            AVG(capitalAdequacyRatio) as avgCAR,
+            AVG(nonPerformingLoans) as avgNPL,
+            SUM(branchCount) as totalBranches
+          FROM commercial_banks 
+          WHERE jurisdiction IN ('sanaa', 'both')
+        `);
+        
+        const [watchList] = await conn.execute(`
+          SELECT id, name, nameAr, operationalStatus, watchReason
+          FROM commercial_banks WHERE isUnderWatch = true
+        `);
+        
+        await conn.end();
+        return {
+          metrics: metrics as any[],
+          adenStats: (adenStats as any[])[0],
+          sanaaStats: (sanaaStats as any[])[0],
+          watchList: watchList as any[],
+        };
+      }),
+    
+    getDirectives: publicProcedure
+      .input(z.object({
+        type: z.enum(['circular', 'regulation', 'law', 'decree', 'instruction', 'guideline', 'notice', 'amendment', 'all']).optional(),
+        authority: z.enum(['cby_aden', 'cby_sanaa', 'government', 'parliament', 'all']).optional(),
+        status: z.enum(['active', 'superseded', 'expired', 'draft', 'all']).optional(),
+        limit: z.number().optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        const mysql = await import('mysql2/promise');
+        const conn = await mysql.createConnection(process.env.DATABASE_URL!);
+        let query = `SELECT * FROM cby_directives WHERE 1=1`;
+        const params: any[] = [];
+        
+        if (input?.type && input.type !== 'all') {
+          query += ` AND directiveType = ?`;
+          params.push(input.type);
+        }
+        if (input?.authority && input.authority !== 'all') {
+          query += ` AND issuingAuthority = ?`;
+          params.push(input.authority);
+        }
+        if (input?.status && input.status !== 'all') {
+          query += ` AND status = ?`;
+          params.push(input.status);
+        }
+        query += ` ORDER BY issueDate DESC`;
+        if (input?.limit) {
+          query += ` LIMIT ?`;
+          params.push(input.limit);
+        }
+        
+        const [rows] = await conn.execute(query, params);
+        await conn.end();
+        return rows as any[];
+      }),
+    
+    getBanksUnderWatch: publicProcedure
+      .query(async () => {
+        const mysql = await import('mysql2/promise');
+        const conn = await mysql.createConnection(process.env.DATABASE_URL!);
+        const [rows] = await conn.execute(`
+          SELECT id, name, nameAr, acronym, operationalStatus, sanctionsStatus, 
+                 watchReason, capitalAdequacyRatio, nonPerformingLoans
+          FROM commercial_banks 
+          WHERE isUnderWatch = true OR sanctionsStatus != 'none'
+          ORDER BY sanctionsStatus DESC, operationalStatus
+        `);
+        await conn.end();
+        return rows as any[];
+      }),
+  }),
+
+  // ============================================================================
+  // EXECUTIVE PROFILES
+  // ============================================================================
+  
+  executives: router({
+    getAll: publicProcedure
+      .input(z.object({
+        institution: z.string().optional(),
+        position: z.string().optional(),
+        isActive: z.boolean().optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        const mysql = await import('mysql2/promise');
+        const conn = await mysql.createConnection(process.env.DATABASE_URL!);
+        let query = `SELECT * FROM executive_profiles WHERE 1=1`;
+        const params: any[] = [];
+        
+        if (input?.institution) {
+          query += ` AND institution = ?`;
+          params.push(input.institution);
+        }
+        if (input?.position) {
+          query += ` AND position = ?`;
+          params.push(input.position);
+        }
+        if (input?.isActive !== undefined) {
+          query += ` AND isActive = ?`;
+          params.push(input.isActive);
+        }
+        query += ` ORDER BY position, name`;
+        
+        const [rows] = await conn.execute(query, params);
+        await conn.end();
+        return rows as any[];
+      }),
+    
+    getById: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const mysql = await import('mysql2/promise');
+        const conn = await mysql.createConnection(process.env.DATABASE_URL!);
+        const [rows] = await conn.execute(
+          `SELECT * FROM executive_profiles WHERE id = ?`,
+          [input.id]
+        );
+        await conn.end();
+        return (rows as any[])[0] || null;
+      }),
+    
+    getBySlug: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input }) => {
+        const mysql = await import('mysql2/promise');
+        const conn = await mysql.createConnection(process.env.DATABASE_URL!);
+        // Slug format: name-lowercased-dashed
+        const [rows] = await conn.execute(
+          `SELECT * FROM executive_profiles WHERE LOWER(REPLACE(name, ' ', '-')) = ?`,
+          [input.slug.toLowerCase()]
+        );
+        await conn.end();
+        return (rows as any[])[0] || null;
+      }),
+  }),
+
+  // ============================================================================
+  // PARTNER CONTRIBUTIONS
+  // ============================================================================
+  
+  partners: router({
+    getOrganizations: publicProcedure
+      .input(z.object({
+        status: z.enum(['active', 'pending', 'suspended', 'expired', 'all']).optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        const mysql = await import('mysql2/promise');
+        const conn = await mysql.createConnection(process.env.DATABASE_URL!);
+        let query = `SELECT * FROM partner_organizations WHERE 1=1`;
+        const params: any[] = [];
+        
+        if (input?.status && input.status !== 'all') {
+          query += ` AND partnershipStatus = ?`;
+          params.push(input.status);
+        }
+        query += ` ORDER BY name`;
+        
+        const [rows] = await conn.execute(query, params);
+        await conn.end();
+        return rows as any[];
+      }),
+    
+    getMyContributions: protectedProcedure
+      .query(async ({ ctx }) => {
+        const mysql = await import('mysql2/promise');
+        const conn = await mysql.createConnection(process.env.DATABASE_URL!);
+        const [rows] = await conn.execute(`
+          SELECT c.*, o.name as organizationName, o.nameAr as organizationNameAr
+          FROM partner_contributions c
+          LEFT JOIN partner_organizations o ON c.organizationId = o.id
+          WHERE c.submittedByUserId = ?
+          ORDER BY c.createdAt DESC
+        `, [ctx.user.id]);
+        await conn.end();
+        return rows as any[];
+      }),
+    
+    getContributionStats: protectedProcedure
+      .query(async ({ ctx }) => {
+        const mysql = await import('mysql2/promise');
+        const conn = await mysql.createConnection(process.env.DATABASE_URL!);
+        const [stats] = await conn.execute(`
+          SELECT 
+            COUNT(*) as total,
+            SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END) as published,
+            SUM(CASE WHEN status = 'under_review' THEN 1 ELSE 0 END) as underReview,
+            SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected,
+            SUM(CASE WHEN status IN ('draft', 'submitted') THEN 1 ELSE 0 END) as pending
+          FROM partner_contributions
+          WHERE submittedByUserId = ?
+        `, [ctx.user.id]);
+        await conn.end();
+        return (stats as any[])[0];
+      }),
+    
+    submitContribution: protectedProcedure
+      .input(z.object({
+        organizationId: z.number(),
+        title: z.string(),
+        titleAr: z.string().optional(),
+        description: z.string().optional(),
+        dataCategory: z.enum(['exchange_rates', 'monetary_reserves', 'banking_statistics', 'fiscal_data', 'trade_data', 'price_indices', 'employment_data', 'sector_reports', 'regulatory_updates', 'other']),
+        timePeriod: z.string().optional(),
+        fileType: z.enum(['excel', 'csv', 'pdf', 'api', 'json', 'other']),
+        fileKey: z.string().optional(),
+        fileUrl: z.string().optional(),
+        fileName: z.string().optional(),
+        fileSize: z.number().optional(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const mysql = await import('mysql2/promise');
+        const conn = await mysql.createConnection(process.env.DATABASE_URL!);
+        const [result] = await conn.execute(`
+          INSERT INTO partner_contributions 
+          (organizationId, submittedByUserId, title, titleAr, description, 
+           dataCategory, timePeriod, fileType, fileKey, fileUrl, fileName, fileSize,
+           status, notes, submittedAt)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'submitted', ?, NOW())
+        `, [
+          input.organizationId,
+          ctx.user.id,
+          input.title,
+          input.titleAr || null,
+          input.description || null,
+          input.dataCategory,
+          input.timePeriod || null,
+          input.fileType,
+          input.fileKey || null,
+          input.fileUrl || null,
+          input.fileName || null,
+          input.fileSize || null,
+          input.notes || null,
+        ]);
+        await conn.end();
+        return { success: true, id: (result as any).insertId };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -1425,3 +1425,407 @@ export const emailNotificationQueue = mysqlTable("email_notification_queue", {
 
 export type EmailNotification = typeof emailNotificationQueue.$inferSelect;
 export type InsertEmailNotification = typeof emailNotificationQueue.$inferInsert;
+
+
+// ============================================================================
+// BANKING SECTOR - COMMERCIAL BANKS
+// ============================================================================
+
+export const commercialBanks = mysqlTable("commercial_banks", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Basic Info
+  name: varchar("name", { length: 255 }).notNull(),
+  nameAr: varchar("nameAr", { length: 255 }),
+  acronym: varchar("acronym", { length: 50 }),
+  swiftCode: varchar("swiftCode", { length: 20 }),
+  licenseNumber: varchar("licenseNumber", { length: 100 }),
+  
+  // Classification
+  bankType: mysqlEnum("bankType", ["commercial", "islamic", "specialized", "microfinance"]).notNull(),
+  jurisdiction: mysqlEnum("jurisdiction", ["aden", "sanaa", "both"]).notNull(),
+  ownership: mysqlEnum("ownership", ["state", "private", "mixed", "foreign"]).default("private").notNull(),
+  
+  // Status
+  operationalStatus: mysqlEnum("operationalStatus", ["operational", "limited", "distressed", "suspended", "liquidation"]).default("operational").notNull(),
+  sanctionsStatus: mysqlEnum("sanctionsStatus", ["none", "ofac", "un", "eu", "multiple"]).default("none").notNull(),
+  
+  // Financial Metrics (latest available)
+  totalAssets: decimal("totalAssets", { precision: 20, scale: 2 }), // in USD millions
+  capitalAdequacyRatio: decimal("capitalAdequacyRatio", { precision: 5, scale: 2 }), // percentage
+  nonPerformingLoans: decimal("nonPerformingLoans", { precision: 5, scale: 2 }), // percentage
+  liquidityRatio: decimal("liquidityRatio", { precision: 5, scale: 2 }), // percentage
+  returnOnAssets: decimal("returnOnAssets", { precision: 5, scale: 2 }), // percentage
+  returnOnEquity: decimal("returnOnEquity", { precision: 5, scale: 2 }), // percentage
+  branchCount: int("branchCount"),
+  employeeCount: int("employeeCount"),
+  
+  // Data Quality
+  metricsAsOf: timestamp("metricsAsOf"), // Date of financial metrics
+  confidenceRating: mysqlEnum("confidenceRating", ["A", "B", "C", "D"]).default("C").notNull(),
+  sourceId: int("sourceId").references(() => sources.id),
+  
+  // Contact & Details
+  headquarters: varchar("headquarters", { length: 255 }),
+  website: text("website"),
+  logoUrl: text("logoUrl"),
+  foundedYear: int("foundedYear"),
+  notes: text("notes"),
+  
+  // Metadata
+  isUnderWatch: boolean("isUnderWatch").default(false).notNull(),
+  watchReason: text("watchReason"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  nameIdx: index("bank_name_idx").on(table.name),
+  jurisdictionIdx: index("bank_jurisdiction_idx").on(table.jurisdiction),
+  bankTypeIdx: index("bank_type_idx").on(table.bankType),
+  statusIdx: index("bank_status_idx").on(table.operationalStatus),
+  sanctionsIdx: index("bank_sanctions_idx").on(table.sanctionsStatus),
+}));
+
+export type CommercialBank = typeof commercialBanks.$inferSelect;
+export type InsertCommercialBank = typeof commercialBanks.$inferInsert;
+
+// ============================================================================
+// BANKING SECTOR - CBY DIRECTIVES
+// ============================================================================
+
+export const cbyDirectives = mysqlTable("cby_directives", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Basic Info
+  directiveNumber: varchar("directiveNumber", { length: 100 }).notNull(), // e.g., "Circular No. 54/2021"
+  title: varchar("title", { length: 500 }).notNull(),
+  titleAr: varchar("titleAr", { length: 500 }),
+  
+  // Classification
+  directiveType: mysqlEnum("directiveType", [
+    "circular",
+    "regulation",
+    "law",
+    "decree",
+    "instruction",
+    "guideline",
+    "notice",
+    "amendment"
+  ]).notNull(),
+  category: varchar("category", { length: 100 }), // e.g., "exchange_rate", "compliance", "licensing"
+  
+  // Issuing Authority
+  issuingAuthority: mysqlEnum("issuingAuthority", ["cby_aden", "cby_sanaa", "government", "parliament"]).notNull(),
+  issueDate: timestamp("issueDate").notNull(),
+  effectiveDate: timestamp("effectiveDate"),
+  expiryDate: timestamp("expiryDate"),
+  
+  // Content
+  summary: text("summary"),
+  summaryAr: text("summaryAr"),
+  fullTextUrl: text("fullTextUrl"), // Link to PDF
+  pdfFileKey: varchar("pdfFileKey", { length: 255 }), // S3 key
+  
+  // Status
+  status: mysqlEnum("status", ["active", "superseded", "expired", "draft"]).default("active").notNull(),
+  supersededBy: int("supersededBy"), // FK to another directive
+  
+  // Impact
+  affectedEntities: json("affectedEntities").$type<string[]>(), // e.g., ["banks", "exchange_companies"]
+  impactLevel: mysqlEnum("impactLevel", ["low", "medium", "high", "critical"]).default("medium").notNull(),
+  
+  // Metadata
+  sourceId: int("sourceId").references(() => sources.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  directiveNumberIdx: index("directive_number_idx").on(table.directiveNumber),
+  typeIdx: index("directive_type_idx").on(table.directiveType),
+  authorityIdx: index("issuing_authority_idx").on(table.issuingAuthority),
+  issueDateIdx: index("issue_date_idx").on(table.issueDate),
+  statusIdx: index("directive_status_idx").on(table.status),
+  categoryIdx: index("directive_category_idx").on(table.category),
+}));
+
+export type CbyDirective = typeof cbyDirectives.$inferSelect;
+export type InsertCbyDirective = typeof cbyDirectives.$inferInsert;
+
+// ============================================================================
+// BANKING SECTOR - AGGREGATE METRICS
+// ============================================================================
+
+export const bankingSectorMetrics = mysqlTable("banking_sector_metrics", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Time & Scope
+  date: timestamp("date").notNull(),
+  jurisdiction: mysqlEnum("jurisdiction", ["aden", "sanaa", "national"]).notNull(),
+  
+  // Aggregate Metrics
+  totalBanks: int("totalBanks"),
+  totalAssets: decimal("totalAssets", { precision: 20, scale: 2 }), // USD millions
+  totalDeposits: decimal("totalDeposits", { precision: 20, scale: 2 }),
+  totalLoans: decimal("totalLoans", { precision: 20, scale: 2 }),
+  loanToDepositRatio: decimal("loanToDepositRatio", { precision: 5, scale: 2 }),
+  averageCAR: decimal("averageCAR", { precision: 5, scale: 2 }),
+  averageNPL: decimal("averageNPL", { precision: 5, scale: 2 }),
+  
+  // Reserves
+  foreignReserves: decimal("foreignReserves", { precision: 20, scale: 2 }), // USD millions
+  
+  // Data Quality
+  confidenceRating: mysqlEnum("confidenceRating", ["A", "B", "C", "D"]).default("C").notNull(),
+  sourceId: int("sourceId").references(() => sources.id),
+  notes: text("notes"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  dateIdx: index("sector_date_idx").on(table.date),
+  jurisdictionIdx: index("sector_jurisdiction_idx").on(table.jurisdiction),
+  dateJurisdictionUnique: unique("date_jurisdiction_unique").on(table.date, table.jurisdiction),
+}));
+
+export type BankingSectorMetric = typeof bankingSectorMetrics.$inferSelect;
+export type InsertBankingSectorMetric = typeof bankingSectorMetrics.$inferInsert;
+
+// ============================================================================
+// EXECUTIVE PROFILES (Governor, Deputy Governor, etc.)
+// ============================================================================
+
+export const executiveProfiles = mysqlTable("executive_profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Basic Info
+  name: varchar("name", { length: 255 }).notNull(),
+  nameAr: varchar("nameAr", { length: 255 }),
+  title: varchar("title", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }),
+  
+  // Position
+  institution: varchar("institution", { length: 255 }).notNull(), // e.g., "Central Bank of Yemen - Aden"
+  institutionAr: varchar("institutionAr", { length: 255 }),
+  position: mysqlEnum("position", [
+    "governor",
+    "deputy_governor",
+    "board_member",
+    "director",
+    "minister",
+    "deputy_minister",
+    "advisor"
+  ]).notNull(),
+  department: varchar("department", { length: 255 }), // e.g., "Bank Supervision"
+  
+  // Tenure
+  appointmentDate: timestamp("appointmentDate"),
+  endDate: timestamp("endDate"),
+  isActive: boolean("isActive").default(true).notNull(),
+  
+  // Profile
+  photoUrl: text("photoUrl"),
+  biography: text("biography"),
+  biographyAr: text("biographyAr"),
+  education: json("education").$type<Array<{degree: string, institution: string, year?: number}>>(),
+  previousPositions: json("previousPositions").$type<Array<{title: string, institution: string, startYear?: number, endYear?: number}>>(),
+  
+  // Focus Areas
+  policyFocus: json("policyFocus").$type<string[]>(), // e.g., ["monetary_policy", "financial_stability"]
+  keyInitiatives: json("keyInitiatives").$type<Array<{title: string, description: string, status: string}>>(),
+  
+  // Contact
+  email: varchar("email", { length: 320 }),
+  phone: varchar("phone", { length: 50 }),
+  
+  // Metadata
+  sourceId: int("sourceId").references(() => sources.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  nameIdx: index("exec_name_idx").on(table.name),
+  institutionIdx: index("exec_institution_idx").on(table.institution),
+  positionIdx: index("exec_position_idx").on(table.position),
+  isActiveIdx: index("exec_is_active_idx").on(table.isActive),
+}));
+
+export type ExecutiveProfile = typeof executiveProfiles.$inferSelect;
+export type InsertExecutiveProfile = typeof executiveProfiles.$inferInsert;
+
+// ============================================================================
+// EXECUTIVE DASHBOARD WIDGETS (Customizable)
+// ============================================================================
+
+export const executiveDashboardWidgets = mysqlTable("executive_dashboard_widgets", {
+  id: int("id").autoincrement().primaryKey(),
+  executiveId: int("executiveId").notNull().references(() => executiveProfiles.id),
+  
+  // Widget Config
+  widgetType: mysqlEnum("widgetType", [
+    "kpi_card",
+    "chart",
+    "table",
+    "alert_feed",
+    "news_feed",
+    "calendar",
+    "report_generator",
+    "ai_assistant",
+    "quick_actions"
+  ]).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }),
+  
+  // Layout
+  gridColumn: int("gridColumn").default(1).notNull(),
+  gridRow: int("gridRow").default(1).notNull(),
+  gridWidth: int("gridWidth").default(1).notNull(),
+  gridHeight: int("gridHeight").default(1).notNull(),
+  
+  // Data Config
+  dataSource: varchar("dataSource", { length: 255 }), // e.g., "banking_sector_metrics"
+  filters: json("filters").$type<Record<string, unknown>>(),
+  refreshInterval: int("refreshInterval").default(300), // seconds
+  
+  // Display
+  isVisible: boolean("isVisible").default(true).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  executiveIdx: index("widget_executive_idx").on(table.executiveId),
+  typeIdx: index("widget_type_idx").on(table.widgetType),
+}));
+
+export type ExecutiveDashboardWidget = typeof executiveDashboardWidgets.$inferSelect;
+export type InsertExecutiveDashboardWidget = typeof executiveDashboardWidgets.$inferInsert;
+
+// ============================================================================
+// PARTNER ORGANIZATIONS (for Contribution Portal)
+// ============================================================================
+
+export const partnerOrganizations = mysqlTable("partner_organizations", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Basic Info
+  name: varchar("name", { length: 255 }).notNull(),
+  nameAr: varchar("nameAr", { length: 255 }),
+  acronym: varchar("acronym", { length: 50 }),
+  
+  // Type & Status
+  organizationType: mysqlEnum("organizationType", [
+    "central_bank",
+    "commercial_bank",
+    "ministry",
+    "statistical_office",
+    "international_org",
+    "research_institution",
+    "ngo",
+    "other"
+  ]).notNull(),
+  partnershipStatus: mysqlEnum("partnershipStatus", ["active", "pending", "suspended", "expired"]).default("pending").notNull(),
+  partnershipStartDate: timestamp("partnershipStartDate"),
+  partnershipEndDate: timestamp("partnershipEndDate"),
+  
+  // Contact
+  primaryContactName: varchar("primaryContactName", { length: 255 }),
+  primaryContactEmail: varchar("primaryContactEmail", { length: 320 }),
+  primaryContactPhone: varchar("primaryContactPhone", { length: 50 }),
+  
+  // Contribution Stats
+  totalContributions: int("totalContributions").default(0).notNull(),
+  publishedContributions: int("publishedContributions").default(0).notNull(),
+  pendingContributions: int("pendingContributions").default(0).notNull(),
+  rejectedContributions: int("rejectedContributions").default(0).notNull(),
+  
+  // Agreement
+  agreementFileKey: varchar("agreementFileKey", { length: 255 }),
+  agreementFileUrl: text("agreementFileUrl"),
+  dataCategories: json("dataCategories").$type<string[]>(), // Types of data they can submit
+  
+  // Metadata
+  logoUrl: text("logoUrl"),
+  website: text("website"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  nameIdx: index("partner_org_name_idx").on(table.name),
+  typeIdx: index("partner_org_type_idx").on(table.organizationType),
+  statusIdx: index("partner_org_status_idx").on(table.partnershipStatus),
+}));
+
+export type PartnerOrganization = typeof partnerOrganizations.$inferSelect;
+export type InsertPartnerOrganization = typeof partnerOrganizations.$inferInsert;
+
+// ============================================================================
+// PARTNER CONTRIBUTION SUBMISSIONS (Enhanced)
+// ============================================================================
+
+export const partnerContributions = mysqlTable("partner_contributions", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Submitter
+  organizationId: int("organizationId").notNull().references(() => partnerOrganizations.id),
+  submittedByUserId: int("submittedByUserId").notNull().references(() => users.id),
+  
+  // Contribution Details
+  title: varchar("title", { length: 500 }).notNull(),
+  titleAr: varchar("titleAr", { length: 500 }),
+  description: text("description"),
+  
+  // Data Classification
+  dataCategory: mysqlEnum("dataCategory", [
+    "exchange_rates",
+    "monetary_reserves",
+    "banking_statistics",
+    "fiscal_data",
+    "trade_data",
+    "price_indices",
+    "employment_data",
+    "sector_reports",
+    "regulatory_updates",
+    "other"
+  ]).notNull(),
+  timePeriod: varchar("timePeriod", { length: 100 }), // e.g., "Q3 2024", "November 2024"
+  
+  // File Info
+  fileType: mysqlEnum("fileType", ["excel", "csv", "pdf", "api", "json", "other"]).notNull(),
+  fileKey: varchar("fileKey", { length: 255 }),
+  fileUrl: text("fileUrl"),
+  fileName: varchar("fileName", { length: 255 }),
+  fileSize: int("fileSize"),
+  
+  // Review Status
+  status: mysqlEnum("status", [
+    "draft",
+    "submitted",
+    "under_review",
+    "clarification_needed",
+    "approved",
+    "published",
+    "rejected"
+  ]).default("draft").notNull(),
+  
+  // Review Process
+  reviewedByUserId: int("reviewedByUserId").references(() => users.id),
+  reviewedAt: timestamp("reviewedAt"),
+  reviewNotes: text("reviewNotes"),
+  rejectionReason: text("rejectionReason"),
+  
+  // Publishing
+  publishedAt: timestamp("publishedAt"),
+  publishedDatasetId: int("publishedDatasetId").references(() => datasets.id),
+  
+  // Metadata
+  submittedAt: timestamp("submittedAt"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  organizationIdx: index("contribution_org_idx").on(table.organizationId),
+  submitterIdx: index("contribution_submitter_idx").on(table.submittedByUserId),
+  statusIdx: index("contribution_status_idx").on(table.status),
+  categoryIdx: index("contribution_category_idx").on(table.dataCategory),
+  submittedAtIdx: index("contribution_submitted_at_idx").on(table.submittedAt),
+}));
+
+export type PartnerContribution = typeof partnerContributions.$inferSelect;
+export type InsertPartnerContribution = typeof partnerContributions.$inferInsert;

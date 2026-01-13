@@ -26,7 +26,10 @@ import {
   Clock,
   BookOpen,
   BarChart3,
-  Link2
+  Link2,
+  Share2,
+  Mic,
+  ChevronRight
 } from "lucide-react";
 
 interface Message {
@@ -276,30 +279,30 @@ export default function AIAssistant() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hero Section - Enhanced */}
-      <section className="bg-gradient-to-br from-emerald-900/30 via-primary/20 to-emerald-800/30 border-b relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMyMjIiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
-        <div className="container py-10 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500/20 to-primary/20 flex items-center justify-center shadow-lg border border-emerald-500/20">
-                <Brain className="h-10 w-10 text-emerald-500" />
-              </div>
+      {/* Hero Section - Matching Mockup Design */}
+      <section className="bg-[#1e3a5f] text-white relative overflow-hidden">
+        <div className="container py-6 relative z-10">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold mb-1">
+                {language === "ar" 
+                  ? "مساعد الذكاء الاقتصادي"
+                  : "Economic Intelligence Assistant"}
+              </h1>
+              <p className="text-white/70 text-sm">
+                {language === "ar" ? "المرصد اليمني" : "Yemen Observatory"}
+              </p>
             </div>
-            <Badge variant="outline" className="text-sm gap-1 mb-4 bg-background/50 backdrop-blur-sm">
-              <Sparkles className="h-3 w-3 text-emerald-500" />
-              {language === "ar" ? "مدعوم بالذكاء الاصطناعي" : "AI-Powered"}
-            </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              {language === "ar" 
-                ? "العقل الواحد"
-                : "One Brain"}
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              {language === "ar"
-                ? "مساعدك الذكي للبيانات الاقتصادية اليمنية - كل إجابة موثقة بالمصادر والأدلة"
-                : "Your intelligent assistant for Yemen economic data - every answer backed by sources and evidence"}
-            </p>
+            <div className="flex items-center gap-3">
+              <Button variant="default" className="bg-blue-600 hover:bg-blue-700 gap-2">
+                <Download className="h-4 w-4" />
+                {language === "ar" ? "تصدير المحادثة" : "Export Conversation"}
+              </Button>
+              <Button variant="default" className="bg-teal-600 hover:bg-teal-700 gap-2">
+                <Share2 className="h-4 w-4" />
+                {language === "ar" ? "مشاركة التحليل" : "Share Analysis"}
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -451,19 +454,26 @@ export default function AIAssistant() {
                     )}
                   </CardContent>
                   
-                  <div className="border-t p-4">
-                    <div className="flex gap-2">
+                  <div className="border-t p-4 bg-gray-50 dark:bg-gray-900/50">
+                    <div className="flex gap-2 items-center">
+                      <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                        <Mic className="h-5 w-5" />
+                      </Button>
                       <Input
-                        placeholder={language === "ar" ? "اطرح سؤالاً عن الاقتصاد اليمني..." : "Ask a question about Yemen's economy..."}
+                        placeholder={language === "ar" ? "اسأل عن اقتصاد اليمن..." : "Ask about Yemen's economy..."}
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         onKeyPress={(e) => e.key === "Enter" && !isLoading && handleSendMessage()}
-                        className="flex-1"
+                        className="flex-1 bg-white dark:bg-gray-800"
                         disabled={isLoading}
                       />
-                      <Button onClick={handleSendMessage} className="gap-2" disabled={isLoading}>
+                      <Button 
+                        onClick={handleSendMessage} 
+                        size="icon"
+                        className="rounded-full bg-emerald-600 hover:bg-emerald-700 h-10 w-10" 
+                        disabled={isLoading}
+                      >
                         <Send className="h-4 w-4" />
-                        {language === "ar" ? "إرسال" : "Send"}
                       </Button>
                     </div>
                   </div>
@@ -522,36 +532,59 @@ export default function AIAssistant() {
             </Card>
           </div>
 
-          {/* Sidebar */}
+          {/* Sidebar - Suggested Questions (Matching Mockup) */}
           <div className="space-y-6">
-            <Card className="shadow-md">
+            <Card className="shadow-md bg-gray-50 dark:bg-gray-900/50">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-emerald-500" />
-                  {language === "ar" ? "القدرات" : "Capabilities"}
+                <CardTitle className="text-lg font-semibold">
+                  {language === "ar" ? "أسئلة مقترحة" : "Suggested Questions"}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {capabilities.map((capability, index) => {
-                    const Icon = capability.icon;
-                    return (
-                      <div key={index} className="flex gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                          <Icon className="h-5 w-5 text-primary" />
-                        </div>
-                        <div>
-                          <div className="font-medium mb-1">
-                            {language === "ar" ? capability.titleAr : capability.titleEn}
-                          </div>
-                          <div className="text-sm text-muted-foreground leading-relaxed">
-                            {language === "ar" ? capability.descAr : capability.descEn}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+              <CardContent className="space-y-3">
+                <button
+                  onClick={() => setQuery(language === "ar" ? "كيف يؤثر عدم استقرار العملة على الناتج المحلي الإجمالي؟" : "How does currency instability affect GDP?")}
+                  className="w-full p-4 text-left rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/50 hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <TrendingUp className="h-5 w-5 text-red-500" />
+                      <span className="text-sm">
+                        {language === "ar" ? "كيف يؤثر عدم استقرار العملة على الناتج المحلي الإجمالي؟" : "How does currency instability affect GDP?"}
+                      </span>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                  </div>
+                </button>
+                
+                <button
+                  onClick={() => setQuery(language === "ar" ? "قارن تعافي اليمن مع الدول المجاورة" : "Compare Yemen's recovery to regional peers")}
+                  className="w-full p-4 text-left rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <BarChart3 className="h-5 w-5 text-emerald-500" />
+                      <span className="text-sm">
+                        {language === "ar" ? "قارن تعافي اليمن مع الدول المجاورة" : "Compare Yemen's recovery to regional peers"}
+                      </span>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                  </div>
+                </button>
+                
+                <button
+                  onClick={() => setQuery(language === "ar" ? "ما هي توصيات السياسة المالية؟" : "What are the fiscal policy recommendations?")}
+                  className="w-full p-4 text-left rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/50 hover:bg-amber-100 dark:hover:bg-amber-900/40 transition-colors group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Lightbulb className="h-5 w-5 text-amber-500" />
+                      <span className="text-sm">
+                        {language === "ar" ? "ما هي توصيات السياسة المالية؟" : "What are the fiscal policy recommendations?"}
+                      </span>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                  </div>
+                </button>
               </CardContent>
             </Card>
 
