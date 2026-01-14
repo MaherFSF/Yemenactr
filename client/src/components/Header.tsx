@@ -116,33 +116,29 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:bg-gray-950/95 dark:border-gray-800">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
-        <Link href="/">
-          <a className="flex items-center gap-3 text-xl font-bold text-primary hover:opacity-80 transition-opacity">
-            <div className="flex items-center gap-1">
-              {/* CauseWay Logo Colors */}
-              <div className="w-8 h-8 relative">
-                <div className="absolute top-0 left-0 w-4 h-4 bg-[#107040] rounded-sm"></div>
-                <div className="absolute top-0 right-0 w-4 h-4 bg-[#C0A030] rounded-sm"></div>
-                <div className="absolute bottom-0 left-0 w-4 h-4 bg-[#103050] rounded-sm"></div>
-                <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#4A90E2] rounded-full"></div>
-              </div>
+        <Link href="/" className="flex items-center gap-3 text-xl font-bold text-primary hover:opacity-80 transition-opacity">
+          <div className="flex items-center gap-1">
+            {/* CauseWay Logo Colors */}
+            <div className="w-8 h-8 relative">
+              <div className="absolute top-0 left-0 w-4 h-4 bg-[#107040] rounded-sm"></div>
+              <div className="absolute top-0 right-0 w-4 h-4 bg-[#C0A030] rounded-sm"></div>
+              <div className="absolute bottom-0 left-0 w-4 h-4 bg-[#103050] rounded-sm"></div>
+              <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#4A90E2] rounded-full"></div>
             </div>
-            <span className="hidden sm:inline font-bold">
-              {language === "ar" ? "يتو" : "YETO"}
-            </span>
-          </a>
+          </div>
+          <span className="hidden sm:inline font-bold">
+            {language === "ar" ? "يتو" : "YETO"}
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-1">
-          <Link href="/">
-            <a className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-              isActive("/") && location === "/" 
-                ? "text-[#107040] bg-[#107040]/10" 
-                : "text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5"
-            }`}>
-              {language === "ar" ? "الرئيسية" : "Home"}
-            </a>
+          <Link href="/" className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+            isActive("/") && location === "/" 
+              ? "text-[#107040] bg-[#107040]/10" 
+              : "text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5"
+          }`}>
+            {language === "ar" ? "الرئيسية" : "Home"}
           </Link>
 
           {/* Sectors Dropdown */}
@@ -166,11 +162,9 @@ export default function Header() {
                 const Icon = sector.icon;
                 return (
                   <DropdownMenuItem key={sector.href} asChild>
-                    <Link href={sector.href}>
-                      <a className="flex items-center gap-2 w-full cursor-pointer">
-                        <Icon className="h-4 w-4 text-muted-foreground" />
-                        {language === "ar" ? sector.nameAr : sector.nameEn}
-                      </a>
+                    <Link href={sector.href} className="flex items-center gap-2 w-full cursor-pointer">
+                      <Icon className="h-4 w-4 text-muted-foreground" />
+                      {language === "ar" ? sector.nameAr : sector.nameEn}
                     </Link>
                   </DropdownMenuItem>
                 );
@@ -199,11 +193,9 @@ export default function Header() {
                 const Icon = tool.icon;
                 return (
                   <DropdownMenuItem key={tool.href} asChild>
-                    <Link href={tool.href}>
-                      <a className="flex items-center gap-2 w-full cursor-pointer">
-                        <Icon className="h-4 w-4 text-muted-foreground" />
-                        {language === "ar" ? tool.nameAr : tool.nameEn}
-                      </a>
+                    <Link href={tool.href} className="flex items-center gap-2 w-full cursor-pointer">
+                      <Icon className="h-4 w-4 text-muted-foreground" />
+                      {language === "ar" ? tool.nameAr : tool.nameEn}
                     </Link>
                   </DropdownMenuItem>
                 );
@@ -232,11 +224,9 @@ export default function Header() {
                 const Icon = resource.icon;
                 return (
                   <DropdownMenuItem key={resource.href} asChild>
-                    <Link href={resource.href}>
-                      <a className="flex items-center gap-2 w-full cursor-pointer">
-                        <Icon className="h-4 w-4 text-muted-foreground" />
-                        {language === "ar" ? resource.nameAr : resource.nameEn}
-                      </a>
+                    <Link href={resource.href} className="flex items-center gap-2 w-full cursor-pointer">
+                      <Icon className="h-4 w-4 text-muted-foreground" />
+                      {language === "ar" ? resource.nameAr : resource.nameEn}
                     </Link>
                   </DropdownMenuItem>
                 );
@@ -245,26 +235,22 @@ export default function Header() {
           </DropdownMenu>
 
           {/* Direct Links */}
-          <Link href="/pricing">
-            <a className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-              isActive("/pricing") 
-                ? "text-[#107040] bg-[#107040]/10" 
-                : "text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5"
-            }`}>
-              {language === "ar" ? "الاشتراكات" : "Pricing"}
-            </a>
+          <Link href="/pricing" className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+            isActive("/pricing") 
+              ? "text-[#107040] bg-[#107040]/10" 
+              : "text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5"
+          }`}>
+            {language === "ar" ? "الاشتراكات" : "Pricing"}
           </Link>
 
           {/* Admin Hub Link */}
-          <Link href="/admin-hub">
-            <a className={`px-3 py-2 text-sm font-medium rounded-md transition-colors flex items-center gap-1 ${
-              location.startsWith("/admin") 
-                ? "text-[#107040] bg-[#107040]/10" 
-                : "text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5"
-            }`}>
-              <Shield className="h-4 w-4" />
-              {language === "ar" ? "الإدارة" : "Admin"}
-            </a>
+          <Link href="/admin-hub" className={`px-3 py-2 text-sm font-medium rounded-md transition-colors flex items-center gap-1 ${
+            location.startsWith("/admin") 
+              ? "text-[#107040] bg-[#107040]/10" 
+              : "text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5"
+          }`}>
+            <Shield className="h-4 w-4" />
+            {language === "ar" ? "الإدارة" : "Admin"}
           </Link>
         </nav>
 
@@ -315,13 +301,12 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="lg:hidden border-t bg-white dark:bg-gray-950 max-h-[80vh] overflow-y-auto">
           <nav className="container flex flex-col py-4 gap-1">
-            <Link href="/">
-              <a
-                className="block px-4 py-2 text-sm font-medium text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5 rounded-md transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {language === "ar" ? "الرئيسية" : "Home"}
-              </a>
+            <Link 
+              href="/"
+              className="block px-4 py-2 text-sm font-medium text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5 rounded-md transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {language === "ar" ? "الرئيسية" : "Home"}
             </Link>
 
             {/* Mobile Sectors */}
@@ -333,25 +318,24 @@ export default function Header() {
                 {sectors.slice(0, 8).map((sector) => {
                   const Icon = sector.icon;
                   return (
-                    <Link key={sector.href} href={sector.href}>
-                      <a
-                        className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5 rounded-md transition-colors"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        <Icon className="h-4 w-4" />
-                        <span className="truncate">{language === "ar" ? sector.nameAr : sector.nameEn}</span>
-                      </a>
+                    <Link 
+                      key={sector.href} 
+                      href={sector.href}
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5 rounded-md transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span className="truncate">{language === "ar" ? sector.nameAr : sector.nameEn}</span>
                     </Link>
                   );
                 })}
               </div>
-              <Link href="/data-repository">
-                <a
-                  className="block mt-2 px-3 py-2 text-sm font-medium text-[#107040] hover:bg-[#107040]/5 rounded-md transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {language === "ar" ? "عرض جميع القطاعات →" : "View All Sectors →"}
-                </a>
+              <Link 
+                href="/data-repository"
+                className="block mt-2 px-3 py-2 text-sm font-medium text-[#107040] hover:bg-[#107040]/5 rounded-md transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {language === "ar" ? "عرض جميع القطاعات →" : "View All Sectors →"}
               </Link>
             </div>
 
@@ -363,14 +347,14 @@ export default function Header() {
               {tools.map((tool) => {
                 const Icon = tool.icon;
                 return (
-                  <Link key={tool.href} href={tool.href}>
-                    <a
-                      className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5 rounded-md transition-colors"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Icon className="h-4 w-4" />
-                      {language === "ar" ? tool.nameAr : tool.nameEn}
-                    </a>
+                  <Link 
+                    key={tool.href} 
+                    href={tool.href}
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5 rounded-md transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {language === "ar" ? tool.nameAr : tool.nameEn}
                   </Link>
                 );
               })}
@@ -384,14 +368,14 @@ export default function Header() {
               {resources.map((resource) => {
                 const Icon = resource.icon;
                 return (
-                  <Link key={resource.href} href={resource.href}>
-                    <a
-                      className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5 rounded-md transition-colors"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <Icon className="h-4 w-4" />
-                      {language === "ar" ? resource.nameAr : resource.nameEn}
-                    </a>
+                  <Link 
+                    key={resource.href} 
+                    href={resource.href}
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5 rounded-md transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {language === "ar" ? resource.nameAr : resource.nameEn}
                   </Link>
                 );
               })}

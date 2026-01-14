@@ -2,14 +2,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "wouter";
 import { 
   Mail, 
-  MapPin, 
   ExternalLink,
   Database,
   BarChart3,
-  FileText,
-  Shield,
-  Users,
-  BookOpen
+  BookOpen,
+  Shield
 } from "lucide-react";
 
 export default function Footer() {
@@ -81,11 +78,9 @@ export default function Footer() {
                 const Icon = link.icon;
                 return (
                   <li key={index}>
-                    <Link href={link.href}>
-                      <a className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors">
-                        <Icon className="h-4 w-4" />
-                        {language === "ar" ? link.nameAr : link.nameEn}
-                      </a>
+                    <Link href={link.href} className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors">
+                      <Icon className="h-4 w-4" />
+                      {language === "ar" ? link.nameAr : link.nameEn}
                     </Link>
                   </li>
                 );
@@ -101,19 +96,15 @@ export default function Footer() {
             <ul className="space-y-2">
               {sectors.map((sector, index) => (
                 <li key={index}>
-                  <Link href={sector.href}>
-                    <a className="text-sm text-white/70 hover:text-white transition-colors">
-                      {language === "ar" ? sector.nameAr : sector.nameEn}
-                    </a>
+                  <Link href={sector.href} className="text-sm text-white/70 hover:text-white transition-colors">
+                    {language === "ar" ? sector.nameAr : sector.nameEn}
                   </Link>
                 </li>
               ))}
               <li>
-                <Link href="/data-repository">
-                  <a className="text-sm text-[#C0A030] hover:text-[#D4B440] transition-colors flex items-center gap-1">
-                    {language === "ar" ? "عرض جميع القطاعات" : "View All Sectors"}
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
+                <Link href="/data-repository" className="text-sm text-[#C0A030] hover:text-[#D4B440] transition-colors flex items-center gap-1">
+                  {language === "ar" ? "عرض جميع القطاعات" : "View All Sectors"}
+                  <ExternalLink className="h-3 w-3" />
                 </Link>
               </li>
             </ul>
@@ -127,10 +118,8 @@ export default function Footer() {
             <ul className="space-y-2">
               {resources.map((resource, index) => (
                 <li key={index}>
-                  <Link href={resource.href}>
-                    <a className="text-sm text-white/70 hover:text-white transition-colors">
-                      {language === "ar" ? resource.nameAr : resource.nameEn}
-                    </a>
+                  <Link href={resource.href} className="text-sm text-white/70 hover:text-white transition-colors">
+                    {language === "ar" ? resource.nameAr : resource.nameEn}
                   </Link>
                 </li>
               ))}
@@ -156,10 +145,8 @@ export default function Footer() {
                 />
               </span>
               <span className="text-white/30">|</span>
-              <Link href="/methodology">
-                <a className="hover:text-white transition-colors">
-                  {language === "ar" ? "سياسة البيانات" : "Data Policy"}
-                </a>
+              <Link href="/methodology" className="hover:text-white transition-colors">
+                {language === "ar" ? "سياسة البيانات" : "Data Policy"}
               </Link>
             </div>
           </div>

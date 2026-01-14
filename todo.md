@@ -3737,3 +3737,13 @@ Based on review of master design documents and data source register:
 - Missing historical events (2015-2023)
 - Data Repository buttons not functional
 - Scenario Simulator working but needs calibration
+
+
+## Phase 71: Bug Fix - Nested Anchor Tags (January 14, 2026)
+- [ ] Fix nested <a> tags error on homepage
+
+
+## Phase 71: Bug Fix - Nested Anchor Tags (January 14, 2026)
+- [x] Fix nested <a> tags error on homepage (Header.tsx fixed - removed inner <a> elements from Link components)
+- [x] Fix nested <a> tags error in Footer.tsx (removed inner <a> elements from Link components)
+- [x] Verified 0 nested anchors remaining in DOM
