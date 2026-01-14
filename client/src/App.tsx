@@ -32,7 +32,7 @@ import Microfinance from "./pages/sectors/Microfinance";
 import DataRepository from "./pages/DataRepository";
 import AdminPortal from "./pages/AdminPortal";
 import PartnerPortal from "./pages/PartnerPortal";
-import AIAssistant from "./pages/AIAssistant";
+import AIAssistant from "./pages/AIAssistantEnhanced";
 import ScenarioSimulator from "./pages/ScenarioSimulator";
 import Timeline from "./pages/Timeline";
 import Methodology from "./pages/Methodology";
@@ -58,6 +58,7 @@ import ApiDocs from "./pages/ApiDocs";
 import PolicyImpact from "./pages/PolicyImpact";
 import DataExchangeHub from "./pages/DataExchangeHub";
 import AccuracyDashboard from "./pages/AccuracyDashboard";
+import AdvancedSearch from "./pages/AdvancedSearch";
 import SchedulerDashboard from "./pages/SchedulerDashboard";
 import AlertsDashboard from "./pages/AlertsDashboard";
 import ResearchPortal from "./pages/ResearchPortal";
@@ -95,6 +96,7 @@ function Router() {
       <Route path={"/contact"} component={Contact} />
       <Route path={"/glossary"} component={Glossary} />
       <Route path={"/research"} component={Research} />
+      <Route path={"/search"} component={AdvancedSearch} />
       <Route path={"/research-portal"} component={ResearchPortal} />
       <Route path={"/research-explorer"} component={ResearchExplorer} />
       <Route path={"/research-analytics"} component={ResearchVisualization} />
