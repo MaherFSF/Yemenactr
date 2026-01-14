@@ -4344,3 +4344,37 @@ Based on review of master design documents and data source register:
 - [ ] Verify all 20 data connectors
 - [ ] Test CSV/JSON export from Data Repository
 - [ ] Final TypeScript and test verification
+
+
+## Phase 84: 4-Layer Platform Architecture
+
+### Layer 1: Data Layer
+- [x] Enhance provenance tracking tables
+- [x] Add stakeholder registry table
+- [x] Add data frequency support (annual/quarterly/monthly)
+- [x] Add geographic level support (national/subnational)
+- [x] Add version/vintage tracking for data
+
+### Layer 2: Provenance & Trust Layer
+- [x] Add source references and licensing info
+- [x] Add confidence scores per data point
+- [x] Add contradiction flags for conflicting sources
+- [x] Add version history tracking
+- [x] Add correction logs
+- [x] Implement R1-R3 and R9 rules
+
+### Layer 3: Reasoning & AI Layer
+- [x] Add change detection module
+- [x] Add forecasting/nowcasting models
+- [x] Enhance scenario simulation
+- [x] Improve narrative generation with evidence linking
+- [x] Add semantic search for large context
+
+### Layer 4: Delivery Layer
+- [x] Role-based dashboard access
+- [x] Public API for data access
+- [x] Enhanced alerts/notification system
+- [x] Report generation with evidence appendix
+
+### Documentation
+- [x] Create PLATFORM_ARCHITECTURE.md
