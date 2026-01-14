@@ -4272,3 +4272,47 @@ Based on review of master design documents and data source register:
 ### Testing
 - [x] All 245 tests passing
 - [x] TypeScript: 0 errors
+
+
+## Phase 81: Advanced Admin Features (IN PROGRESS - Jan 14, 2026)
+
+### Admin Editorial Workflow UI
+- [ ] Create /admin/reports route for editorial dashboard
+- [ ] Build report queue component with workflow status filters
+- [ ] Implement workflow action buttons (Submit, Review, Approve, Publish)
+- [ ] Add report preview with evidence appendix
+
+### Insight Miner Scheduled Job
+- [ ] Create insight miner service for trend detection
+- [ ] Add nightly scheduler job for insight generation
+- [ ] Implement anomaly detection algorithm
+- [ ] Create correlation discovery logic
+
+### Visualization Builder UI
+- [ ] Create /admin/visualizations route
+- [ ] Build chart type selector component
+- [ ] Implement data source configuration panel
+- [ ] Add live chart preview
+- [ ] Create evidence pack configuration
+
+### Export Platform Bundle
+- [ ] Create export-bundle script
+- [ ] Generate .env.template (no secrets)
+- [ ] Package code, docs, configs, migrations
+- [ ] Create README with setup instructions
+
+### tRPC Procedures
+- [ ] Add visualization.list/get/create/update/export procedures
+- [ ] Add reporting.templates/instances/workflow procedures
+- [ ] Add insightMiner.list/review procedures
+
+
+## Phase 81: Advanced Admin Features (COMPLETED - Jan 14, 2026)
+- [x] Admin Editorial Workflow UI (/admin/reports)
+- [x] Visualization Builder UI (/admin/visualizations)
+- [x] Insight Miner UI (/admin/insights)
+- [x] Export Platform Bundle UI (/admin/export)
+- [x] Add routes to App.tsx
+- [x] Add pages to AdminHub navigation
+- [x] All 245 tests passing
+- [x] Zero TypeScript errors

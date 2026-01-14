@@ -80,6 +80,10 @@ import AdminHub from "./pages/admin/AdminHub";
 import WebhookSettings from "./pages/admin/WebhookSettings";
 import ConnectorThresholds from "./pages/admin/ConnectorThresholds";
 import AutopilotControlRoom from "./pages/admin/AutopilotControlRoom";
+import ReportWorkflow from "./pages/admin/ReportWorkflow";
+import VisualizationBuilder from "./pages/admin/VisualizationBuilder";
+import InsightMiner from "./pages/admin/InsightMiner";
+import ExportBundle from "./pages/admin/ExportBundle";
 import GovernorDashboard from "./pages/GovernorDashboard";
 import DeputyGovernorDashboard from "./pages/DeputyGovernorDashboard";
 
@@ -155,6 +159,10 @@ function Router() {
           <Route path="/admin/webhooks" component={WebhookSettings} />
           <Route path="/admin/connector-thresholds" component={ConnectorThresholds} />
           <Route path="/admin/autopilot" component={AutopilotControlRoom} />
+          <Route path="/admin/reports" component={ReportWorkflow} />
+          <Route path="/admin/visualizations" component={VisualizationBuilder} />
+          <Route path="/admin/insights" component={InsightMiner} />
+          <Route path="/admin/export" component={ExportBundle} />
       <Route path={"/executive/governor"} component={GovernorDashboard} />
       <Route path={"/executive/deputy-governor"} component={DeputyGovernorDashboard} />
       <Route path={"/partner"} component={PartnerPortal} />
