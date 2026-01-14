@@ -3220,6 +3220,77 @@ Answer the user's question based on this research. Be specific and cite sources 
         await conn.end();
         return rows as any[];
       }),
+    
+    getHistoricalMetrics: publicProcedure
+      .input(z.object({
+        bankId: z.number().optional(),
+        startYear: z.number().min(2010).max(2025).optional(),
+        endYear: z.number().min(2010).max(2025).optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        const mysql = await import('mysql2/promise');
+        const conn = await mysql.createConnection(process.env.DATABASE_URL!);
+        let query = `
+          SELECT h.*, b.name, b.nameAr, b.acronym
+          FROM bank_historical_metrics h
+          JOIN commercial_banks b ON h.bankId = b.id
+          WHERE 1=1
+        `;
+        const params: any[] = [];
+        
+        if (input?.bankId) {
+          query += ` AND h.bankId = ?`;
+          params.push(input.bankId);
+        }
+        if (input?.startYear) {
+          query += ` AND h.year >= ?`;
+          params.push(input.startYear);
+        }
+        if (input?.endYear) {
+          query += ` AND h.year <= ?`;
+          params.push(input.endYear);
+        }
+        query += ` ORDER BY h.bankId, h.year`;
+        
+        const [rows] = await conn.execute(query, params);
+        await conn.end();
+        return rows as any[];
+      }),
+    
+    getSectorTimeSeries: publicProcedure
+      .input(z.object({
+        metric: z.enum(['totalAssets', 'nonPerformingLoans', 'capitalAdequacyRatio', 'branchCount', 'employeeCount']),
+        startYear: z.number().min(2010).max(2025).optional(),
+        endYear: z.number().min(2010).max(2025).optional(),
+      }))
+      .query(async ({ input }) => {
+        const mysql = await import('mysql2/promise');
+        const conn = await mysql.createConnection(process.env.DATABASE_URL!);
+        const metricCol = input.metric;
+        let query = `
+          SELECT year, 
+                 SUM(${metricCol}) as total,
+                 AVG(${metricCol}) as average,
+                 COUNT(*) as bankCount
+          FROM bank_historical_metrics
+          WHERE 1=1
+        `;
+        const params: any[] = [];
+        
+        if (input.startYear) {
+          query += ` AND year >= ?`;
+          params.push(input.startYear);
+        }
+        if (input.endYear) {
+          query += ` AND year <= ?`;
+          params.push(input.endYear);
+        }
+        query += ` GROUP BY year ORDER BY year`;
+        
+        const [rows] = await conn.execute(query, params);
+        await conn.end();
+        return rows as any[];
+      }),
   }),
 
   // ============================================================================

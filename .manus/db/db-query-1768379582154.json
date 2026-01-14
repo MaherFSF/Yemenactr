@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS bank_historical_metrics (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  bankId INT NOT NULL,\n  year INT NOT NULL,\n  quarter ENUM('Q1', 'Q2', 'Q3', 'Q4', 'annual') DEFAULT 'annual',\n  totalAssets DECIMAL(15,2),\n  totalDeposits DECIMAL(15,2),\n  totalLoans DECIMAL(15,2),\n  capitalAdequacyRatio DECIMAL(5,2),\n  nonPerformingLoans DECIMAL(5,2),\n  liquidityRatio DECIMAL(5,2),\n  returnOnAssets DECIMAL(5,2),\n  returnOnEquity DECIMAL(5,2),\n  netInterestMargin DECIMAL(5,2),\n  branchCount INT,\n  employeeCount INT,\n  sourceDocumentId INT,\n  confidenceRating ENUM('A', 'B', 'C', 'D') DEFAULT 'C',\n  notes TEXT,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  UNIQUE KEY unique_bank_period (bankId, year, quarter),\n  INDEX idx_bank_year (bankId, year)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute CREATE TABLE IF NOT EXISTS bank_historical_metrics (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  bankId INT NOT NULL,\n  year INT NOT NULL,\n  quarter ENUM('Q1', 'Q2', 'Q3', 'Q4', 'annual') DEFAULT 'annual',\n  totalAssets DECIMAL(15,2),\n  totalDeposits DECIMAL(15,2),\n  totalLoans DECIMAL(15,2),\n  capitalAdequacyRatio DECIMAL(5,2),\n  nonPerformingLoans DECIMAL(5,2),\n  liquidityRatio DECIMAL(5,2),\n  returnOnAssets DECIMAL(5,2),\n  returnOnEquity DECIMAL(5,2),\n  netInterestMargin DECIMAL(5,2),\n  branchCount INT,\n  employeeCount INT,\n  sourceDocumentId INT,\n  confidenceRating ENUM('A', 'B', 'C', 'D') DEFAULT 'C',\n  notes TEXT,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  UNIQUE KEY unique_bank_period (bankId, year, quarter),\n  INDEX idx_bank_year (bankId, year)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 266
+}

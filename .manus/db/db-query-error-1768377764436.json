@@ -1,0 +1,8 @@
+{
+  "query": "UPDATE commercial_banks SET sanctionsStatus = 'ofac', operationalStatus = 'sanctioned', isUnderWatch = 1, watchReason = 'OFAC SDN - Sanctioned April 17, 2025 for financial support to Ansarallah (Houthis)' WHERE acronym = 'IBY'; UPDATE commercial_banks SET sanctionsStatus = 'ofac', isUnderWatch = 1, watchReason = 'OFAC SDN - Sanctioned January 17, 2025 for financial support to Ansarallah (Houthis). GL32 wind-down authorized.' WHERE acronym = 'YKB';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute UPDATE commercial_banks SET sanctionsStatus = 'ofac', operationalStatus = 'sanctioned', isUnderWatch = 1, watchReason = 'OFAC SDN - Sanctioned April 17, 2025 for financial support to Ansarallah (Houthis)' WHERE acronym = 'IBY'; UPDATE commercial_banks SET sanctionsStatus = 'ofac', isUnderWatch = 1, watchReason = 'OFAC SDN - Sanctioned January 17, 2025 for financial support to Ansarallah (Houthis). GL32 wind-down authorized.' WHERE acronym = 'YKB';",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1265 (01000) at line 1: Data truncated for column '%s' at row %d"
+  ]
+}

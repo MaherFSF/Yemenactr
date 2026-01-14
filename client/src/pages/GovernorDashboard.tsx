@@ -105,16 +105,16 @@ const economicIndicators = [
   },
 ];
 
-// Banking sector summary
-const bankingSectorSummary = {
-  totalBanks: 25,
-  adenBanks: 18,
-  sanaaBanks: 7,
-  totalAssets: 8.2, // billion USD
-  averageCAR: 18.7,
-  averageNPL: 12.3,
+// Banking sector summary - will be populated from API
+const defaultBankingSectorSummary = {
+  totalBanks: 31,
+  adenBanks: 28,
+  sanaaBanks: 16,
+  totalAssets: 18.67, // billion USD - from real data
+  averageCAR: 17.7,
+  averageNPL: 19.4,
   banksUnderWatch: 3,
-  sanctionedBanks: 1,
+  sanctionedBanks: 3, // IBY, YKB, CAC Bank - OFAC
 };
 
 // Recent alerts
@@ -376,10 +376,10 @@ export default function GovernorDashboard() {
                       <div className="relative w-20 h-20">
                         <svg className="w-20 h-20 transform -rotate-90">
                           <circle cx="40" cy="40" r="35" stroke="currentColor" strokeWidth="8" fill="none" className="text-slate-200 dark:text-slate-700" />
-                          <circle cx="40" cy="40" r="35" stroke="currentColor" strokeWidth="8" fill="none" className="text-emerald-500" strokeDasharray={`${bankingSectorSummary.averageCAR * 2.2} 220`} />
+                          <circle cx="40" cy="40" r="35" stroke="currentColor" strokeWidth="8" fill="none" className="text-emerald-500" strokeDasharray={`${defaultBankingSectorSummary.averageCAR * 2.2} 220`} />
                         </svg>
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-lg font-bold">{bankingSectorSummary.averageCAR}%</span>
+                          <span className="text-lg font-bold">{defaultBankingSectorSummary.averageCAR}%</span>
                         </div>
                       </div>
                     </div>

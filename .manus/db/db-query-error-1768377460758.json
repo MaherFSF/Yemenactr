@@ -1,0 +1,8 @@
+{
+  "query": "SELECT sector, year, status, claimCount, evidenceCount FROM coverage_cells WHERE sector = 'banking' OR sector LIKE '%bank%' ORDER BY year DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT sector, year, status, claimCount, evidenceCount FROM coverage_cells WHERE sector = 'banking' OR sector LIKE '%bank%' ORDER BY year DESC;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'status' in 'field list'"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "query": "SELECT DISTINCT sanctionsStatus, operationalStatus FROM commercial_banks;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT DISTINCT sanctionsStatus, operationalStatus FROM commercial_banks;",
+  "rows": [
+    {
+      "sanctionsStatus": "none",
+      "operationalStatus": "operational"
+    },
+    {
+      "sanctionsStatus": "none",
+      "operationalStatus": "distressed"
+    },
+    {
+      "sanctionsStatus": "none",
+      "operationalStatus": "limited"
+    },
+    {
+      "sanctionsStatus": "ofac",
+      "operationalStatus": "operational"
+    }
+  ],
+  "messages": [],
+  "stdout": "sanctionsStatus\toperationalStatus\nnone\toperational\nnone\tdistressed\nnone\tlimited\nofac\toperational\n",
+  "stderr": "",
+  "execution_time_ms": 50
+}

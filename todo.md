@@ -3279,3 +3279,58 @@ Based on review of master design documents and data source register:
 - [ ] Unit tests for evidence mapping, citation scoring, contradiction scoring
 - [ ] E2E tests for report generation, tribunal, export with badges
 - [ ] CI gating for tribunal bypass detection
+
+
+## Phase 68: Banking Sector 100% Production-Ready Transformation
+
+### PART A: Data Completeness
+- [ ] Add all 31 banks from CBY-Aden official list
+- [ ] Add banks under CBY-Sana'a jurisdiction
+- [ ] Populate full profiles: history, metrics, sanctions, SWIFT, ownership
+- [ ] Build 2010-2025 historical time series
+- [ ] Add dual-currency impact analysis
+
+### PART B: Sanctions Compliance
+- [ ] Add all OFAC SDN Yemen designations
+- [ ] Add UN Security Council sanctions
+- [ ] Add EU restrictive measures
+- [ ] Build sanctions timeline visualization
+- [ ] Create sanctions alert system
+
+### PART C: Backend & Database
+- [ ] Fix all 14 TypeScript errors in Banking.tsx
+- [ ] Ensure banking router properly exported
+- [ ] Add missing database columns
+- [ ] Fix scheduler job errors
+
+### PART D: Autopilot & Truth Layer
+- [ ] Seed evidence_sources table
+- [ ] Create claims for banking metrics
+- [ ] Activate Coverage Governor
+- [ ] Run full QA scan
+
+### PART E: UI/UX Excellence
+- [ ] Add pagination to bank table
+- [ ] Add data export (CSV, Excel, PDF)
+- [ ] Add interactive charts
+- [ ] Add sanctions timeline visualization
+- [ ] Add confidence badges
+- [ ] Mobile-optimize views
+
+### PART F: Stakeholder Features
+- [ ] CBY Governor Dashboard enhancements
+- [ ] Donor Portal features
+- [ ] Researcher API documentation
+
+### PART G: Integration
+- [ ] Link to exchange rate sector
+- [ ] Link to research library
+- [ ] Feed alerts to main dashboard
+
+### PART H: Testing
+- [ ] Write Vitest tests for banking procedures
+- [ ] Validate data against primary sources
+
+### PART I: Documentation
+- [ ] Create BANKING_METHODOLOGY.md
+- [ ] Create BANKING_DATA_DICTIONARY.md

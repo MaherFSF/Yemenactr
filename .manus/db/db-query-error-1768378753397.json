@@ -1,0 +1,8 @@
+{
+  "query": "ALTER TABLE commercial_banks \nADD COLUMN email VARCHAR(255) NULL,\nADD COLUMN employeeCount INT NULL;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute ALTER TABLE commercial_banks \nADD COLUMN email VARCHAR(255) NULL,\nADD COLUMN employeeCount INT NULL;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1060 (42S21) at line 1: Duplicate column name 'employeeCount'"
+  ]
+}

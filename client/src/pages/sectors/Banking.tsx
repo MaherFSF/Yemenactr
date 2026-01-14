@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, AreaChart, Area } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -103,6 +104,11 @@ export default function BankingSector() {
   const { data: sectorMetrics, isLoading: metricsLoading } = (trpc as any).banking.getSectorMetrics.useQuery();
   const { data: watchList } = (trpc as any).banking.getBanksUnderWatch.useQuery();
   const { data: directives } = (trpc as any).banking.getDirectives.useQuery({ limit: 10 });
+  const { data: historicalData } = (trpc as any).banking.getSectorTimeSeries.useQuery({ 
+    metric: 'totalAssets',
+    startYear: 2010,
+    endYear: 2025
+  });
 
   // Calculate totals
   const totals = useMemo(() => {
@@ -228,6 +234,76 @@ export default function BankingSector() {
 
               {/* Overview Tab */}
               <TabsContent value="overview" className="space-y-6">
+                {/* Historical Time Series Chart */}
+                {historicalData && historicalData.length > 0 && (
+                  <Card>
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <CardTitle className="flex items-center gap-2">
+                            <BarChart3 className="h-5 w-5 text-primary" />
+                            تطور القطاع المصرفي (2010-2025)
+                          </CardTitle>
+                          <CardDescription>إجمالي أصول القطاع المصرفي بالمليون دولار</CardDescription>
+                        </div>
+                        <Button variant="outline" size="sm">
+                          <Download className="h-4 w-4 ml-2" />
+                          تصدير البيانات
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="h-[300px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <AreaChart data={historicalData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                            <defs>
+                              <linearGradient id="colorAssets" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                              </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                            <XAxis dataKey="year" className="text-xs" />
+                            <YAxis className="text-xs" tickFormatter={(value) => `$${(value / 1000).toFixed(1)}B`} />
+                            <Tooltip 
+                              formatter={(value: number) => [`$${value.toLocaleString()}M`, 'إجمالي الأصول']}
+                              labelFormatter={(label) => `السنة: ${label}`}
+                              contentStyle={{ direction: 'rtl', textAlign: 'right' }}
+                            />
+                            <Area 
+                              type="monotone" 
+                              dataKey="total" 
+                              stroke="#3b82f6" 
+                              fillOpacity={1} 
+                              fill="url(#colorAssets)" 
+                              strokeWidth={2}
+                              name="إجمالي الأصول"
+                            />
+                          </AreaChart>
+                        </ResponsiveContainer>
+                      </div>
+                      <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div className="p-3 bg-muted/50 rounded-lg">
+                          <div className="text-sm text-muted-foreground">2010 (قبل الصراع)</div>
+                          <div className="text-lg font-bold text-primary">${((historicalData.find((d: any) => d.year === 2010)?.total || 0) / 1000).toFixed(1)}B</div>
+                        </div>
+                        <div className="p-3 bg-muted/50 rounded-lg">
+                          <div className="text-sm text-muted-foreground">2016 (انقسام البنك المركزي)</div>
+                          <div className="text-lg font-bold text-amber-600">${((historicalData.find((d: any) => d.year === 2016)?.total || 0) / 1000).toFixed(1)}B</div>
+                        </div>
+                        <div className="p-3 bg-muted/50 rounded-lg">
+                          <div className="text-sm text-muted-foreground">2020 (كوفيد)</div>
+                          <div className="text-lg font-bold text-red-600">${((historicalData.find((d: any) => d.year === 2020)?.total || 0) / 1000).toFixed(1)}B</div>
+                        </div>
+                        <div className="p-3 bg-muted/50 rounded-lg">
+                          <div className="text-sm text-muted-foreground">2025 (الحالي)</div>
+                          <div className="text-lg font-bold text-emerald-600">${((historicalData.find((d: any) => d.year === 2025)?.total || 0) / 1000).toFixed(1)}B</div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
                 {/* Banks Table */}
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between">
@@ -278,7 +354,7 @@ export default function BankingSector() {
                                   <JurisdictionBadge jurisdiction={bank.jurisdiction} />
                                 </td>
                                 <td className="py-3 font-mono">
-                                  {bank.totalAssets ? (bank.totalAssets / 1e6).toFixed(0) : "N/A"}
+                                  {bank.totalAssets ? parseFloat(bank.totalAssets).toLocaleString() : "N/A"}
                                 </td>
                                 <td className="py-3">
                                   <span className={bank.capitalAdequacyRatio && bank.capitalAdequacyRatio >= 12 ? "text-emerald-600" : "text-amber-600"}>
