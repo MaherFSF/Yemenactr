@@ -2841,3 +2841,9 @@ export const integrityReports = mysqlTable("integrity_reports", {
 
 export type IntegrityReport = typeof integrityReports.$inferSelect;
 export type InsertIntegrityReport = typeof integrityReports.$inferInsert;
+
+
+// ============================================================================
+// RE-EXPORT VISUALIZATION & REPORTING SCHEMA
+// ============================================================================
+export * from "./schema-visualization";

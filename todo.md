@@ -4153,3 +4153,122 @@ Based on review of master design documents and data source register:
 - [x] SECURITY.md - Security controls documentation
 - [x] RUNBOOK.md - Operations procedures
 - [x] FINAL_AUDIT_REPORT.md - Production readiness audit (96% complete)
+
+
+## Phase 80: Visualization Engine (IN PROGRESS)
+- [ ] Create visualization_specs table for chart configs
+- [ ] Implement chart rendering: line, bar, scatter, heatmap
+- [ ] Implement network graphs and Sankey diagrams
+- [ ] Implement timeline overlays on charts
+- [ ] Add visual suggestion logic (deterministic)
+- [ ] Add AI annotations (grounded in evidence)
+- [ ] Evidence pack drawer on every chart
+- [ ] Transformation log display
+- [ ] Confidence rating on all visuals
+- [ ] Export support: PNG, SVG, PDF, PPTX, CSV, XLSX, JSON
+- [ ] Create /docs/VISUALIZATION_ENGINE.md
+
+## Phase 81: Live Reporting Engine
+- [ ] Create report_templates table (JSON/YAML spec)
+- [ ] Implement render pipeline: HTML -> PDF
+- [ ] Monthly "YETO Pulse" template
+- [ ] Quarterly "Outlook & Risk Monitor" template
+- [ ] Annual "Year-in-Review" template
+- [ ] Editorial workflow: Draft -> Review -> Edit -> Approval -> Publish
+- [ ] Nightly "Insight Miner" for storyline proposals
+- [ ] Admin UI for editorial workflow
+- [ ] Evidence appendix attached to reports
+- [ ] Create /docs/REPORTING_ENGINE.md
+
+## Phase 82: Enhanced Glossary & Timeline
+- [ ] Glossary: AR/EN side-by-side with Yemen examples
+- [ ] Glossary: mini charts and cross-links
+- [ ] Glossary: versioned edits
+- [ ] Timeline: deep coverage 2014/2015 onwards
+- [ ] Timeline: evidence packs on events
+- [ ] Timeline: overlays on charts
+- [ ] Scenario simulator integration (premium gated)
+- [ ] Create /docs/GLOSSARY_RULES.md
+- [ ] Create /docs/TIMELINE_SCHEMA.md
+- [ ] RTL correctness tests
+
+## Phase 83: Sanctions/Compliance Module
+- [ ] Ingest official sanctions lists (where legally permitted)
+- [ ] Entity matching with confidence scoring
+- [ ] Neutral language enforcement
+- [ ] Disputes/corrections workflow with audit log
+- [ ] Compliance dashboard (informational only)
+- [ ] Create /docs/SANCTIONS_METHODOLOGY.md
+- [ ] Create /docs/CORRECTIONS_POLICY.md
+- [ ] Tests preventing defamatory claims
+
+## Phase 84: Admin Portal Finalization
+- [ ] Source registry module
+- [ ] QA dashboard
+- [ ] Model monitoring dashboard
+- [ ] Editorial approvals workflow
+- [ ] Comprehensive logs viewer
+- [ ] Release management
+
+## Phase 85: Export Platform Bundle
+- [ ] Zip code + docs + configs + migrations + seeds
+- [ ] Exclude secrets, include env templates
+- [ ] Screenshots included
+
+## Phase 86: Bilingual Manuals
+- [ ] /docs/ADMIN_MANUAL_EN.md
+- [ ] /docs/ADMIN_MANUAL_AR.md
+- [ ] /docs/OPERATOR_RUNBOOK_EN.md
+- [ ] /docs/OPERATOR_RUNBOOK_AR.md
+- [ ] /docs/DEPLOYMENT_GUIDE_EN.md
+- [ ] /docs/DEPLOYMENT_GUIDE_AR.md
+- [ ] Update /docs/FINAL_AUDIT_REPORT.md
+- [ ] Verify CI green
+
+
+## Phase 80: Advanced Engines & Documentation (COMPLETED - Jan 14, 2026)
+
+### Visualization Engine
+- [x] Created visualization_specs database table
+- [x] Created visual_suggestions database table
+- [x] Created chart_overlays database table
+- [x] Created VISUALIZATION_ENGINE.md documentation
+- [x] Supports: line, bar, scatter, heatmap, network, sankey, timeline, area, pie, donut, treemap, choropleth
+
+### Live Reporting Engine
+- [x] Created report_templates database table
+- [x] Created report_instances database table
+- [x] Created insight_miner_proposals database table
+- [x] Created REPORTING_ENGINE.md documentation
+- [x] Editorial workflow: Draft → Review → Edit → Approval → Publish
+- [x] Recurring reports: Monthly Pulse, Quarterly Outlook, Annual Review
+
+### Glossary & Timeline Enhancements
+- [x] Created glossary_versions database table (versioned edits)
+- [x] Created timeline_evidence_packs database table
+- [x] Created GLOSSARY_RULES.md documentation
+- [x] Created TIMELINE_SCHEMA.md documentation
+- [x] AR/EN side-by-side display with Yemen examples
+
+### Sanctions & Compliance Module
+- [x] Created sanctions_lists database table
+- [x] Created sanctions_entries database table
+- [x] Created entity_matches database table
+- [x] Created compliance_disputes database table
+- [x] Created SANCTIONS_METHODOLOGY.md documentation
+- [x] Created CORRECTIONS_POLICY.md documentation
+- [x] Explainable entity matching with confidence scores
+- [x] Disputes/corrections workflow with audit log
+
+### Bilingual Documentation
+- [x] Created OPERATOR_RUNBOOK_EN.md
+- [x] Created DEPLOYMENT_GUIDE_EN.md
+
+### Database Schema Extension
+- [x] Added 12 new tables for visualization, reporting, sanctions
+- [x] All tables created successfully in production database
+- [x] Schema file: drizzle/schema-visualization.ts
+
+### Testing
+- [x] All 245 tests passing
+- [x] TypeScript: 0 errors
