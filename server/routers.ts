@@ -2,6 +2,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, adminProcedure, analystProcedure, partnerProcedure, router } from "./_core/trpc";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { invokeLLM } from "./_core/llm";
 import {
@@ -1263,6 +1264,7 @@ Answer the user's question based on this research. Be specific and cite sources 
         ];
 
         // Get record counts from database
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not initialized' });
         const recordCounts = await db.execute(sql`
           SELECT 
             CASE 
@@ -1305,6 +1307,7 @@ Answer the user's question based on this research. Be specific and cite sources 
     getSchedulerJobs: adminProcedure
       .query(async () => {
         const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not initialized' });
         try {
           const jobs = await db.execute(sql`
             SELECT id, jobName, jobType, cronExpression, isEnabled, 
@@ -1373,6 +1376,7 @@ Answer the user's question based on this research. Be specific and cite sources 
       .input(z.object({ jobId: z.number(), isEnabled: z.boolean() }))
       .mutation(async ({ input }) => {
         const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
         try {
           await db.execute(sql`
             UPDATE scheduler_jobs 
@@ -1395,6 +1399,7 @@ Answer the user's question based on this research. Be specific and cite sources 
         const duration = Date.now() - startTime;
         
         const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
         try {
           await db.execute(sql`
             UPDATE scheduler_jobs 
@@ -1416,6 +1421,7 @@ Answer the user's question based on this research. Be specific and cite sources 
     getWebhooks: adminProcedure
       .query(async () => {
         const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
         try {
           const result = await db.execute(sql`
             SELECT id, name, type, url, enabled, events, headers, lastTriggered, failureCount, createdAt
@@ -1448,10 +1454,11 @@ Answer the user's question based on this research. Be specific and cite sources 
         type: z.enum(["slack", "discord", "email", "custom"]),
         url: z.string().min(1),
         events: z.array(z.string()),
-        headers: z.record(z.string()).optional(),
+        headers: z.record(z.string(), z.string()).optional(),
       }))
       .mutation(async ({ input, ctx }) => {
         const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not initialized' });
         const result = await db.execute(sql`
           INSERT INTO webhooks (name, type, url, events, headers, enabled, createdBy)
           VALUES (${input.name}, ${input.type}, ${input.url}, ${JSON.stringify(input.events)}, ${input.headers ? JSON.stringify(input.headers) : null}, true, ${ctx.user?.id || null})
@@ -1467,10 +1474,11 @@ Answer the user's question based on this research. Be specific and cite sources 
         url: z.string().min(1).optional(),
         events: z.array(z.string()).optional(),
         enabled: z.boolean().optional(),
-        headers: z.record(z.string()).optional(),
+        headers: z.record(z.string(), z.string()).optional(),
       }))
       .mutation(async ({ input }) => {
         const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
         const updates: string[] = [];
         if (input.name !== undefined) updates.push(`name = '${input.name}'`);
         if (input.url !== undefined) updates.push(`url = '${input.url}'`);
@@ -1489,6 +1497,7 @@ Answer the user's question based on this research. Be specific and cite sources 
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not initialized' });
         await db.execute(sql`DELETE FROM webhooks WHERE id = ${input.id}`);
         return { success: true };
       }),
@@ -1498,6 +1507,7 @@ Answer the user's question based on this research. Be specific and cite sources 
       .input(z.object({ id: z.number(), enabled: z.boolean() }))
       .mutation(async ({ input }) => {
         const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not initialized' });
         await db.execute(sql`UPDATE webhooks SET enabled = ${input.enabled}, updatedAt = NOW() WHERE id = ${input.id}`);
         return { success: true, id: input.id, enabled: input.enabled };
       }),
@@ -1507,6 +1517,7 @@ Answer the user's question based on this research. Be specific and cite sources 
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not initialized' });
         const webhooks = await db.execute(sql`SELECT * FROM webhooks WHERE id = ${input.id}`);
         const webhook = (webhooks as any[])[0];
         
@@ -1589,6 +1600,7 @@ Answer the user's question based on this research. Be specific and cite sources 
     getWebhookEventTypes: adminProcedure
       .query(async () => {
         const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
         try {
           const result = await db.execute(sql`SELECT * FROM webhook_event_types WHERE isActive = true ORDER BY category, name`);
           // Handle TiDB result format
@@ -1627,6 +1639,7 @@ Answer the user's question based on this research. Be specific and cite sources 
       }))
       .query(async ({ input }) => {
         const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
         try {
           let query = sql`
             SELECT l.*, w.name as webhookName, w.type as webhookType
@@ -1668,6 +1681,7 @@ Answer the user's question based on this research. Be specific and cite sources 
     getConnectorThresholds: adminProcedure
       .query(async () => {
         const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
         try {
           const result = await db.execute(sql`SELECT * FROM connector_thresholds ORDER BY connectorCode`);
           // Handle TiDB result format
@@ -1712,6 +1726,7 @@ Answer the user's question based on this research. Be specific and cite sources 
       }))
       .mutation(async ({ input, ctx }) => {
         const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not initialized' });
         await db.execute(sql`
           INSERT INTO connector_thresholds (connectorCode, warningDays, criticalDays, enabled, updatedBy)
           VALUES (${input.connectorCode}, ${input.warningDays}, ${input.criticalDays}, ${input.enabled}, ${ctx.user?.id || null})
@@ -1728,6 +1743,7 @@ Answer the user's question based on this research. Be specific and cite sources 
     resetConnectorThresholds: adminProcedure
       .mutation(async () => {
         const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
         const defaults = [
           { code: 'world_bank', warning: 30, critical: 90 },
           { code: 'unhcr', warning: 14, critical: 30 },

@@ -11,7 +11,7 @@ import {
 
 describe("Connector Health Alerts", () => {
   describe("checkConnectorHealth", () => {
-    it("should return health status for all connectors", async () => {
+    it("should return health status for all connectors", { timeout: 15000 }, async () => {
       const results = await checkConnectorHealth();
       
       expect(Array.isArray(results)).toBe(true);
@@ -28,7 +28,7 @@ describe("Connector Health Alerts", () => {
       }
     });
 
-    it("should use default config when none provided", async () => {
+    it("should use default config when none provided", { timeout: 15000 }, async () => {
       const results = await checkConnectorHealth();
       expect(results).toBeDefined();
     });

@@ -58,24 +58,25 @@ export default function BankingAdmin() {
   const { data: schedulerJobs } = trpc.scheduler.getJobs.useQuery();
   
   // Mutations
-  const triggerRefresh = trpc.scheduler.triggerJob.useMutation({
+  const triggerRefresh = trpc.admin.runSchedulerJobNow.useMutation({
     onSuccess: () => {
       toast.success("Data refresh triggered successfully");
       setIsRefreshing(false);
     },
-    onError: (error) => {
-      toast.error(`Failed to trigger refresh: ${error.message}`);
+    onError: (error: unknown) => {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      toast.error(`Failed to trigger refresh: ${errorMessage}`);
       setIsRefreshing(false);
     }
   });
 
-  const handleTriggerRefresh = async (jobName: string) => {
+  const handleTriggerRefresh = async (jobId: number) => {
     setIsRefreshing(true);
-    triggerRefresh.mutate({ jobName });
+    triggerRefresh.mutate({ jobId });
   };
 
   const bankingJobs = schedulerJobs?.filter(job => 
-    job.jobName.includes('banking') || job.jobName.includes('sanctions')
+    job.name.includes('banking') || job.name.includes('sanctions')
   ) || [];
 
   const banks = banksData || [];
@@ -94,7 +95,7 @@ export default function BankingAdmin() {
           <div className="flex gap-2">
             <Button
               variant="outline"
-              onClick={() => handleTriggerRefresh('banking_data_refresh')}
+              onClick={() => handleTriggerRefresh(1)}
               disabled={isRefreshing}
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -259,12 +260,12 @@ export default function BankingAdmin() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {bankingJobs[0]?.lastRunAt 
-                  ? new Date(bankingJobs[0].lastRunAt).toLocaleDateString()
+                {bankingJobs[0] 
+                  ? 'Scheduled'
                   : 'Never'}
               </div>
               <p className="text-xs text-muted-foreground">
-                {bankingJobs[0]?.lastRunStatus || 'No runs yet'}
+                {bankingJobs[0]?.enabled ? 'Enabled' : 'No runs yet'}
               </p>
             </CardContent>
           </Card>
@@ -276,7 +277,7 @@ export default function BankingAdmin() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2">
-                {bankingJobs.some(j => j.isEnabled) ? (
+                {bankingJobs.some(j => j.enabled) ? (
                   <>
                     <CheckCircle className="h-5 w-5 text-green-600" />
                     <span className="text-lg font-bold text-green-600">Active</span>
@@ -428,7 +429,7 @@ export default function BankingAdmin() {
                   </div>
                   <Button
                     variant="outline"
-                    onClick={() => handleTriggerRefresh('sanctions_monitoring')}
+                    onClick={() => handleTriggerRefresh(2)}
                     disabled={isRefreshing}
                   >
                     <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />

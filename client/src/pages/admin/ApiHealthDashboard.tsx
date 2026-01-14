@@ -76,7 +76,6 @@ export default function ApiHealthDashboard() {
   });
 
   // Mutation to toggle job status
-  // @ts-expect-error - tRPC types may not be fully generated yet
   const toggleJob = trpc.admin.toggleSchedulerJob?.useMutation?.({
     onSuccess: () => {
       toast.success("Job Updated");

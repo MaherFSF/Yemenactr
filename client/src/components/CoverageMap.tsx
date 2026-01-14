@@ -88,13 +88,13 @@ export function CoverageMap({
   // Extract unique years and sectors from data
   const years = useMemo(() => {
     if (propYears) return propYears;
-    const uniqueYears = [...new Set(data.map(d => d.year))].sort((a, b) => a - b);
+    const uniqueYears = Array.from(new Set(data.map(d => d.year))).sort((a, b) => a - b);
     return uniqueYears.length > 0 ? uniqueYears : Array.from({ length: 16 }, (_, i) => 2010 + i);
   }, [data, propYears]);
 
   const sectors = useMemo(() => {
     if (propSectors) return propSectors;
-    return [...new Set(data.map(d => d.sector))];
+    return Array.from(new Set(data.map(d => d.sector)));
   }, [data, propSectors]);
 
   // Build lookup map

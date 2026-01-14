@@ -691,7 +691,7 @@ export default function AdvancedSearch() {
   // Handle save search
   const handleSaveSearch = () => {
     if (filters.query) {
-      setSavedSearches(prev => [...new Set([...prev, filters.query])]);
+      setSavedSearches(prev => Array.from(new Set([...prev, filters.query])));
       toast.success(isArabic ? "تم حفظ البحث" : "Search saved");
     }
   };

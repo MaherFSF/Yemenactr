@@ -1,0 +1,38 @@
+{
+  "query": "SELECT 'time_series' as tbl, COUNT(*) as cnt FROM time_series UNION ALL SELECT 'economic_events', COUNT(*) FROM economic_events UNION ALL SELECT 'research_publications', COUNT(*) FROM research_publications UNION ALL SELECT 'commercial_banks', COUNT(*) FROM commercial_banks UNION ALL SELECT 'glossary_terms', COUNT(*) FROM glossary_terms UNION ALL SELECT 'sources', COUNT(*) FROM sources UNION ALL SELECT 'scheduler_jobs', COUNT(*) FROM scheduler_jobs;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT 'time_series' as tbl, COUNT(*) as cnt FROM time_series UNION ALL SELECT 'economic_events', COUNT(*) FROM economic_events UNION ALL SELECT 'research_publications', COUNT(*) FROM research_publications UNION ALL SELECT 'commercial_banks', COUNT(*) FROM commercial_banks UNION ALL SELECT 'glossary_terms', COUNT(*) FROM glossary_terms UNION ALL SELECT 'sources', COUNT(*) FROM sources UNION ALL SELECT 'scheduler_jobs', COUNT(*) FROM scheduler_jobs;",
+  "rows": [
+    {
+      "tbl": "economic_events",
+      "cnt": "179"
+    },
+    {
+      "tbl": "research_publications",
+      "cnt": "353"
+    },
+    {
+      "tbl": "glossary_terms",
+      "cnt": "51"
+    },
+    {
+      "tbl": "commercial_banks",
+      "cnt": "31"
+    },
+    {
+      "tbl": "time_series",
+      "cnt": "3355"
+    },
+    {
+      "tbl": "sources",
+      "cnt": "84"
+    },
+    {
+      "tbl": "scheduler_jobs",
+      "cnt": "30"
+    }
+  ],
+  "messages": [],
+  "stdout": "tbl\tcnt\neconomic_events\t179\nresearch_publications\t353\nglossary_terms\t51\ncommercial_banks\t31\ntime_series\t3355\nsources\t84\nscheduler_jobs\t30\n",
+  "stderr": "",
+  "execution_time_ms": 1551
+}
