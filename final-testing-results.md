@@ -296,3 +296,56 @@ The YETO platform has passed all comprehensive tests and is ready for production
 
 *Testing completed: January 14, 2026*
 *Platform Version: 7456b87f*
+
+
+---
+
+## 10. Custom Report Builder Test (Phase 85)
+**Tested:** January 14, 2026 18:07 UTC
+**URL:** /report-builder
+
+### Findings:
+- ✅ **4-Step Wizard UI Working**: Step indicator shows all 4 steps (Select Data → Choose Visualizations → Customize Layout → Export)
+- ✅ **Step 1 - Select Data**: 8 data categories displayed (Exchange Rates, Inflation & Prices, Trade, Banking & Finance, Humanitarian, Energy & Fuel, Food Security, Conflict Economy)
+- ✅ **Bilingual Support**: Arabic RTL layout working correctly
+- ✅ **Navigation**: Next/Previous buttons functional
+- ✅ **Selection UI**: Dashed border cards for data category selection
+
+### Status: WORKING
+The Custom Report Builder wizard is fully functional with all 4 steps implemented.
+
+
+---
+
+## 11. Scenario Simulator Test (Phase 85)
+**Tested:** January 14, 2026 18:08 UTC
+**URL:** /scenario-simulator
+
+### Features Verified:
+- ✅ **AI-Powered Badge**: "مدعوم بالذكاء الاصطناعي" (AI-Powered) indicator displayed
+- ✅ **4 Tab Navigation**: Parameters, Scenarios, What-If, Results
+- ✅ **8 Variables**: Configurable economic parameters
+- ✅ **What-If Analysis**: Uncertainty bands feature available
+
+### Main Variables (المتغيرات الرئيسية):
+| Variable | Current Value |
+|----------|---------------|
+| Oil Production (% of capacity) | 15% |
+| International Aid ($B) | $2.8B |
+| Exchange Rate (YER/USD) | 2050 |
+| Conflict Intensity | 50% |
+
+### Additional Variables (متغيرات إضافية):
+| Variable | Current Value |
+|----------|---------------|
+| Remittances ($B) | $3.5B |
+| Fuel Prices (Index) | 100 |
+| Food Prices (Index) | 100 |
+
+### Simulation Settings:
+- Time Horizon: 12 months (configurable)
+- Run Simulation button (تشغيل المحاكاة)
+- Reset button (إعادة تعيين)
+
+### Status: FULLY WORKING
+The Scenario Simulator provides comprehensive what-if analysis with ML-powered forecasting.

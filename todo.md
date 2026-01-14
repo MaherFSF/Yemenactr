@@ -4378,3 +4378,23 @@ Based on review of master design documents and data source register:
 
 ### Documentation
 - [x] Create PLATFORM_ARCHITECTURE.md
+
+
+## Phase 85: Custom Report Builder & Auto-Publication Engine
+- [x] Custom Report Builder wizard UI (4-step wizard)
+  - [x] Step 1: Select Data (indicators, timeframe)
+  - [x] Step 2: Choose Visualizations (chart types)
+  - [x] Step 3: Customize Layout (title, author, logo)
+  - [x] Step 4: Export (PDF, Excel, Word, PPT)
+- [ ] Report Generation Backend
+  - [ ] PDF generation with charts and citations
+  - [ ] Excel export with data tables
+  - [ ] Evidence appendix generation
+- [ ] Auto-Publication Engine enhancements
+  - [ ] Daily Brief generation
+  - [ ] Weekly Market Update
+  - [ ] Monthly Economic Monitor
+  - [ ] Quarterly Outlook (premium)
+  - [ ] Annual Report
+- [x] Verify Scenario Simulator functionality
+- [x] Final comprehensive testing (245/245 tests passing)
