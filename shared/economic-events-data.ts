@@ -21,6 +21,7 @@ export interface EconomicEvent {
   };
   sources?: string[];
   relatedIndicators?: string[];
+  image?: string; // Path to event image
 }
 
 export const economicEventsData: EconomicEvent[] = [
@@ -466,7 +467,8 @@ export const economicEventsData: EconomicEvent[] = [
       gdpEffect: "GDP contracts 28% in 2015",
       tradeEffect: "Naval blockade cripples imports"
     },
-    sources: ["Arab Center DC", "UN"]
+    sources: ["Arab Center DC", "UN"],
+    image: "/images/events/saudi_intervention_2015.jpg"
   },
   {
     id: "evt-2015-05",
@@ -577,7 +579,8 @@ export const economicEventsData: EconomicEvent[] = [
       currencyEffect: "Dual exchange rate system begins",
       inflationEffect: "Inflation accelerates in south"
     },
-    sources: ["Sana'a Center", "Reuters"]
+    sources: ["Sana'a Center", "Reuters"],
+    image: "/images/events/cby_relocation_2016.jpg"
   },
   {
     id: "evt-2016-04",
@@ -1054,7 +1057,8 @@ export const economicEventsData: EconomicEvent[] = [
     economicImpact: {
       tradeEffect: "Commercial flights resume to Sanaa"
     },
-    sources: ["UN", "Arab Center DC"]
+    sources: ["UN", "Arab Center DC"],
+    image: "/images/events/truce_2022.jpg"
   },
   {
     id: "evt-2022-04",

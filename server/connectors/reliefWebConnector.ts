@@ -145,6 +145,8 @@ async function fetchReports(params: {
     const response = await fetch(url.toString(), {
       headers: {
         'Accept': 'application/json',
+        'User-Agent': 'YETO-Platform/1.0 (yeto@causewaygrp.com)',
+        'Cache-Control': 'no-cache',
       },
     });
     

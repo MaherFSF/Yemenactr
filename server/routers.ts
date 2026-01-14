@@ -1750,7 +1750,8 @@ Answer the user's question based on this research. Be specific and cite sources 
           if (input.status === "critical") whereClause = "severity = 'critical'";
           if (input.status === "warning") whereClause = "severity = 'warning'";
           
-          const result = await db!.execute(sql.raw(`
+          if (!db) throw new Error('Database not initialized');
+          const result = await db.execute(sql.raw(`
             SELECT * FROM alerts 
             WHERE ${whereClause}
             ORDER BY createdAt DESC 
@@ -1791,7 +1792,8 @@ Answer the user's question based on this research. Be specific and cite sources 
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         const db = await getDb();
-        await db!.execute(sql`UPDATE alerts SET acknowledged = true, acknowledgedAt = NOW() WHERE id = ${input.id}`);
+        if (!db) throw new Error('Database not initialized');
+        await db.execute(sql`UPDATE alerts SET acknowledged = true, acknowledgedAt = NOW() WHERE id = ${input.id}`);
         return { success: true };
       }),
 
@@ -1800,7 +1802,8 @@ Answer the user's question based on this research. Be specific and cite sources 
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         const db = await getDb();
-        await db!.execute(sql`UPDATE alerts SET resolved = true, resolvedAt = NOW() WHERE id = ${input.id}`);
+        if (!db) throw new Error('Database not initialized');
+        await db.execute(sql`UPDATE alerts SET resolved = true, resolvedAt = NOW() WHERE id = ${input.id}`);
         return { success: true };
       }),
 
@@ -1809,7 +1812,8 @@ Answer the user's question based on this research. Be specific and cite sources 
       .query(async () => {
         const db = await getDb();
         try {
-          const counts = await db!.execute(sql`
+          if (!db) throw new Error('Database not initialized');
+          const counts = await db.execute(sql`
             SELECT 
               COUNT(*) as total,
               SUM(CASE WHEN isRead = 0 THEN 1 ELSE 0 END) as unread,

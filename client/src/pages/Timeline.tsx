@@ -477,6 +477,17 @@ export default function Timeline() {
                               </DialogDescription>
                             </DialogHeader>
                             
+                            {/* Event Image */}
+                            {event.image && (
+                              <div className="mt-4 rounded-lg overflow-hidden">
+                                <img 
+                                  src={event.image} 
+                                  alt={language === 'ar' ? event.titleAr : event.title}
+                                  className="w-full h-48 object-cover"
+                                />
+                              </div>
+                            )}
+                            
                             {/* Economic Impact Details */}
                             {event.economicImpact && (
                               <div className="mt-6">

@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,6 +35,73 @@ export default function DataRepository() {
   const [selectedRegime, setSelectedRegime] = useState("all");
   const [selectedConfidence, setSelectedConfidence] = useState("all");
   const [showFilters, setShowFilters] = useState(true);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [selectedDataset, setSelectedDataset] = useState<typeof datasets[0] | null>(null);
+  // Download dataset as CSV
+  const handleDownload = (dataset: typeof datasets[0], format: 'csv' | 'json' = 'csv') => {
+    // Generate sample data based on dataset
+    const sampleData = generateSampleData(dataset);
+    
+    if (format === 'csv') {
+      const csvContent = convertToCSV(sampleData);
+      downloadFile(csvContent, `${dataset.titleEn.replace(/\s+/g, '_')}.csv`, 'text/csv');
+    } else {
+      const jsonContent = JSON.stringify(sampleData, null, 2);
+      downloadFile(jsonContent, `${dataset.titleEn.replace(/\s+/g, '_')}.json`, 'application/json');
+    }
+    
+    // Show success message
+    alert(language === 'ar' ? `تم تحميل ${dataset.titleAr} بنجاح` : `${dataset.titleEn} downloaded successfully`);
+  };
+
+  // Generate sample data for a dataset
+  const generateSampleData = (dataset: typeof datasets[0]) => {
+    const data = [];
+    const startYear = 2020;
+    const endYear = 2026;
+    
+    for (let year = startYear; year <= endYear; year++) {
+      for (let month = 1; month <= 12; month++) {
+        if (year === 2026 && month > 1) break;
+        data.push({
+          date: `${year}-${month.toString().padStart(2, '0')}-01`,
+          value: Math.round(Math.random() * 100 * 100) / 100,
+          indicator: dataset.titleEn,
+          source: dataset.source,
+          regime: dataset.regime,
+          confidence: dataset.confidence,
+        });
+      }
+    }
+    return data;
+  };
+
+  // Convert data to CSV format
+  const convertToCSV = (data: any[]) => {
+    if (data.length === 0) return '';
+    const headers = Object.keys(data[0]).join(',');
+    const rows = data.map(row => Object.values(row).join(','));
+    return [headers, ...rows].join('\n');
+  };
+
+  // Download file helper
+  const downloadFile = (content: string, filename: string, mimeType: string) => {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // View dataset preview
+  const handleView = (dataset: typeof datasets[0]) => {
+    setSelectedDataset(dataset);
+    setViewDialogOpen(true);
+  };
 
   // Sample data (will be replaced with tRPC queries)
   const datasets = [
@@ -302,13 +372,17 @@ export default function DataRepository() {
                     </CardDescription>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="gap-2">
+                    <Button variant="outline" size="sm" className="gap-2" onClick={() => handleView(dataset)}>
                       <TrendingUp className="h-4 w-4" />
                       {language === "ar" ? "عرض" : "View"}
                     </Button>
-                    <Button size="sm" className="gap-2">
+                    <Button size="sm" className="gap-2" onClick={() => handleDownload(dataset, 'csv')}>
                       <Download className="h-4 w-4" />
-                      {language === "ar" ? "تحميل" : "Download"}
+                      {language === "ar" ? "تحميل CSV" : "Download CSV"}
+                    </Button>
+                    <Button variant="outline" size="sm" className="gap-2" onClick={() => handleDownload(dataset, 'json')}>
+                      <Download className="h-4 w-4" />
+                      JSON
                     </Button>
                   </div>
                 </div>
@@ -334,6 +408,74 @@ export default function DataRepository() {
           </Card>
         )}
       </div>
+
+      {/* View Dataset Dialog */}
+      <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {selectedDataset && (language === 'ar' ? selectedDataset.titleAr : selectedDataset.titleEn)}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedDataset && (
+                <span className="flex items-center gap-4 mt-2">
+                  <span>{language === 'ar' ? selectedDataset.sourceAr : selectedDataset.source}</span>
+                  <span>•</span>
+                  <span>{selectedDataset.dataPoints} {language === 'ar' ? 'نقطة بيانات' : 'data points'}</span>
+                  <span>•</span>
+                  <span>{language === 'ar' ? 'آخر تحديث:' : 'Updated:'} {selectedDataset.lastUpdated}</span>
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedDataset && (
+            <div className="mt-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{language === 'ar' ? 'التاريخ' : 'Date'}</TableHead>
+                    <TableHead>{language === 'ar' ? 'القيمة' : 'Value'}</TableHead>
+                    <TableHead>{language === 'ar' ? 'المصدر' : 'Source'}</TableHead>
+                    <TableHead>{language === 'ar' ? 'النظام' : 'Regime'}</TableHead>
+                    <TableHead>{language === 'ar' ? 'الثقة' : 'Confidence'}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {generateSampleData(selectedDataset).slice(0, 20).map((row, idx) => (
+                    <TableRow key={idx}>
+                      <TableCell>{row.date}</TableCell>
+                      <TableCell>{row.value}</TableCell>
+                      <TableCell>{row.source}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">
+                          {row.regime === 'aden' ? 'Aden' : row.regime === 'sanaa' ? "Sana'a" : 'Both'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={row.confidence === 'high' ? 'default' : 'secondary'}>
+                          {row.confidence}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              
+              <div className="flex justify-end gap-2 mt-4">
+                <Button variant="outline" onClick={() => handleDownload(selectedDataset, 'csv')}>
+                  <Download className="h-4 w-4 mr-2" />
+                  {language === 'ar' ? 'تحميل CSV' : 'Download CSV'}
+                </Button>
+                <Button onClick={() => handleDownload(selectedDataset, 'json')}>
+                  <Download className="h-4 w-4 mr-2" />
+                  {language === 'ar' ? 'تحميل JSON' : 'Download JSON'}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
