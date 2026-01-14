@@ -3223,3 +3223,59 @@ Based on review of master design documents and data source register:
 - [x] Create button tester
 - [x] Create export verifier
 - [x] Generate click audit report
+
+
+## Phase 66: Public Access Configuration
+- [ ] Remove login requirement for public pages
+- [ ] Allow direct link sharing without authentication
+
+
+## Phase 67: Evidence Tribunal + Reliability Lab
+
+### Database Schema
+- [x] Create evidence_sets table (claim_id, created_at)
+- [x] Create evidence_items table (evidence_set_id, item_type, source_org, confidence_grade)
+- [x] Create tribunal_runs table (claim_id, verdict, scores, reasons_json)
+- [x] Create publication_log table (append-only audit trail)
+- [ ] Extend data_gap_tickets with tribunal integration
+
+### Multi-Agent Tribunal System
+- [ ] Implement Analyst Agent (produces claims from evidence)
+- [ ] Implement Skeptic Agent (finds contradictions, weak inferences)
+- [ ] Implement Methodologist Agent (checks time scope, units, regime tagging)
+- [ ] Implement Citation Auditor Agent (verifies sentence-to-evidence mapping)
+- [ ] Implement Judge Agent (PASS/PASS-WARN/FAIL decisions)
+
+### Citation Verification
+- [ ] Implement citation coverage metric (≥95% for PASS)
+- [ ] Implement sentence-to-evidence mapping
+- [ ] Flag "citation drift" and broken citations
+- [ ] Auto-remove or mark ungrounded sentences as "Unverified"
+
+### Contradiction Detection
+- [ ] Detect when multiple sources disagree
+- [ ] Display both values with provenance
+- [ ] Explain likely causes (definitions, coverage, timing)
+- [ ] Tag as "contested" if no resolution possible
+
+### Reliability Lab
+- [ ] Create test suite of 200+ domain questions
+- [ ] Track citation coverage, contradiction resolution, hallucination flags
+- [ ] Build Reliability Score dashboard (admin only)
+- [ ] Block deployment if score drops below threshold
+
+### Publication Gating
+- [ ] Block KPIs/events/alerts/reports without PASS/PASS-WARN
+- [ ] Implement admin override with signed note
+- [ ] Show "Manual Override" publicly with timestamp
+
+### UI Integration
+- [ ] Add Verified badge (green) with Tribunal Report link
+- [ ] Add Contested badge (yellow) with "compare sources" view
+- [ ] Add Data Gap badge (red) with contribution link
+- [ ] Embed Tribunal Verdict Summary in exports
+
+### Testing
+- [ ] Unit tests for evidence mapping, citation scoring, contradiction scoring
+- [ ] E2E tests for report generation, tribunal, export with badges
+- [ ] CI gating for tribunal bypass detection

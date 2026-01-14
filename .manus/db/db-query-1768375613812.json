@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS evidence_items (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  evidenceSetId INT NOT NULL,\n  itemType ENUM('doc_chunk', 'dataset_row', 'indicator_point', 'event_record', 'regulation', 'excerpt') NOT NULL,\n  itemId INT,\n  sourceOrg VARCHAR(255),\n  sourceDate DATE,\n  retrievedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  provenanceJson JSON,\n  confidenceGrade ENUM('A', 'B', 'C', 'D') DEFAULT 'C',\n  textContent TEXT,\n  pageRef VARCHAR(100),\n  documentUrl TEXT,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  INDEX idx_evidence_set (evidenceSetId),\n  INDEX idx_item_type (itemType)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute CREATE TABLE IF NOT EXISTS evidence_items (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  evidenceSetId INT NOT NULL,\n  itemType ENUM('doc_chunk', 'dataset_row', 'indicator_point', 'event_record', 'regulation', 'excerpt') NOT NULL,\n  itemId INT,\n  sourceOrg VARCHAR(255),\n  sourceDate DATE,\n  retrievedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  provenanceJson JSON,\n  confidenceGrade ENUM('A', 'B', 'C', 'D') DEFAULT 'C',\n  textContent TEXT,\n  pageRef VARCHAR(100),\n  documentUrl TEXT,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  INDEX idx_evidence_set (evidenceSetId),\n  INDEX idx_item_type (itemType)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 356
+}
