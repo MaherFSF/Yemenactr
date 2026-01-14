@@ -3469,3 +3469,70 @@ Based on review of master design documents and data source register:
 - [x] Improve analytical tools with descriptions
 - [x] Add sector alerts with clickable external links
 - [x] All links verified working (OFAC, World Bank, IMF, think tanks)
+
+
+## Phase 72: Banking & Microfinance Comprehensive Enhancement (IN PROGRESS - Jan 14, 2026)
+
+### Banking Sector UI Improvements
+- [ ] Add bank logos to all 31 banks in the table
+- [ ] Fix "تفاصيل" (Details) buttons to link to individual bank profile pages
+- [ ] Create individual bank profile pages with full financial data
+- [ ] Add ownership structure and sanctions history to bank profiles
+
+### CBY Regulations & Directives
+- [ ] Scrape and upload all CBY Aden regulations to S3
+- [ ] Scrape and upload all CBY Sanaa regulations to S3
+- [ ] Create regulations section in Banking page with downloadable PDFs
+- [ ] Add regulatory timeline showing directive history
+
+### Dynamic Updates & Scheduling
+- [ ] Implement scheduled job for banking sector data refresh
+- [ ] Add auto-update for exchange rates from CBY
+- [ ] Add auto-update for bank financial data
+- [ ] Implement dynamic feeds from World Bank, IMF APIs
+
+### Microfinance Sector
+- [ ] Create/enhance Microfinance sector page
+- [ ] Integrate Yemen Microfinance Network data
+- [ ] Add MFI profiles with logos and financial data
+- [ ] Upload microfinance reports to S3
+
+### Data Integration
+- [ ] Connect to Association of Yemeni Banks publications
+- [ ] Add Yemen Microfinance Network publications
+- [ ] Implement CBY circular auto-ingestion
+- [ ] Add SFD reports integration
+
+
+## Phase 72: Banking & Microfinance Comprehensive Enhancement (COMPLETED - Jan 14, 2026)
+
+### Banking Sector Enhancements:
+- [x] Fixed asset display ($18,672 → $18.7B with proper formatting)
+- [x] Added source citations to all KPIs (CBY, IMF, World Bank)
+- [x] Added A/B/C/D confidence badges to all metrics
+- [x] Added last updated timestamps (آخر تحديث: 14 يناير 2026)
+- [x] Fixed broken tool links (scenario-simulator, research, methodology)
+- [x] Uploaded 4 banking reports to S3 (World Bank, ACAPS, ODI, Yemen Economic Monitor)
+- [x] Created working download links for all reports
+- [x] Added OFAC sanctions with direct Treasury press release links
+- [x] Added CBY circulars quick links (Aden & Sanaa)
+- [x] Added Think Tank Reports section (Sana'a Center, Carnegie, Crisis Group, Washington Institute)
+- [x] Added Donor Stabilization Efforts section (Yemen Fund, Saudi $500M, IFC)
+- [x] Added bank logos (Al-Kuraimi and others)
+- [x] Fixed "تفاصيل" (Details) buttons to link to bank profiles
+- [x] Created BankDetail page for individual bank profiles with full financial data
+
+### Microfinance Sector (NEW):
+- [x] Created comprehensive Microfinance sector page
+- [x] Added Yemen Microfinance Network (YMN) data
+- [x] Added 6 microfinance institutions with full profiles
+- [x] Added historical chart (2010-2024) showing sector growth
+- [x] Added KPIs: 12 MFIs, 680,000 borrowers, $195M portfolio, 5.2% PAR30
+- [x] Added Social Impact tab with women empowerment and marginalized groups data
+- [x] Added links to CGAP, World Bank, UNDP reports
+- [x] Added route /sectors/microfinance
+
+### Scheduled Auto-Updates:
+- [x] Scheduled daily banking sector data auto-update at 6:00 AM UTC
+- [x] Created bankingSectorUpdate.ts job script for CBY, OFAC, World Bank, IMF data refresh
+

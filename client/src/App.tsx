@@ -28,6 +28,7 @@ import ConflictEconomy from "./pages/sectors/ConflictEconomy";
 import Infrastructure from "./pages/sectors/Infrastructure";
 import Agriculture from "./pages/sectors/Agriculture";
 import Investment from "./pages/sectors/Investment";
+import Microfinance from "./pages/sectors/Microfinance";
 import DataRepository from "./pages/DataRepository";
 import AdminPortal from "./pages/AdminPortal";
 import PartnerPortal from "./pages/PartnerPortal";
@@ -40,6 +41,7 @@ import Pricing from "./pages/Pricing";
 import Legal from "./pages/Legal";
 import Entities from "./pages/Entities";
 import EntityDetail from "./pages/EntityDetail";
+import BankDetail from "./pages/entities/BankDetail";
 import Corrections from "./pages/Corrections";
 import Publications from "./pages/Publications";
 import CoverageScorecard from "./pages/CoverageScorecard";
@@ -114,6 +116,7 @@ function Router() {
       <Route path={"/sectors/infrastructure"} component={Infrastructure} />
       <Route path={"/sectors/agriculture"} component={Agriculture} />
       <Route path={"/sectors/investment"} component={Investment} />
+      <Route path={"/sectors/microfinance"} component={Microfinance} />
       <Route path={"/data-repository"} component={DataRepository} />
       <Route path={"/timeline"} component={Timeline} />
       <Route path={"/methodology"} component={Methodology} />
@@ -122,6 +125,7 @@ function Router() {
       <Route path={"/legal"} component={Legal} />
       <Route path={"/entities"} component={Entities} />
       <Route path={"/entities/:id"} component={EntityDetail} />
+      <Route path={"/entities/bank/:id"} component={BankDetail} />
       <Route path={"/corrections"} component={Corrections} />
       <Route path={"/publications"} component={Publications} />
       <Route path={"/coverage"} component={CoverageScorecard} />

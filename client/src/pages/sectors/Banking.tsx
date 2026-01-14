@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
+import { getBankLogo, getBankWebsite } from "@/lib/bankLogos";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, AreaChart, Area } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -371,9 +372,17 @@ export default function BankingSector() {
                               <tr key={bank.id} className="border-b last:border-0 hover:bg-muted/50">
                                 <td className="py-3">
                                   <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                      <Landmark className="h-4 w-4 text-primary" />
-                                    </div>
+                                    {getBankLogo(bank.acronym, bank.nameAr) ? (
+                                      <img 
+                                        src={getBankLogo(bank.acronym, bank.nameAr)!} 
+                                        alt={bank.nameAr || bank.name}
+                                        className="w-8 h-8 rounded-full object-cover"
+                                      />
+                                    ) : (
+                                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                        <Landmark className="h-4 w-4 text-primary" />
+                                      </div>
+                                    )}
                                     <div>
                                       <div className="font-medium">{bank.nameAr || bank.name}</div>
                                       <div className="text-xs text-muted-foreground">{bank.acronym}</div>
@@ -395,9 +404,11 @@ export default function BankingSector() {
                                   <StatusBadge status={bank.operationalStatus} />
                                 </td>
                                 <td className="py-3">
-                                  <Button variant="ghost" size="sm">
-                                    عرض
-                                  </Button>
+                                  <Link href={`/entities/bank/${bank.id}`}>
+                                    <Button variant="ghost" size="sm">
+                                      عرض
+                                    </Button>
+                                  </Link>
                                 </td>
                               </tr>
                             ))}
@@ -608,9 +619,17 @@ export default function BankingSector() {
                             className="flex items-center justify-between p-4 rounded-lg border hover:border-primary/50 transition-colors"
                           >
                             <div className="flex items-center gap-4">
+                              {getBankLogo(bank.acronym, bank.nameAr) ? (
+                              <img 
+                                src={getBankLogo(bank.acronym, bank.nameAr)!} 
+                                alt={bank.nameAr || bank.name}
+                                className="w-12 h-12 rounded-xl object-cover"
+                              />
+                            ) : (
                               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                                 <Landmark className="h-6 w-6 text-primary" />
                               </div>
+                            )}
                               <div>
                                 <div className="font-semibold">{bank.nameAr || bank.name}</div>
                                 <div className="text-sm text-muted-foreground flex items-center gap-2">
@@ -637,9 +656,11 @@ export default function BankingSector() {
                               </div>
                               <JurisdictionBadge jurisdiction={bank.jurisdiction} />
                               <StatusBadge status={bank.operationalStatus} />
-                              <Button variant="outline" size="sm">
-                                التفاصيل
-                              </Button>
+                              <Link href={`/entities/bank/${bank.id}`}>
+                                <Button variant="outline" size="sm">
+                                  التفاصيل
+                                </Button>
+                              </Link>
                             </div>
                           </div>
                         ))}
