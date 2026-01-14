@@ -264,6 +264,41 @@ export async function getAllBankingKnowledge(): Promise<{
   }
 }
 
+// Convenience functions for AI integration
+export async function getBankingSummary() {
+  const overview = await getBankingSectorOverview();
+  const dataPoints = overview.dataPoints;
+  return {
+    totalBanks: Number(dataPoints.find(d => d.metric === 'Total Banks')?.value || 0),
+    totalAssets: Number(dataPoints.find(d => d.metric === 'Total Assets')?.value || 0),
+    avgCAR: Number(dataPoints.find(d => d.metric === 'Average CAR')?.value || 0),
+    avgNPL: Number(dataPoints.find(d => d.metric === 'Average NPL')?.value || 0),
+    adenBanks: Number(dataPoints.find(d => d.metric === 'Aden Banks')?.value || 0),
+    sanaaBanks: Number(dataPoints.find(d => d.metric === 'Sana\'a Banks')?.value || 0),
+  };
+}
+
+export async function getSanctionsContext() {
+  const sanctions = await getSanctionsKnowledge();
+  return {
+    totalSanctioned: sanctions.dataPoints.length,
+    sanctionedBanks: sanctions.dataPoints.map(d => ({
+      bankName: d.metric,
+      authority: d.source || 'OFAC',
+      designationDate: d.value,
+    })),
+  };
+}
+
+export async function getBankingContext() {
+  const [summary, sanctions, trends] = await Promise.all([
+    getBankingSectorOverview(),
+    getSanctionsKnowledge(),
+    getHistoricalTrendKnowledge('totalAssets'),
+  ]);
+  return { summary, sanctions, trends };
+}
+
 export {
   BankingKnowledge,
   DataPoint,

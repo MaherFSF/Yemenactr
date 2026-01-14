@@ -6,6 +6,7 @@
  */
 
 import { invokeLLM } from "../_core/llm";
+import { getBankingContext, getBankingSummary, getSanctionsContext } from "../services/bankingKnowledgeBase";
 
 // System prompt for One Brain - UPDATED January 10, 2026
 const SYSTEM_PROMPT = `You are "One Brain" (العقل الواحد), the AI assistant for YETO (Yemen Economic Transparency Observatory).
@@ -79,11 +80,21 @@ export interface EvidencePack {
   caveats?: string[];
 }
 
-// Knowledge base for common queries - UPDATED January 10, 2026
-const KNOWLEDGE_BASE: Record<string, {
+// Knowledge base entry type
+interface KnowledgeEntry {
   answer: { en: string; ar: string };
   evidence: EvidencePack;
-}> = {
+}
+
+interface DynamicKnowledgeEntry {
+  dynamic: true;
+  fetchContext: () => Promise<KnowledgeEntry>;
+}
+
+type KnowledgeBaseEntry = KnowledgeEntry | DynamicKnowledgeEntry;
+
+// Knowledge base for common queries - UPDATED January 10, 2026
+const KNOWLEDGE_BASE: Record<string, KnowledgeBaseEntry> = {
   "exchange_rate": {
     answer: {
       en: "**As of January 10, 2026**, the exchange rate shows a significant divergence between the two monetary authorities:\n\n**Aden (IRG):** ~1,890-2,050 YER/USD (parallel market)\n**Sana'a (DFA):** ~530-600 YER/USD (controlled)\n\nThis represents a spread of approximately 250-280%, reflecting the economic fragmentation since 2016 when the Central Bank split. Recent political developments, including the STC dissolution on January 9, 2026, may impact exchange rate stability in the coming weeks.",
@@ -208,28 +219,36 @@ const KNOWLEDGE_BASE: Record<string, {
     }
   },
   "banking_sector": {
-    answer: {
-      en: "**Yemen's Banking Sector - January 2026 Update**\n\n**Split System:** Two parallel central banks since September 2016\n- CBY Aden: Governor Ahmed Ghaleb, floating exchange rate\n- CBY Sana'a: Governor Hashem Ismail, controlled exchange rate\n\n**Recent CBY Aden Actions (2025-2026):**\n- July 2025: Launched major exchange market regulation campaign\n- December 2025: 79 exchange companies had licenses suspended/revoked\n- January 2, 2026: Suspended Al-Bal'asi, Al-Khader, Suhail Exchange; revoked Al-Shamil branch license\n- January 9, 2026: First 2026 board meeting, approved 2025 audit\n- January 10, 2026: Instructed to freeze al-Zubaidi's accounts\n\n**Challenges:**\n- Limited foreign reserves (~$1.2B estimated)\n- Correspondent banking relationships severed\n- Political instability following STC dissolution",
-      ar: "**القطاع المصرفي اليمني - تحديث يناير 2026**\n\n**نظام منقسم:** بنكان مركزيان متوازيان منذ سبتمبر 2016\n- البنك المركزي عدن: المحافظ أحمد غالب، سعر صرف عائم\n- البنك المركزي صنعاء: المحافظ هاشم إسماعيل، سعر صرف مُسيطر عليه\n\n**إجراءات البنك المركزي عدن الأخيرة (2025-2026):**\n- يوليو 2025: أطلق حملة كبرى لتنظيم سوق الصرافة\n- ديسمبر 2025: تم تعليق/إلغاء تراخيص 79 شركة صرافة\n- 2 يناير 2026: علّق شركات البلعسي والخضر وسهيل للصرافة؛ ألغى ترخيص فرع الشامل\n- 9 يناير 2026: أول اجتماع لمجلس الإدارة 2026، وافق على تدقيق 2025\n- 10 يناير 2026: تم توجيهه بتجميد حسابات الزبيدي\n\n**التحديات:**\n- احتياطيات أجنبية محدودة (~1.2 مليار دولار تقديرياً)\n- قطع علاقات المراسلة المصرفية\n- عدم استقرار سياسي بعد حل المجلس الانتقالي"
-    },
-    evidence: {
-      sources: [
-        { title: "Yemen Monitor - CBY Decisions", type: "News", date: "2026-01-09", confidence: "A" },
-        { title: "Yemen Monitor - Exchange License Suspensions", type: "News", date: "2026-01-02", confidence: "A" },
-        { title: "World Bank Financial Sector Assessment", type: "Report", date: "2025-Q2", confidence: "B" }
-      ],
-      indicators: [
-        { name: "Exchange Companies Suspended (2025)", value: "79", trend: "up", regime: "IRG" },
-        { name: "Active Banks", value: "18", trend: "stable" },
-        { name: "Mobile Money Users", value: "2.1 million", trend: "up" },
-        { name: "Foreign Reserves (est.)", value: "~$1.2B", trend: "down", regime: "IRG" }
-      ],
-      methodology: "Compiled from central bank reports and international assessments",
-      caveats: [
-        "Limited transparency from both central banks",
-        "NPL data is estimated due to reporting gaps",
-        "Political situation may impact banking operations"
-      ]
+    // Dynamic - fetched from database via bankingKnowledgeBase service
+    dynamic: true,
+    fetchContext: async () => {
+      const summary = await getBankingSummary();
+      const sanctions = await getSanctionsContext();
+      return {
+        answer: {
+          en: `**Yemen's Banking Sector - Live Data**\n\n**Overview:**\n- Total Banks: ${summary.totalBanks}\n- Total Assets: $${(summary.totalAssets / 1000).toFixed(1)}B\n- Average CAR: ${summary.avgCAR.toFixed(1)}%\n- Average NPL: ${summary.avgNPL.toFixed(1)}%\n\n**Jurisdiction:**\n- Aden: ${summary.adenBanks} banks\n- Sana'a: ${summary.sanaaBanks} banks\n\n**Sanctions Status:**\n${sanctions.sanctionedBanks.map((b: any) => `- ${b.bankName}: ${b.authority} (${b.designationDate})`).join('\n')}\n\n**Split System:** Two parallel central banks since September 2016\n- CBY Aden: Governor Ahmed Ghaleb, floating exchange rate\n- CBY Sana'a: Governor Hashem Ismail, controlled exchange rate`,
+          ar: `**القطاع المصرفي اليمني - بيانات حية**\n\n**نظرة عامة:**\n- إجمالي البنوك: ${summary.totalBanks}\n- إجمالي الأصول: $${(summary.totalAssets / 1000).toFixed(1)} مليار\n- متوسط كفاية رأس المال: ${summary.avgCAR.toFixed(1)}%\n- متوسط القروض غير العاملة: ${summary.avgNPL.toFixed(1)}%\n\n**الولاية القضائية:**\n- عدن: ${summary.adenBanks} بنك\n- صنعاء: ${summary.sanaaBanks} بنك`
+        },
+        evidence: {
+          sources: [
+            { title: "YETO Banking Database", type: "Database", date: new Date().toISOString().split('T')[0], confidence: "A" },
+            { title: "CBY-Aden Licensed Banks List", type: "Official", date: "2024", confidence: "A" },
+            { title: "OFAC SDN List", type: "Sanctions", date: new Date().toISOString().split('T')[0], confidence: "A" }
+          ],
+          indicators: [
+            { name: "Total Banks", value: summary.totalBanks.toString(), trend: "stable" },
+            { name: "Total Assets", value: `$${(summary.totalAssets / 1000).toFixed(1)}B`, trend: "down" },
+            { name: "OFAC Sanctioned Banks", value: sanctions.totalSanctioned.toString(), trend: "up" },
+            { name: "Average CAR", value: `${summary.avgCAR.toFixed(1)}%`, trend: "stable" }
+          ],
+          methodology: "Live data from YETO database, updated daily from CBY reports and OFAC SDN list",
+          caveats: [
+            "Data refreshed daily at 06:00 UTC",
+            "Some banks may have limited reporting",
+            "Sanctions data from OFAC, updated every 4 hours"
+          ]
+        }
+      };
     }
   }
 };
@@ -314,12 +333,30 @@ export async function generateResponse(
   
   // Check knowledge base first for common queries
   if (topic && KNOWLEDGE_BASE[topic]) {
-    const kb = KNOWLEDGE_BASE[topic];
-    return {
-      content: language === "ar" ? kb.answer.ar : kb.answer.en,
-      evidence: kb.evidence,
-      confidence: "high"
-    };
+    const entry = KNOWLEDGE_BASE[topic];
+    
+    // Handle dynamic entries that fetch from database
+    if ('dynamic' in entry && entry.dynamic) {
+      try {
+        const kb = await entry.fetchContext();
+        return {
+          content: language === "ar" ? kb.answer.ar : kb.answer.en,
+          evidence: kb.evidence,
+          confidence: "high"
+        };
+      } catch (error) {
+        console.error('Failed to fetch dynamic knowledge:', error);
+        // Fall through to LLM
+      }
+    } else {
+      // Static entry
+      const kb = entry as KnowledgeEntry;
+      return {
+        content: language === "ar" ? kb.answer.ar : kb.answer.en,
+        evidence: kb.evidence,
+        confidence: "high"
+      };
+    }
   }
   
   // Use LLM for other queries

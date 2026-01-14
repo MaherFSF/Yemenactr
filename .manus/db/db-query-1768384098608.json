@@ -1,0 +1,35 @@
+{
+  "query": "SELECT name, totalAssets, CONCAT('$', FORMAT(totalAssets, 0), 'M') as formatted FROM commercial_banks ORDER BY totalAssets DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT name, totalAssets, CONCAT('$', FORMAT(totalAssets, 0), 'M') as formatted FROM commercial_banks ORDER BY totalAssets DESC LIMIT 5;",
+  "rows": [
+    {
+      "name": "Tadhamon International Islamic Bank",
+      "totalAssets": "2800.00",
+      "formatted": "$2,800M"
+    },
+    {
+      "name": "Yemen Bank for Reconstruction & Development",
+      "totalAssets": "2100.00",
+      "formatted": "$2,100M"
+    },
+    {
+      "name": "National Bank of Yemen",
+      "totalAssets": "1850.00",
+      "formatted": "$1,850M"
+    },
+    {
+      "name": "Yemen Kuwait Bank for Trade and Investment",
+      "totalAssets": "1650.00",
+      "formatted": "$1,650M"
+    },
+    {
+      "name": "Yemen Commercial Bank",
+      "totalAssets": "1420.00",
+      "formatted": "$1,420M"
+    }
+  ],
+  "messages": [],
+  "stdout": "name\ttotalAssets\tformatted\nTadhamon International Islamic Bank\t2800.00\t$2,800M\nYemen Bank for Reconstruction & Development\t2100.00\t$2,100M\nNational Bank of Yemen\t1850.00\t$1,850M\nYemen Kuwait Bank for Trade and Investment\t1650.00\t$1,650M\nYemen Commercial Bank\t1420.00\t$1,420M\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}

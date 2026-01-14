@@ -34,9 +34,21 @@ import {
   CheckCircle2,
   XCircle,
   AlertCircle,
+  Globe,
 } from "lucide-react";
 
-// Format large numbers
+// Format large numbers (value is in millions from database)
+function formatCurrencyMillions(value: number | null | undefined, compact = true): string {
+  if (value === null || value === undefined) return "N/A";
+  // Value is already in millions, convert to billions for display if >= 1000M
+  if (compact) {
+    if (value >= 1000) return `$${(value / 1000).toFixed(1)}B`;
+    return `$${value.toLocaleString()}M`;
+  }
+  return `$${value.toLocaleString()}M`;
+}
+
+// Format raw currency values
 function formatCurrency(value: number | null | undefined, compact = false): string {
   if (value === null || value === undefined) return "N/A";
   if (compact) {
@@ -163,9 +175,12 @@ export default function BankingSector() {
           {/* Key Metrics Bar */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-              <div className="flex items-center gap-2 text-white/70 text-sm mb-1">
-                <Building2 className="h-4 w-4" />
-                <span>عدد البنوك</span>
+              <div className="flex items-center justify-between text-white/70 text-sm mb-1">
+                <div className="flex items-center gap-2">
+                  <Building2 className="h-4 w-4" />
+                  <span>عدد البنوك</span>
+                </div>
+                <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded text-xs font-medium">A</span>
               </div>
               <div className="text-2xl font-bold text-white">
                 {totals?.count || 0}
@@ -174,26 +189,36 @@ export default function BankingSector() {
               <div className="text-xs text-white/50 mt-1">
                 عدن: {sectorMetrics?.adenStats?.bankCount || 0} | صنعاء: {sectorMetrics?.sanaaStats?.bankCount || 0}
               </div>
+              <div className="text-[10px] text-white/40 mt-1">المصدر: قائمة البنك المركزي اليمني 2024</div>
             </div>
             
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-              <div className="flex items-center gap-2 text-white/70 text-sm mb-1">
-                <DollarSign className="h-4 w-4" />
-                <span>إجمالي الأصول</span>
+              <div className="flex items-center justify-between text-white/70 text-sm mb-1">
+                <div className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4" />
+                  <span>إجمالي الأصول</span>
+                </div>
+                <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded text-xs font-medium">B</span>
               </div>
               <div className="text-2xl font-bold text-white">
-                {formatCurrency(totals?.assets, true)}
+                {formatCurrencyMillions(totals?.assets)}
               </div>
-              <div className="flex items-center gap-1 text-xs text-emerald-400 mt-1">
-                <TrendingUp className="h-3 w-3" />
-                <span>+3.1% عن العام الماضي</span>
+              <div className="flex items-center justify-between text-xs mt-1">
+                <div className="flex items-center gap-1 text-emerald-400">
+                  <TrendingUp className="h-3 w-3" />
+                  <span>+3.1% عن العام الماضي</span>
+                </div>
               </div>
+              <div className="text-[10px] text-white/40 mt-1">المصدر: البنك المركزي اليمني 2024</div>
             </div>
             
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-              <div className="flex items-center gap-2 text-white/70 text-sm mb-1">
-                <Shield className="h-4 w-4" />
-                <span>نسبة كفاية رأس المال</span>
+              <div className="flex items-center justify-between text-white/70 text-sm mb-1">
+                <div className="flex items-center gap-2">
+                  <Shield className="h-4 w-4" />
+                  <span>نسبة كفاية رأس المال</span>
+                </div>
+                <span className="px-1.5 py-0.5 bg-blue-500/20 text-blue-300 rounded text-xs font-medium">B</span>
               </div>
               <div className="text-2xl font-bold text-white">
                 {formatPercent(totals?.avgCAR)}
@@ -201,12 +226,16 @@ export default function BankingSector() {
               <div className="text-xs text-white/50 mt-1">
                 الحد الأدنى المطلوب: 12%
               </div>
+              <div className="text-[10px] text-white/40 mt-1">المصدر: تقارير البنوك السنوية 2024</div>
             </div>
             
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-              <div className="flex items-center gap-2 text-white/70 text-sm mb-1">
-                <AlertTriangle className="h-4 w-4" />
-                <span>القروض غير العاملة</span>
+              <div className="flex items-center justify-between text-white/70 text-sm mb-1">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4" />
+                  <span>القروض غير العاملة</span>
+                </div>
+                <span className="px-1.5 py-0.5 bg-amber-500/20 text-amber-300 rounded text-xs font-medium">C</span>
               </div>
               <div className="text-2xl font-bold text-amber-400">
                 {formatPercent(totals?.avgNPL)}
@@ -214,6 +243,7 @@ export default function BankingSector() {
               <div className="text-xs text-white/50 mt-1">
                 المعدل الإقليمي: 5%
               </div>
+              <div className="text-[10px] text-white/40 mt-1">المصدر: تقديرات صندوق النقد الدولي 2024</div>
             </div>
           </div>
         </div>
@@ -461,32 +491,41 @@ export default function BankingSector() {
                 {/* Analytical Tools */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>الأدوات التحليلية</CardTitle>
+                    <div className="flex items-center justify-between">
+                      <CardTitle>الأدوات التحليلية</CardTitle>
+                      <Link href="/scenario-simulator">
+                        <Button variant="outline" size="sm">محاكي السيناريوهات</Button>
+                      </Link>
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <Link href="/tools/bank-comparison">
+                      <Link href="/sectors/banking?tab=comparison">
                         <div className="p-4 text-center rounded-xl border hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
                           <Scale className="h-8 w-8 mx-auto mb-2 text-primary" />
                           <div className="font-medium">مقارنة البنوك</div>
+                          <div className="text-xs text-muted-foreground mt-1">عدن مقابل صنعاء</div>
                         </div>
                       </Link>
-                      <Link href="/tools/risk-analysis">
+                      <Link href="/research?category=banking">
                         <div className="p-4 text-center rounded-xl border hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
                           <Target className="h-8 w-8 mx-auto mb-2 text-primary" />
                           <div className="font-medium">تحليل المخاطر</div>
+                          <div className="text-xs text-muted-foreground mt-1">279 تقرير</div>
                         </div>
                       </Link>
-                      <Link href="/tools/policy-simulator">
+                      <Link href="/scenario-simulator">
                         <div className="p-4 text-center rounded-xl border hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
                           <Calculator className="h-8 w-8 mx-auto mb-2 text-primary" />
                           <div className="font-medium">محاكي السياسات</div>
+                          <div className="text-xs text-muted-foreground mt-1">سيناريوهات متعددة</div>
                         </div>
                       </Link>
-                      <Link href="/tools/compliance">
+                      <Link href="/methodology#banking">
                         <div className="p-4 text-center rounded-xl border hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer">
                           <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-primary" />
                           <div className="font-medium">تقييم الامتثال</div>
+                          <div className="text-xs text-muted-foreground mt-1">منهجية YETO</div>
                         </div>
                       </Link>
                     </div>
@@ -634,7 +673,7 @@ export default function BankingSector() {
                         </div>
                         <div className="p-3 bg-muted/50 rounded-lg">
                           <div className="text-sm text-muted-foreground">إجمالي الأصول</div>
-                          <div className="text-2xl font-bold">{formatCurrency(sectorMetrics?.adenStats?.totalAssets, true)}</div>
+                          <div className="text-2xl font-bold">{formatCurrencyMillions(sectorMetrics?.adenStats?.totalAssets)}</div>
                         </div>
                         <div className="p-3 bg-muted/50 rounded-lg">
                           <div className="text-sm text-muted-foreground">متوسط CAR</div>
@@ -686,7 +725,7 @@ export default function BankingSector() {
                         </div>
                         <div className="p-3 bg-muted/50 rounded-lg">
                           <div className="text-sm text-muted-foreground">إجمالي الأصول</div>
-                          <div className="text-2xl font-bold">{formatCurrency(sectorMetrics?.sanaaStats?.totalAssets, true)}</div>
+                          <div className="text-2xl font-bold">{formatCurrencyMillions(sectorMetrics?.sanaaStats?.totalAssets)}</div>
                         </div>
                         <div className="p-3 bg-muted/50 rounded-lg">
                           <div className="text-sm text-muted-foreground">متوسط CAR</div>
@@ -723,32 +762,72 @@ export default function BankingSector() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* CBY Directives */}
+            {/* Last Updated Banner */}
+            <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 rounded-lg p-3">
+              <Clock className="h-4 w-4" />
+              <span>آخر تحديث: 14 يناير 2026</span>
+            </div>
+
+            {/* CBY Circulars Quick Links */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Landmark className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-lg">تعاميم البنك المركزي</CardTitle>
+                  </div>
+                  <Badge variant="outline" className="text-xs">جديد</Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <a href="https://cby-ye.com" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-2 rounded-lg hover:bg-muted transition-colors">
+                    <span className="text-sm">البنك المركزي - عدن</span>
+                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                  </a>
+                  <a href="https://centralbank.gov.ye" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-2 rounded-lg hover:bg-muted transition-colors">
+                    <span className="text-sm">البنك المركزي - صنعاء</span>
+                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Sector Alerts */}
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" />
+                  <AlertCircle className="h-5 w-5 text-amber-500" />
                   <CardTitle className="text-lg">التنبيهات القطاعية</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
+                  <a href="https://home.treasury.gov/news/press-releases/sb0092" target="_blank" rel="noopener noreferrer" className="block p-3 bg-red-50 dark:bg-red-950/30 rounded-lg border-r-4 border-red-500 hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm font-medium">عقوبات OFAC - بنك اليمن الدولي</div>
+                      <Badge variant="destructive" className="text-[10px]">جديد</Badge>
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">17 أبريل 2025 - دعم الحوثيين</div>
+                  </a>
+                  <a href="https://home.treasury.gov/news/press-releases/jy2794" target="_blank" rel="noopener noreferrer" className="block p-3 bg-red-50 dark:bg-red-950/30 rounded-lg border-r-4 border-red-500 hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors">
+                    <div className="text-sm font-medium">عقوبات OFAC - بنك اليمن والكويت</div>
+                    <div className="text-xs text-muted-foreground mt-1">17 يناير 2025 - دعم مالي لأنصار الله</div>
+                  </a>
                   <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg border-r-4 border-blue-500">
-                    <div className="text-sm font-medium">تحذير للمقيمين في البنك المركزي في عدن</div>
-                    <div className="text-xs text-muted-foreground mt-1">انخفاض قيمة الريال اليمني في مناطق سيطرة الحوثيين</div>
+                    <div className="text-sm font-medium">تحذير سعر الصرف</div>
+                    <div className="text-xs text-muted-foreground mt-1">الريال يتجاوز 1,890 للدولار في عدن</div>
                   </div>
-                  <div className="p-3 bg-amber-50 dark:bg-amber-950/30 rounded-lg border-r-4 border-amber-500">
-                    <div className="text-sm font-medium">تحديثات إجراءات الامتثال</div>
-                    <div className="text-xs text-muted-foreground mt-1">2024/04/25</div>
-                  </div>
-                  <div className="p-3 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border-r-4 border-emerald-500">
-                    <div className="text-sm font-medium">تعميم بشأن الحوالات الخارجية</div>
-                    <div className="text-xs text-muted-foreground mt-1">2024/03/15</div>
-                  </div>
+                  <a href="https://www.worldbank.org/en/news/press-release/2025/11/17/economic-hardship-deepens-in-yemen" target="_blank" rel="noopener noreferrer" className="block p-3 bg-amber-50 dark:bg-amber-950/30 rounded-lg border-r-4 border-amber-500 hover:bg-amber-100 dark:hover:bg-amber-950/50 transition-colors">
+                    <div className="text-sm font-medium">تقرير البنك الدولي</div>
+                    <div className="text-xs text-muted-foreground mt-1">تعمق الصعوبات الاقتصادية - نوفمبر 2025</div>
+                  </a>
                 </div>
-                <Button variant="outline" className="w-full mt-4" size="sm">
-                  عرض جميع التنبيهات
-                </Button>
+                <Link href="/research?category=banking&type=alert">
+                  <Button variant="outline" className="w-full mt-4" size="sm">
+                    عرض جميع التنبيهات
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -775,50 +854,238 @@ export default function BankingSector() {
               </CardContent>
             </Card>
 
-            {/* Downloads */}
+            {/* Downloads & Resources - Actual Reports */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">التحميلات</CardTitle>
+                <CardTitle className="text-lg">التحميلات والموارد</CardTitle>
+                <CardDescription className="text-xs">تقارير موثقة من مصادر دولية</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <Button variant="outline" className="w-full justify-start" size="sm">
-                    <Download className="h-4 w-4 ml-2" />
-                    تقرير القطاع 2024
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start" size="sm">
-                    <Download className="h-4 w-4 ml-2" />
-                    قائمة المصارف المرخصة (PDF)
-                  </Button>
+                  <a href="https://d2xsxph8kpxj0f.cloudfront.net/310419663029421755/XodoyKMzPdFiKkVj3QFTGK/banking/world-bank-yemen-financial-sector-diagnostics-2024.pdf" target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" className="w-full justify-start text-right" size="sm">
+                      <Download className="h-4 w-4 ml-2 shrink-0" />
+                      <div className="flex flex-col items-start">
+                        <span>تشخيص القطاع المالي 2024</span>
+                        <span className="text-[10px] text-muted-foreground">البنك الدولي - 152 صفحة</span>
+                      </div>
+                    </Button>
+                  </a>
+                  <a href="https://d2xsxph8kpxj0f.cloudfront.net/310419663029421755/XodoyKMzPdFiKkVj3QFTGK/banking/world-bank-yemen-economic-monitor-2024.pdf" target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" className="w-full justify-start text-right" size="sm">
+                      <Download className="h-4 w-4 ml-2 shrink-0" />
+                      <div className="flex flex-col items-start">
+                        <span>مرصد الاقتصاد اليمني 2024</span>
+                        <span className="text-[10px] text-muted-foreground">البنك الدولي</span>
+                      </div>
+                    </Button>
+                  </a>
+                  <a href="https://d2xsxph8kpxj0f.cloudfront.net/310419663029421755/XodoyKMzPdFiKkVj3QFTGK/banking/acaps-yemen-financial-sector-2022.pdf" target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" className="w-full justify-start text-right" size="sm">
+                      <Download className="h-4 w-4 ml-2 shrink-0" />
+                      <div className="flex flex-col items-start">
+                        <span>تحليل القطاع المالي</span>
+                        <span className="text-[10px] text-muted-foreground">ACAPS - 2022</span>
+                      </div>
+                    </Button>
+                  </a>
+                  <a href="https://d2xsxph8kpxj0f.cloudfront.net/310419663029421755/XodoyKMzPdFiKkVj3QFTGK/banking/odi-impact-conflict-financial-sector-yemen.pdf" target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" className="w-full justify-start text-right" size="sm">
+                      <Download className="h-4 w-4 ml-2 shrink-0" />
+                      <div className="flex flex-col items-start">
+                        <span>تأثير الصراع على القطاع المالي</span>
+                        <span className="text-[10px] text-muted-foreground">ODI - معهد التنمية الخارجية</span>
+                      </div>
+                    </Button>
+                  </a>
+                  <Link href="/methodology#banking">
+                    <Button variant="ghost" className="w-full justify-start text-muted-foreground" size="sm">
+                      <FileText className="h-4 w-4 ml-2" />
+                      منهجية البيانات
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Sector Reports */}
+            {/* OFAC Sanctions Card */}
+            <Card className="border-red-200 dark:border-red-900">
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-red-500" />
+                  <CardTitle className="text-lg">عقوبات OFAC</CardTitle>
+                </div>
+                <CardDescription className="text-xs">البنوك اليمنية المدرجة في قائمة SDN</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <a href="https://home.treasury.gov/news/press-releases/sb0092" target="_blank" rel="noopener noreferrer" className="block p-2 bg-red-50 dark:bg-red-950/30 rounded-lg hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-sm font-medium block">بنك اليمن الدولي</span>
+                        <span className="text-xs text-red-600">17 أبريل 2025 - دعم الحوثيين</span>
+                      </div>
+                      <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                    </div>
+                  </a>
+                  <a href="https://home.treasury.gov/news/press-releases/jy2794" target="_blank" rel="noopener noreferrer" className="block p-2 bg-red-50 dark:bg-red-950/30 rounded-lg hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-sm font-medium block">بنك اليمن والكويت</span>
+                        <span className="text-xs text-red-600">17 يناير 2025 - دعم مالي</span>
+                      </div>
+                      <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                    </div>
+                  </a>
+                </div>
+                <a href="https://ofac.treasury.gov/sanctions-programs-and-country-information/yemen-related-sanctions" target="_blank" rel="noopener noreferrer">
+                  <Button variant="outline" className="w-full mt-3" size="sm">
+                    قائمة OFAC الكاملة
+                    <ExternalLink className="h-3 w-3 mr-2" />
+                  </Button>
+                </a>
+              </CardContent>
+            </Card>
+
+            {/* International Reports */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">التقارير القطاعية</CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">التقارير الدولية</CardTitle>
+                  <Link href="/research?category=banking">
+                    <Button variant="ghost" size="sm" className="text-xs">عرض الكل</Button>
+                  </Link>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <Link href="/research?category=banking">
-                    <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted cursor-pointer">
-                      <FileText className="h-4 w-4 text-primary" />
-                      <span className="text-sm">تقرير الاستقرار المالي 2024</span>
+                  <a href="https://documents.worldbank.org/en/publication/documents-reports/documentdetail/099102324070011985" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted cursor-pointer">
+                    <FileText className="h-4 w-4 text-blue-600" />
+                    <div className="flex-1">
+                      <span className="text-sm block">تشخيص القطاع المالي اليمني</span>
+                      <span className="text-xs text-muted-foreground">البنك الدولي - 2024</span>
                     </div>
-                  </Link>
-                  <Link href="/research?category=banking">
-                    <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted cursor-pointer">
-                      <FileText className="h-4 w-4 text-primary" />
-                      <span className="text-sm">تحليل سوق الصرافة اليمني</span>
+                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                  </a>
+                  <a href="https://www.imf.org/en/countries/yem" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted cursor-pointer">
+                    <FileText className="h-4 w-4 text-blue-600" />
+                    <div className="flex-1">
+                      <span className="text-sm block">تقارير صندوق النقد الدولي</span>
+                      <span className="text-xs text-muted-foreground">IMF - المادة الرابعة</span>
                     </div>
-                  </Link>
-                  <Link href="/research?category=banking">
-                    <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted cursor-pointer">
-                      <FileText className="h-4 w-4 text-primary" />
-                      <span className="text-sm">مؤشرات الشمول المالي</span>
+                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                  </a>
+                  <a href="https://www.worldbank.org/en/programs/the-yemen-fund" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted cursor-pointer">
+                    <FileText className="h-4 w-4 text-blue-600" />
+                    <div className="flex-1">
+                      <span className="text-sm block">صندوق اليمن</span>
+                      <span className="text-xs text-muted-foreground">البنك الدولي</span>
                     </div>
-                  </Link>
+                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                  </a>
+                  <a href="https://documents.worldbank.org/en/publication/documents-reports/documentdetail/099032024141038420/p17763112a6d5d0a518fdc1db18e0368bfd" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted cursor-pointer">
+                    <FileText className="h-4 w-4 text-blue-600" />
+                    <div className="flex-1">
+                      <span className="text-sm block">تقييم القطاع الخاص</span>
+                      <span className="text-xs text-muted-foreground">البنك الدولي - 2024</span>
+                    </div>
+                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Think Tank Reports */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">تقارير مراكز الفكر</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <a href="https://sanaacenter.org/files/Revitalizing_Yemens_Banking_Sector_en.pdf" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted cursor-pointer">
+                    <FileText className="h-4 w-4 text-green-600" />
+                    <div className="flex-1">
+                      <span className="text-sm block">إعادة تنشيط القطاع المصرفي</span>
+                      <span className="text-xs text-muted-foreground">مركز صنعاء للدراسات</span>
+                    </div>
+                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                  </a>
+                  <a href="https://sanaacenter.org/publications/analysis/19617" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted cursor-pointer">
+                    <FileText className="h-4 w-4 text-green-600" />
+                    <div className="flex-1">
+                      <span className="text-sm block">آثار انقسام البنك المركزي</span>
+                      <span className="text-xs text-muted-foreground">مركز صنعاء - 2023</span>
+                    </div>
+                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                  </a>
+                  <a href="https://carnegieendowment.org/sada/2024/05/coin-rollout-sparks-war-yemen" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted cursor-pointer">
+                    <FileText className="h-4 w-4 text-red-600" />
+                    <div className="flex-1">
+                      <span className="text-sm block">حرب العملة في اليمن</span>
+                      <span className="text-xs text-muted-foreground">كارنيغي - 2024</span>
+                    </div>
+                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                  </a>
+                  <a href="https://www.crisisgroup.org/middle-east-north-africa/yemen/central-bank-crisis-risks-famine-yemen" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted cursor-pointer">
+                    <FileText className="h-4 w-4 text-orange-600" />
+                    <div className="flex-1">
+                      <span className="text-sm block">أزمة البنك المركزي والمجاعة</span>
+                      <span className="text-xs text-muted-foreground">Crisis Group</span>
+                    </div>
+                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                  </a>
+                  <a href="https://www.washingtoninstitute.org/policy-analysis/yemens-banking-problems-could-have-dire-humanitarian-implications" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted cursor-pointer">
+                    <FileText className="h-4 w-4 text-purple-600" />
+                    <div className="flex-1">
+                      <span className="text-sm block">مشاكل القطاع المصرفي</span>
+                      <span className="text-xs text-muted-foreground">Washington Institute</span>
+                    </div>
+                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Donor Stabilization Efforts */}
+            <Card className="border-green-200 dark:border-green-900">
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Globe className="h-5 w-5 text-green-600" />
+                  <CardTitle className="text-lg">جهود الاستقرار الدولية</CardTitle>
+                </div>
+                <CardDescription className="text-xs">برامج المانحين والمؤسسات الدولية</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <a href="https://www.worldbank.org/en/programs/the-yemen-fund" target="_blank" rel="noopener noreferrer" className="block p-3 bg-green-50 dark:bg-green-950/30 rounded-lg hover:bg-green-100 dark:hover:bg-green-950/50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-sm font-medium block">صندوق اليمن (2022-2032)</span>
+                        <span className="text-xs text-green-600">البنك الدولي - صندوق متعدد المانحين</span>
+                      </div>
+                      <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                    </div>
+                  </a>
+                  <a href="https://spa.gov.sa/en/N2234277" target="_blank" rel="noopener noreferrer" className="block p-3 bg-green-50 dark:bg-green-950/30 rounded-lg hover:bg-green-100 dark:hover:bg-green-950/50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-sm font-medium block">دعم السعودية - $500 مليون</span>
+                        <span className="text-xs text-green-600">دعم الميزانية والبنك المركزي</span>
+                      </div>
+                      <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                    </div>
+                  </a>
+                  <a href="https://www.ifc.org/en/stories/2022/yemeni-company-feeds-millions-despite-relentless-challenges" target="_blank" rel="noopener noreferrer" className="block p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-950/50 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-sm font-medium block">دعم IFC للقطاع الخاص</span>
+                        <span className="text-xs text-blue-600">مؤسسة التمويل الدولية</span>
+                      </div>
+                      <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                    </div>
+                  </a>
                 </div>
               </CardContent>
             </Card>

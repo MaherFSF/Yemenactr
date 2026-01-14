@@ -3334,3 +3334,138 @@ Based on review of master design documents and data source register:
 ### PART I: Documentation
 - [ ] Create BANKING_METHODOLOGY.md
 - [ ] Create BANKING_DATA_DICTIONARY.md
+
+## Phase 69: Banking Sector Critical Fixes (Audit Findings)
+
+### FIX 1: Create Banking Data Refresh Scheduler Job
+- [ ] Create banking_data_refresh scheduler job
+- [ ] Create sanctions_monitoring scheduler job
+- [ ] Connect to CBY API for real-time data
+- [ ] Connect to OFAC SDN list API
+
+### FIX 2: Connect AI Knowledge Base to Agents
+- [ ] Import bankingKnowledgeBase into One Brain AI
+- [ ] Add dynamic bank data to AI context
+- [ ] Add sanctions data to AI context
+- [ ] Add historical trends to AI context
+
+### FIX 3: Add Source References to KPIs
+- [ ] Add source citation to each KPI card
+- [ ] Add confidence badge (A/B/C/D) to each KPI
+- [ ] Add "Last Updated" timestamp
+- [ ] Add "View Methodology" link
+
+### FIX 4: Create Banking Admin Controls
+- [ ] Create BankingAdmin.tsx page
+- [ ] Add CRUD operations for banks
+- [ ] Add sanctions management interface
+- [ ] Add data refresh trigger button
+
+### FIX 5: Add Missing Quick Links
+- [ ] Link to Research Library (banking filter)
+- [ ] Link to CBY circulars
+- [ ] Link to methodology documentation
+- [ ] Link to data dictionary
+
+### FIX 6: Ensure Cross-Platform Data Feeding
+- [ ] Feed banking alerts to main dashboard
+- [ ] Feed banking data to Governor AI
+- [ ] Feed banking data to report generator
+- [ ] Connect to Truth Layer claims
+
+
+## Phase 70: Banking Page Comprehensive UI/UX Fixes (Jan 14, 2026)
+
+### P0 - Critical UI Fixes
+- [ ] Fix asset display ($18,672 → $18.67B with proper units)
+- [ ] Add source citations to all KPIs ("المصدر: البنك المركزي اليمني 2024")
+- [ ] Add confidence badges from Truth Layer (A/B/C/D ratings)
+- [ ] Add "آخر تحديث" (Last Updated) timestamps
+
+### P1 - Links and Navigation
+- [ ] Test and fix all "عرض" (View) buttons on bank rows
+- [ ] Test "عرض الكل" (View All) button
+- [ ] Test "عرض جميع التنبيهات" (View All Alerts) button
+- [ ] Verify all footer links work
+- [ ] Test all three tabs (نظرة عامة, البنوك العاملة, مقارنة النظامين)
+
+### P2 - S3 Uploads and Downloads
+- [ ] Upload Banking Sector Report 2024 PDF to S3
+- [ ] Upload Licensed Banks List PDF to S3
+- [ ] Upload audit reports to S3
+- [ ] Fix download buttons to use S3 URLs
+
+### P3 - AI Integration
+- [ ] Connect Banking Knowledge Base to One Brain agents
+- [ ] Ensure all banking data feeds to AI for coaching
+- [ ] Cache banking facts for quick AI responses
+
+### P4 - Quick Links and References
+- [ ] Add CBY circulars quick link (/research?category=cby-circulars)
+- [ ] Add methodology documentation link
+- [ ] Add data dictionary link
+- [ ] Add "Related Research" section
+
+### P5 - Typography and Design
+- [ ] Improve Arabic typography (consider Noto Kufi Arabic)
+- [ ] Add bank logos to table
+- [ ] Add CBY logo
+- [ ] Make sanction descriptions bilingual
+- [ ] Test mobile responsiveness
+
+
+## Phase 71: Comprehensive Banking Sector Page Overhaul (Jan 14, 2026)
+
+### Research & Data Collection
+- [ ] Search and collect World Bank Yemen banking sector reports
+- [ ] Search and collect IMF Yemen financial sector assessments
+- [ ] Search and collect IFC Yemen reports
+- [ ] Collect OFAC sanctions data on Yemeni banks (SDN list)
+- [ ] Collect CBY Aden directives and circulars
+- [ ] Collect CBY Sanaa directives and circulars
+- [ ] Research think tank reports (Sana'a Center, Chatham House, etc.)
+- [ ] Research donor stabilization efforts (Saudi, UAE, UN)
+
+### S3 Uploads
+- [ ] Upload World Bank reports to S3
+- [ ] Upload IMF reports to S3
+- [ ] Upload CBY directives to S3
+- [ ] Upload sanctions documentation to S3
+- [ ] Upload think tank reports to S3
+
+### UI/UX Improvements
+- [ ] Fix asset display to show $18.7B properly (verify server restart)
+- [ ] Redesign analytical tools section
+- [ ] Enhance downloads section with actual file links
+- [ ] Add proper source citations with hyperlinks
+
+### Content & Links
+- [ ] Create links to actual specific World Bank reports
+- [ ] Create links to actual IMF assessments
+- [ ] Add OFAC sanctions with official links
+- [ ] Add CBY circulars with direct links
+- [ ] Add donor effort documentation
+
+### Bilingual Support
+- [ ] Ensure all content has Arabic version
+- [ ] Ensure all content has English version
+
+
+## Phase 71: Banking Page Comprehensive Enhancement (COMPLETED - Jan 14, 2026)
+- [x] Fix asset display ($18,672 → $18.7B) - formatCurrencyMillions function
+- [x] Add source citations to all KPIs (البنك المركزي اليمني 2024, etc.)
+- [x] Add confidence badges (A/B/C/D) to KPI cards
+- [x] Add last updated timestamps (آخر تحديث: 14 يناير 2026)
+- [x] Fix broken tool links (now point to existing routes)
+- [x] Upload banking reports to S3 (4 reports uploaded)
+- [x] Create working download links to S3 PDFs
+- [x] Add OFAC sanctions with Treasury press release links
+- [x] Add World Bank reports (Financial Sector Diagnostics, Yemen Fund)
+- [x] Add IMF reports (Article IV consultation)
+- [x] Add IFC reports (Private sector support)
+- [x] Add CBY circulars quick links (Aden & Sanaa)
+- [x] Add think tank reports (Sana'a Center, Carnegie, Crisis Group, Washington Institute)
+- [x] Add donor stabilization efforts section (Yemen Fund, Saudi support, IFC)
+- [x] Improve analytical tools with descriptions
+- [x] Add sector alerts with clickable external links
+- [x] All links verified working (OFAC, World Bank, IMF, think tanks)

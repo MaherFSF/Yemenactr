@@ -1,0 +1,30 @@
+[
+  {
+    "localPath": "../public/documents/banking/world-bank-yemen-financial-sector-diagnostics-2024.pdf",
+    "s3Key": "banking/world-bank-yemen-financial-sector-diagnostics-2024.pdf",
+    "title": "World Bank - Yemen Financial Sector Diagnostics 2024",
+    "titleAr": "البنك الدولي - تشخيص القطاع المالي اليمني 2024",
+    "s3Url": "https://d2xsxph8kpxj0f.cloudfront.net/310419663029421755/XodoyKMzPdFiKkVj3QFTGK/banking/world-bank-yemen-financial-sector-diagnostics-2024.pdf"
+  },
+  {
+    "localPath": "../public/documents/banking/acaps-yemen-financial-sector-2022.pdf",
+    "s3Key": "banking/acaps-yemen-financial-sector-2022.pdf",
+    "title": "ACAPS - Yemen Financial Sector Analysis 2022",
+    "titleAr": "أكابس - تحليل القطاع المالي اليمني 2022",
+    "s3Url": "https://d2xsxph8kpxj0f.cloudfront.net/310419663029421755/XodoyKMzPdFiKkVj3QFTGK/banking/acaps-yemen-financial-sector-2022.pdf"
+  },
+  {
+    "localPath": "../public/documents/banking/odi-impact-conflict-financial-sector-yemen.pdf",
+    "s3Key": "banking/odi-impact-conflict-financial-sector-yemen.pdf",
+    "title": "ODI - Impact of Conflict on Financial Sector in Yemen",
+    "titleAr": "معهد التنمية الخارجية - تأثير الصراع على القطاع المالي في اليمن",
+    "s3Url": "https://d2xsxph8kpxj0f.cloudfront.net/310419663029421755/XodoyKMzPdFiKkVj3QFTGK/banking/odi-impact-conflict-financial-sector-yemen.pdf"
+  },
+  {
+    "localPath": "../public/documents/banking/world-bank-yemen-economic-monitor-2024.pdf",
+    "s3Key": "banking/world-bank-yemen-economic-monitor-2024.pdf",
+    "title": "World Bank - Yemen Economic Monitor 2024",
+    "titleAr": "البنك الدولي - مرصد الاقتصاد اليمني 2024",
+    "s3Url": "https://d2xsxph8kpxj0f.cloudfront.net/310419663029421755/XodoyKMzPdFiKkVj3QFTGK/banking/world-bank-yemen-economic-monitor-2024.pdf"
+  }
+]
