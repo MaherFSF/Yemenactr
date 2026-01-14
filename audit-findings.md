@@ -428,3 +428,88 @@ Both Arabic and English versions display correctly with RTL layout for Arabic.
 ### Next Steps
 - Test actual chat query to verify RAG retrieval works
 - Write vitest tests for AI chat backend
+
+
+---
+
+## YETO Deep Functional Audit - January 14, 2026 (New Findings)
+
+### CRITICAL ISSUES FROM PDF AUDIT:
+
+#### 1. STATIC vs DYNAMIC Data (CRITICAL)
+- **Exchange rates are STATIC HARDCODED** - Must be DYNAMIC API feed every 6 hours
+- **"Jan 2026" dates are STATIC text** - Must be actual timestamps
+- **Gap calculation is STATIC** - Must be calculated from live rates
+- **Chart data is STATIC array** - Must pull from observations table
+- **YoY change is STATIC** - Must calculate from historical data
+
+#### 2. Data Inconsistencies Found:
+| Data Point | Location 1 | Location 2 | Conflict |
+|------------|------------|------------|----------|
+| Aden Parallel Rate | Hero: 1,950 YER/$ | Table: 2,320 YER/$ | 370 YER DIFFERENCE |
+| Aden Official Rate | Hero: 1,890 YER/$ | Table: 1,800 YER/$ | 90 YER DIFFERENCE |
+| Sana'a Rate | Hero: 530 YER/$ | Table: 562 YER/$ | 32 YER DIFFERENCE |
+| Gap Percentage | Hero: 268% | Table: 313% | 45% DIFFERENCE |
+
+#### 3. Required Dynamic Feeds:
+1. **CBY Aden Official Rate** - Source: https://cby-ye.com (every 6 hours)
+2. **CBY Sana'a Rate** - Source: https://cby.gov.ye (every 6 hours)
+3. **Al-Kuraimi Exchange** - Source: https://alkuraimi.com (every 6 hours)
+4. **Market Survey Data** - Source: WFP Market Monitor, FSAC (weekly)
+
+#### 4. Missing Historical Events (Currency Page):
+- 2015: Saudi intervention begins
+- 2016: CBY moved to Aden
+- 2017: Salary crisis
+- 2018: Stockholm Agreement
+- 2020: COVID impact
+- 2021: Marib offensive
+- 2023: Truce period
+
+#### 5. News Links Issue:
+- News items don't link to actual articles, they redirect to sector pages
+
+#### 6. Export Button Issue:
+- Button exists but no dropdown appeared, nothing happened
+
+### ACTIONS COMPLETED:
+1. ✅ Fix exchange rate value (changed to 1,620 YER/USD)
+2. ✅ Added interactive exchange rate chart with historical trends
+3. ✅ Added bank logos for major banks (12 logos)
+4. ✅ Updated CBY connector with 2025-2026 data
+
+### ACTIONS PENDING:
+1. [ ] Make exchange rates fully dynamic with live API feeds
+2. [ ] Add missing historical events to currency timeline
+3. [ ] Fix news article links to actual articles
+4. [ ] Fix export button functionality
+5. [ ] Ensure data consistency across all pages
+
+
+### DATA REPOSITORY PAGE ISSUES (/data-repository):
+- **Download button**: ❌ NOTHING HAPPENED - No file downloaded, no modal, no feedback
+- **View button**: ❌ NOTHING HAPPENED - No modal, no navigation, no feedback
+- **CRITICAL**: Data Repository is essentially a STATIC MOCKUP
+  - Buttons don't work
+  - No actual data download
+  - No actual data viewing
+  - Filters likely don't work either
+
+### Required Dynamic Feeds for Data Repository:
+1. Dataset Metadata - Should pull from `series` table
+2. Data Point Counts - Should COUNT observations per series
+3. Last Updated - Should get MAX(date) from observations per series
+4. Download - Should generate file from actual observations data
+5. Search - Should search series.name, series.nameAr, series.description
+
+### SCENARIO SIMULATOR PAGE (/scenario-simulator):
+- **Run Simulation Button**: ✅ WORKS!
+- **Slider values**: Interactive ✅ Good
+- **Quick results**: Updates on run ✅ Good
+- **Baseline data**: STATIC (hardcoded) - Should be from actual Yemen indicators
+- **Model coefficients**: STATIC - Should be calibrated to real Yemen data
+- **Historical comparison**: Missing - Should compare to actual historical outcomes
+
+### RESEARCH LIBRARY PAGE (/research):
+- **Statistics**: 353 Documents, 64 Reports, 2 Datasets, 47 Sources, 16 Years (2010-2025)
+- This is impressive! Research library appears to be working well.

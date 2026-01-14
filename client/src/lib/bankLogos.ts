@@ -3,25 +3,69 @@
 
 export const bankLogos: Record<string, string> = {
   // Major Commercial Banks
-  "TIIB": "/images/banks/tadhamon.png",
-  "tadhamon": "/images/banks/tadhamon.png",
-  "بنك التضامن": "/images/banks/tadhamon.png",
+  "TIIB": "/images/banks/tadhamon.jpg",
+  "tadhamon": "/images/banks/tadhamon.jpg",
+  "بنك التضامن": "/images/banks/tadhamon.jpg",
+  "Tadhamon International Islamic Bank": "/images/banks/tadhamon.jpg",
   
   "CAC": "/images/banks/cac-bank.jpg",
   "cac": "/images/banks/cac-bank.jpg",
   "كاك بنك": "/images/banks/cac-bank.jpg",
+  "CAC Bank": "/images/banks/cac-bank.jpg",
+  "Cooperative & Agricultural Credit Bank": "/images/banks/cac-bank.jpg",
   
   "YKB": "/images/banks/ykb.jpg",
   "ykb": "/images/banks/ykb.jpg",
   "بنك اليمن والكويت": "/images/banks/ykb.jpg",
+  "Yemen Kuwait Bank": "/images/banks/ykb.jpg",
   
   "SIB": "/images/banks/saba.jpg",
   "saba": "/images/banks/saba.jpg",
   "بنك سبأ": "/images/banks/saba.jpg",
+  "Saba Islamic Bank": "/images/banks/saba.jpg",
   
-  "KIMB": "/images/banks/kuraimi.jpg",
-  "kuraimi": "/images/banks/kuraimi.jpg",
-  "بنك الكريمي": "/images/banks/kuraimi.jpg",
+  "KIMB": "/images/banks/alkuraimi.jpg",
+  "kuraimi": "/images/banks/alkuraimi.jpg",
+  "بنك الكريمي": "/images/banks/alkuraimi.jpg",
+  "Al-Kuraimi Islamic Microfinance Bank": "/images/banks/alkuraimi.jpg",
+  "Alkuraimi": "/images/banks/alkuraimi.jpg",
+  
+  "NBY": "/images/banks/nby.jpg",
+  "nby": "/images/banks/nby.jpg",
+  "البنك الأهلي اليمني": "/images/banks/nby.jpg",
+  "National Bank of Yemen": "/images/banks/nby.jpg",
+  
+  "YCB": "/images/banks/ycb.jpg",
+  "ycb": "/images/banks/ycb.jpg",
+  "البنك التجاري اليمني": "/images/banks/ycb.jpg",
+  "Yemen Commercial Bank": "/images/banks/ycb.jpg",
+  
+  "YIB": "/images/banks/iby.png",
+  "IBY": "/images/banks/iby.png",
+  "iby": "/images/banks/iby.png",
+  "بنك اليمن الدولي": "/images/banks/iby.png",
+  "International Bank of Yemen": "/images/banks/iby.png",
+  
+  "SHAMIL": "/images/banks/shamil.jpg",
+  "shamil": "/images/banks/shamil.jpg",
+  "مصرف اليمن البحرين الشامل": "/images/banks/shamil.jpg",
+  "Shamil Bank of Yemen & Bahrain": "/images/banks/shamil.jpg",
+  
+  "AIMB": "/images/banks/aden-islamic.jpg",
+  "aden": "/images/banks/aden-islamic.jpg",
+  "بنك عدن الإسلامي": "/images/banks/aden-islamic.jpg",
+  "Aden Islamic Bank": "/images/banks/aden-islamic.jpg",
+  
+  "AMAL": "/images/banks/amal.jpg",
+  "amal": "/images/banks/amal.jpg",
+  "بنك الأمل": "/images/banks/amal.jpg",
+  "Al-Amal Microfinance Bank": "/images/banks/amal.jpg",
+  
+  // Central Bank
+  "CBY": "/images/banks/cby.jpeg",
+  "cby": "/images/banks/cby.jpeg",
+  "البنك المركزي اليمني": "/images/banks/cby.jpeg",
+  "Central Bank of Yemen": "/images/banks/cby.jpeg",
 };
 
 // Get bank logo by acronym or name
@@ -30,12 +74,19 @@ export function getBankLogo(bankAcronym?: string, bankName?: string): string | n
     const upperAcronym = bankAcronym.toUpperCase();
     if (bankLogos[upperAcronym]) return bankLogos[upperAcronym];
     if (bankLogos[bankAcronym.toLowerCase()]) return bankLogos[bankAcronym.toLowerCase()];
+    if (bankLogos[bankAcronym]) return bankLogos[bankAcronym];
   }
   
   if (bankName) {
-    // Check for partial matches in Arabic names
+    // Direct match first
+    if (bankLogos[bankName]) return bankLogos[bankName];
+    
+    // Check for partial matches in Arabic and English names
     for (const [key, logo] of Object.entries(bankLogos)) {
-      if (bankName.includes(key) || key.includes(bankName)) {
+      if (bankName.toLowerCase().includes(key.toLowerCase()) || 
+          key.toLowerCase().includes(bankName.toLowerCase()) ||
+          bankName.includes(key) || 
+          key.includes(bankName)) {
         return logo;
       }
     }
@@ -55,6 +106,10 @@ export const bankWebsites: Record<string, string> = {
   "KIMB": "https://kuraimibank.com/",
   "CAC": "https://www.cacbank.com.ye/",
   "YIB": "https://ibyemen.com/",
+  "IBY": "https://ibyemen.com/",
+  "SHAMIL": "https://www.shamilbank.com/",
+  "AIMB": "https://adenislamicbank.com/",
+  "AMAL": "https://alamal.bank/",
 };
 
 // Get bank website by acronym

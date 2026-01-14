@@ -37,6 +37,7 @@ import { YetoLogo } from "@/components/YetoLogo";
 import { useScrollPosition } from "@/hooks/useParallax";
 import { KpiCardSkeleton, KpiRowSkeleton } from "@/components/KpiCardSkeleton";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import ExchangeRateChart from "@/components/ExchangeRateChart";
 
 export default function Home() {
   const { language } = useLanguage();
@@ -676,6 +677,15 @@ export default function Home() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Exchange Rate Trends Section */}
+      <section id="exchange-rates" className="py-16 bg-white dark:bg-gray-800">
+        <div className="container">
+          <AnimatedSection animation="fadeInUp">
+            <ExchangeRateChart />
+          </AnimatedSection>
         </div>
       </section>
 
