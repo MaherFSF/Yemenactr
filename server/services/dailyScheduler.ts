@@ -25,6 +25,9 @@ import { ingestCBYData as fetchCbyData } from "../connectors/cbyConnector";
 // Import signal detector
 import { runSignalDetection } from "./signalDetector";
 
+// Import notification service
+import { notifyOwner } from "../_core/notification";
+
 // ============================================
 // Types
 // ============================================
@@ -377,6 +380,31 @@ export async function runJob(jobId: string): Promise<JobRunResult> {
   }
   
   console.log(`[Scheduler] Job ${job.name} completed: ${status}, ${recordsProcessed} records, ${duration}ms`);
+  
+  // Send notification for critical job failures
+  if (status === 'failed' && job.type === 'data_refresh') {
+    try {
+      await notifyOwner({
+        title: `⚠️ YETO Data Refresh Failed: ${job.name}`,
+        content: `The scheduled data refresh job "${job.name}" failed at ${completedAt.toISOString()}.\n\nError: ${error || 'Unknown error'}\n\nPlease check the Admin Portal for more details.`,
+      });
+      console.log(`[Scheduler] Notification sent for failed job: ${job.name}`);
+    } catch (notifyError) {
+      console.error('[Scheduler] Failed to send notification:', notifyError);
+    }
+  }
+  
+  // Send notification for significant data updates
+  if (status === 'success' && recordsProcessed > 100) {
+    try {
+      await notifyOwner({
+        title: `✅ YETO Data Update: ${job.name}`,
+        content: `Successfully refreshed ${recordsProcessed} records from ${job.name} at ${completedAt.toISOString()}.`,
+      });
+    } catch (notifyError) {
+      // Silent fail for success notifications
+    }
+  }
   
   return {
     jobId,

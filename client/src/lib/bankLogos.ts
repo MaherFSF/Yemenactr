@@ -8,6 +8,16 @@ export const bankLogos: Record<string, string> = {
   "بنك التضامن": "/images/banks/tadhamon.jpg",
   "Tadhamon International Islamic Bank": "/images/banks/tadhamon.jpg",
   
+  "YBRD": "/images/banks/ybrd.png",
+  "ybrd": "/images/banks/ybrd.png",
+  "البنك اليمني للإنشاء والتعمير": "/images/banks/ybrd.png",
+  "Yemen Bank for Reconstruction and Development": "/images/banks/ybrd.png",
+  
+  "IBYFI": "/images/banks/ibyfi.png",
+  "ibyfi": "/images/banks/ibyfi.png",
+  "البنك الإسلامي اليمني للتمويل والاستثمار": "/images/banks/ibyfi.png",
+  "Islamic Bank of Yemen for Finance and Investment": "/images/banks/ibyfi.png",
+  
   "CAC": "/images/banks/cac-bank.jpg",
   "cac": "/images/banks/cac-bank.jpg",
   "كاك بنك": "/images/banks/cac-bank.jpg",
@@ -60,6 +70,16 @@ export const bankLogos: Record<string, string> = {
   "amal": "/images/banks/amal.jpg",
   "بنك الأمل": "/images/banks/amal.jpg",
   "Al-Amal Microfinance Bank": "/images/banks/amal.jpg",
+  
+  "ADEN": "/images/banks/aden-bank.jpg",
+  "aden-bank": "/images/banks/aden-bank.jpg",
+  "بنك عدن": "/images/banks/aden-bank.jpg",
+  "Aden Bank": "/images/banks/aden-bank.jpg",
+  
+  "GULF": "/images/banks/gulf-bank.png",
+  "gulf": "/images/banks/gulf-bank.png",
+  "بنك الخليج": "/images/banks/gulf-bank.png",
+  "Gulf Bank Yemen": "/images/banks/gulf-bank.png",
   
   // Central Bank
   "CBY": "/images/banks/cby.jpeg",
