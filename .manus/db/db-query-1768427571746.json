@@ -1,0 +1,42 @@
+{
+  "query": "SELECT COUNT(*) as cnt, 'time_series' as tbl FROM time_series\nUNION ALL SELECT COUNT(*), 'documents' FROM documents\nUNION ALL SELECT COUNT(*), 'economic_events' FROM economic_events\nUNION ALL SELECT COUNT(*), 'glossary_terms' FROM glossary_terms\nUNION ALL SELECT COUNT(*), 'indicators' FROM indicators\nUNION ALL SELECT COUNT(*), 'sources' FROM sources\nUNION ALL SELECT COUNT(*), 'users' FROM users\nUNION ALL SELECT COUNT(*), 'scheduler_jobs' FROM scheduler_jobs;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT COUNT(*) as cnt, 'time_series' as tbl FROM time_series\nUNION ALL SELECT COUNT(*), 'documents' FROM documents\nUNION ALL SELECT COUNT(*), 'economic_events' FROM economic_events\nUNION ALL SELECT COUNT(*), 'glossary_terms' FROM glossary_terms\nUNION ALL SELECT COUNT(*), 'indicators' FROM indicators\nUNION ALL SELECT COUNT(*), 'sources' FROM sources\nUNION ALL SELECT COUNT(*), 'users' FROM users\nUNION ALL SELECT COUNT(*), 'scheduler_jobs' FROM scheduler_jobs;",
+  "rows": [
+    {
+      "cnt": "32",
+      "tbl": "documents"
+    },
+    {
+      "cnt": "179",
+      "tbl": "economic_events"
+    },
+    {
+      "cnt": "66",
+      "tbl": "indicators"
+    },
+    {
+      "cnt": "84",
+      "tbl": "sources"
+    },
+    {
+      "cnt": "3355",
+      "tbl": "time_series"
+    },
+    {
+      "cnt": "3",
+      "tbl": "users"
+    },
+    {
+      "cnt": "51",
+      "tbl": "glossary_terms"
+    },
+    {
+      "cnt": "30",
+      "tbl": "scheduler_jobs"
+    }
+  ],
+  "messages": [],
+  "stdout": "cnt\ttbl\n32\tdocuments\n179\teconomic_events\n66\tindicators\n84\tsources\n3355\ttime_series\n3\tusers\n51\tglossary_terms\n30\tscheduler_jobs\n",
+  "stderr": "",
+  "execution_time_ms": 1498
+}
