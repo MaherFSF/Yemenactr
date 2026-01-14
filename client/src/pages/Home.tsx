@@ -286,12 +286,52 @@ export default function Home() {
     default: "/images/sectors/local-market.webp"
   };
   
+  // Array of varied images for news items to avoid repetition
+  const newsImages = [
+    "/images/sectors/currency-exchange.jpg",
+    "/images/sectors/central-bank.jpg",
+    "/images/sectors/trade-port.jpg",
+    "/images/sectors/infrastructure.jpg",
+    "/images/sectors/humanitarian-aid.jpg",
+    "/images/sectors/energy-fuel.jpg",
+    "/images/sectors/food-security.jpg",
+    "/images/sectors/local-market.webp"
+  ];
+  
+  // Function to get image based on event title keywords
+  const getEventImage = (title: string, index: number): string => {
+    const lowerTitle = title.toLowerCase();
+    if (lowerTitle.includes('exchange') || lowerTitle.includes('yer') || lowerTitle.includes('currency') || lowerTitle.includes('صرف')) {
+      return "/images/sectors/currency-exchange.jpg";
+    }
+    if (lowerTitle.includes('bank') || lowerTitle.includes('cby') || lowerTitle.includes('بنك') || lowerTitle.includes('مركزي')) {
+      return "/images/sectors/central-bank.jpg";
+    }
+    if (lowerTitle.includes('port') || lowerTitle.includes('trade') || lowerTitle.includes('ميناء') || lowerTitle.includes('تجار')) {
+      return "/images/sectors/trade-port.jpg";
+    }
+    if (lowerTitle.includes('defense') || lowerTitle.includes('security') || lowerTitle.includes('military') || lowerTitle.includes('دفاع') || lowerTitle.includes('أمن')) {
+      return "/images/sectors/infrastructure.jpg";
+    }
+    if (lowerTitle.includes('rally') || lowerTitle.includes('protest') || lowerTitle.includes('stc') || lowerTitle.includes('مظاهر')) {
+      return "/images/sectors/humanitarian-aid.jpg";
+    }
+    if (lowerTitle.includes('fuel') || lowerTitle.includes('oil') || lowerTitle.includes('وقود') || lowerTitle.includes('نفط')) {
+      return "/images/sectors/energy-fuel.jpg";
+    }
+    if (lowerTitle.includes('food') || lowerTitle.includes('wheat') || lowerTitle.includes('غذاء') || lowerTitle.includes('قمح')) {
+      return "/images/sectors/food-security.jpg";
+    }
+    // Use varied images based on index to avoid repetition
+    return newsImages[index % newsImages.length];
+  };
+  
   // Transform database events to display format
-  const latestUpdates = (latestEventsData || []).slice(0, 6).map(event => ({
+  const latestUpdates = (latestEventsData || []).slice(0, 6).map((event, index) => ({
     titleEn: event.title,
     titleAr: event.titleAr || event.title,
     date: new Date(event.eventDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-    image: sectorImages[event.category || 'default'] || sectorImages.default,
+    image: getEventImage(event.title, index),
     href: `/sectors/${event.category || 'macroeconomy'}`,
     source: 'YETO Database'
   }));
@@ -460,7 +500,7 @@ export default function Home() {
                     <div className="flex items-center gap-1">
                       <span className="text-xs text-gray-500">YER/USD</span>
                     </div>
-                    <div className="text-xl font-bold text-[#107040] mb-1">{kpiData?.exchangeRateAden?.value || "1 USD = 1,890 YER"}</div>
+                    <div className="text-xl font-bold text-[#107040] mb-1">{kpiData?.exchangeRateAden?.value || "1 USD = 1,620 YER"}</div>
                     <div className="text-xs text-gray-500 mb-2">
                       {language === "ar" ? "سعر عدن الموازي" : "Aden Parallel Rate"}
                     </div>

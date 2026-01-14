@@ -837,7 +837,7 @@ export default function BankingSector() {
                   </a>
                   <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg border-r-4 border-blue-500">
                     <div className="text-sm font-medium">تحذير سعر الصرف</div>
-                    <div className="text-xs text-muted-foreground mt-1">الريال يتجاوز 1,890 للدولار في عدن</div>
+                    <div className="text-xs text-muted-foreground mt-1">الريال يتجاوز 1,620 للدولار في عدن</div>
                   </div>
                   <a href="https://www.worldbank.org/en/news/press-release/2025/11/17/economic-hardship-deepens-in-yemen" target="_blank" rel="noopener noreferrer" className="block p-3 bg-amber-50 dark:bg-amber-950/30 rounded-lg border-r-4 border-amber-500 hover:bg-amber-100 dark:hover:bg-amber-950/50 transition-colors">
                     <div className="text-sm font-medium">تقرير البنك الدولي</div>
@@ -861,7 +861,7 @@ export default function BankingSector() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm">سعر صرف الريال للدولار</span>
-                    <span className="font-mono text-sm">1,890</span>
+                    <span className="font-mono text-sm">1,620</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm">سعر صرف الريال للدولار صنعاء</span>

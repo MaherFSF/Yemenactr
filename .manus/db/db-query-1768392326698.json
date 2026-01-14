@@ -1,0 +1,46 @@
+{
+  "query": "SELECT DISTINCT indicatorCode FROM time_series WHERE indicatorCode LIKE '%FX%' OR indicatorCode LIKE '%EXCHANGE%' OR indicatorCode LIKE '%rate%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT DISTINCT indicatorCode FROM time_series WHERE indicatorCode LIKE '%FX%' OR indicatorCode LIKE '%EXCHANGE%' OR indicatorCode LIKE '%rate%';",
+  "rows": [
+    {
+      "indicatorCode": "CBY_DEPOSIT_RATE_ADEN"
+    },
+    {
+      "indicatorCode": "CBY_FX_OFFICIAL_ADEN"
+    },
+    {
+      "indicatorCode": "CBY_FX_OFFICIAL_SANAA"
+    },
+    {
+      "indicatorCode": "CBY_FX_PARALLEL_ADEN"
+    },
+    {
+      "indicatorCode": "CBY_FX_PARALLEL_SANAA"
+    },
+    {
+      "indicatorCode": "CBY_LENDING_RATE_ADEN"
+    },
+    {
+      "indicatorCode": "FEWS_FOOD_INSECURITY_RATE"
+    },
+    {
+      "indicatorCode": "fx_rate_aden_parallel"
+    },
+    {
+      "indicatorCode": "FX_RATE_PARALLEL"
+    },
+    {
+      "indicatorCode": "fx_rate_sanaa"
+    },
+    {
+      "indicatorCode": "poverty_rate"
+    },
+    {
+      "indicatorCode": "unemployment_rate"
+    }
+  ],
+  "messages": [],
+  "stdout": "indicatorCode\nCBY_DEPOSIT_RATE_ADEN\nCBY_FX_OFFICIAL_ADEN\nCBY_FX_OFFICIAL_SANAA\nCBY_FX_PARALLEL_ADEN\nCBY_FX_PARALLEL_SANAA\nCBY_LENDING_RATE_ADEN\nFEWS_FOOD_INSECURITY_RATE\nfx_rate_aden_parallel\nFX_RATE_PARALLEL\nfx_rate_sanaa\npoverty_rate\nunemployment_rate\n",
+  "stderr": "",
+  "execution_time_ms": 86
+}

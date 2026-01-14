@@ -300,9 +300,9 @@ export const appRouter = router({
         ]);
 
         // Calculate YoY change for exchange rate using actual data
-        // Jan 2026: 1,890 YER/USD (improved from 2,050 in mid-2025 due to Saudi support)
+        // Jan 2026: 1,620 YER/USD (improved from 2,050 in mid-2025 due to Saudi support and CBY interventions)
         // Jan 2025: 1,550 YER/USD (before the July 2025 crisis)
-        const currentFxAden = fxAden ? parseFloat(fxAden.value) : 1890;
+        const currentFxAden = fxAden ? parseFloat(fxAden.value) : 1620;
         const fxAdenDate = fxAden ? new Date(fxAden.date) : new Date('2026-01-10');
         const previousYearFxAden = 1550; // Jan 2025 value for YoY comparison
         const fxYoYChange = ((currentFxAden - previousYearFxAden) / previousYearFxAden * 100).toFixed(1);
@@ -826,7 +826,7 @@ export const appRouter = router({
 ## KEY STAKEHOLDERS
 
 ### Central Banks
-- **CBY Aden**: Governor Ahmed Ghaleb (since 2023), manages IRG monetary policy, ~$1.2B reserves, floating exchange rate (~1,890-2,050 YER/USD as of Jan 2026)
+- **CBY Aden**: Governor Ahmed Ghaleb (since 2023), manages IRG monetary policy, ~$1.2B reserves, floating exchange rate (~1,620-2,050 YER/USD as of Jan 2026)
 - **CBY Sana'a**: Governor Hashem Ismail (since 2016), controls Houthi-area currency, maintains stable rate (~530-600 YER/USD) through restrictions
 
 ### Government Authorities
@@ -849,7 +849,7 @@ export const appRouter = router({
 ## DUAL ECONOMIC SYSTEM
 
 ### Aden/IRG Zone
-- Exchange Rate: ~1,890-2,050 YER/USD (Jan 2026), floating market rate
+- Exchange Rate: ~1,620-2,050 YER/USD (Jan 2026), floating market rate
 - Inflation: ~15% (higher due to currency depreciation)
 - Monetary Policy: Saudi support, remittance-dependent
 - Currency: New notes (2017+) accepted
@@ -865,7 +865,7 @@ export const appRouter = router({
 - GDP Growth: -1.5% (World Bank Fall 2025 Monitor, Confidence: A)
 - Inflation Aden: 18% (CBY Aden, Confidence: B)
 - Inflation Sana'a: 2.89% (SEMC 2024, Confidence: B)
-- Exchange Rate Aden: 1,890-2,050 YER/USD (Jan 2026, Confidence: A)
+- Exchange Rate Aden: 1,620-2,050 YER/USD (Jan 2026, Confidence: A)
 - Exchange Rate Sana'a: 530-600 YER/USD (Jan 2026, Confidence: B)
 - July 2025 Peak: 2,905 YER/USD (all-time low for rial)
 - August 2025 Recovery: 1,676 YER/USD (after CBY measures)
@@ -1750,7 +1750,7 @@ Answer the user's question based on this research. Be specific and cite sources 
           if (input.status === "critical") whereClause = "severity = 'critical'";
           if (input.status === "warning") whereClause = "severity = 'warning'";
           
-          const result = await db.execute(sql.raw(`
+          const result = await db!.execute(sql.raw(`
             SELECT * FROM alerts 
             WHERE ${whereClause}
             ORDER BY createdAt DESC 
@@ -1791,7 +1791,7 @@ Answer the user's question based on this research. Be specific and cite sources 
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         const db = await getDb();
-        await db.execute(sql`UPDATE alerts SET acknowledged = true, acknowledgedAt = NOW() WHERE id = ${input.id}`);
+        await db!.execute(sql`UPDATE alerts SET acknowledged = true, acknowledgedAt = NOW() WHERE id = ${input.id}`);
         return { success: true };
       }),
 
@@ -1800,7 +1800,7 @@ Answer the user's question based on this research. Be specific and cite sources 
       .input(z.object({ id: z.number() }))
       .mutation(async ({ input }) => {
         const db = await getDb();
-        await db.execute(sql`UPDATE alerts SET resolved = true, resolvedAt = NOW() WHERE id = ${input.id}`);
+        await db!.execute(sql`UPDATE alerts SET resolved = true, resolvedAt = NOW() WHERE id = ${input.id}`);
         return { success: true };
       }),
 
@@ -1809,7 +1809,7 @@ Answer the user's question based on this research. Be specific and cite sources 
       .query(async () => {
         const db = await getDb();
         try {
-          const counts = await db.execute(sql`
+          const counts = await db!.execute(sql`
             SELECT 
               COUNT(*) as total,
               SUM(CASE WHEN isRead = 0 THEN 1 ELSE 0 END) as unread,

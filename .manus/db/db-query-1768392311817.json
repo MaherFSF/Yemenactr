@@ -1,0 +1,90 @@
+{
+  "query": "SELECT id, indicatorCode, regimeTag, date, value, unit FROM time_series WHERE indicatorCode LIKE '%FX%' OR indicatorCode LIKE '%EXCHANGE%' ORDER BY date DESC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT id, indicatorCode, regimeTag, date, value, unit FROM time_series WHERE indicatorCode LIKE '%FX%' OR indicatorCode LIKE '%EXCHANGE%' ORDER BY date DESC LIMIT 10;",
+  "rows": [
+    {
+      "id": "90094",
+      "indicatorCode": "fx_rate_sanaa",
+      "regimeTag": "sanaa_defacto",
+      "date": "2026-12-31 00:00:00",
+      "value": "530.000000",
+      "unit": "YER/USD"
+    },
+    {
+      "id": "90081",
+      "indicatorCode": "fx_rate_aden_parallel",
+      "regimeTag": "aden_irg",
+      "date": "2026-12-31 00:00:00",
+      "value": "1890.000000",
+      "unit": "YER/USD"
+    },
+    {
+      "id": "90375",
+      "indicatorCode": "fx_rate_aden_parallel",
+      "regimeTag": "aden_irg",
+      "date": "2026-01-10 00:00:00",
+      "value": "1890.000000",
+      "unit": "YER/USD"
+    },
+    {
+      "id": "90093",
+      "indicatorCode": "fx_rate_sanaa",
+      "regimeTag": "sanaa_defacto",
+      "date": "2025-12-31 00:00:00",
+      "value": "530.000000",
+      "unit": "YER/USD"
+    },
+    {
+      "id": "90080",
+      "indicatorCode": "fx_rate_aden_parallel",
+      "regimeTag": "aden_irg",
+      "date": "2025-12-31 00:00:00",
+      "value": "2050.000000",
+      "unit": "YER/USD"
+    },
+    {
+      "id": "32116",
+      "indicatorCode": "CBY_FX_PARALLEL_SANAA",
+      "regimeTag": "sanaa_defacto",
+      "date": "2024-12-31 05:00:00",
+      "value": "535.000000",
+      "unit": "YER/USD"
+    },
+    {
+      "id": "32107",
+      "indicatorCode": "CBY_FX_PARALLEL_ADEN",
+      "regimeTag": "aden_irg",
+      "date": "2024-12-31 05:00:00",
+      "value": "2050.000000",
+      "unit": "YER/USD"
+    },
+    {
+      "id": "32092",
+      "indicatorCode": "CBY_FX_OFFICIAL_SANAA",
+      "regimeTag": "sanaa_defacto",
+      "date": "2024-12-31 05:00:00",
+      "value": "250.000000",
+      "unit": "YER/USD"
+    },
+    {
+      "id": "32083",
+      "indicatorCode": "CBY_FX_OFFICIAL_ADEN",
+      "regimeTag": "aden_irg",
+      "date": "2024-12-31 05:00:00",
+      "value": "1890.000000",
+      "unit": "YER/USD"
+    },
+    {
+      "id": "90092",
+      "indicatorCode": "fx_rate_sanaa",
+      "regimeTag": "sanaa_defacto",
+      "date": "2024-12-31 00:00:00",
+      "value": "530.000000",
+      "unit": "YER/USD"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tindicatorCode\tregimeTag\tdate\tvalue\tunit\n90094\tfx_rate_sanaa\tsanaa_defacto\t2026-12-31 00:00:00\t530.000000\tYER/USD\n90081\tfx_rate_aden_parallel\taden_irg\t2026-12-31 00:00:00\t1890.000000\tYER/USD\n90375\tfx_rate_aden_parallel\taden_irg\t2026-01-10 00:00:00\t1890.000000\tYER/USD\n90093\tfx_rate_sanaa\tsanaa_defacto\t2025-12-31 00:00:00\t530.000000\tYER/USD\n90080\tfx_rate_aden_parallel\taden_irg\t2025-12-31 00:00:00\t2050.000000\tYER/USD\n32116\tCBY_FX_PARALLEL_SANAA\tsanaa_defacto\t2024-12-31 05:00:00\t535.000000\tYER/USD\n32107\tCBY_FX_PARALLEL_ADEN\taden_irg\t2024-12-31 05:00:00\t2050.000000\tYER/USD\n32092\tCBY_FX_OFFICIAL_SANAA\tsanaa_defacto\t2024-12-31 05:00:00\t250.000000\tYER/USD\n32083\tCBY_FX_OFFICIAL_ADEN\taden_irg\t2024-12-31 05:00:00\t1890.000000\tYER/USD\n90092\tfx_rate_sanaa\tsanaa_defacto\t2024-12-31 00:00:00\t530.000000\tYER/USD\n",
+  "stderr": "",
+  "execution_time_ms": 61
+}

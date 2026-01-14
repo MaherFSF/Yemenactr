@@ -29,7 +29,7 @@ export default function RegionalZones() {
       control: "IRG",
       population: 1.1,
       gdpShare: 12,
-      exchangeRate: 1890,
+      exchangeRate: 1620,
       inflationRate: 35,
       unemploymentRate: 32,
       keyIndustries: ["Port", "Refinery", "Services", "Trade"],
@@ -61,7 +61,7 @@ export default function RegionalZones() {
       control: "IRG",
       population: 2.8,
       gdpShare: 18,
-      exchangeRate: 1890,
+      exchangeRate: 1620,
       inflationRate: 28,
       unemploymentRate: 25,
       keyIndustries: ["Oil/Gas", "Power Generation", "Agriculture"],
@@ -109,7 +109,7 @@ export default function RegionalZones() {
       control: "IRG",
       population: 1.8,
       gdpShare: 12,
-      exchangeRate: 1890,
+      exchangeRate: 1620,
       inflationRate: 30,
       unemploymentRate: 28,
       keyIndustries: ["Oil", "Agriculture", "Fishing", "Trade"],
@@ -132,12 +132,12 @@ export default function RegionalZones() {
 
   // Exchange rate comparison
   const exchangeComparison = [
-    { region: language === "ar" ? "عدن" : "Aden", rate: 1890, color: "#107040" },
+    { region: language === "ar" ? "عدن" : "Aden", rate: 1620, color: "#107040" },
     { region: language === "ar" ? "صنعاء" : "Sana'a", rate: 535, color: "#1e40af" },
-    { region: language === "ar" ? "مأرب" : "Marib", rate: 1890, color: "#C0A030" },
+    { region: language === "ar" ? "مأرب" : "Marib", rate: 1620, color: "#C0A030" },
     { region: language === "ar" ? "تعز" : "Taiz", rate: 1850, color: "#dc2626" },
     { region: language === "ar" ? "الحديدة" : "Hodeidah", rate: 535, color: "#7c3aed" },
-    { region: language === "ar" ? "حضرموت" : "Hadramawt", rate: 1890, color: "#059669" },
+    { region: language === "ar" ? "حضرموت" : "Hadramawt", rate: 1620, color: "#059669" },
   ];
 
   return (

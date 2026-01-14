@@ -47,7 +47,7 @@ const apiEndpoints = [
   "data": [
     {
       "date": "2024-01-15",
-      "value": 1890.5,
+      "value": 1620.5,
       "unit": "YER/USD",
       "confidence": "A",
       "regime": "aden_irg",

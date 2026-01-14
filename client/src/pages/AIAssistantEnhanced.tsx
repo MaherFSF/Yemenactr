@@ -289,7 +289,7 @@ export default function AIAssistantEnhanced() {
         { title: "Sana'a Center Analysis", type: "Think Tank", date: "Jan 2025", confidence: "B" },
       ],
       indicators: [
-        { name: "Exchange Rate (Aden)", value: "1,890 YER/$", trend: "up", regime: "IRG" },
+        { name: "Exchange Rate (Aden)", value: "1,620 YER/$", trend: "down", regime: "IRG" },
         { name: "Exchange Rate (Sana'a)", value: "530 YER/$", trend: "stable", regime: "DFA" },
         { name: "Inflation Rate", value: "15.0%", trend: "up" },
       ],

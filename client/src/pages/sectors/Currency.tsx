@@ -34,7 +34,7 @@ export default function Currency() {
     { month: "Oct 25", adenOfficial: 1750, adenParallel: 1800, sanaaParallel: 530 },
     { month: "Nov 25", adenOfficial: 1800, adenParallel: 1850, sanaaParallel: 530 },
     { month: "Dec 25", adenOfficial: 1850, adenParallel: 1900, sanaaParallel: 530 },
-    { month: "Jan 26", adenOfficial: 1890, adenParallel: 1950, sanaaParallel: 530 },
+    { month: "Jan 26", adenOfficial: 1620, adenParallel: 1650, sanaaParallel: 535 },
   ];
 
   // Spread data
@@ -48,7 +48,7 @@ export default function Currency() {
     {
       titleEn: "Official Rate (Aden)",
       titleAr: "السعر الرسمي (عدن)",
-      value: "1,890 YER/$",
+      value: "1,620 YER/$",
       change: 5.3,
       source: "CBY Aden Jan 2026",
       confidence: "A",
@@ -57,7 +57,7 @@ export default function Currency() {
     {
       titleEn: "Parallel Rate (Aden)",
       titleAr: "السعر الموازي (عدن)",
-      value: "1,950 YER/$",
+      value: "1,650 YER/$",
       change: -32.8,
       source: "Market Survey Jan 2026",
       confidence: "B",

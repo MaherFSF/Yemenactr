@@ -131,7 +131,7 @@ const policyScenarios = [
 
 // Impact indicators
 const impactIndicators = {
-  exchange_rate: { name: "Exchange Rate", nameAr: "سعر الصرف", unit: "YER/USD", baseline: 1890 },
+  exchange_rate: { name: "Exchange Rate", nameAr: "سعر الصرف", unit: "YER/USD", baseline: 1620 },
   inflation: { name: "Inflation Rate", nameAr: "معدل التضخم", unit: "%", baseline: 15 },
   gdp_growth: { name: "GDP Growth", nameAr: "نمو الناتج المحلي", unit: "%", baseline: 2.5 },
   poverty_rate: { name: "Poverty Rate", nameAr: "معدل الفقر", unit: "%", baseline: 54 },
