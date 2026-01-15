@@ -4927,3 +4927,33 @@ Based on review of master design documents and data source register:
 - [ ] Verify every single translation
 - [ ] Check every single image
 - [ ] Test every single animation
+
+
+## Phase 92: User Journey Enhancement (Jan 15, 2026)
+
+### 1. Enhanced Welcome Tour
+- [ ] Navigate users to actual pages during tour
+- [ ] Show real data and features at each stop
+- [ ] Add interactive highlights on page elements
+- [ ] Include "Try it now" prompts
+- [ ] Track tour completion progress
+- [ ] Offer different tour paths (Quick/Full/Expert)
+
+### 2. Fully Functional Filters
+- [ ] Period selection (daily, weekly, monthly, quarterly, annual)
+- [ ] Custom date range picker (from 2010 to present)
+- [ ] Sector filters (banking, trade, aid, food security, etc.)
+- [ ] Regime filters (Aden IRG, Sanaa De-facto, Both)
+- [ ] Source filters (World Bank, IMF, CBY, UN agencies)
+- [ ] Confidence rating filters (A, B, C, D)
+- [ ] Real-time filter updates on charts and tables
+- [ ] Save filter presets for users
+- [ ] URL-based filter state (shareable links)
+
+### 3. Progressive User Journey
+- [ ] Basic path: Key indicators, simple charts, guided exploration
+- [ ] Intermediate path: Sector deep-dives, comparisons, exports
+- [ ] Advanced path: Custom queries, API access, raw data downloads
+- [ ] Role-based defaults (citizen, researcher, policymaker, donor)
+- [ ] Contextual help at each level
+- [ ] Unlock advanced features progressively
