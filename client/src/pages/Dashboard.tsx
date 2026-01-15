@@ -28,12 +28,66 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ExportButton } from "@/components/ExportButton";
+import { DataFilters, type FilterState } from "@/components/filters/DataFilters";
 
 export default function Dashboard() {
   const { language } = useLanguage();
   const [regimeTag, setRegimeTag] = useState<"aden" | "sanaa" | "both">("both");
   const [granularity, setGranularity] = useState<"annual" | "quarterly" | "monthly">("annual");
   const [selectedIndicator, setSelectedIndicator] = useState("gdp");
+  
+  // Filter state with localStorage persistence
+  const [filters, setFilters] = useState<FilterState>(() => {
+    const saved = localStorage.getItem('yeto-dashboard-filters');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return getDefaultFilters();
+      }
+    }
+    return getDefaultFilters();
+  });
+  
+  // Helper to get default filters
+  function getDefaultFilters(): FilterState {
+    return {
+      periodType: 'preset',
+      presetPeriod: 'all',
+      startDate: null,
+      endDate: null,
+      granularity: 'monthly',
+      sectors: [],
+      regimes: [],
+      sources: [],
+      confidenceRatings: [],
+      showGaps: false,
+      showProjections: false,
+      compareRegimes: false
+    };
+  }
+  
+  // Handle filter changes with persistence
+  const handleFilterChange = (newFilters: FilterState) => {
+    setFilters(newFilters);
+    localStorage.setItem('yeto-dashboard-filters', JSON.stringify(newFilters));
+    
+    // Update regime tag based on filter
+    if (newFilters.regimes.includes('aden_irg') && !newFilters.regimes.includes('sanaa_defacto')) {
+      setRegimeTag('aden');
+    } else if (newFilters.regimes.includes('sanaa_defacto') && !newFilters.regimes.includes('aden_irg')) {
+      setRegimeTag('sanaa');
+    } else {
+      setRegimeTag('both');
+    }
+    
+    // Update granularity
+    if (newFilters.granularity === 'daily' || newFilters.granularity === 'weekly') {
+      setGranularity('monthly');
+    } else {
+      setGranularity(newFilters.granularity as 'annual' | 'quarterly' | 'monthly');
+    }
+  };
   
   // Real Yemen images from search results
   const yemenImages = {
@@ -165,6 +219,12 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Advanced Data Filters */}
+      <DataFilters 
+        filters={filters} 
+        onChange={handleFilterChange}
+      />
 
       {/* Filters Bar - Matching mockup */}
       <div className="bg-white dark:bg-gray-900 border-b py-4">

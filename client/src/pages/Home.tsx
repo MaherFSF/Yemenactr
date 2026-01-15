@@ -2,6 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import InsightsTicker from "@/components/InsightsTicker";
 import { WelcomeTour, QuickTourButton } from "@/components/onboarding/WelcomeTour";
+import { InteractiveTour, InteractiveTourButton } from "@/components/onboarding/InteractiveTour";
 import { Card, CardContent } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
 import { 
@@ -341,8 +342,8 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
-      {/* Welcome Tour for first-time users */}
-      <WelcomeTour />
+      {/* Interactive Tour for first-time users - with Quick/Full/Expert paths */}
+      <InteractiveTour />
       
       {/* Production Mode - Real Data */}
       

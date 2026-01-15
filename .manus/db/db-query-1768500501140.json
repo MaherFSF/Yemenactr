@@ -1,0 +1,38 @@
+{
+  "query": "\nSELECT \n  'time_series' as table_name, COUNT(*) as record_count FROM time_series\nUNION ALL\nSELECT 'organizations', COUNT(*) FROM organizations\nUNION ALL\nSELECT 'commercial_entities', COUNT(*) FROM commercial_entities\nUNION ALL\nSELECT 'economic_events', COUNT(*) FROM economic_events\nUNION ALL\nSELECT 'research_publications', COUNT(*) FROM research_publications\nUNION ALL\nSELECT 'indicators', COUNT(*) FROM indicators\nUNION ALL\nSELECT 'glossary_terms', COUNT(*) FROM glossary_terms\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute \nSELECT \n  'time_series' as table_name, COUNT(*) as record_count FROM time_series\nUNION ALL\nSELECT 'organizations', COUNT(*) FROM organizations\nUNION ALL\nSELECT 'commercial_entities', COUNT(*) FROM commercial_entities\nUNION ALL\nSELECT 'economic_events', COUNT(*) FROM economic_events\nUNION ALL\nSELECT 'research_publications', COUNT(*) FROM research_publications\nUNION ALL\nSELECT 'indicators', COUNT(*) FROM indicators\nUNION ALL\nSELECT 'glossary_terms', COUNT(*) FROM glossary_terms\n",
+  "rows": [
+    {
+      "table_name": "organizations",
+      "record_count": "56"
+    },
+    {
+      "table_name": "commercial_entities",
+      "record_count": "44"
+    },
+    {
+      "table_name": "economic_events",
+      "record_count": "205"
+    },
+    {
+      "table_name": "research_publications",
+      "record_count": "370"
+    },
+    {
+      "table_name": "indicators",
+      "record_count": "66"
+    },
+    {
+      "table_name": "time_series",
+      "record_count": "4320"
+    },
+    {
+      "table_name": "glossary_terms",
+      "record_count": "51"
+    }
+  ],
+  "messages": [],
+  "stdout": "table_name\trecord_count\norganizations\t56\ncommercial_entities\t44\neconomic_events\t205\nresearch_publications\t370\nindicators\t66\ntime_series\t4320\nglossary_terms\t51\n",
+  "stderr": "",
+  "execution_time_ms": 1646
+}

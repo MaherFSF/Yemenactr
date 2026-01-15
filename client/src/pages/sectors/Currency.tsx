@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   TrendingUp, 
   TrendingDown,
@@ -12,75 +13,82 @@ import {
   AlertTriangle,
   FileText,
   ArrowLeft,
-  ArrowUpDown
+  ArrowUpDown,
+  RefreshCw,
+  Clock
 } from "lucide-react";
 import { Link } from "wouter";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { Sparkline, RegimeHeatmap, InsightsTicker, CorrelationMatrix } from "@/components/charts/EnhancedVisualizations";
+import { trpc } from "@/lib/trpc";
+import { useMemo } from "react";
 
 export default function Currency() {
   const { language } = useLanguage();
 
-  // Exchange rate data - Updated January 2026 (CBY Aden Annual Reports)
-  const fxData = [
-    { month: "Feb 25", adenOfficial: 1840, adenParallel: 1920, sanaaParallel: 530 },
-    { month: "Mar 25", adenOfficial: 1860, adenParallel: 1950, sanaaParallel: 530 },
-    { month: "Apr 25", adenOfficial: 1880, adenParallel: 1980, sanaaParallel: 530 },
-    { month: "May 25", adenOfficial: 1900, adenParallel: 2000, sanaaParallel: 530 },
-    { month: "Jun 25", adenOfficial: 1920, adenParallel: 2020, sanaaParallel: 530 },
-    { month: "Jul 25", adenOfficial: 2050, adenParallel: 2905, sanaaParallel: 530 }, // All-time low for rial
-    { month: "Aug 25", adenOfficial: 1676, adenParallel: 1720, sanaaParallel: 530 }, // CBY measures recovery
-    { month: "Sep 25", adenOfficial: 1700, adenParallel: 1750, sanaaParallel: 530 },
-    { month: "Oct 25", adenOfficial: 1750, adenParallel: 1800, sanaaParallel: 530 },
-    { month: "Nov 25", adenOfficial: 1800, adenParallel: 1850, sanaaParallel: 530 },
-    { month: "Dec 25", adenOfficial: 1850, adenParallel: 1900, sanaaParallel: 530 },
-    { month: "Jan 26", adenOfficial: 1620, adenParallel: 1650, sanaaParallel: 535 },
-  ];
+  // Fetch dynamic data from database
+  const { data: latestRates, isLoading: ratesLoading } = trpc.currency.getLatestRates.useQuery();
+  const { data: historicalRates, isLoading: historicalLoading } = trpc.currency.getHistoricalRates.useQuery({
+    startYear: 2015,
+    endYear: 2026,
+    granularity: 'monthly',
+  });
+  const { data: kpisData, isLoading: kpisLoading } = trpc.currency.getKPIs.useQuery();
+  const { data: events, isLoading: eventsLoading } = trpc.currency.getHistoricalEvents.useQuery({
+    startYear: 2011,
+    endYear: 2026,
+  });
 
-  // Spread data
-  const spreadData = fxData.map(d => ({
-    month: d.month,
-    adenSpread: ((d.adenParallel - d.adenOfficial) / d.adenOfficial * 100).toFixed(1),
-    northSouthSpread: ((d.adenParallel - d.sanaaParallel) / d.sanaaParallel * 100).toFixed(1),
-  }));
+  // Process chart data from database
+  const fxData = useMemo(() => {
+    if (!historicalRates || historicalRates.length === 0) return [];
+    return historicalRates.map(d => ({
+      month: d.month,
+      adenOfficial: d.adenOfficial || 0,
+      adenParallel: d.adenParallel || 0,
+      sanaaParallel: d.sanaaParallel || 0,
+    }));
+  }, [historicalRates]);
 
-  const kpis = [
-    {
-      titleEn: "Official Rate (Aden)",
-      titleAr: "السعر الرسمي (عدن)",
-      value: "1,620 YER/$",
-      change: 5.3,
-      source: "CBY Aden Jan 2026",
-      confidence: "A",
-      regime: "IRG"
-    },
-    {
-      titleEn: "Parallel Rate (Aden)",
-      titleAr: "السعر الموازي (عدن)",
-      value: "1,650 YER/$",
-      change: -32.8,
-      source: "Market Survey Jan 2026",
-      confidence: "B",
-      regime: "IRG"
-    },
-    {
-      titleEn: "Parallel Rate (Sana'a)",
-      titleAr: "السعر الموازي (صنعاء)",
-      value: "530 YER/$",
-      change: -5.7,
-      source: "Market Survey Jan 2026",
-      confidence: "B",
-      regime: "DFA"
-    },
-    {
-      titleEn: "North-South Spread",
-      titleAr: "الفجوة شمال-جنوب",
-      value: "268%",
-      change: -14.4,
-      source: "Calculated Jan 2026",
-      confidence: "B"
-    },
-  ];
+  // Calculate spread data from fetched rates
+  const spreadData = useMemo(() => {
+    return fxData.map(d => ({
+      month: d.month,
+      adenSpread: d.adenOfficial > 0 ? ((d.adenParallel - d.adenOfficial) / d.adenOfficial * 100).toFixed(1) : '0',
+      northSouthSpread: d.sanaaParallel > 0 ? ((d.adenParallel - d.sanaaParallel) / d.sanaaParallel * 100).toFixed(1) : '0',
+    }));
+  }, [fxData]);
+
+  // Use KPIs from database
+  const kpis = kpisData?.kpis || [];
+
+  // Format date for display
+  const formatDate = (dateStr: string | null) => {
+    if (!dateStr) return 'N/A';
+    return new Date(dateStr).toLocaleDateString(language === 'ar' ? 'ar-YE' : 'en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
+  // Format relative time
+  const formatRelativeTime = (dateStr: string | null) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
+    
+    if (diffDays > 0) {
+      return language === 'ar' ? `منذ ${diffDays} يوم` : `${diffDays} days ago`;
+    }
+    if (diffHours > 0) {
+      return language === 'ar' ? `منذ ${diffHours} ساعة` : `${diffHours} hours ago`;
+    }
+    return language === 'ar' ? 'الآن' : 'Just now';
+  };
 
   return (
     <div className="flex flex-col">
@@ -125,6 +133,15 @@ export default function Currency() {
                 ? "تتبع أسعار صرف الريال اليمني والفجوة بين النظامين النقديين"
                 : "Tracking Yemeni Rial exchange rates and the dual monetary system divergence"}
             </p>
+            {/* Dynamic Last Updated */}
+            {latestRates && (
+              <div className="flex items-center gap-2 text-white/70 text-sm">
+                <Clock className="h-4 w-4" />
+                <span>
+                  {language === "ar" ? "آخر تحديث:" : "Last updated:"} {formatRelativeTime(latestRates.lastUpdated)}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -149,40 +166,66 @@ export default function Currency() {
           </CardContent>
         </Card>
 
-        {/* KPI Cards */}
+        {/* KPI Cards - Dynamic from Database */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
-          {kpis.map((kpi, index) => (
-            <Card key={index}>
-              <CardHeader className="pb-3">
-                <CardDescription className="flex items-center justify-between">
-                  <span>{language === "ar" ? kpi.titleAr : kpi.titleEn}</span>
-                  <div className="flex items-center gap-1">
-                    {kpi.regime && (
-                      <Badge variant={kpi.regime === "IRG" ? "default" : "secondary"} className="text-xs">
-                        {kpi.regime}
+          {kpisLoading ? (
+            // Loading skeletons
+            Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i}>
+                <CardHeader className="pb-3">
+                  <Skeleton className="h-4 w-32" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-8 w-24 mb-2" />
+                  <Skeleton className="h-4 w-20" />
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            kpis.map((kpi: any, index: number) => (
+              <Card key={index}>
+                <CardHeader className="pb-3">
+                  <CardDescription className="flex items-center justify-between">
+                    <span>{language === "ar" ? kpi.titleAr : kpi.titleEn}</span>
+                    <div className="flex items-center gap-1">
+                      {kpi.regime && (
+                        <Badge variant={kpi.regime === "IRG" ? "default" : "secondary"} className="text-xs">
+                          {kpi.regime}
+                        </Badge>
+                      )}
+                      <Badge variant="outline" className="text-xs">
+                        {kpi.confidence}
                       </Badge>
-                    )}
-                    <Badge variant="outline" className="text-xs">
-                      {kpi.confidence}
-                    </Badge>
+                    </div>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{kpi.value}</div>
+                  <div className="flex items-center gap-2 mt-1">
+                    {kpi.change > 0 ? (
+                      <TrendingUp className="h-4 w-4 text-red-600" />
+                    ) : kpi.change < 0 ? (
+                      <TrendingDown className="h-4 w-4 text-green-600" />
+                    ) : null}
+                    <span className={`text-sm ${kpi.change > 0 ? 'text-red-600' : kpi.change < 0 ? 'text-green-600' : 'text-muted-foreground'}`}>
+                      {kpi.change > 0 ? '+' : ''}{kpi.change.toFixed(1)}% YoY
+                    </span>
                   </div>
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{kpi.value}</div>
-                <div className="flex items-center gap-2 mt-1">
-                  <TrendingUp className="h-4 w-4 text-red-600" />
-                  <span className="text-sm text-red-600">
-                    +{kpi.change}% YoY
-                  </span>
-                </div>
-                <div className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
-                  <FileText className="h-3 w-3" />
-                  {kpi.source}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  <div className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
+                    <FileText className="h-3 w-3" />
+                    {kpi.source}
+                  </div>
+                  {/* Show actual data date */}
+                  {kpi.asOf && (
+                    <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      {language === "ar" ? "بتاريخ:" : "As of:"} {formatDate(kpi.asOf)}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
 
         {/* Main Charts */}
@@ -205,10 +248,10 @@ export default function Currency() {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle>
-                      {language === "ar" ? "أسعار الصرف الشهرية (2024)" : "Monthly Exchange Rates (2024)"}
+                      {language === "ar" ? "أسعار الصرف الشهرية (2015-2026)" : "Monthly Exchange Rates (2015-2026)"}
                     </CardTitle>
                     <CardDescription>
-                      {language === "ar" ? "ريال يمني مقابل الدولار الأمريكي" : "YER per USD"}
+                      {language === "ar" ? "ريال يمني مقابل الدولار الأمريكي - بيانات حية من قاعدة البيانات" : "YER per USD - Live data from database"}
                     </CardDescription>
                   </div>
                   <Button variant="outline" size="sm" className="gap-2">
@@ -218,52 +261,59 @@ export default function Currency() {
                 </div>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={400}>
-                  <LineChart data={fxData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis yAxisId="left" domain={[0, 2500]} />
-                    <YAxis yAxisId="right" orientation="right" domain={[500, 600]} />
-                    <Tooltip />
-                    <Legend />
-                    <Line 
-                      yAxisId="left"
-                      type="monotone" 
-                      dataKey="adenOfficial" 
-                      stroke="#107040" 
-                      strokeWidth={2}
-                      name={language === "ar" ? "عدن - رسمي" : "Aden - Official"}
-                    />
-                    <Line 
-                      yAxisId="left"
-                      type="monotone" 
-                      dataKey="adenParallel" 
-                      stroke="#103050" 
-                      strokeWidth={2}
-                      strokeDasharray="5 5"
-                      name={language === "ar" ? "عدن - موازي" : "Aden - Parallel"}
-                    />
-                    <Line 
-                      yAxisId="right"
-                      type="monotone" 
-                      dataKey="sanaaParallel" 
-                      stroke="#C0A030" 
-                      strokeWidth={2}
-                      name={language === "ar" ? "صنعاء - موازي" : "Sana'a - Parallel"}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-                <div className="mt-4 p-3 bg-muted/50 rounded-lg text-sm">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Info className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">{language === "ar" ? "ملاحظة" : "Note"}</span>
+                {historicalLoading ? (
+                  <div className="h-[400px] flex items-center justify-center">
+                    <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
                   </div>
-                  <p className="text-muted-foreground">
-                    {language === "ar"
-                      ? "صنعاء تستخدم مقياس مختلف (المحور الأيمن) بسبب الفجوة الكبيرة في الأسعار"
-                      : "Sana'a uses a different scale (right axis) due to the significant price divergence"}
-                  </p>
-                </div>
+                ) : fxData.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={400}>
+                    <LineChart data={fxData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis yAxisId="left" domain={[0, 'auto']} />
+                      <YAxis yAxisId="right" orientation="right" domain={[200, 700]} />
+                      <Tooltip 
+                        formatter={(value: number, name: string) => [
+                          `${value.toLocaleString()} YER/$`,
+                          name
+                        ]}
+                      />
+                      <Legend />
+                      <Line 
+                        yAxisId="left"
+                        type="monotone" 
+                        dataKey="adenOfficial" 
+                        stroke="#107040" 
+                        strokeWidth={2}
+                        name={language === "ar" ? "عدن - رسمي" : "Aden - Official"}
+                        dot={false}
+                      />
+                      <Line 
+                        yAxisId="left"
+                        type="monotone" 
+                        dataKey="adenParallel" 
+                        stroke="#103050" 
+                        strokeWidth={2}
+                        strokeDasharray="5 5"
+                        name={language === "ar" ? "عدن - موازي" : "Aden - Parallel"}
+                        dot={false}
+                      />
+                      <Line 
+                        yAxisId="right"
+                        type="monotone" 
+                        dataKey="sanaaParallel" 
+                        stroke="#C0A030" 
+                        strokeWidth={2}
+                        name={language === "ar" ? "صنعاء - موازي" : "Sana'a - Parallel"}
+                        dot={false}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-[400px] flex items-center justify-center text-muted-foreground">
+                    {language === "ar" ? "لا توجد بيانات متاحة" : "No data available"}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -271,47 +321,49 @@ export default function Currency() {
           <TabsContent value="spread">
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>
-                      {language === "ar" ? "تحليل الفجوة" : "Spread Analysis"}
-                    </CardTitle>
-                    <CardDescription>
-                      {language === "ar" ? "الفرق بين الأسعار الرسمية والموازية" : "Difference between official and parallel rates"}
-                    </CardDescription>
-                  </div>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Download className="h-4 w-4" />
-                    {language === "ar" ? "تصدير" : "Export"}
-                  </Button>
-                </div>
+                <CardTitle>
+                  {language === "ar" ? "تحليل الفجوة" : "Spread Analysis"}
+                </CardTitle>
+                <CardDescription>
+                  {language === "ar" ? "الفرق بين الأسعار الرسمية والموازية" : "Difference between official and parallel rates"}
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={400}>
-                  <AreaChart data={spreadData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Area 
-                      type="monotone" 
-                      dataKey="adenSpread" 
-                      stroke="#103050" 
-                      fill="#103050"
-                      fillOpacity={0.3}
-                      name={language === "ar" ? "فجوة عدن (%)" : "Aden Spread (%)"}
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="northSouthSpread" 
-                      stroke="#C0A030" 
-                      fill="#C0A030"
-                      fillOpacity={0.3}
-                      name={language === "ar" ? "فجوة شمال-جنوب (%)" : "North-South Spread (%)"}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
+                {historicalLoading ? (
+                  <div className="h-[400px] flex items-center justify-center">
+                    <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+                  </div>
+                ) : spreadData.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={400}>
+                    <AreaChart data={spreadData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Tooltip formatter={(value: string) => [`${value}%`, '']} />
+                      <Legend />
+                      <Area 
+                        type="monotone" 
+                        dataKey="northSouthSpread" 
+                        stroke="#C0A030" 
+                        fill="#C0A030" 
+                        fillOpacity={0.3}
+                        name={language === "ar" ? "فجوة شمال-جنوب %" : "North-South Spread %"}
+                      />
+                      <Area 
+                        type="monotone" 
+                        dataKey="adenSpread" 
+                        stroke="#107040" 
+                        fill="#107040" 
+                        fillOpacity={0.3}
+                        name={language === "ar" ? "فجوة عدن %" : "Aden Spread %"}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-[400px] flex items-center justify-center text-muted-foreground">
+                    {language === "ar" ? "لا توجد بيانات متاحة" : "No data available"}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -320,229 +372,116 @@ export default function Currency() {
             <Card>
               <CardHeader>
                 <CardTitle>
-                  {language === "ar" ? "الأحداث الرئيسية في سوق الصرف" : "Key FX Market Events"}
+                  {language === "ar" ? "الأحداث التاريخية الرئيسية" : "Key Historical Events"}
                 </CardTitle>
+                <CardDescription>
+                  {language === "ar" ? "الأحداث الاقتصادية والسياسية المؤثرة على سعر الصرف" : "Economic and political events affecting exchange rates"}
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex gap-4 p-4 border rounded-lg">
-                    <div className="text-sm font-medium text-muted-foreground w-24">2019</div>
-                    <div>
-                      <h4 className="font-semibold">
-                        {language === "ar" ? "انقسام العملة" : "Currency Split"}
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
-                        {language === "ar"
-                          ? "سلطات صنعاء تحظر الأوراق النقدية الجديدة"
-                          : "Sana'a authorities ban new banknotes"}
-                      </p>
-                    </div>
+                {eventsLoading ? (
+                  <div className="space-y-4">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <div key={i} className="flex gap-4">
+                        <Skeleton className="h-12 w-12 rounded-full" />
+                        <div className="flex-1">
+                          <Skeleton className="h-4 w-32 mb-2" />
+                          <Skeleton className="h-4 w-full" />
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex gap-4 p-4 border rounded-lg">
-                    <div className="text-sm font-medium text-muted-foreground w-24">2022</div>
-                    <div>
-                      <h4 className="font-semibold">
-                        {language === "ar" ? "وديعة سعودية" : "Saudi Deposit"}
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
-                        {language === "ar"
-                          ? "وديعة بقيمة مليار دولار تدعم الريال مؤقتاً"
-                          : "$1B deposit temporarily supports the Rial"}
-                      </p>
-                    </div>
+                ) : events && events.length > 0 ? (
+                  <div className="space-y-4 max-h-[500px] overflow-y-auto">
+                    {events.map((event: any, index: number) => (
+                      <div key={event.id || index} className="flex gap-4 p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white text-sm font-bold ${
+                          event.impactLevel === 'critical' ? 'bg-red-600' :
+                          event.impactLevel === 'high' ? 'bg-orange-500' :
+                          event.impactLevel === 'medium' ? 'bg-yellow-500' : 'bg-blue-500'
+                        }`}>
+                          {event.year}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-semibold">
+                              {language === "ar" ? event.titleAr : event.title}
+                            </span>
+                            <Badge variant="outline" className="text-xs">
+                              {event.category}
+                            </Badge>
+                            <Badge variant={
+                              event.impactLevel === 'critical' ? 'destructive' :
+                              event.impactLevel === 'high' ? 'default' : 'secondary'
+                            } className="text-xs">
+                              {event.impactLevel}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            {formatDate(event.eventDate)}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex gap-4 p-4 border rounded-lg">
-                    <div className="text-sm font-medium text-muted-foreground w-24">2024</div>
-                    <div>
-                      <h4 className="font-semibold">
-                        {language === "ar" ? "أزمة البحر الأحمر" : "Red Sea Crisis"}
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
-                        {language === "ar"
-                          ? "اضطرابات الشحن تؤثر على التجارة وتدفقات العملة"
-                          : "Shipping disruptions affect trade and currency flows"}
-                      </p>
-                    </div>
+                ) : (
+                  <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                    {language === "ar" ? "لا توجد أحداث متاحة" : "No events available"}
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
 
-        {/* Related Research */}
+        {/* Data Sources Info */}
         <Card className="mt-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              {language === "ar" ? "الأبحاث ذات الصلة" : "Related Research"}
+              <Info className="h-5 w-5" />
+              {language === "ar" ? "مصادر البيانات" : "Data Sources"}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                <h4 className="font-semibold mb-1">Yemen's Dual Currency Crisis</h4>
-                <p className="text-sm text-muted-foreground mb-2">Sana'a Center • November 2024</p>
-                <Badge variant="outline" className="text-xs">PDF</Badge>
+            <div className="grid md:grid-cols-3 gap-4 text-sm">
+              <div>
+                <h4 className="font-semibold mb-2">{language === "ar" ? "البنك المركزي - عدن" : "CBY Aden"}</h4>
+                <p className="text-muted-foreground">
+                  {language === "ar" 
+                    ? "الأسعار الرسمية والتقارير الشهرية"
+                    : "Official rates and monthly reports"}
+                </p>
               </div>
-              <div className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                <h4 className="font-semibold mb-1">Central Bank Policy Analysis - Yemen</h4>
-                <p className="text-sm text-muted-foreground mb-2">Rethinking Yemen's Economy • October 2024</p>
-                <Badge variant="outline" className="text-xs">PDF</Badge>
+              <div>
+                <h4 className="font-semibold mb-2">{language === "ar" ? "البنك المركزي - صنعاء" : "CBY Sana'a"}</h4>
+                <p className="text-muted-foreground">
+                  {language === "ar"
+                    ? "أسعار المنطقة الشمالية"
+                    : "Northern region rates"}
+                </p>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">{language === "ar" ? "مسوحات السوق" : "Market Surveys"}</h4>
+                <p className="text-muted-foreground">
+                  {language === "ar"
+                    ? "أسعار السوق الموازي من الصرافين"
+                    : "Parallel market rates from money changers"}
+                </p>
               </div>
             </div>
+            {/* Show actual data freshness */}
+            {latestRates && (
+              <div className="mt-4 pt-4 border-t">
+                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
+                  {language === "ar" 
+                    ? `البيانات محدثة حتى: ${formatDate(latestRates.adenParallel?.date || latestRates.lastUpdated)}`
+                    : `Data current as of: ${formatDate(latestRates.adenParallel?.date || latestRates.lastUpdated)}`}
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
-
-        {/* Enhanced Visualizations Section */}
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold text-[#103050] mb-6">
-            {language === "ar" ? "التحليلات المتقدمة" : "Advanced Analytics"}
-          </h2>
-          
-          {/* Insights Ticker */}
-          <Card className="mb-6 overflow-hidden">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-[#107040]" />
-                {language === "ar" ? "رؤى العملة" : "Currency Insights"}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <InsightsTicker
-                insights={[
-                  {
-                    id: "1",
-                    type: "alert",
-                    priority: "critical",
-                    title: "Aden parallel rate hits record 2,320 YER/USD",
-                    titleAr: "سعر الصرف الموازي في عدن يصل لمستوى قياسي 2,320 ريال/دولار",
-                    indicator: "FX Rate",
-                    value: 2320,
-                    change: 43.2
-                  },
-                  {
-                    id: "2",
-                    type: "warning",
-                    priority: "high",
-                    title: "North-South currency spread exceeds 300%",
-                    titleAr: "فجوة العملة بين الشمال والجنوب تتجاوز 300%",
-                    indicator: "Spread",
-                    value: 313,
-                    change: 25
-                  },
-                  {
-                    id: "3",
-                    type: "info",
-                    priority: "medium",
-                    title: "Sana'a rate stable at 562 YER/USD",
-                    titleAr: "سعر صنعاء مستقر عند 562 ريال/دولار",
-                    indicator: "FX Rate",
-                    value: 562,
-                    change: 5
-                  }
-                ]}
-                speed={45}
-              />
-            </CardContent>
-          </Card>
-
-          {/* Regime Comparison Heatmap */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ArrowUpDown className="h-5 w-5 text-[#C0A030]" />
-                {language === "ar" ? "مقارنة أسعار الصرف" : "Exchange Rate Comparison"}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <RegimeHeatmap
-                data={[
-                  {
-                    indicator: "Official Rate",
-                    indicatorAr: "السعر الرسمي",
-                    adenValue: 1800,
-                    sanaaValue: 562,
-                    divergence: 220.3,
-                    trend: "widening"
-                  },
-                  {
-                    indicator: "Parallel Rate",
-                    indicatorAr: "السعر الموازي",
-                    adenValue: 2320,
-                    sanaaValue: 562,
-                    divergence: 312.8,
-                    trend: "widening"
-                  },
-                  {
-                    indicator: "Monthly Volatility",
-                    indicatorAr: "التقلب الشهري",
-                    adenValue: 8.5,
-                    sanaaValue: 1.2,
-                    divergence: 608.3,
-                    trend: "widening"
-                  }
-                ]}
-                title="Currency Divergence"
-                titleAr="تباين العملة"
-              />
-            </CardContent>
-          </Card>
-
-          {/* Sparkline Trends */}
-          <div className="grid md:grid-cols-3 gap-4">
-            <Card className="p-4">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    {language === "ar" ? "عدن - موازي" : "Aden Parallel"}
-                  </p>
-                  <p className="text-2xl font-bold text-[#103050]">2,320</p>
-                </div>
-                <Sparkline 
-                  data={[1620, 1720, 1850, 1980, 2050, 2120, 2180, 2250, 2320]} 
-                  color="#dc2626"
-                  showTrend={true}
-                />
-              </div>
-              <p className="text-xs text-red-600">↑ 43.2% {language === "ar" ? "سنوياً" : "YoY"}</p>
-            </Card>
-
-            <Card className="p-4">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    {language === "ar" ? "صنعاء - موازي" : "Sana'a Parallel"}
-                  </p>
-                  <p className="text-2xl font-bold text-[#103050]">562</p>
-                </div>
-                <Sparkline 
-                  data={[535, 538, 540, 545, 548, 550, 555, 558, 562]} 
-                  color="#16a34a"
-                  showTrend={true}
-                />
-              </div>
-              <p className="text-xs text-green-600">↑ 5.0% {language === "ar" ? "سنوياً" : "YoY"}</p>
-            </Card>
-
-            <Card className="p-4">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <p className="text-sm text-muted-foreground">
-                    {language === "ar" ? "الفجوة" : "Spread"}
-                  </p>
-                  <p className="text-2xl font-bold text-red-600">313%</p>
-                </div>
-                <Sparkline 
-                  data={[203, 220, 243, 260, 279, 285, 293, 303, 313]} 
-                  color="#dc2626"
-                  showTrend={true}
-                />
-              </div>
-              <p className="text-xs text-red-600">↑ {language === "ar" ? "يتسع" : "Widening"}</p>
-            </Card>
-          </div>
-        </div>
       </div>
     </div>
   );

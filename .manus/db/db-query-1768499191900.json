@@ -1,0 +1,66 @@
+{
+  "query": "SELECT indicatorCode, regimeTag, date, value, unit, confidenceRating \nFROM time_series \nWHERE (indicatorCode LIKE '%fx%' OR indicatorCode LIKE '%exchange%') \nAND date >= '2025-01-01'\nORDER BY date DESC\nLIMIT 30;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT indicatorCode, regimeTag, date, value, unit, confidenceRating \nFROM time_series \nWHERE (indicatorCode LIKE '%fx%' OR indicatorCode LIKE '%exchange%') \nAND date >= '2025-01-01'\nORDER BY date DESC\nLIMIT 30;",
+  "rows": [
+    {
+      "indicatorCode": "CBY_FX_PARALLEL_ADEN",
+      "regimeTag": "aden_irg",
+      "date": "2026-12-31 05:00:00",
+      "value": "1620.000000",
+      "unit": "YER/USD",
+      "confidenceRating": "B"
+    },
+    {
+      "indicatorCode": "CBY_FX_OFFICIAL_ADEN",
+      "regimeTag": "aden_irg",
+      "date": "2026-12-31 05:00:00",
+      "value": "1620.000000",
+      "unit": "YER/USD",
+      "confidenceRating": "B"
+    },
+    {
+      "indicatorCode": "fx_rate_sanaa",
+      "regimeTag": "sanaa_defacto",
+      "date": "2026-12-31 00:00:00",
+      "value": "530.000000",
+      "unit": "YER/USD",
+      "confidenceRating": "B"
+    },
+    {
+      "indicatorCode": "fx_rate_aden_parallel",
+      "regimeTag": "aden_irg",
+      "date": "2026-12-31 00:00:00",
+      "value": "1620.000000",
+      "unit": "YER/USD",
+      "confidenceRating": "A"
+    },
+    {
+      "indicatorCode": "fx_rate_aden_parallel",
+      "regimeTag": "aden_irg",
+      "date": "2026-01-10 00:00:00",
+      "value": "1620.000000",
+      "unit": "YER/USD",
+      "confidenceRating": "A"
+    },
+    {
+      "indicatorCode": "fx_rate_sanaa",
+      "regimeTag": "sanaa_defacto",
+      "date": "2025-12-31 00:00:00",
+      "value": "530.000000",
+      "unit": "YER/USD",
+      "confidenceRating": "B"
+    },
+    {
+      "indicatorCode": "fx_rate_aden_parallel",
+      "regimeTag": "aden_irg",
+      "date": "2025-12-31 00:00:00",
+      "value": "1620.000000",
+      "unit": "YER/USD",
+      "confidenceRating": "A"
+    }
+  ],
+  "messages": [],
+  "stdout": "indicatorCode\tregimeTag\tdate\tvalue\tunit\tconfidenceRating\nCBY_FX_PARALLEL_ADEN\taden_irg\t2026-12-31 05:00:00\t1620.000000\tYER/USD\tB\nCBY_FX_OFFICIAL_ADEN\taden_irg\t2026-12-31 05:00:00\t1620.000000\tYER/USD\tB\nfx_rate_sanaa\tsanaa_defacto\t2026-12-31 00:00:00\t530.000000\tYER/USD\tB\nfx_rate_aden_parallel\taden_irg\t2026-12-31 00:00:00\t1620.000000\tYER/USD\tA\nfx_rate_aden_parallel\taden_irg\t2026-01-10 00:00:00\t1620.000000\tYER/USD\tA\nfx_rate_sanaa\tsanaa_defacto\t2025-12-31 00:00:00\t530.000000\tYER/USD\tB\nfx_rate_aden_parallel\taden_irg\t2025-12-31 00:00:00\t1620.000000\tYER/USD\tA\n",
+  "stderr": "",
+  "execution_time_ms": 1599
+}

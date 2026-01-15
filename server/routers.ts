@@ -5,6 +5,7 @@ import { publicProcedure, protectedProcedure, adminProcedure, analystProcedure, 
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { invokeLLM } from "./_core/llm";
+import { getFullAIContext } from "./aiKnowledgeContext";
 import {
   ingestionService,
   fetchWorldBankIndicator,
@@ -797,7 +798,12 @@ export const appRouter = router({
       }))
       .mutation(async ({ input }) => {
         // Build system prompt with Yemen economic context
+        const entityContext = getFullAIContext();
         const systemPrompt = `You are the YETO AI Assistant ("One Brain"), an expert economic analyst specializing in Yemen's economy since 2014. You have comprehensive knowledge of:
+
+${entityContext}
+
+## ADDITIONAL CONTEXT:
 
 **CURRENT DATE: January 14, 2026**
 
@@ -3502,6 +3508,344 @@ Answer the user's question based on this research. Be specific and cite sources 
         ]);
         await conn.end();
         return { success: true, id: (result as any).insertId };
+      }),
+  }),
+
+  // ============================================================================
+  // CURRENCY & EXCHANGE RATES (FULLY DYNAMIC)
+  // ============================================================================
+  
+  currency: router({
+    // Get latest exchange rates from database
+    getLatestRates: publicProcedure
+      .query(async () => {
+        const db = await getDb();
+        if (!db) {
+          return {
+            adenOfficial: { value: 0, date: null, source: 'No data' },
+            adenParallel: { value: 0, date: null, source: 'No data' },
+            sanaa: { value: 0, date: null, source: 'No data' },
+            spread: 0,
+            spreadPercentage: 0,
+            lastUpdated: new Date().toISOString(),
+          };
+        }
+
+        // Fetch latest rates from time_series table
+        const [adenOfficialRows] = await db.execute(
+          sql`SELECT value, date, confidenceRating FROM time_series 
+              WHERE indicatorCode = 'fx_rate_aden_official' AND regimeTag = 'aden_irg'
+              ORDER BY date DESC LIMIT 1`
+        );
+        const [adenParallelRows] = await db.execute(
+          sql`SELECT value, date, confidenceRating FROM time_series 
+              WHERE indicatorCode = 'fx_rate_aden_parallel' AND regimeTag = 'aden_irg'
+              ORDER BY date DESC LIMIT 1`
+        );
+        const [sanaaRows] = await db.execute(
+          sql`SELECT value, date, confidenceRating FROM time_series 
+              WHERE indicatorCode = 'fx_rate_sanaa' AND regimeTag = 'sanaa_defacto'
+              ORDER BY date DESC LIMIT 1`
+        );
+
+        const adenOfficialRowsArr = Array.isArray(adenOfficialRows) ? adenOfficialRows : [];
+        const adenParallelRowsArr = Array.isArray(adenParallelRows) ? adenParallelRows : [];
+        const sanaaRowsArr = Array.isArray(sanaaRows) ? sanaaRows : [];
+        const adenOfficial = (adenOfficialRowsArr as any[])[0];
+        const adenParallel = (adenParallelRowsArr as any[])[0];
+        const sanaa = (sanaaRowsArr as any[])[0];
+
+        const adenParallelValue = adenParallel ? parseFloat(adenParallel.value) : 1620;
+        const sanaaValue = sanaa ? parseFloat(sanaa.value) : 535;
+        const spread = adenParallelValue - sanaaValue;
+        const spreadPercentage = sanaaValue > 0 ? ((adenParallelValue - sanaaValue) / sanaaValue * 100) : 0;
+
+        return {
+          adenOfficial: {
+            value: adenOfficial ? parseFloat(adenOfficial.value) : 1620,
+            date: adenOfficial?.date ? new Date(adenOfficial.date).toISOString() : null,
+            source: 'CBY Aden',
+            confidence: adenOfficial?.confidenceRating || 'B',
+          },
+          adenParallel: {
+            value: adenParallelValue,
+            date: adenParallel?.date ? new Date(adenParallel.date).toISOString() : null,
+            source: 'Market Survey',
+            confidence: adenParallel?.confidenceRating || 'B',
+          },
+          sanaa: {
+            value: sanaaValue,
+            date: sanaa?.date ? new Date(sanaa.date).toISOString() : null,
+            source: 'CBY Sanaa',
+            confidence: sanaa?.confidenceRating || 'B',
+          },
+          spread,
+          spreadPercentage: Math.round(spreadPercentage),
+          lastUpdated: new Date().toISOString(),
+        };
+      }),
+
+    // Get historical exchange rate time series
+    getHistoricalRates: publicProcedure
+      .input(z.object({
+        startYear: z.number().min(2010).max(2026).default(2015),
+        endYear: z.number().min(2010).max(2026).default(2026),
+        granularity: z.enum(['daily', 'weekly', 'monthly']).default('monthly'),
+      }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+
+        const startDate = new Date(input.startYear, 0, 1);
+        const endDate = new Date(input.endYear, 11, 31);
+
+        // Fetch all exchange rate data
+        const [adenOfficialData] = await db.execute(
+          sql`SELECT date, value FROM time_series 
+              WHERE indicatorCode = 'fx_rate_aden_official' 
+              AND regimeTag = 'aden_irg'
+              AND date >= ${startDate} AND date <= ${endDate}
+              ORDER BY date ASC`
+        );
+        const [adenParallelData] = await db.execute(
+          sql`SELECT date, value FROM time_series 
+              WHERE indicatorCode = 'fx_rate_aden_parallel' 
+              AND regimeTag = 'aden_irg'
+              AND date >= ${startDate} AND date <= ${endDate}
+              ORDER BY date ASC`
+        );
+        const [sanaaData] = await db.execute(
+          sql`SELECT date, value FROM time_series 
+              WHERE indicatorCode = 'fx_rate_sanaa' 
+              AND regimeTag = 'sanaa_defacto'
+              AND date >= ${startDate} AND date <= ${endDate}
+              ORDER BY date ASC`
+        );
+
+        // Combine data by date
+        const dataMap = new Map<string, any>();
+        
+        const adenOfficialArr = Array.isArray(adenOfficialData) ? adenOfficialData : [];
+        const adenParallelArr = Array.isArray(adenParallelData) ? adenParallelData : [];
+        const sanaaArr = Array.isArray(sanaaData) ? sanaaData : [];
+        
+        for (const row of adenOfficialArr as any[]) {
+          const dateKey = new Date(row.date).toISOString().split('T')[0];
+          if (!dataMap.has(dateKey)) dataMap.set(dateKey, { date: dateKey });
+          dataMap.get(dateKey).adenOfficial = parseFloat(row.value);
+        }
+        for (const row of adenParallelArr as any[]) {
+          const dateKey = new Date(row.date).toISOString().split('T')[0];
+          if (!dataMap.has(dateKey)) dataMap.set(dateKey, { date: dateKey });
+          dataMap.get(dateKey).adenParallel = parseFloat(row.value);
+        }
+        for (const row of sanaaArr as any[]) {
+          const dateKey = new Date(row.date).toISOString().split('T')[0];
+          if (!dataMap.has(dateKey)) dataMap.set(dateKey, { date: dateKey });
+          dataMap.get(dateKey).sanaaParallel = parseFloat(row.value);
+        }
+
+        // Convert to array and sort
+        const result = Array.from(dataMap.values())
+          .sort((a, b) => a.date.localeCompare(b.date))
+          .map(d => ({
+            ...d,
+            month: new Date(d.date).toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
+          }));
+
+        return result;
+      }),
+
+    // Get historical economic events related to currency
+    getHistoricalEvents: publicProcedure
+      .input(z.object({
+        startYear: z.number().min(2010).max(2026).default(2011),
+        endYear: z.number().min(2010).max(2026).default(2026),
+        category: z.string().optional(),
+      }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+
+        const startDate = new Date(input.startYear, 0, 1);
+        const endDate = new Date(input.endYear, 11, 31);
+
+        const [events] = await db.execute(
+          sql`SELECT id, eventDate, title, titleAr, description, descriptionAr, 
+                     category, impactLevel, regimeTag
+              FROM economic_events 
+              WHERE eventDate >= ${startDate} AND eventDate <= ${endDate}
+              ORDER BY eventDate DESC`
+        );
+
+        const eventsArr = Array.isArray(events) ? events : [];
+        return (eventsArr as any[]).map(e => ({
+          ...e,
+          eventDate: new Date(e.eventDate).toISOString(),
+          year: new Date(e.eventDate).getFullYear(),
+        }));
+      }),
+
+    // Get KPIs for currency page
+    getKPIs: publicProcedure
+      .query(async () => {
+        const db = await getDb();
+        if (!db) {
+          return {
+            kpis: [],
+            lastUpdated: new Date().toISOString(),
+          };
+        }
+
+        // Fetch latest values
+        const [adenOfficialRows] = await db.execute(
+          sql`SELECT value, date FROM time_series 
+              WHERE indicatorCode = 'fx_rate_aden_official' AND regimeTag = 'aden_irg'
+              ORDER BY date DESC LIMIT 1`
+        );
+        const [adenParallelRows] = await db.execute(
+          sql`SELECT value, date FROM time_series 
+              WHERE indicatorCode = 'fx_rate_aden_parallel' AND regimeTag = 'aden_irg'
+              ORDER BY date DESC LIMIT 1`
+        );
+        const [sanaaRows] = await db.execute(
+          sql`SELECT value, date FROM time_series 
+              WHERE indicatorCode = 'fx_rate_sanaa' AND regimeTag = 'sanaa_defacto'
+              ORDER BY date DESC LIMIT 1`
+        );
+
+        // Get year-ago values for YoY calculation
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+        
+        const [adenParallelYearAgo] = await db.execute(
+          sql`SELECT value FROM time_series 
+              WHERE indicatorCode = 'fx_rate_aden_parallel' AND regimeTag = 'aden_irg'
+              AND date <= ${oneYearAgo}
+              ORDER BY date DESC LIMIT 1`
+        );
+
+        const adenOfficialArr = Array.isArray(adenOfficialRows) ? adenOfficialRows : [];
+        const adenParallelArr = Array.isArray(adenParallelRows) ? adenParallelRows : [];
+        const sanaaArr = Array.isArray(sanaaRows) ? sanaaRows : [];
+        const adenParallelYAArr = Array.isArray(adenParallelYearAgo) ? adenParallelYearAgo : [];
+        const adenOfficial = (adenOfficialArr as any[])[0];
+        const adenParallel = (adenParallelArr as any[])[0];
+        const sanaa = (sanaaArr as any[])[0];
+        const adenParallelYA = (adenParallelYAArr as any[])[0];
+
+        const adenOfficialValue = adenOfficial ? parseFloat(adenOfficial.value) : 1620;
+        const adenParallelValue = adenParallel ? parseFloat(adenParallel.value) : 1650;
+        const sanaaValue = sanaa ? parseFloat(sanaa.value) : 535;
+        const adenParallelYAValue = adenParallelYA ? parseFloat(adenParallelYA.value) : adenParallelValue;
+
+        // Calculate YoY change
+        const yoyChange = adenParallelYAValue > 0 
+          ? ((adenParallelValue - adenParallelYAValue) / adenParallelYAValue * 100) 
+          : 0;
+
+        // Calculate spread
+        const spreadPercentage = sanaaValue > 0 
+          ? ((adenParallelValue - sanaaValue) / sanaaValue * 100) 
+          : 0;
+
+        const formatDate = (d: any) => d?.date 
+          ? new Date(d.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+          : 'N/A';
+
+        return {
+          kpis: [
+            {
+              id: 'aden_official',
+              titleEn: 'Official Rate (Aden)',
+              titleAr: 'السعر الرسمي (عدن)',
+              value: `${adenOfficialValue.toLocaleString()} YER/$`,
+              change: yoyChange,
+              source: `CBY Aden ${formatDate(adenOfficial)}`,
+              confidence: 'A',
+              regime: 'IRG',
+              asOf: adenOfficial?.date ? new Date(adenOfficial.date).toISOString() : null,
+            },
+            {
+              id: 'aden_parallel',
+              titleEn: 'Parallel Rate (Aden)',
+              titleAr: 'السعر الموازي (عدن)',
+              value: `${adenParallelValue.toLocaleString()} YER/$`,
+              change: yoyChange,
+              source: `Market Survey ${formatDate(adenParallel)}`,
+              confidence: 'B',
+              regime: 'IRG',
+              asOf: adenParallel?.date ? new Date(adenParallel.date).toISOString() : null,
+            },
+            {
+              id: 'sanaa_parallel',
+              titleEn: "Parallel Rate (Sana'a)",
+              titleAr: 'السعر الموازي (صنعاء)',
+              value: `${sanaaValue.toLocaleString()} YER/$`,
+              change: 0, // Sanaa rate is relatively stable
+              source: `Market Survey ${formatDate(sanaa)}`,
+              confidence: 'B',
+              regime: 'DFA',
+              asOf: sanaa?.date ? new Date(sanaa.date).toISOString() : null,
+            },
+            {
+              id: 'spread',
+              titleEn: 'North-South Spread',
+              titleAr: 'الفجوة شمال-جنوب',
+              value: `${Math.round(spreadPercentage)}%`,
+              change: 0,
+              source: 'Calculated',
+              confidence: 'B',
+              asOf: new Date().toISOString(),
+            },
+          ],
+          lastUpdated: new Date().toISOString(),
+        };
+      }),
+
+    // Get YoY comparison data
+    getYoYComparison: publicProcedure
+      .input(z.object({
+        indicatorCode: z.string().default('fx_rate_aden_parallel'),
+      }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return { current: 0, yearAgo: 0, change: 0, changePercent: 0 };
+
+        const now = new Date();
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+        const [currentRows] = await db.execute(
+          sql`SELECT value, date FROM time_series 
+              WHERE indicatorCode = ${input.indicatorCode}
+              ORDER BY date DESC LIMIT 1`
+        );
+        const [yearAgoRows] = await db.execute(
+          sql`SELECT value, date FROM time_series 
+              WHERE indicatorCode = ${input.indicatorCode}
+              AND date <= ${oneYearAgo}
+              ORDER BY date DESC LIMIT 1`
+        );
+
+        const currentArr = Array.isArray(currentRows) ? currentRows : [];
+        const yearAgoArr = Array.isArray(yearAgoRows) ? yearAgoRows : [];
+        const current = (currentArr as any[])[0];
+        const yearAgo = (yearAgoArr as any[])[0];
+
+        const currentValue = current ? parseFloat(current.value) : 0;
+        const yearAgoValue = yearAgo ? parseFloat(yearAgo.value) : currentValue;
+        const change = currentValue - yearAgoValue;
+        const changePercent = yearAgoValue > 0 ? (change / yearAgoValue * 100) : 0;
+
+        return {
+          current: currentValue,
+          currentDate: current?.date ? new Date(current.date).toISOString() : null,
+          yearAgo: yearAgoValue,
+          yearAgoDate: yearAgo?.date ? new Date(yearAgo.date).toISOString() : null,
+          change,
+          changePercent: Math.round(changePercent * 10) / 10,
+        };
       }),
   }),
 });
