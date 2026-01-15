@@ -4420,3 +4420,35 @@ Based on review of master design documents and data source register:
   - [x] Set appropriate access levels (public/premium)
   - [x] Send notifications to subscribers
 - [x] Admin review workflow for low-confidence reports
+
+
+## Phase 87: Sections 2, 3, 4 Implementation
+
+### Section 2: Full Platform Audit
+- [ ] Create ROUTE_INVENTORY.md with all routes
+- [ ] Implement placeholder/fake-stat detector
+- [ ] Implement evidence-pack presence check
+- [ ] Create REQ_GAP_ANALYSIS.md
+
+### Section 3: Data & Evidence Architecture
+- [ ] Verify evidence store schema completeness
+- [ ] Build Source Registry module in Admin
+- [ ] Implement licensing enforcement
+- [ ] Implement "What was known when" vintage switching
+
+### Section 4: Wide Search + Continuous Ingestion
+- [ ] Implement discovery engine for candidate sources
+- [ ] Implement news tracker pipeline
+- [ ] Implement ingestion orchestration with retries
+- [ ] Build job status UI in Admin portal
+
+
+## Phase 87: Sections 2, 3, 4 Implementation (COMPLETED - Jan 15, 2026)
+- [x] ROUTE_INVENTORY.md - All 50+ routes documented
+- [x] REQ_GAP_ANALYSIS.md - Requirements gap analysis (97% complete)
+- [x] Placeholder detector tests (15 tests passing)
+- [x] DATA_ARCHITECTURE.md - Evidence-first schema documentation
+- [x] SOURCE_REGISTRY.md - All 50+ data sources and licensing
+- [x] DISCOVERY_ENGINE.md - Wide search documentation
+- [x] INGESTION_ORCHESTRATION.md - News tracker and pipeline
+- [x] All 260 tests passing (up from 245)

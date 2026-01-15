@@ -1,0 +1,110 @@
+{
+  "query": "SELECT publisher, license, COUNT(*) as count FROM sources GROUP BY publisher, license ORDER BY count DESC LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT publisher, license, COUNT(*) as count FROM sources GROUP BY publisher, license ORDER BY count DESC LIMIT 20;",
+  "rows": [
+    {
+      "publisher": "Social Fund for Development",
+      "license": "public",
+      "count": "9"
+    },
+    {
+      "publisher": "World Bank",
+      "license": "CC-BY-4.0",
+      "count": "3"
+    },
+    {
+      "publisher": "UN OCHA",
+      "license": "CC-BY-3.0-IGO",
+      "count": "3"
+    },
+    {
+      "publisher": "IPC Global Platform",
+      "license": "CC-BY-4.0",
+      "count": "2"
+    },
+    {
+      "publisher": "Sana'a Monetary Authority",
+      "license": "Public Domain",
+      "count": "2"
+    },
+    {
+      "publisher": "Central Bank of Yemen - Aden",
+      "license": "Public Domain",
+      "count": "2"
+    },
+    {
+      "publisher": "UNDP",
+      "license": "CC-BY-3.0-IGO",
+      "count": "2"
+    },
+    {
+      "publisher": "ILO",
+      "license": "CC-BY-4.0",
+      "count": "2"
+    },
+    {
+      "publisher": "ACAPS",
+      "license": "CC-BY-4.0",
+      "count": "2"
+    },
+    {
+      "publisher": "UNCTAD",
+      "license": "CC-BY-3.0-IGO",
+      "count": "2"
+    },
+    {
+      "publisher": "World Food Programme",
+      "license": "CC-BY-4.0",
+      "count": "2"
+    },
+    {
+      "publisher": "UNHCR",
+      "license": "CC-BY-4.0",
+      "count": "2"
+    },
+    {
+      "publisher": "IPC Projection",
+      "license": "CC-BY-4.0",
+      "count": "1"
+    },
+    {
+      "publisher": "UN OCHA FTS",
+      "license": "CC-BY-3.0-IGO",
+      "count": "1"
+    },
+    {
+      "publisher": "International Crisis Group",
+      "license": "public",
+      "count": "1"
+    },
+    {
+      "publisher": "IOM",
+      "license": "public",
+      "count": "1"
+    },
+    {
+      "publisher": "UN Population Division",
+      "license": "CC-BY-3.0-IGO",
+      "count": "1"
+    },
+    {
+      "publisher": "ACAPS",
+      "license": "CC-BY-NC-4.0",
+      "count": "1"
+    },
+    {
+      "publisher": "European Commission - DG ECHO",
+      "license": "public",
+      "count": "1"
+    },
+    {
+      "publisher": "OCHA FTS",
+      "license": "Open Data",
+      "count": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "publisher\tlicense\tcount\nSocial Fund for Development\tpublic\t9\nWorld Bank\tCC-BY-4.0\t3\nUN OCHA\tCC-BY-3.0-IGO\t3\nIPC Global Platform\tCC-BY-4.0\t2\nSana'a Monetary Authority\tPublic Domain\t2\nCentral Bank of Yemen - Aden\tPublic Domain\t2\nUNDP\tCC-BY-3.0-IGO\t2\nILO\tCC-BY-4.0\t2\nACAPS\tCC-BY-4.0\t2\nUNCTAD\tCC-BY-3.0-IGO\t2\nWorld Food Programme\tCC-BY-4.0\t2\nUNHCR\tCC-BY-4.0\t2\nIPC Projection\tCC-BY-4.0\t1\nUN OCHA FTS\tCC-BY-3.0-IGO\t1\nInternational Crisis Group\tpublic\t1\nIOM\tpublic\t1\nUN Population Division\tCC-BY-3.0-IGO\t1\nACAPS\tCC-BY-NC-4.0\t1\nEuropean Commission - DG ECHO\tpublic\t1\nOCHA FTS\tOpen Data\t1\n",
+  "stderr": "",
+  "execution_time_ms": 1763
+}
