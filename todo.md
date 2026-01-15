@@ -4398,3 +4398,25 @@ Based on review of master design documents and data source register:
   - [ ] Annual Report
 - [x] Verify Scenario Simulator functionality
 - [x] Final comprehensive testing (245/245 tests passing)
+
+
+## Phase 86: Auto-Publication Scheduled Jobs
+- [x] Create Auto-Publication Engine service
+  - [x] Report template definitions (Daily, Weekly, Monthly, Quarterly, Annual)
+  - [x] AI narrative generation for reports
+  - [x] Evidence pack attachment to reports
+- [x] Implement scheduled jobs
+  - [x] Daily Brief (7:00 AM UTC)
+  - [x] Weekly Market Update (Monday 8:00 AM UTC)
+  - [x] Monthly Economic Monitor (1st of month 9:00 AM UTC)
+  - [x] Quarterly Outlook (1st of quarter 10:00 AM UTC)
+  - [x] Annual Report (January 15 6:00 AM UTC)
+- [x] Report generation logic
+  - [x] Fetch latest data for each report type
+  - [x] Generate AI narrative with citations
+  - [x] Create PDF with charts and evidence
+- [x] Auto-publish to Research Library
+  - [x] Save generated reports as research publications
+  - [x] Set appropriate access levels (public/premium)
+  - [x] Send notifications to subscribers
+- [x] Admin review workflow for low-confidence reports

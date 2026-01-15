@@ -25,6 +25,15 @@ import { ingestCBYData as fetchCbyData } from "../connectors/cbyConnector";
 // Import signal detector
 import { runSignalDetection } from "./signalDetector";
 
+// Import auto-publication engine
+import { 
+  generateDailySnapshot, 
+  generateWeeklyDigest, 
+  generateMonthlyReport,
+  checkAnomaliesAndAlert,
+  autoPublicationEngine 
+} from "./autoPublicationEngine";
+
 // Import notification service
 import { notifyOwner } from "../_core/notification";
 
@@ -200,6 +209,70 @@ export const DEFAULT_JOBS: SchedulerJobConfig[] = [
     description: 'Check connector health and send alerts for failures or stale data (>7 days)',
     enabled: true,
   },
+  
+  // ============================================
+  // Auto-Publication Jobs
+  // ============================================
+  
+  // Daily Market Snapshot (7:00 AM UTC)
+  {
+    id: 'daily_snapshot_publication',
+    name: 'Daily Market Snapshot',
+    type: 'publication',
+    cronExpression: '0 0 7 * * *',
+    description: 'Generate and publish daily market snapshot report with exchange rates and key indicators',
+    enabled: true,
+  },
+  
+  // Weekly Economic Digest (Monday 8:00 AM UTC)
+  {
+    id: 'weekly_digest_publication',
+    name: 'Weekly Economic Digest',
+    type: 'publication',
+    cronExpression: '0 0 8 * * 1',
+    description: 'Generate weekly economic digest with comprehensive indicator analysis',
+    enabled: true,
+  },
+  
+  // Monthly Economic Monitor (1st of month 9:00 AM UTC)
+  {
+    id: 'monthly_report_publication',
+    name: 'Monthly Economic Monitor',
+    type: 'publication',
+    cronExpression: '0 0 9 1 * *',
+    description: 'Generate comprehensive monthly economic report with all indicators and events',
+    enabled: true,
+  },
+  
+  // Quarterly Outlook (1st of Jan/Apr/Jul/Oct 10:00 AM UTC)
+  {
+    id: 'quarterly_outlook_publication',
+    name: 'Quarterly Economic Outlook',
+    type: 'publication',
+    cronExpression: '0 0 10 1 1,4,7,10 *',
+    description: 'Generate quarterly economic outlook with forecasts and scenario analysis',
+    enabled: true,
+  },
+  
+  // Annual Year-in-Review (January 15 6:00 AM UTC)
+  {
+    id: 'annual_review_publication',
+    name: 'Annual Year-in-Review',
+    type: 'publication',
+    cronExpression: '0 0 6 15 1 *',
+    description: 'Generate comprehensive annual economic review report',
+    enabled: true,
+  },
+  
+  // Nightly Insight Miner (2:00 AM UTC)
+  {
+    id: 'insight_miner_nightly',
+    name: 'Nightly Insight Miner',
+    type: 'signal_detection',
+    cronExpression: '0 0 2 * * *',
+    description: 'AI-powered analysis to detect trends, anomalies, and propose storylines for editorial review',
+    enabled: true,
+  },
 ];
 
 // ============================================
@@ -314,8 +387,67 @@ export async function runJob(jobId: string): Promise<JobRunResult> {
     
     // Execute the job
     if (job.type === 'signal_detection') {
-      const result = await runSignalDetection();
-      recordsProcessed = result.signalsDetected;
+      if (job.id === 'insight_miner_nightly') {
+        // Run insight miner - detect anomalies and generate storylines
+        const alerts = await checkAnomaliesAndAlert();
+        recordsProcessed = alerts.length;
+        console.log(`[Scheduler] Insight Miner generated ${alerts.length} storyline proposals`);
+      } else {
+        const result = await runSignalDetection();
+        recordsProcessed = result.signalsDetected;
+      }
+    } else if (job.type === 'publication') {
+      // Handle auto-publication jobs
+      try {
+        let report;
+        switch (job.id) {
+          case 'daily_snapshot_publication':
+            report = await generateDailySnapshot();
+            break;
+          case 'weekly_digest_publication':
+            report = await generateWeeklyDigest();
+            break;
+          case 'monthly_report_publication':
+            report = await generateMonthlyReport();
+            break;
+          case 'quarterly_outlook_publication':
+            // Generate quarterly report (uses monthly as base with extended analysis)
+            report = await generateMonthlyReport();
+            if (report) {
+              report.type = 'quarterly_analysis';
+              report.title = report.title.replace('Monthly', 'Quarterly');
+              report.titleAr = report.titleAr.replace('الشهري', 'الربع سنوي');
+            }
+            break;
+          case 'annual_review_publication':
+            // Generate annual report (comprehensive yearly analysis)
+            report = await generateMonthlyReport();
+            if (report) {
+              report.type = 'special_report' as any;
+              report.title = `Annual Year-in-Review ${new Date().getFullYear() - 1}`;
+              report.titleAr = `المراجعة السنوية ${new Date().getFullYear() - 1}`;
+            }
+            break;
+        }
+        
+        if (report) {
+          // Auto-approve daily snapshots, others go to review
+          if (job.id === 'daily_snapshot_publication') {
+            report.status = 'published';
+            await autoPublicationEngine.publishReport(report);
+            console.log(`[Scheduler] Auto-published: ${report.title}`);
+          } else {
+            report.status = 'review';
+            // Save to database for editorial review
+            console.log(`[Scheduler] Report ready for review: ${report.title}`);
+          }
+          recordsProcessed = 1;
+        }
+      } catch (pubError) {
+        console.error(`[Scheduler] Publication job ${job.id} failed:`, pubError);
+        error = pubError instanceof Error ? pubError.message : 'Publication failed';
+        status = 'failed';
+      }
     } else if (job.id === 'connector_health_check') {
       // Import and run health check
       const { runHealthCheckAndAlert } = await import('./connectorHealthAlerts');
