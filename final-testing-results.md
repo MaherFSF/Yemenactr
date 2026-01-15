@@ -349,3 +349,36 @@ The Custom Report Builder wizard is fully functional with all 4 steps implemente
 
 ### Status: FULLY WORKING
 The Scenario Simulator provides comprehensive what-if analysis with ML-powered forecasting.
+
+
+---
+
+## 12. 2025 Auto-Reports Generation Test (Phase 88)
+**Date:** January 15, 2026
+
+### Reports Generated
+Successfully generated and inserted 17 YETO reports for 2025:
+
+**Monthly Economic Monitors (12 reports):**
+- January 2025 through December 2025
+- Each includes: exchange rates, inflation, fuel prices, humanitarian funding analysis
+- Bilingual (English/Arabic) titles and abstracts
+
+**Quarterly Economic Outlooks (4 reports):**
+- Q1 (Jan-Mar) 2025
+- Q2 (Apr-Jun) 2025
+- Q3 (Jul-Sep) 2025
+- Q4 (Oct-Dec) 2025
+- Each covers: macroeconomic trends, sectoral performance, humanitarian conditions, scenario projections
+
+**Annual Report (1 report):**
+- YETO Annual Year-in-Review 2025
+- Comprehensive analysis: GDP, inflation, exchange rates, trade, banking, humanitarian funding, conflict economy impacts
+
+### Verification
+- All 17 reports visible in Research Library
+- Total documents in library: 370
+- Reports appear with correct titles in both English and Arabic
+- Filters working correctly for year 2025
+
+### Status: ✅ PASSED

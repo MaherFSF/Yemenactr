@@ -1,0 +1,35 @@
+{
+  "query": "SELECT column_name, column_type, extra FROM information_schema.columns WHERE table_name = 'research_publications' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT column_name, column_type, extra FROM information_schema.columns WHERE table_name = 'research_publications' LIMIT 5;",
+  "rows": [
+    {
+      "column_name": "id",
+      "column_type": "int(11)",
+      "extra": "auto_increment"
+    },
+    {
+      "column_name": "title",
+      "column_type": "varchar(500)",
+      "extra": ""
+    },
+    {
+      "column_name": "titleAr",
+      "column_type": "varchar(500)",
+      "extra": ""
+    },
+    {
+      "column_name": "abstract",
+      "column_type": "text",
+      "extra": ""
+    },
+    {
+      "column_name": "abstractAr",
+      "column_type": "text",
+      "extra": ""
+    }
+  ],
+  "messages": [],
+  "stdout": "column_name\tcolumn_type\textra\nid\tint(11)\tauto_increment\ntitle\tvarchar(500)\t\ntitleAr\tvarchar(500)\t\nabstract\ttext\t\nabstractAr\ttext\t\n",
+  "stderr": "",
+  "execution_time_ms": 1699
+}

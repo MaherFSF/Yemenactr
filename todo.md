@@ -4452,3 +4452,21 @@ Based on review of master design documents and data source register:
 - [x] DISCOVERY_ENGINE.md - Wide search documentation
 - [x] INGESTION_ORCHESTRATION.md - News tracker and pipeline
 - [x] All 260 tests passing (up from 245)
+
+
+## Phase 88: 2025 Auto-Report Generation
+- [ ] Create report generation script for 2025 reports
+- [ ] Generate 12 Monthly Economic Monitors (Jan-Dec 2025)
+- [ ] Generate 4 Quarterly Outlooks (Q1-Q4 2025)
+- [ ] Generate 2025 Annual Year-in-Review report
+- [ ] Verify all reports saved to Research Library
+- [ ] Test report display in browser
+
+
+## Phase 88: 2025 Auto-Reports Generation (COMPLETED)
+- [x] Create report generation script for 2025 reports
+- [x] Generate 12 Monthly Economic Monitors (Jan-Dec 2025)
+- [x] Generate 4 Quarterly Outlooks (Q1-Q4 2025)
+- [x] Generate Annual Year-in-Review 2025
+- [x] Verify all 17 reports visible in Research Library (370 total documents)
+- [x] Test auto-publication workflow
