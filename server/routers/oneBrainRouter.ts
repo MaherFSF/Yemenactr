@@ -10,6 +10,7 @@ import {
   type UserRole,
   type QueryContext 
 } from '../ml/core/oneBrainDirective';
+import { getVisualIntelligence } from '../ml/core/visualIntelligence';
 
 export const oneBrainRouter = router({
   /**
@@ -40,7 +41,18 @@ export const oneBrainRouter = router({
 
       const response = await oneBrain.processQuery(input.query, context);
       
-      return response;
+      // Add visual intelligence if applicable
+      const visualEngine = getVisualIntelligence();
+      const visualization = visualEngine.determineVisualization(
+        input.query,
+        response.evidencePack || [],
+        input.language
+      );
+
+      return {
+        ...response,
+        visualization,
+      };
     }),
 
   /**

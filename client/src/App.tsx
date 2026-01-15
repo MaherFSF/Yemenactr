@@ -84,6 +84,7 @@ import ReportWorkflow from "./pages/admin/ReportWorkflow";
 import VisualizationBuilder from "./pages/admin/VisualizationBuilder";
 import InsightMiner from "./pages/admin/InsightMiner";
 import ExportBundle from "./pages/admin/ExportBundle";
+import Sitemap from "./pages/Sitemap";
 import GovernorDashboard from "./pages/GovernorDashboard";
 import DeputyGovernorDashboard from "./pages/DeputyGovernorDashboard";
 
@@ -177,6 +178,7 @@ function Router() {
       <Route path="/humanitarian-funding" component={HumanitarianFunding} />
       <Route path="/regional-zones" component={RegionalZones} />
       <Route path="/economic-actors" component={EconomicActors} />
+      <Route path="/sitemap" component={Sitemap} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

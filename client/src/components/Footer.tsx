@@ -31,6 +31,7 @@ export default function Footer() {
     { nameEn: "Contact Us", nameAr: "اتصل بنا", href: "/contact" },
     { nameEn: "Glossary", nameAr: "المصطلحات", href: "/glossary" },
     { nameEn: "Pricing", nameAr: "الاشتراكات", href: "/pricing" },
+    { nameEn: "Sitemap", nameAr: "خريطة الموقع", href: "/sitemap" },
   ];
 
   return (
