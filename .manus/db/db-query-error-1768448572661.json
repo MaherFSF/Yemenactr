@@ -1,0 +1,8 @@
+{
+  "query": "\nSELECT 'time_series' as tbl, COUNT(*) as cnt FROM time_series\nUNION ALL SELECT 'economic_events', COUNT(*) FROM economic_events\nUNION ALL SELECT 'documents', COUNT(*) FROM documents\nUNION ALL SELECT 'indicators', COUNT(*) FROM indicators\nUNION ALL SELECT 'scheduler_jobs', COUNT(*) FROM scheduler_jobs\nUNION ALL SELECT 'glossary_terms', COUNT(*) FROM glossary_terms\nUNION ALL SELECT 'timeline_events', COUNT(*) FROM timeline_events\nUNION ALL SELECT 'geographic_units', COUNT(*) FROM geographic_units\nUNION ALL SELECT 'users', COUNT(*) FROM users\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute \nSELECT 'time_series' as tbl, COUNT(*) as cnt FROM time_series\nUNION ALL SELECT 'economic_events', COUNT(*) FROM economic_events\nUNION ALL SELECT 'documents', COUNT(*) FROM documents\nUNION ALL SELECT 'indicators', COUNT(*) FROM indicators\nUNION ALL SELECT 'scheduler_jobs', COUNT(*) FROM scheduler_jobs\nUNION ALL SELECT 'glossary_terms', COUNT(*) FROM glossary_terms\nUNION ALL SELECT 'timeline_events', COUNT(*) FROM timeline_events\nUNION ALL SELECT 'geographic_units', COUNT(*) FROM geographic_units\nUNION ALL SELECT 'users', COUNT(*) FROM users\n",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1146 (42S02) at line 2: Table 'xodoykmzpdfikkvj3qftgk.timeline_events' doesn't exist"
+  ]
+}
