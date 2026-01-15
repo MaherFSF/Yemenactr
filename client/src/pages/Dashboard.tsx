@@ -6,6 +6,7 @@ import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
 import InsightsTicker from "@/components/InsightsTicker";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -15,9 +16,10 @@ import {
   AlertCircle,
   Eye,
   ChevronDown,
-  Info
+  Info,
+  RefreshCw
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, ComposedChart } from 'recharts';
 import { Link } from "wouter";
 import {
@@ -29,6 +31,7 @@ import {
 } from "@/components/ui/select";
 import { ExportButton } from "@/components/ExportButton";
 import { DataFilters, type FilterState } from "@/components/filters/DataFilters";
+import { trpc } from "@/lib/trpc";
 
 export default function Dashboard() {
   const { language } = useLanguage();
@@ -88,93 +91,162 @@ export default function Dashboard() {
       setGranularity(newFilters.granularity as 'annual' | 'quarterly' | 'monthly');
     }
   };
+
+  // ============================================
+  // DYNAMIC DATA QUERIES
+  // ============================================
   
-  // Real Yemen images from search results
-  const yemenImages = {
-    hero: "/images/yemen/sanaa-old-city.jpg",
-    trade: "/images/yemen/aden-port.jpg",
-    banking: "/images/yemen/currency-riyal.jpg",
-    humanitarian: "/images/yemen/humanitarian-aid.jpg",
-    agriculture: "/images/yemen/agriculture-terraces.jpg",
-    energy: "/images/yemen/oil-refinery.jpg",
-  };
+  // Fetch Hero KPIs from database
+  const { data: heroKPIs, isLoading: heroLoading, refetch: refetchHero } = trpc.dashboard.getHeroKPIs.useQuery();
+  
+  // Fetch GDP time series data
+  const { data: gdpTimeSeries, isLoading: gdpLoading } = trpc.sectors.getIndicatorTimeSeries.useQuery({
+    indicatorCodes: ['gdp_nominal', 'gdp_growth_annual'],
+    regimeTag: regimeTag === 'aden' ? 'aden_irg' : regimeTag === 'sanaa' ? 'sanaa_defacto' : 'both',
+    startYear: 2010,
+    endYear: 2026,
+  });
+  
+  // Fetch economic events/alerts
+  const { data: eventsData, isLoading: eventsLoading } = trpc.events.list.useQuery({
+    limit: 10,
+  });
+  
+  // Fetch latest exchange rates
+  const { data: fxData, isLoading: fxLoading } = trpc.sectors.getIndicatorTimeSeries.useQuery({
+    indicatorCodes: ['fx_rate_aden_parallel', 'fx_rate_sanaa'],
+    regimeTag: 'both',
+    startYear: 2024,
+    endYear: 2026,
+  });
 
-  // GDP Time Series Data (2010-2024) matching mockup
-  const gdpData = [
-    { year: "2010", aden: 50000, sanaa: 48000, unified: 49000 },
-    { year: "2011", aden: 45000, sanaa: 44000, unified: 44500 },
-    { year: "2012", aden: 52000, sanaa: 50000, unified: 51000 },
-    { year: "2013", aden: 55000, sanaa: 53000, unified: 54000 },
-    { year: "2014", aden: 58000, sanaa: 56000, unified: 57000 },
-    { year: "2015", aden: 40000, sanaa: 38000, unified: 39000 },
-    { year: "2016", aden: 35000, sanaa: 32000, unified: null },
-    { year: "2017", aden: 38000, sanaa: 35000, unified: null },
-    { year: "2018", aden: 42000, sanaa: 40000, unified: null },
-    { year: "2019", aden: 48000, sanaa: 45000, unified: null },
-    { year: "2020", aden: 52000, sanaa: 48000, unified: null },
-    { year: "2021", aden: 65000, sanaa: 55000, unified: null },
-    { year: "2022", aden: 78000, sanaa: 58000, unified: null },
-    { year: "2023", aden: 85000, sanaa: 60200, unified: null },
-    { year: "2024", aden: 92000, sanaa: 65000, unified: null },
-  ];
+  // Transform GDP data for chart
+  const gdpChartData = useMemo(() => {
+    if (!gdpTimeSeries || gdpTimeSeries.length === 0) {
+      // Return placeholder data while loading
+      return Array.from({ length: 15 }, (_, i) => ({
+        year: (2010 + i).toString(),
+        aden: null,
+        sanaa: null,
+        unified: i < 5 ? 50000 + i * 2000 : null,
+      }));
+    }
+    
+    // Group by year
+    const byYear: Record<string, { aden?: number; sanaa?: number; unified?: number }> = {};
+    
+    gdpTimeSeries.forEach((row: any) => {
+      const year = new Date(row.date).getFullYear().toString();
+      if (!byYear[year]) byYear[year] = {};
+      
+      const value = parseFloat(row.value);
+      if (row.regimeTag === 'aden_irg') {
+        byYear[year].aden = value;
+      } else if (row.regimeTag === 'sanaa_defacto') {
+        byYear[year].sanaa = value;
+      } else if (row.regimeTag === 'mixed') {
+        byYear[year].unified = value;
+      }
+    });
+    
+    // Convert to array sorted by year
+    return Object.entries(byYear)
+      .map(([year, values]) => ({ year, ...values }))
+      .sort((a, b) => parseInt(a.year) - parseInt(b.year));
+  }, [gdpTimeSeries]);
 
-  // Quick Stats matching mockup
-  const quickStats = [
-    {
-      labelEn: "Annual Inflation Rate (Aden)",
-      labelAr: "معدل التضخم السنوي (عدن)",
-      value: "25.0%",
-      trend: "up",
-      sparkline: [15, 18, 20, 22, 24, 25]
-    },
-    {
-      labelEn: "Annual Inflation Rate (Sana'a)",
-      labelAr: "معدل التضخم السنوي (صنعاء)",
-      value: "18.3%",
-      trend: "up",
-      sparkline: [12, 14, 15, 16, 17, 18.3]
-    },
-    {
-      labelEn: "Unemployment Rate",
-      labelAr: "نسبة البطالة",
-      value: "38.2%",
-      trend: "warning",
-      sparkline: [30, 32, 34, 35, 37, 38.2]
-    },
-  ];
+  // Transform events to alerts format
+  const alerts = useMemo(() => {
+    if (!eventsData || eventsData.length === 0) return [];
+    
+    return eventsData.slice(0, 5).map((event: any) => ({
+      type: event.impactLevel === 'high' ? 'error' : 'warning',
+      titleEn: event.titleEn,
+      titleAr: event.titleAr,
+      timeEn: new Date(event.eventDate).toLocaleDateString('en-US', { 
+        month: 'short', day: 'numeric', year: 'numeric' 
+      }),
+      timeAr: new Date(event.eventDate).toLocaleDateString('ar-SA', { 
+        month: 'short', day: 'numeric', year: 'numeric' 
+      }),
+    }));
+  }, [eventsData]);
 
-  // Alerts matching mockup
-  const alerts = [
-    {
-      type: "warning",
-      titleEn: "Important Update: Exchange rate change",
-      titleAr: "تحديث هام: تغيير في سعر الصرف",
-      timeEn: "Yesterday, 10:00 AM",
-      timeAr: "أمس، 10:00 ص"
-    },
-    {
-      type: "error",
-      titleEn: "Warning: Sharp decline in currency reserves",
-      titleAr: "تحذير: انخفاض حاد في احتياطيات العملة",
-      timeEn: "2 days ago, 3:30 PM",
-      timeAr: "قبل يومين، 3:30 م"
-    },
-  ];
+  // Quick stats from hero KPIs
+  const quickStats = useMemo(() => {
+    if (!heroKPIs) return [];
+    
+    return [
+      {
+        labelEn: "Annual Inflation Rate (Aden)",
+        labelAr: "معدل التضخم السنوي (عدن)",
+        value: heroKPIs.inflation?.value || "N/A",
+        trend: "up",
+        sparkline: Array.isArray(heroKPIs.inflation?.trend) ? heroKPIs.inflation.trend : [15, 18, 20, 22, 24, 25]
+      },
+      {
+        labelEn: "Exchange Rate (Aden)",
+        labelAr: "سعر الصرف (عدن)",
+        value: heroKPIs.exchangeRateAden?.value || "N/A",
+        trend: "up",
+        sparkline: heroKPIs.exchangeRateAden?.trend || [1500, 1550, 1600, 1620]
+      },
+      {
+        labelEn: "Foreign Reserves",
+        labelAr: "الاحتياطيات الأجنبية",
+        value: heroKPIs.foreignReserves?.value || "N/A",
+        trend: "warning",
+        sparkline: heroKPIs.foreignReserves?.trend || [1.5, 1.4, 1.3, 1.2]
+      },
+    ];
+  }, [heroKPIs]);
 
-  // Watchlist matching mockup
-  const watchlist = [
-    { labelEn: "USD Exchange Rate (Aden)", labelAr: "سعر صرف الدولار (عدن)", value: "1500 ريال" },
-    { labelEn: "Crude Oil Prices", labelAr: "أسعار النفط الخام", value: "82.3 دولار/برميل" },
-    { labelEn: "Consumer Price Index", labelAr: "مؤشر أسعار المستهلكين", value: "154.6 نقطة" },
-  ];
+  // Watchlist from latest data
+  const watchlist = useMemo(() => {
+    if (!heroKPIs) return [];
+    
+    return [
+      { 
+        labelEn: "USD Exchange Rate (Aden)", 
+        labelAr: "سعر صرف الدولار (عدن)", 
+        value: heroKPIs.exchangeRateAden?.value?.replace('1 USD = ', '') || "N/A"
+      },
+      { 
+        labelEn: "USD Exchange Rate (Sana'a)", 
+        labelAr: "سعر صرف الدولار (صنعاء)", 
+        value: heroKPIs.exchangeRateSanaa?.value?.replace('1 USD = ', '') || "N/A"
+      },
+      { 
+        labelEn: "IDPs (UNHCR)", 
+        labelAr: "النازحون داخلياً", 
+        value: heroKPIs.idps?.value || "N/A"
+      },
+    ];
+  }, [heroKPIs]);
 
-  // Data table matching mockup
-  const dataTable = [
-    { year: "2023", value: "85,000 مليار", regime: "عدن", source: "وزارة التخطيط - عدن", quality: "عالية" },
-    { year: "2023", value: "60,200 مليار", regime: "صنعاء", source: "البنك المركزي - صنعاء", quality: "متوسطة" },
-    { year: "2012", value: "30,500 مليار", regime: "عدن", source: "البنك المركزي - صنعاء", quality: "عالية" },
-    { year: "2018", value: "20,000 مليار", regime: "صنعاء", source: "البنك المركزي - صنعاء", quality: "عالية" },
-  ];
+  // Data table from time series
+  const dataTable = useMemo(() => {
+    if (!gdpTimeSeries || gdpTimeSeries.length === 0) return [];
+    
+    // Get latest records for each regime
+    const latestByRegime: Record<string, any> = {};
+    gdpTimeSeries.forEach((row: any) => {
+      const key = `${row.regimeTag}-${new Date(row.date).getFullYear()}`;
+      if (!latestByRegime[key] || new Date(row.date) > new Date(latestByRegime[key].date)) {
+        latestByRegime[key] = row;
+      }
+    });
+    
+    return Object.values(latestByRegime)
+      .slice(0, 4)
+      .map((row: any) => ({
+        year: new Date(row.date).getFullYear().toString(),
+        value: `${(parseFloat(row.value) / 1000).toFixed(1)} مليار`,
+        regime: row.regimeTag === 'aden_irg' ? 'عدن' : 'صنعاء',
+        source: row.sourceName || 'World Bank',
+        quality: row.confidenceRating === 'A' ? 'عالية' : row.confidenceRating === 'B' ? 'متوسطة' : 'منخفضة'
+      }));
+  }, [gdpTimeSeries]);
 
   // Simple sparkline component
   const MiniSparkline = ({ data, color = "#107040" }: { data: number[], color?: string }) => {
@@ -196,529 +268,369 @@ export default function Dashboard() {
     );
   };
 
+  // Loading skeleton for KPI cards
+  const KPISkeleton = () => (
+    <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+      <CardContent className="p-4">
+        <Skeleton className="h-4 w-32 mb-2" />
+        <Skeleton className="h-8 w-24 mb-2" />
+        <Skeleton className="h-3 w-20" />
+      </CardContent>
+    </Card>
+  );
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      {/* DEV Mode Banner */}
+      {/* Dev Mode Banner */}
       <DevModeBanner />
       
       {/* Insights Ticker */}
       <InsightsTicker />
       
       {/* Header */}
-      <div className="bg-white dark:bg-gray-900 border-b">
-        <div className="container py-6">
-          <div className={`${language === 'ar' ? 'text-right' : ''}`}>
-            <h1 className="text-2xl md:text-3xl font-bold text-[#103050] dark:text-white mb-2">
-              {language === "ar" ? "لوحة المؤشرات الاقتصادية" : "Economic Indicators Dashboard"}
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              {language === "ar" 
-                ? "بيانات موثقة ومحدثة عن الاقتصاد اليمني"
-                : "Verified and updated data on the Yemeni economy"}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Advanced Data Filters */}
-      <DataFilters 
-        filters={filters} 
-        onChange={handleFilterChange}
-      />
-
-      {/* Filters Bar - Matching mockup */}
-      <div className="bg-white dark:bg-gray-900 border-b py-4">
-        <div className="container">
-          <div className={`flex flex-wrap items-center gap-4 ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
-            {/* Indicator Selector */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {language === "ar" ? "اختر المؤشر" : "Select Indicator"}
-              </span>
-              <Select value={selectedIndicator} onValueChange={setSelectedIndicator}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="gdp">{language === "ar" ? "الناتج المحلي الإجمالي" : "GDP"}</SelectItem>
-                  <SelectItem value="inflation">{language === "ar" ? "التضخم" : "Inflation"}</SelectItem>
-                  <SelectItem value="fx">{language === "ar" ? "سعر الصرف" : "Exchange Rate"}</SelectItem>
-                  <SelectItem value="trade">{language === "ar" ? "الميزان التجاري" : "Trade Balance"}</SelectItem>
-                </SelectContent>
-              </Select>
+      <div className="bg-gradient-to-r from-[#103050] to-[#1a4a70] text-white py-6 px-4">
+        <div className="container mx-auto">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold">
+                {language === "ar" ? "لوحة المعلومات الاقتصادية" : "Economic Dashboard"}
+              </h1>
+              <p className="text-white/80 mt-1">
+                {language === "ar" 
+                  ? "مؤشرات اقتصادية شاملة لليمن - بيانات حية من قاعدة البيانات" 
+                  : "Comprehensive economic indicators for Yemen - Live data from database"}
+              </p>
             </div>
-
-            {/* Time Period */}
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {language === "ar" ? "الفترة الزمنية" : "Time Period"}
-              </span>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Calendar className="h-4 w-4" />
-                2024/11/20 - 2024/11/31
-                <ChevronDown className="h-4 w-4" />
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                onClick={() => refetchHero()}
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                {language === "ar" ? "تحديث" : "Refresh"}
               </Button>
+              <Badge variant="outline" className="bg-green-500/20 text-green-100 border-green-400/30">
+                {language === "ar" ? "بيانات حية" : "Live Data"}
+              </Badge>
+              {heroKPIs?.lastUpdated && (
+                <span className="text-xs text-white/60">
+                  {language === "ar" ? "آخر تحديث: " : "Last updated: "}
+                  {new Date(heroKPIs.lastUpdated).toLocaleTimeString()}
+                </span>
+              )}
             </div>
-
-            {/* Regime Toggle - Matching mockup exactly */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {language === "ar" ? "النظام" : "Regime"}
-              </span>
-              <div className="flex rounded-lg border overflow-hidden">
-                <button
-                  onClick={() => setRegimeTag("both")}
-                  className={`px-4 py-2 text-sm font-medium transition-colors ${
-                    regimeTag === "both" 
-                      ? "bg-[#103050] text-white" 
-                      : "bg-white text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  {language === "ar" ? "كلاهما" : "Both"}
-                </button>
-                <button
-                  onClick={() => setRegimeTag("sanaa")}
-                  className={`px-4 py-2 text-sm font-medium transition-colors border-x ${
-                    regimeTag === "sanaa" 
-                      ? "bg-[#103050] text-white" 
-                      : "bg-white text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  {language === "ar" ? "صنعاء" : "Sana'a"}
-                </button>
-                <button
-                  onClick={() => setRegimeTag("aden")}
-                  className={`px-4 py-2 text-sm font-medium transition-colors ${
-                    regimeTag === "aden" 
-                      ? "bg-[#103050] text-white" 
-                      : "bg-white text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  {language === "ar" ? "عدن" : "Aden"}
-                </button>
-              </div>
-            </div>
-
-            {/* Granularity */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {language === "ar" ? "التفصيل" : "Granularity"}
-              </span>
-              <div className="flex rounded-lg border overflow-hidden">
-                <button
-                  onClick={() => setGranularity("annual")}
-                  className={`px-3 py-2 text-sm font-medium transition-colors ${
-                    granularity === "annual" 
-                      ? "bg-[#103050] text-white" 
-                      : "bg-white text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  {language === "ar" ? "سنوي" : "Annual"}
-                </button>
-                <button
-                  onClick={() => setGranularity("quarterly")}
-                  className={`px-3 py-2 text-sm font-medium transition-colors border-x ${
-                    granularity === "quarterly" 
-                      ? "bg-[#103050] text-white" 
-                      : "bg-white text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  {language === "ar" ? "ربع سنوي" : "Quarterly"}
-                </button>
-                <button
-                  onClick={() => setGranularity("monthly")}
-                  className={`px-3 py-2 text-sm font-medium transition-colors ${
-                    granularity === "monthly" 
-                      ? "bg-[#103050] text-white" 
-                      : "bg-white text-gray-700 hover:bg-gray-100"
-                  }`}
-                >
-                  {language === "ar" ? "شهري" : "Monthly"}
-                </button>
-              </div>
-            </div>
-
-            {/* Export Button */}
-            <ExportButton 
-              data={gdpData.map(d => ({
-                year: d.year,
-                aden: d.aden,
-                sanaa: d.sanaa,
-                unified: d.unified
-              }))}
-              filename="yeto_economic_data"
-              title={language === "ar" ? "تصدير البيانات" : "Export Data"}
-              variant="default"
-              size="sm"
-            />
           </div>
         </div>
       </div>
 
-      {/* Main Content - 3 Column Layout matching mockup */}
-      <div className="container py-6">
-        <div className="grid lg:grid-cols-[280px_1fr_280px] gap-6">
-          
-          {/* Left Sidebar */}
-          <div className={`space-y-6 ${language === 'ar' ? 'lg:order-3' : ''}`}>
-            {/* Quick Stats */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">
-                  {language === "ar" ? "إحصائيات سريعة" : "Quick Stats"}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {quickStats.map((stat, index) => (
-                  <div key={index} className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="text-xs text-gray-500">
+      <div className="container mx-auto py-6 px-4">
+        {/* Filters */}
+        <div className="mb-6">
+          <DataFilters 
+            filters={filters} 
+            onChange={handleFilterChange}
+            compact={true}
+            showPresets={true}
+          />
+        </div>
+
+        {/* Quick Stats Row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {heroLoading ? (
+            <>
+              <KPISkeleton />
+              <KPISkeleton />
+              <KPISkeleton />
+            </>
+          ) : (
+            quickStats.map((stat, index) => (
+              <Card key={index} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+                <CardContent className="p-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         {language === "ar" ? stat.labelAr : stat.labelEn}
-                      </div>
-                      <ConfidenceBadge rating="C" size="sm" />
+                      </p>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                        {stat.value}
+                      </p>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        {stat.trend === "up" && <TrendingUp className="h-4 w-4 text-red-500" />}
-                        {stat.trend === "warning" && <AlertTriangle className="h-4 w-4 text-amber-500" />}
-                        <span className="font-bold text-[#103050] dark:text-white">{stat.value}</span>
-                      </div>
-                      <MiniSparkline data={stat.sparkline} color={stat.trend === "warning" ? "#F59E0B" : "#EF4444"} />
-                    </div>
-                    <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
-                      <EvidencePackButton 
-                        data={{
-                          indicatorId: `stat-${index}`,
-                          indicatorNameEn: stat.labelEn,
-                          indicatorNameAr: stat.labelAr,
-                          value: stat.value,
-                          unit: "",
-                          timestamp: new Date().toISOString(),
-                          confidence: "C",
-                          sources: [
-                            {
-                              id: "1",
-                              name: "Sample Data Source",
-                              nameAr: "مصدر بيانات عينة",
-                              type: "estimate",
-                              date: "2026-01-10",
-                              quality: "C"
-                            }
-                          ]
-                        }}
-                        variant="link"
-                        size="sm"
+                    <div className="flex flex-col items-end gap-1">
+                      {stat.trend === "up" && <TrendingUp className="h-5 w-5 text-red-500" />}
+                      {stat.trend === "down" && <TrendingDown className="h-5 w-5 text-green-500" />}
+                      {stat.trend === "warning" && <AlertTriangle className="h-5 w-5 text-amber-500" />}
+                      <MiniSparkline 
+                        data={stat.sparkline as number[]} 
+                        color={stat.trend === "up" ? "#ef4444" : stat.trend === "down" ? "#22c55e" : "#f59e0b"} 
                       />
                     </div>
                   </div>
-                ))}
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </div>
 
-            {/* Alerts */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">
-                  {language === "ar" ? "التنبيهات" : "Alerts"}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {alerts.map((alert, index) => (
-                  <div 
-                    key={index} 
-                    className={`p-3 rounded-lg border-l-4 ${
-                      alert.type === "warning" 
-                        ? "bg-amber-50 border-amber-500 dark:bg-amber-900/20" 
-                        : "bg-red-50 border-red-500 dark:bg-red-900/20"
-                    }`}
-                  >
-                    <div className="flex items-start gap-2">
-                      {alert.type === "warning" 
-                        ? <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5" />
-                        : <AlertCircle className="h-4 w-4 text-red-500 mt-0.5" />
-                      }
-                      <div>
-                        <div className="text-sm font-medium text-gray-800 dark:text-white">
-                          {language === "ar" ? alert.titleAr : alert.titleEn}
-                        </div>
-                        <div className="text-xs text-gray-500 mt-1">
-                          {language === "ar" ? alert.timeAr : alert.timeEn}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* Watchlist */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">
-                  {language === "ar" ? "قائمة المتابعة" : "Watchlist"}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {watchlist.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between py-2 border-b last:border-0">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      {language === "ar" ? item.labelAr : item.labelEn}
-                    </span>
-                    <span className="font-medium text-[#103050] dark:text-white">{item.value}</span>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* Data Source Info */}
-            <Card className="bg-gray-50 dark:bg-gray-800">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">
-                  {language === "ar" ? "مصدر البيانات" : "Data Source"}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                  {language === "ar" 
-                    ? "يتم جمع البيانات ومعالجتها من مصادر رسمية وغير رسمية متعددة في جميع أنحاء اليمن، بما في ذلك المؤسسات الحكومية، المنظمات الدولية، ومراكز الأبحاث المستقلة، مع تطبيق منهجية صارمة للتحقق والتوثيق."
-                    : "Data is collected and processed from multiple official and unofficial sources across Yemen, including government institutions, international organizations, and independent research centers, with rigorous verification methodology."}
-                </p>
-                <Button variant="link" className="text-[#107040] p-0 h-auto mt-2">
-                  {language === "ar" ? "عرض حزمة الأدلة" : "View Evidence Pack"}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Main Chart Area */}
-          <div className={`${language === 'ar' ? 'lg:order-2' : ''}`}>
-            <Card className="h-full">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle>
-                    {language === "ar" ? "الناتج المحلي الإجمالي 2010-2024" : "GDP 2010-2024"}
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* GDP Chart - 2 columns */}
+          <div className="lg:col-span-2">
+            <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+              <CardHeader className="pb-2">
+                <div className="flex justify-between items-center">
+                  <CardTitle className="text-lg">
+                    {language === "ar" ? "الناتج المحلي الإجمالي (2010-2026)" : "GDP Time Series (2010-2026)"}
                   </CardTitle>
-                  <div className="flex items-center gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-0.5 bg-[#107040]"></div>
-                      <span className="text-gray-600">{language === "ar" ? "نظام عدن" : "Aden Regime"}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-0.5 bg-[#103050] border-dashed border-t-2 border-[#103050]"></div>
-                      <span className="text-gray-600">{language === "ar" ? "نظام صنعاء" : "Sana'a Regime"}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-[#107040]/20 rounded"></div>
-                      <span className="text-gray-600">{language === "ar" ? "مجال الثقة (95%)" : "Confidence Band (95%)"}</span>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <Select value={regimeTag} onValueChange={(v) => setRegimeTag(v as any)}>
+                      <SelectTrigger className="w-32 h-8 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="both">{language === "ar" ? "الكل" : "All"}</SelectItem>
+                        <SelectItem value="aden">{language === "ar" ? "عدن" : "Aden"}</SelectItem>
+                        <SelectItem value="sanaa">{language === "ar" ? "صنعاء" : "Sana'a"}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <ConfidenceBadge rating="B" size="sm" />
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="h-[400px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <ComposedChart data={gdpData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                {gdpLoading ? (
+                  <div className="h-[300px] flex items-center justify-center">
+                    <RefreshCw className="h-8 w-8 animate-spin text-gray-400" />
+                  </div>
+                ) : (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <ComposedChart data={gdpChartData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                       <XAxis dataKey="year" tick={{ fontSize: 12 }} />
-                      <YAxis 
-                        tick={{ fontSize: 12 }} 
-                        tickFormatter={(value) => `${(value / 1000).toFixed(0)}K`}
-                        label={{ 
-                          value: language === "ar" ? "مليار ريال يمني" : "YER Billions", 
-                          angle: -90, 
-                          position: 'insideLeft',
-                          style: { fontSize: 12 }
-                        }}
-                      />
+                      <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => `${(v/1000).toFixed(0)}B`} />
                       <Tooltip 
-                        formatter={(value: number, name: string) => [
-                          `${(value / 1000).toFixed(1)}K ${language === "ar" ? "مليار ريال" : "Billion YER"}`,
-                          name === "aden" ? (language === "ar" ? "عدن" : "Aden") : (language === "ar" ? "صنعاء" : "Sana'a")
-                        ]}
-                        labelFormatter={(label) => `${language === "ar" ? "السنة:" : "Year:"} ${label}`}
-                        contentStyle={{ 
-                          backgroundColor: 'white', 
-                          border: '1px solid #E5E7EB',
-                          borderRadius: '8px',
-                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                        }}
+                        formatter={(value: any) => value ? `$${(value/1000).toFixed(1)}B` : 'N/A'}
+                        labelFormatter={(label) => `Year: ${label}`}
                       />
                       <Legend />
-                      
-                      {/* Confidence band for Aden */}
-                      <Area 
-                        type="monotone" 
-                        dataKey="aden" 
-                        fill="#107040" 
-                        fillOpacity={0.1} 
-                        stroke="none"
-                      />
-                      
-                      {/* Aden line */}
                       {(regimeTag === "both" || regimeTag === "aden") && (
                         <Line 
                           type="monotone" 
                           dataKey="aden" 
+                          name={language === "ar" ? "عدن (IRG)" : "Aden (IRG)"} 
                           stroke="#107040" 
                           strokeWidth={2}
-                          dot={{ fill: "#107040", strokeWidth: 2, r: 4 }}
-                          activeDot={{ r: 6, fill: "#107040" }}
-                          name={language === "ar" ? "عدن" : "Aden"}
+                          dot={{ r: 3 }}
+                          connectNulls
                         />
                       )}
-                      
-                      {/* Sana'a line */}
                       {(regimeTag === "both" || regimeTag === "sanaa") && (
                         <Line 
                           type="monotone" 
                           dataKey="sanaa" 
-                          stroke="#103050" 
+                          name={language === "ar" ? "صنعاء (DFA)" : "Sana'a (DFA)"} 
+                          stroke="#C0A030" 
                           strokeWidth={2}
-                          strokeDasharray="5 5"
-                          dot={{ fill: "#103050", strokeWidth: 2, r: 4 }}
-                          activeDot={{ r: 6, fill: "#103050" }}
-                          name={language === "ar" ? "صنعاء" : "Sana'a"}
+                          dot={{ r: 3 }}
+                          connectNulls
                         />
                       )}
+                      <Line 
+                        type="monotone" 
+                        dataKey="unified" 
+                        name={language === "ar" ? "موحد (قبل 2015)" : "Unified (Pre-2015)"} 
+                        stroke="#103050" 
+                        strokeWidth={2}
+                        strokeDasharray="5 5"
+                        dot={{ r: 3 }}
+                        connectNulls
+                      />
                     </ComposedChart>
                   </ResponsiveContainer>
+                )}
+                <div className="flex justify-between items-center mt-4 text-xs text-gray-500">
+                  <span>
+                    {language === "ar" ? "المصدر: البنك الدولي، البنك المركزي اليمني" : "Source: World Bank, CBY"}
+                  </span>
+                  <ExportButton 
+                    data={gdpChartData}
+                    filename="yemen-gdp-data"
+                    title="GDP Time Series"
+                  />
                 </div>
+              </CardContent>
+            </Card>
+          </div>
 
-                {/* Data Table */}
-                <div className="mt-6 border rounded-lg overflow-hidden">
-                  <table className="w-full text-sm">
-                    <thead className="bg-gray-50 dark:bg-gray-800">
-                      <tr>
-                        <th className="px-4 py-3 text-right font-medium text-gray-600 dark:text-gray-400">
-                          {language === "ar" ? "السنة" : "Year"}
-                        </th>
-                        <th className="px-4 py-3 text-right font-medium text-gray-600 dark:text-gray-400">
-                          {language === "ar" ? "القيمة" : "Value"}
-                        </th>
-                        <th className="px-4 py-3 text-right font-medium text-gray-600 dark:text-gray-400">
-                          {language === "ar" ? "النظام" : "Regime"}
-                        </th>
-                        <th className="px-4 py-3 text-right font-medium text-gray-600 dark:text-gray-400">
-                          {language === "ar" ? "المصدر" : "Source"}
-                        </th>
-                        <th className="px-4 py-3 text-right font-medium text-gray-600 dark:text-gray-400">
-                          {language === "ar" ? "جودة البيانات" : "Data Quality"}
-                        </th>
+          {/* Sidebar - Alerts & Watchlist */}
+          <div className="space-y-6">
+            {/* Alerts */}
+            <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5 text-amber-500" />
+                  {language === "ar" ? "التنبيهات" : "Alerts"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {eventsLoading ? (
+                  <div className="space-y-3">
+                    <Skeleton className="h-16 w-full" />
+                    <Skeleton className="h-16 w-full" />
+                  </div>
+                ) : alerts.length === 0 ? (
+                  <p className="text-sm text-gray-500 text-center py-4">
+                    {language === "ar" ? "لا توجد تنبيهات حالية" : "No current alerts"}
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {alerts.map((alert: any, index: number) => (
+                      <div 
+                        key={index} 
+                        className={`p-3 rounded-lg border ${
+                          alert.type === 'error' 
+                            ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' 
+                            : 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'
+                        }`}
+                      >
+                        <div className="flex items-start gap-2">
+                          {alert.type === 'error' ? (
+                            <AlertTriangle className="h-4 w-4 text-red-500 mt-0.5" />
+                          ) : (
+                            <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5" />
+                          )}
+                          <div>
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                              {language === "ar" ? alert.titleAr : alert.titleEn}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {language === "ar" ? alert.timeAr : alert.timeEn}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Watchlist */}
+            <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Eye className="h-5 w-5 text-blue-500" />
+                  {language === "ar" ? "قائمة المراقبة" : "Watchlist"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {heroLoading ? (
+                  <div className="space-y-3">
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {watchlist.map((item, index) => (
+                      <div key={index} className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          {language === "ar" ? item.labelAr : item.labelEn}
+                        </span>
+                        <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                          {item.value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Data Table */}
+        <Card className="mt-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+          <CardHeader className="pb-2">
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-lg">
+                {language === "ar" ? "بيانات الناتج المحلي الإجمالي" : "GDP Data Table"}
+              </CardTitle>
+              <ExportButton 
+                data={dataTable}
+                filename="yemen-gdp-table"
+                title="GDP Data"
+              />
+            </div>
+          </CardHeader>
+          <CardContent>
+            {gdpLoading ? (
+              <div className="space-y-2">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-200 dark:border-gray-700">
+                      <th className="text-right py-3 px-4 font-medium text-gray-500">
+                        {language === "ar" ? "السنة" : "Year"}
+                      </th>
+                      <th className="text-right py-3 px-4 font-medium text-gray-500">
+                        {language === "ar" ? "القيمة" : "Value"}
+                      </th>
+                      <th className="text-right py-3 px-4 font-medium text-gray-500">
+                        {language === "ar" ? "المنطقة" : "Region"}
+                      </th>
+                      <th className="text-right py-3 px-4 font-medium text-gray-500">
+                        {language === "ar" ? "المصدر" : "Source"}
+                      </th>
+                      <th className="text-right py-3 px-4 font-medium text-gray-500">
+                        {language === "ar" ? "الجودة" : "Quality"}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dataTable.map((row, index) => (
+                      <tr key={index} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                        <td className="py-3 px-4">{row.year}</td>
+                        <td className="py-3 px-4 font-medium">{row.value}</td>
+                        <td className="py-3 px-4">
+                          <Badge variant="outline" className={
+                            row.regime === 'عدن' 
+                              ? 'bg-green-50 text-green-700 border-green-200' 
+                              : 'bg-amber-50 text-amber-700 border-amber-200'
+                          }>
+                            {row.regime}
+                          </Badge>
+                        </td>
+                        <td className="py-3 px-4 text-gray-500">{row.source}</td>
+                        <td className="py-3 px-4">
+                          <Badge variant="outline" className={
+                            row.quality === 'عالية' 
+                              ? 'bg-green-50 text-green-700 border-green-200' 
+                              : row.quality === 'متوسطة'
+                              ? 'bg-amber-50 text-amber-700 border-amber-200'
+                              : 'bg-red-50 text-red-700 border-red-200'
+                          }>
+                            {row.quality}
+                          </Badge>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody className="divide-y">
-                      {dataTable.map((row, index) => (
-                        <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-800">
-                          <td className="px-4 py-3 text-right">{row.year}</td>
-                          <td className="px-4 py-3 text-right font-medium">{row.value}</td>
-                          <td className="px-4 py-3 text-right">
-                            <Badge variant="outline" className={
-                              row.regime === "عدن" 
-                                ? "bg-green-50 text-green-700 border-green-200" 
-                                : "bg-blue-50 text-blue-700 border-blue-200"
-                            }>
-                              {row.regime}
-                            </Badge>
-                          </td>
-                          <td className="px-4 py-3 text-right text-gray-600">{row.source}</td>
-                          <td className="px-4 py-3 text-right">
-                            <Badge variant="outline" className={
-                              row.quality === "عالية" 
-                                ? "bg-green-50 text-green-700 border-green-200" 
-                                : "bg-amber-50 text-amber-700 border-amber-200"
-                            }>
-                              {row.quality}
-                            </Badge>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
-          {/* Right Sidebar - Empty for now, can add more widgets */}
-          <div className={`space-y-6 ${language === 'ar' ? 'lg:order-1' : ''}`}>
-            {/* Sector Quick Links */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">
-                  {language === "ar" ? "القطاعات" : "Sectors"}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {[
-                  { nameEn: "Banking & Finance", nameAr: "القطاع المصرفي", href: "/sectors/banking" },
-                  { nameEn: "Trade & Commerce", nameAr: "التجارة", href: "/sectors/trade" },
-                  { nameEn: "Energy & Fuel", nameAr: "الطاقة والوقود", href: "/sectors/energy" },
-                  { nameEn: "Food Security", nameAr: "الأمن الغذائي", href: "/sectors/food-security" },
-                  { nameEn: "Aid Flows", nameAr: "تدفقات المساعدات", href: "/sectors/aid-flows" },
-                ].map((sector, index) => (
-                  <Link key={index} href={sector.href}>
-                    <Button variant="ghost" className="w-full justify-start text-sm hover:bg-gray-100">
-                      {language === "ar" ? sector.nameAr : sector.nameEn}
-                    </Button>
-                  </Link>
-                ))}
-                <Link href="/sectors">
-                  <Button variant="link" className="text-[#107040] w-full justify-start">
-                    {language === "ar" ? "عرض جميع القطاعات" : "View All Sectors"}
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            {/* Tools Quick Links */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">
-                  {language === "ar" ? "الأدوات" : "Tools"}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <Link href="/ai-assistant">
-                  <Button variant="outline" className="w-full justify-start text-sm gap-2">
-                    <Eye className="h-4 w-4" />
-                    {language === "ar" ? "المساعد الذكي" : "AI Assistant"}
-                  </Button>
-                </Link>
-                <Link href="/scenario-simulator">
-                  <Button variant="outline" className="w-full justify-start text-sm gap-2">
-                    <TrendingUp className="h-4 w-4" />
-                    {language === "ar" ? "محاكي السيناريوهات" : "Scenario Simulator"}
-                  </Button>
-                </Link>
-                <Link href="/report-builder">
-                  <Button variant="outline" className="w-full justify-start text-sm gap-2">
-                    <Download className="h-4 w-4" />
-                    {language === "ar" ? "منشئ التقارير" : "Report Builder"}
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            {/* Help Card */}
-            <Card className="bg-[#103050] text-white">
-              <CardContent className="pt-6">
-                <Info className="h-8 w-8 mb-3 text-[#C0A030]" />
-                <h3 className="font-semibold mb-2">
-                  {language === "ar" ? "هل تحتاج مساعدة؟" : "Need Help?"}
-                </h3>
-                <p className="text-sm text-white/80 mb-4">
-                  {language === "ar" 
-                    ? "اسأل المساعد الذكي أي سؤال عن الاقتصاد اليمني"
-                    : "Ask our AI assistant any question about Yemen's economy"}
-                </p>
-                <Link href="/ai-assistant">
-                  <Button size="sm" className="bg-[#107040] hover:bg-[#0D5A34] text-white w-full">
-                    {language === "ar" ? "اسأل الآن" : "Ask Now"}
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          </div>
+        {/* Confidence Rating Legend */}
+        <div className="mt-6">
+          <ConfidenceRatingLegend />
         </div>
       </div>
     </div>

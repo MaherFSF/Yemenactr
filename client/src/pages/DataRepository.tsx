@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   Select,
   SelectContent,
@@ -25,8 +26,28 @@ import {
   CheckCircle2,
   AlertCircle,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  RefreshCw
 } from "lucide-react";
+
+// Dataset type from API
+interface Dataset {
+  id: number;
+  code: string;
+  titleEn: string;
+  titleAr: string;
+  sector: string;
+  descriptionEn?: string;
+  descriptionAr?: string;
+  dataPoints: number;
+  lastUpdated: string | null;
+  confidence: string;
+  regime: string;
+  source: string;
+  sourceAr: string;
+  unit?: string;
+  frequency?: string;
+}
 
 export default function DataRepository() {
   const { language } = useLanguage();
@@ -36,44 +57,41 @@ export default function DataRepository() {
   const [selectedConfidence, setSelectedConfidence] = useState("all");
   const [showFilters, setShowFilters] = useState(true);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
-  const [selectedDataset, setSelectedDataset] = useState<typeof datasets[0] | null>(null);
+  const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
+
+  // Fetch datasets from database
+  const { data: datasets, isLoading, refetch } = trpc.datasets.list.useQuery({
+    sector: selectedSector === "all" ? undefined : selectedSector,
+    regime: selectedRegime === "all" ? undefined : selectedRegime as "aden_irg" | "sanaa_defacto" | "both",
+    confidence: selectedConfidence === "all" ? undefined : (selectedConfidence === "high" ? "A" : selectedConfidence === "medium" ? "B" : "C") as "A" | "B" | "C" | "D",
+    search: searchQuery || undefined,
+    limit: 50,
+  });
+
+  // Fetch data for selected dataset
+  const { data: datasetData, isLoading: dataLoading } = trpc.datasets.getData.useQuery({
+    indicatorCode: selectedDataset?.code || "",
+    limit: 100,
+  }, {
+    enabled: !!selectedDataset?.code,
+  });
+
   // Download dataset as CSV
-  const handleDownload = (dataset: typeof datasets[0], format: 'csv' | 'json' = 'csv') => {
-    // Generate sample data based on dataset
-    const sampleData = generateSampleData(dataset);
+  const handleDownload = (dataset: Dataset, format: 'csv' | 'json' = 'csv') => {
+    if (!datasetData || datasetData.length === 0) {
+      alert(language === 'ar' ? 'لا توجد بيانات للتحميل' : 'No data available to download');
+      return;
+    }
     
     if (format === 'csv') {
-      const csvContent = convertToCSV(sampleData);
+      const csvContent = convertToCSV(datasetData);
       downloadFile(csvContent, `${dataset.titleEn.replace(/\s+/g, '_')}.csv`, 'text/csv');
     } else {
-      const jsonContent = JSON.stringify(sampleData, null, 2);
+      const jsonContent = JSON.stringify(datasetData, null, 2);
       downloadFile(jsonContent, `${dataset.titleEn.replace(/\s+/g, '_')}.json`, 'application/json');
     }
     
-    // Show success message
     alert(language === 'ar' ? `تم تحميل ${dataset.titleAr} بنجاح` : `${dataset.titleEn} downloaded successfully`);
-  };
-
-  // Generate sample data for a dataset
-  const generateSampleData = (dataset: typeof datasets[0]) => {
-    const data = [];
-    const startYear = 2020;
-    const endYear = 2026;
-    
-    for (let year = startYear; year <= endYear; year++) {
-      for (let month = 1; month <= 12; month++) {
-        if (year === 2026 && month > 1) break;
-        data.push({
-          date: `${year}-${month.toString().padStart(2, '0')}-01`,
-          value: Math.round(Math.random() * 100 * 100) / 100,
-          indicator: dataset.titleEn,
-          source: dataset.source,
-          regime: dataset.regime,
-          confidence: dataset.confidence,
-        });
-      }
-    }
-    return data;
   };
 
   // Convert data to CSV format
@@ -98,102 +116,27 @@ export default function DataRepository() {
   };
 
   // View dataset preview
-  const handleView = (dataset: typeof datasets[0]) => {
+  const handleView = (dataset: Dataset) => {
     setSelectedDataset(dataset);
     setViewDialogOpen(true);
   };
 
-  // Sample data (will be replaced with tRPC queries)
-  const datasets = [
-    {
-      id: 1,
-      titleEn: "Commercial Banks Liquidity Ratios",
-      titleAr: "نسب السيولة للبنوك التجارية",
-      sector: "banking",
-      regime: "aden",
-      dataPoints: 156,
-      lastUpdated: "2026-01-02",
-      confidence: "high",
-      source: "Central Bank of Aden",
-      sourceAr: "البنك المركزي في عدن"
-    },
-    {
-      id: 2,
-      titleEn: "Import/Export Trade Volumes",
-      titleAr: "أحجام التجارة الاستيراد والتصدير",
-      sector: "trade",
-      regime: "both",
-      dataPoints: 324,
-      lastUpdated: "2025-12-31",
-      confidence: "high",
-      source: "Yemen Customs Authority",
-      sourceAr: "هيئة الجمارك اليمنية"
-    },
-    {
-      id: 3,
-      titleEn: "Poverty Rate by Governorate",
-      titleAr: "معدل الفقر حسب المحافظة",
-      sector: "poverty",
-      regime: "both",
-      dataPoints: 88,
-      lastUpdated: "2025-12-28",
-      confidence: "medium",
-      source: "World Bank / UNICEF",
-      sourceAr: "البنك الدولي / اليونيسف"
-    },
-    {
-      id: 4,
-      titleEn: "Banking Sector NPL Ratios",
-      titleAr: "نسب القروض المتعثرة في القطاع المصرفي",
-      sector: "banking",
-      regime: "sanaa",
-      dataPoints: 92,
-      lastUpdated: "2025-12-23",
-      confidence: "medium",
-      source: "Central Bank of Yemen (Sana'a)",
-      sourceAr: "البنك المركزي اليمني (صنعاء)"
-    },
-    {
-      id: 5,
-      titleEn: "Humanitarian Aid Distribution",
-      titleAr: "توزيع المساعدات الإنسانية",
-      sector: "poverty",
-      regime: "both",
-      dataPoints: 245,
-      lastUpdated: "2026-01-04",
-      confidence: "high",
-      source: "UN OCHA",
-      sourceAr: "مكتب الأمم المتحدة لتنسيق الشؤون الإنسانية"
-    },
-    {
-      id: 6,
-      titleEn: "Port Operations Statistics",
-      titleAr: "إحصائيات عمليات الموانئ",
-      sector: "trade",
-      regime: "aden",
-      dataPoints: 178,
-      lastUpdated: "2026-01-01",
-      confidence: "high",
-      source: "Aden Port Authority",
-      sourceAr: "هيئة ميناء عدن"
-    },
-  ];
-
-  const filteredDatasets = datasets.filter(dataset => {
-    const matchesSearch = searchQuery === "" || 
-      (language === "ar" ? dataset.titleAr : dataset.titleEn).toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesSector = selectedSector === "all" || dataset.sector === selectedSector;
-    const matchesRegime = selectedRegime === "all" || dataset.regime === selectedRegime || dataset.regime === "both";
-    const matchesConfidence = selectedConfidence === "all" || dataset.confidence === selectedConfidence;
+  // Filter datasets by search query (client-side for instant feedback)
+  const filteredDatasets = useMemo(() => {
+    if (!datasets) return [];
     
-    return matchesSearch && matchesSector && matchesRegime && matchesConfidence;
-  });
+    return datasets.filter((dataset: Dataset) => {
+      const matchesSearch = searchQuery === "" || 
+        (language === "ar" ? dataset.titleAr : dataset.titleEn).toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesSearch;
+    });
+  }, [datasets, searchQuery, language]);
 
   const getConfidenceBadge = (confidence: string) => {
     if (confidence === "high") {
-      return <Badge variant="default" className="gap-1"><CheckCircle2 className="h-3 w-3" /> {language === "ar" ? "عالية" : "High"}</Badge>;
+      return <Badge variant="default" className="gap-1 bg-green-600"><CheckCircle2 className="h-3 w-3" /> {language === "ar" ? "عالية" : "High"}</Badge>;
     } else if (confidence === "medium") {
-      return <Badge variant="secondary" className="gap-1"><AlertCircle className="h-3 w-3" /> {language === "ar" ? "متوسطة" : "Medium"}</Badge>;
+      return <Badge variant="secondary" className="gap-1 bg-amber-500"><AlertCircle className="h-3 w-3" /> {language === "ar" ? "متوسطة" : "Medium"}</Badge>;
     } else {
       return <Badge variant="outline" className="gap-1"><AlertCircle className="h-3 w-3" /> {language === "ar" ? "منخفضة" : "Low"}</Badge>;
     }
@@ -201,13 +144,36 @@ export default function DataRepository() {
 
   const getRegimeBadge = (regime: string) => {
     if (regime === "aden") {
-      return <Badge variant="default">Aden</Badge>;
+      return <Badge variant="default" className="bg-[#107040]">Aden (IRG)</Badge>;
     } else if (regime === "sanaa") {
-      return <Badge variant="secondary">Sana'a</Badge>;
+      return <Badge variant="secondary" className="bg-[#C0A030]">Sana'a (DFA)</Badge>;
     } else {
       return <Badge variant="outline">{language === "ar" ? "كلاهما" : "Both"}</Badge>;
     }
   };
+
+  // Loading skeleton
+  const DatasetSkeleton = () => (
+    <Card className="animate-pulse">
+      <CardHeader>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1">
+            <Skeleton className="h-6 w-3/4 mb-2" />
+            <div className="flex gap-2 mb-3">
+              <Skeleton className="h-5 w-16" />
+              <Skeleton className="h-5 w-16" />
+              <Skeleton className="h-5 w-24" />
+            </div>
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+          <div className="flex gap-2">
+            <Skeleton className="h-8 w-16" />
+            <Skeleton className="h-8 w-24" />
+          </div>
+        </div>
+      </CardHeader>
+    </Card>
+  );
 
   return (
     <div className="flex flex-col">
@@ -222,6 +188,9 @@ export default function DataRepository() {
               <Badge variant="outline" className="text-sm">
                 {language === "ar" ? "مستودع البيانات" : "Data Repository"}
               </Badge>
+              <Badge variant="default" className="bg-green-600 text-sm">
+                {language === "ar" ? "بيانات حية" : "Live Data"}
+              </Badge>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               {language === "ar" 
@@ -233,6 +202,16 @@ export default function DataRepository() {
                 ? "استكشف وقم بتنزيل مجموعات البيانات الاقتصادية الموثقة مع تتبع كامل للمصادر وتقييمات الثقة"
                 : "Explore and download verified economic datasets with complete source attribution and confidence ratings"}
             </p>
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <Database className="h-4 w-4" />
+                {datasets?.length || 0} {language === "ar" ? "مجموعة بيانات" : "datasets"}
+              </span>
+              <span className="flex items-center gap-1">
+                <TrendingUp className="h-4 w-4" />
+                {datasets?.reduce((sum: number, d: Dataset) => sum + d.dataPoints, 0) || 0} {language === "ar" ? "نقطة بيانات" : "data points"}
+              </span>
+            </div>
           </div>
         </div>
       </section>
@@ -246,15 +225,26 @@ export default function DataRepository() {
                 <Search className="h-5 w-5" />
                 {language === "ar" ? "البحث والتصفية" : "Search & Filter"}
               </CardTitle>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => setShowFilters(!showFilters)}
-                className="gap-2"
-              >
-                <Filter className="h-4 w-4" />
-                {showFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => refetch()}
+                  className="gap-2"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  {language === "ar" ? "تحديث" : "Refresh"}
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="gap-2"
+                >
+                  <Filter className="h-4 w-4" />
+                  {showFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                </Button>
+              </div>
             </div>
           </CardHeader>
           <CardContent>
@@ -286,7 +276,10 @@ export default function DataRepository() {
                       <SelectItem value="all">{language === "ar" ? "جميع القطاعات" : "All Sectors"}</SelectItem>
                       <SelectItem value="banking">{language === "ar" ? "المصرفي والمالي" : "Banking & Finance"}</SelectItem>
                       <SelectItem value="trade">{language === "ar" ? "التجارة" : "Trade & Commerce"}</SelectItem>
-                      <SelectItem value="poverty">{language === "ar" ? "الفقر والتنمية" : "Poverty & Development"}</SelectItem>
+                      <SelectItem value="monetary">{language === "ar" ? "السياسة النقدية" : "Monetary Policy"}</SelectItem>
+                      <SelectItem value="fiscal">{language === "ar" ? "السياسة المالية" : "Fiscal Policy"}</SelectItem>
+                      <SelectItem value="humanitarian">{language === "ar" ? "الإنسانية" : "Humanitarian"}</SelectItem>
+                      <SelectItem value="food_security">{language === "ar" ? "الأمن الغذائي" : "Food Security"}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -301,8 +294,8 @@ export default function DataRepository() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{language === "ar" ? "جميع الأنظمة" : "All Regimes"}</SelectItem>
-                      <SelectItem value="aden">Aden</SelectItem>
-                      <SelectItem value="sanaa">Sana'a</SelectItem>
+                      <SelectItem value="aden_irg">Aden (IRG)</SelectItem>
+                      <SelectItem value="sanaa_defacto">Sana'a (DFA)</SelectItem>
                       <SelectItem value="both">{language === "ar" ? "كلاهما" : "Both"}</SelectItem>
                     </SelectContent>
                   </Select>
@@ -318,9 +311,9 @@ export default function DataRepository() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{language === "ar" ? "جميع المستويات" : "All Levels"}</SelectItem>
-                      <SelectItem value="high">{language === "ar" ? "عالية" : "High"}</SelectItem>
-                      <SelectItem value="medium">{language === "ar" ? "متوسطة" : "Medium"}</SelectItem>
-                      <SelectItem value="low">{language === "ar" ? "منخفضة" : "Low"}</SelectItem>
+                      <SelectItem value="high">{language === "ar" ? "عالية (A)" : "High (A)"}</SelectItem>
+                      <SelectItem value="medium">{language === "ar" ? "متوسطة (B)" : "Medium (B)"}</SelectItem>
+                      <SelectItem value="low">{language === "ar" ? "منخفضة (C/D)" : "Low (C/D)"}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -332,9 +325,13 @@ export default function DataRepository() {
         {/* Results Summary */}
         <div className="flex items-center justify-between mb-6">
           <div className="text-sm text-muted-foreground">
-            {language === "ar" 
-              ? `عرض ${filteredDatasets.length} من ${datasets.length} مجموعة بيانات`
-              : `Showing ${filteredDatasets.length} of ${datasets.length} datasets`}
+            {isLoading ? (
+              <Skeleton className="h-4 w-48" />
+            ) : (
+              language === "ar" 
+                ? `عرض ${filteredDatasets.length} مجموعة بيانات`
+                : `Showing ${filteredDatasets.length} datasets`
+            )}
           </div>
           <Button variant="outline" size="sm" className="gap-2">
             <Download className="h-4 w-4" />
@@ -344,69 +341,87 @@ export default function DataRepository() {
 
         {/* Datasets Grid */}
         <div className="grid gap-6">
-          {filteredDatasets.map((dataset) => (
-            <Card key={dataset.id} className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <CardTitle className="text-xl mb-2">
-                      {language === "ar" ? dataset.titleAr : dataset.titleEn}
-                    </CardTitle>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {getRegimeBadge(dataset.regime)}
-                      {getConfidenceBadge(dataset.confidence)}
-                      <Badge variant="outline" className="gap-1">
-                        <Database className="h-3 w-3" />
-                        {dataset.dataPoints} {language === "ar" ? "نقطة بيانات" : "data points"}
-                      </Badge>
-                    </div>
-                    <CardDescription className="flex items-center gap-4 text-sm">
-                      <span className="flex items-center gap-1">
-                        <FileText className="h-3 w-3" />
-                        {language === "ar" ? dataset.sourceAr : dataset.source}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {language === "ar" ? "آخر تحديث:" : "Updated:"} {dataset.lastUpdated}
-                      </span>
-                    </CardDescription>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="gap-2" onClick={() => handleView(dataset)}>
-                      <TrendingUp className="h-4 w-4" />
-                      {language === "ar" ? "عرض" : "View"}
-                    </Button>
-                    <Button size="sm" className="gap-2" onClick={() => handleDownload(dataset, 'csv')}>
-                      <Download className="h-4 w-4" />
-                      {language === "ar" ? "تحميل CSV" : "Download CSV"}
-                    </Button>
-                    <Button variant="outline" size="sm" className="gap-2" onClick={() => handleDownload(dataset, 'json')}>
-                      <Download className="h-4 w-4" />
-                      JSON
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
+          {isLoading ? (
+            <>
+              <DatasetSkeleton />
+              <DatasetSkeleton />
+              <DatasetSkeleton />
+            </>
+          ) : filteredDatasets.length === 0 ? (
+            <Card className="p-12">
+              <div className="text-center">
+                <Database className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">
+                  {language === "ar" ? "لم يتم العثور على نتائج" : "No Results Found"}
+                </h3>
+                <p className="text-muted-foreground">
+                  {language === "ar"
+                    ? "حاول تعديل معايير البحث أو التصفية"
+                    : "Try adjusting your search or filter criteria"}
+                </p>
+              </div>
             </Card>
-          ))}
+          ) : (
+            filteredDatasets.map((dataset: Dataset) => (
+              <Card key={dataset.id} className="hover:shadow-md transition-shadow">
+                <CardHeader>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <CardTitle className="text-xl mb-2">
+                        {language === "ar" ? dataset.titleAr : dataset.titleEn}
+                      </CardTitle>
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {getRegimeBadge(dataset.regime)}
+                        {getConfidenceBadge(dataset.confidence)}
+                        <Badge variant="outline" className="gap-1">
+                          <Database className="h-3 w-3" />
+                          {dataset.dataPoints} {language === "ar" ? "نقطة بيانات" : "data points"}
+                        </Badge>
+                        {dataset.frequency && (
+                          <Badge variant="outline" className="gap-1">
+                            {dataset.frequency}
+                          </Badge>
+                        )}
+                      </div>
+                      <CardDescription className="flex items-center gap-4 text-sm">
+                        <span className="flex items-center gap-1">
+                          <FileText className="h-3 w-3" />
+                          {language === "ar" ? dataset.sourceAr : dataset.source}
+                        </span>
+                        {dataset.lastUpdated && (
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {language === "ar" ? "آخر تحديث:" : "Updated:"} {dataset.lastUpdated}
+                          </span>
+                        )}
+                      </CardDescription>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" className="gap-2" onClick={() => handleView(dataset)}>
+                        <TrendingUp className="h-4 w-4" />
+                        {language === "ar" ? "عرض" : "View"}
+                      </Button>
+                      <Button size="sm" className="gap-2" onClick={() => {
+                        setSelectedDataset(dataset);
+                        // Wait for data to load then download
+                        setTimeout(() => handleDownload(dataset, 'csv'), 500);
+                      }}>
+                        <Download className="h-4 w-4" />
+                        CSV
+                      </Button>
+                      <Button variant="outline" size="sm" className="gap-2" onClick={() => {
+                        setSelectedDataset(dataset);
+                        setTimeout(() => handleDownload(dataset, 'json'), 500);
+                      }}>
+                        JSON
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+              </Card>
+            ))
+          )}
         </div>
-
-        {/* No Results */}
-        {filteredDatasets.length === 0 && (
-          <Card className="p-12">
-            <div className="text-center">
-              <Database className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">
-                {language === "ar" ? "لم يتم العثور على نتائج" : "No Results Found"}
-              </h3>
-              <p className="text-muted-foreground">
-                {language === "ar"
-                  ? "حاول تعديل معايير البحث أو التصفية"
-                  : "Try adjusting your search or filter criteria"}
-              </p>
-            </div>
-          </Card>
-        )}
       </div>
 
       {/* View Dataset Dialog */}
@@ -422,8 +437,12 @@ export default function DataRepository() {
                   <span>{language === 'ar' ? selectedDataset.sourceAr : selectedDataset.source}</span>
                   <span>•</span>
                   <span>{selectedDataset.dataPoints} {language === 'ar' ? 'نقطة بيانات' : 'data points'}</span>
-                  <span>•</span>
-                  <span>{language === 'ar' ? 'آخر تحديث:' : 'Updated:'} {selectedDataset.lastUpdated}</span>
+                  {selectedDataset.lastUpdated && (
+                    <>
+                      <span>•</span>
+                      <span>{language === 'ar' ? 'آخر تحديث:' : 'Updated:'} {selectedDataset.lastUpdated}</span>
+                    </>
+                  )}
                 </span>
               )}
             </DialogDescription>
@@ -431,47 +450,56 @@ export default function DataRepository() {
           
           {selectedDataset && (
             <div className="mt-4">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{language === 'ar' ? 'التاريخ' : 'Date'}</TableHead>
-                    <TableHead>{language === 'ar' ? 'القيمة' : 'Value'}</TableHead>
-                    <TableHead>{language === 'ar' ? 'المصدر' : 'Source'}</TableHead>
-                    <TableHead>{language === 'ar' ? 'النظام' : 'Regime'}</TableHead>
-                    <TableHead>{language === 'ar' ? 'الثقة' : 'Confidence'}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {generateSampleData(selectedDataset).slice(0, 20).map((row, idx) => (
-                    <TableRow key={idx}>
-                      <TableCell>{row.date}</TableCell>
-                      <TableCell>{row.value}</TableCell>
-                      <TableCell>{row.source}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">
-                          {row.regime === 'aden' ? 'Aden' : row.regime === 'sanaa' ? "Sana'a" : 'Both'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={row.confidence === 'high' ? 'default' : 'secondary'}>
-                          {row.confidence}
-                        </Badge>
-                      </TableCell>
+              {dataLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+                </div>
+              ) : datasetData && datasetData.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>{language === 'ar' ? 'التاريخ' : 'Date'}</TableHead>
+                      <TableHead>{language === 'ar' ? 'القيمة' : 'Value'}</TableHead>
+                      <TableHead>{language === 'ar' ? 'الوحدة' : 'Unit'}</TableHead>
+                      <TableHead>{language === 'ar' ? 'النظام' : 'Regime'}</TableHead>
+                      <TableHead>{language === 'ar' ? 'الثقة' : 'Confidence'}</TableHead>
+                      <TableHead>{language === 'ar' ? 'المصدر' : 'Source'}</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {datasetData.slice(0, 20).map((row: any, idx: number) => (
+                      <TableRow key={idx}>
+                        <TableCell>{row.date}</TableCell>
+                        <TableCell className="font-mono">{row.value?.toLocaleString()}</TableCell>
+                        <TableCell>{row.unit || '-'}</TableCell>
+                        <TableCell>
+                          {row.regime === 'aden_irg' ? 'Aden' : row.regime === 'sanaa_defacto' ? "Sana'a" : 'Mixed'}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={row.confidence === 'A' ? 'default' : row.confidence === 'B' ? 'secondary' : 'outline'}>
+                            {row.confidence}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          {language === 'ar' ? row.sourceAr : row.source}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  {language === 'ar' ? 'لا توجد بيانات متاحة' : 'No data available'}
+                </div>
+              )}
               
-              <div className="flex justify-end gap-2 mt-4">
-                <Button variant="outline" onClick={() => handleDownload(selectedDataset, 'csv')}>
-                  <Download className="h-4 w-4 mr-2" />
-                  {language === 'ar' ? 'تحميل CSV' : 'Download CSV'}
-                </Button>
-                <Button onClick={() => handleDownload(selectedDataset, 'json')}>
-                  <Download className="h-4 w-4 mr-2" />
-                  {language === 'ar' ? 'تحميل JSON' : 'Download JSON'}
-                </Button>
-              </div>
+              {datasetData && datasetData.length > 20 && (
+                <div className="text-center py-4 text-sm text-muted-foreground">
+                  {language === 'ar' 
+                    ? `عرض 20 من ${datasetData.length} سجل. قم بتحميل الملف للحصول على جميع البيانات.`
+                    : `Showing 20 of ${datasetData.length} records. Download the file for all data.`}
+                </div>
+              )}
             </div>
           )}
         </DialogContent>

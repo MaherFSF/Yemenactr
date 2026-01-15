@@ -193,6 +193,152 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return await getDatasetById(input.id);
       }),
+
+    // List all datasets dynamically from time_series grouped by indicator
+    list: publicProcedure
+      .input(z.object({
+        sector: z.string().optional(),
+        regime: z.enum(["aden_irg", "sanaa_defacto", "both"]).optional(),
+        confidence: z.enum(["A", "B", "C", "D"]).optional(),
+        search: z.string().optional(),
+        limit: z.number().min(1).max(100).default(50),
+      }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+
+        try {
+          // Get indicators with their time series counts
+          let query = sql`
+            SELECT 
+              i.id,
+              i.code,
+              i.nameEn as titleEn,
+              i.nameAr as titleAr,
+              i.sector,
+              i.descriptionEn,
+              i.descriptionAr,
+              i.unit,
+              i.frequency,
+              COUNT(DISTINCT ts.id) as dataPoints,
+              MAX(ts.date) as lastUpdated,
+              MAX(ts.confidenceRating) as confidence,
+              GROUP_CONCAT(DISTINCT ts.regimeTag) as regimes,
+              s.publisher as source,
+              s.publisherAr as sourceAr
+            FROM indicators i
+            LEFT JOIN time_series ts ON i.code = ts.indicatorCode
+            LEFT JOIN sources s ON ts.sourceId = s.id
+            WHERE i.isActive = 1
+          `;
+
+          if (input.sector) {
+            query = sql`${query} AND i.sector = ${input.sector}`;
+          }
+
+          if (input.regime && input.regime !== "both") {
+            query = sql`${query} AND ts.regimeTag = ${input.regime}`;
+          }
+
+          if (input.confidence) {
+            query = sql`${query} AND ts.confidenceRating = ${input.confidence}`;
+          }
+
+          if (input.search) {
+            const searchTerm = `%${input.search}%`;
+            query = sql`${query} AND (i.nameEn LIKE ${searchTerm} OR i.nameAr LIKE ${searchTerm})`;
+          }
+
+          query = sql`${query} GROUP BY i.id ORDER BY dataPoints DESC LIMIT ${input.limit}`;
+
+          const [rows] = await db.execute(query);
+          const datasets = rows as unknown as any[];
+
+          return datasets.map((d: any) => ({
+            id: d.id,
+            code: d.code,
+            titleEn: d.titleEn || d.code,
+            titleAr: d.titleAr || d.code,
+            sector: d.sector || 'general',
+            descriptionEn: d.descriptionEn,
+            descriptionAr: d.descriptionAr,
+            dataPoints: Number(d.dataPoints) || 0,
+            lastUpdated: d.lastUpdated ? new Date(d.lastUpdated).toISOString().split('T')[0] : null,
+            confidence: d.confidence === 'A' ? 'high' : d.confidence === 'B' ? 'medium' : 'low',
+            regime: d.regimes?.includes('aden_irg') && d.regimes?.includes('sanaa_defacto') ? 'both' 
+                   : d.regimes?.includes('aden_irg') ? 'aden' 
+                   : d.regimes?.includes('sanaa_defacto') ? 'sanaa' : 'both',
+            source: d.source || 'Multiple Sources',
+            sourceAr: d.sourceAr || 'مصادر متعددة',
+            unit: d.unit,
+            frequency: d.frequency,
+          }));
+        } catch (error) {
+          console.error('[Datasets] Failed to list datasets:', error);
+          return [];
+        }
+      }),
+
+    // Get time series data for a specific indicator/dataset
+    getData: publicProcedure
+      .input(z.object({
+        indicatorCode: z.string(),
+        regime: z.enum(["aden_irg", "sanaa_defacto", "both"]).optional(),
+        startYear: z.number().optional(),
+        endYear: z.number().optional(),
+        limit: z.number().min(1).max(1000).default(100),
+      }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+
+        try {
+          let query = sql`
+            SELECT 
+              ts.date,
+              ts.value,
+              ts.regimeTag as regime,
+              ts.confidenceRating as confidence,
+              s.publisher as source,
+              s.publisherAr as sourceAr,
+              i.nameEn as indicator,
+              i.unit
+            FROM time_series ts
+            JOIN indicators i ON ts.indicatorCode = i.code
+            LEFT JOIN sources s ON ts.sourceId = s.id
+            WHERE ts.indicatorCode = ${input.indicatorCode}
+          `;
+
+          if (input.regime && input.regime !== "both") {
+            query = sql`${query} AND ts.regimeTag = ${input.regime}`;
+          }
+
+          if (input.startYear) {
+            query = sql`${query} AND YEAR(ts.date) >= ${input.startYear}`;
+          }
+
+          if (input.endYear) {
+            query = sql`${query} AND YEAR(ts.date) <= ${input.endYear}`;
+          }
+
+          query = sql`${query} ORDER BY ts.date DESC LIMIT ${input.limit}`;
+
+          const [rows] = await db.execute(query);
+          return (rows as unknown as any[]).map((r: any) => ({
+            date: new Date(r.date).toISOString().split('T')[0],
+            value: parseFloat(r.value),
+            regime: r.regime,
+            confidence: r.confidence,
+            source: r.source,
+            sourceAr: r.sourceAr,
+            indicator: r.indicator,
+            unit: r.unit,
+          }));
+        } catch (error) {
+          console.error('[Datasets] Failed to get data:', error);
+          return [];
+        }
+      }),
   }),
 
   // ============================================================================
