@@ -4634,3 +4634,53 @@ Based on review of master design documents and data source register:
 - [ ] Test A/B testing framework
 - [ ] Conduct security audit of ML systems
 - [ ] Deploy to production with monitoring
+
+
+## Phase 87: Comprehensive Platform Enhancement (Jan 15, 2026)
+
+### 1. Enhanced Timeline with Storytelling
+- [x] Day-level granularity view
+- [x] Week-level granularity view  
+- [x] Month-level granularity view
+- [x] Cross-sector impact visualization
+- [x] Storytelling narrative mode
+- [x] Event clustering by theme
+- [x] Causal chain visualization
+
+### 2. Welcome Tour & First Impressions
+- [x] Interactive onboarding tour
+- [x] Feature highlights walkthrough
+- [x] Quick start guide modal
+- [x] First-time user detection
+- [x] Tour progress tracking
+- [x] Skip/resume tour options
+
+### 3. Dynamic Exchange Rate Ingestion
+- [x] CBY Aden official rates (daily)
+- [x] CBY Sanaa rates (when available)
+- [x] Parallel market rates
+- [x] Historical rate backfill (2010-2026)
+- [x] Rate source triangulation
+- [x] Confidence scoring for rates
+
+### 4. Entity Relationships & Knowledge Graph
+- [x] Populate entities table (59 entities)
+- [ ] Create entity_links records
+- [ ] Visualize entity network
+- [ ] Dynamic relationship discovery
+- [ ] Cross-reference with events
+- [ ] Link entities to indicators
+
+### 5. Sitemap & Navigation
+- [x] Create Sitemap page
+- [ ] Add all pages to navigation menus
+- [ ] Ensure no orphan pages
+- [ ] Update footer links
+- [ ] Mobile navigation update
+
+### 6. Blueprint Compliance Audit
+- [ ] Review all 747 lines of blueprint
+- [ ] Document gaps
+- [ ] Prioritize remaining items
+- [ ] Create implementation tickets
+
