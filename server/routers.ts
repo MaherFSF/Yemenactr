@@ -68,12 +68,16 @@ import {
 import { researchPublications, researchOrganizations } from "../drizzle/schema";
 import { truthLayerRouter } from "./routers/truthLayer";
 import { autopilotRouter } from "./routers/autopilot";
+import { mlRouter } from "./routers/mlRouter";
+import { oneBrainRouter } from "./routers/oneBrainRouter";
 import { sql, desc, eq, like, or, and, inArray } from "drizzle-orm";
 
 export const appRouter = router({
   system: systemRouter,
   truthLayer: truthLayerRouter,
   autopilot: autopilotRouter,
+  ml: mlRouter,
+  oneBrain: oneBrainRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

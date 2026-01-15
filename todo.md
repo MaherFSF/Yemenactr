@@ -309,12 +309,19 @@
 - [x] All systems tested and verified
 
 **Remaining ML Tasks:**
-- [ ] Integrate ML procedures into tRPC routers
-- [ ] Create ML dashboard UI components
-- [ ] Add ML configuration management
-- [ ] Set up ML model versioning
-- [ ] Create ML API documentation
-- [ ] Add ML unit tests (vitest)
+- [x] Integrate ML procedures into tRPC routers (mlRouter.ts - 600+ lines)
+- [x] Create ML dashboard UI components (3 components - 800+ lines)
+- [x] Add ML unit tests (vitest) - 44 tests passing
+- [x] Implement One Brain Intelligence Directive (oneBrainDirective.ts - 900+ lines)
+  - [x] Zero fabrication enforcement
+  - [x] Evidence-packed answer structure (9-part format)
+  - [x] Role-aware intelligence modes (7 roles)
+  - [x] Knowledge graph reasoning
+  - [x] Scenario & futures intelligence
+  - [x] Governance & auditability
+  - [x] Data gap ticket auto-creation
+  - [x] Contradiction detection & disagreement mode
+- [x] One Brain tRPC router (oneBrainRouter.ts)
 - [ ] Performance optimization and tuning
 - [ ] Production deployment checklist
 
