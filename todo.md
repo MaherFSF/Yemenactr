@@ -4684,3 +4684,25 @@ Based on review of master design documents and data source register:
 - [ ] Prioritize remaining items
 - [ ] Create implementation tickets
 
+
+
+## Phase 88: Final Integration (Jan 15, 2026)
+
+### 1. Wire StorytellingTimeline to Timeline Page
+- [x] Import StorytellingTimeline component
+- [x] Replace/augment existing Timeline page
+- [x] Connect to database events
+- [x] Test all view modes (story, explore, compare)
+
+### 2. Add Quick Tour Button to Header
+- [x] Import QuickTourButton component
+- [x] Add to Header navigation
+- [x] Test tour restart functionality
+
+### 3. Create Entity Relationship Links
+- [x] Define relationship types
+- [x] Create entity_links records (53 links)
+- [x] Connect CBY-Aden to Ministry of Finance
+- [x] Connect UN agencies to each other
+- [x] Connect donors to implementing partners
+- [x] Test knowledge graph visualization

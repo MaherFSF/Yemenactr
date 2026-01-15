@@ -1,5 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Card, CardContent } from "@/components/ui/card";
+import { StorytellingTimeline } from "@/components/timeline/StorytellingTimeline";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -150,7 +151,21 @@ export default function Timeline() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white" dir={isRTL ? 'rtl' : 'ltr'}>
-      {/* Header */}
+      {/* Storytelling Timeline - New Enhanced View */}
+      <StorytellingTimeline />
+      
+      {/* Divider */}
+      <div className="container py-8">
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-sm text-muted-foreground font-medium">
+            {language === 'ar' ? 'أو استكشف الجدول الزمني الكلاسيكي' : 'Or explore the classic timeline'}
+          </span>
+          <div className="flex-1 h-px bg-gray-200" />
+        </div>
+      </div>
+      
+      {/* Classic Timeline Header */}
       <div className="bg-white border-b">
         <div className="container py-8">
           <div className="flex items-center justify-center gap-3 mb-2">
