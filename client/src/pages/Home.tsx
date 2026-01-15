@@ -34,6 +34,7 @@ import {
 import { Link } from "wouter";
 import DataQualityBadge from "@/components/DataQualityBadge";
 import { AnimatedSection, StaggeredContainer } from "@/components/AnimatedSection";
+import { AnimatedCounter, FadeIn, CardHover, Sparkline } from "@/components/ui/animated";
 import { YetoLogo } from "@/components/YetoLogo";
 import { useScrollPosition } from "@/hooks/useParallax";
 import { KpiCardSkeleton, KpiRowSkeleton } from "@/components/KpiCardSkeleton";
