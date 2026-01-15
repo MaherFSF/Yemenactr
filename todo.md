@@ -5319,3 +5319,27 @@ Based on review of master design documents and data source register:
 - server/services/scheduledReportService.ts
 - server/agents/validationAgents.ts
 - server/agents/selfCoachingAI.ts
+
+
+## Phase 74: Advanced Communication & Collaboration Features (IN PROGRESS)
+
+**SMS/WhatsApp Alerts:**
+- [ ] Create SMS/WhatsApp notification service
+- [ ] Implement critical exchange rate alert triggers
+- [ ] Add phone number management to user profiles
+- [ ] Create alert preference settings (SMS vs WhatsApp)
+- [ ] Implement rate limiting for SMS/WhatsApp
+
+**Historical Report Archive:**
+- [ ] Create report archive database schema
+- [ ] Build report archive listing page
+- [ ] Implement version comparison view
+- [ ] Add search and filtering for archived reports
+- [ ] Create trend analysis from historical reports
+
+**Collaborative Annotations:**
+- [ ] Create annotations database schema
+- [ ] Build annotation UI component
+- [ ] Implement organization-level sharing
+- [ ] Add annotation threading/replies
+- [ ] Create annotation export functionality
