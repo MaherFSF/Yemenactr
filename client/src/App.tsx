@@ -94,7 +94,8 @@ import DeputyGovernorDashboard from "./pages/DeputyGovernorDashboard";
 import ReportArchive from "./pages/ReportArchive";
 import Annotations from "@/pages/Annotations";
 import AnnotationAnalytics from "@/pages/AnnotationAnalytics";
-import ReportScheduler from "@/pages/ReportScheduler";
+import ReportScheduler from './pages/ReportScheduler';
+import DataComparison from './pages/DataComparison';
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -147,6 +148,7 @@ function Router() {
       <Route path="/annotations" component={Annotations} />
               <Route path="/annotation-analytics" component={AnnotationAnalytics} />
               <Route path="/report-scheduler" component={ReportScheduler} />
+              <Route path="/data-comparison" component={DataComparison} />
       <Route path={"/coverage"} component={CoverageScorecard} />
       <Route path={"/compliance"} component={Compliance} />
       <Route path={"/my-dashboard"} component={UserDashboard} />
