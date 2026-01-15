@@ -92,7 +92,9 @@ import { ReviewModeBanner } from "./components/ReviewModeBanner";
 import GovernorDashboard from "./pages/GovernorDashboard";
 import DeputyGovernorDashboard from "./pages/DeputyGovernorDashboard";
 import ReportArchive from "./pages/ReportArchive";
-import Annotations from "./pages/Annotations";
+import Annotations from "@/pages/Annotations";
+import AnnotationAnalytics from "@/pages/AnnotationAnalytics";
+import ReportScheduler from "@/pages/ReportScheduler";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -142,7 +144,9 @@ function Router() {
       <Route path={"/corrections"} component={Corrections} />
       <Route path={"/publications"} component={Publications} />
       <Route path={"/report-archive"} component={ReportArchive} />
-      <Route path={"/annotations"} component={Annotations} />
+      <Route path="/annotations" component={Annotations} />
+              <Route path="/annotation-analytics" component={AnnotationAnalytics} />
+              <Route path="/report-scheduler" component={ReportScheduler} />
       <Route path={"/coverage"} component={CoverageScorecard} />
       <Route path={"/compliance"} component={Compliance} />
       <Route path={"/my-dashboard"} component={UserDashboard} />
