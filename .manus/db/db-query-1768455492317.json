@@ -1,0 +1,30 @@
+{
+  "query": "SELECT 'time_series' as tbl, COUNT(*) as cnt FROM time_series\nUNION ALL SELECT 'economic_events', COUNT(*) FROM economic_events\nUNION ALL SELECT 'sources', COUNT(*) FROM sources\nUNION ALL SELECT 'datasets', COUNT(*) FROM datasets\nUNION ALL SELECT 'users', COUNT(*) FROM users;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT 'time_series' as tbl, COUNT(*) as cnt FROM time_series\nUNION ALL SELECT 'economic_events', COUNT(*) FROM economic_events\nUNION ALL SELECT 'sources', COUNT(*) FROM sources\nUNION ALL SELECT 'datasets', COUNT(*) FROM datasets\nUNION ALL SELECT 'users', COUNT(*) FROM users;",
+  "rows": [
+    {
+      "tbl": "sources",
+      "cnt": "84"
+    },
+    {
+      "tbl": "users",
+      "cnt": "3"
+    },
+    {
+      "tbl": "economic_events",
+      "cnt": "179"
+    },
+    {
+      "tbl": "datasets",
+      "cnt": "0"
+    },
+    {
+      "tbl": "time_series",
+      "cnt": "3355"
+    }
+  ],
+  "messages": [],
+  "stdout": "tbl\tcnt\nsources\t84\nusers\t3\neconomic_events\t179\ndatasets\t0\ntime_series\t3355\n",
+  "stderr": "",
+  "execution_time_ms": 1574
+}
