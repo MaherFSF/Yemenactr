@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import ExchangeRateWidget from "./components/ExchangeRateWidget";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import About from "./pages/About";
@@ -50,6 +51,7 @@ import UserDashboard from "./pages/UserDashboard";
 import Changelog from "./pages/Changelog";
 import APIKeys from "./pages/APIKeys";
 import NotificationSettings from "./pages/NotificationSettings";
+import SubscriptionManagement from "./pages/SubscriptionManagement";
 import ComparisonTool from "./pages/ComparisonTool";
 import IndicatorCatalog from "./pages/IndicatorCatalog";
 import AdminMonitoring from "./pages/AdminMonitoring";
@@ -143,6 +145,7 @@ function Router() {
       <Route path={"/changelog"} component={Changelog} />
       <Route path={"/api-keys"} component={APIKeys} />
       <Route path={"/notifications"} component={NotificationSettings} />
+      <Route path={"/subscriptions"} component={SubscriptionManagement} />
       <Route path={"/legal/privacy"} component={Legal} />
       <Route path={"/legal/terms"} component={Legal} />
       <Route path={"/legal/data-license"} component={Legal} />
@@ -188,6 +191,7 @@ function Router() {
     </Switch>
       </main>
       <Footer />
+      <ExchangeRateWidget position="bottom-right" />
     </div>
   );
 }
