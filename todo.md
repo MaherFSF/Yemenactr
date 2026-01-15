@@ -4706,3 +4706,74 @@ Based on review of master design documents and data source register:
 - [x] Connect UN agencies to each other
 - [x] Connect donors to implementing partners
 - [x] Test knowledge graph visualization
+
+
+## Phase 89: Ultra-Practical Single Execution Prompt (Jan 15, 2026)
+
+### Critical: Review Mode Implementation
+- [x] Feature flag: REVIEW_MODE=true/false in env
+- [x] Feature flag: APP_ENV=local|staging|prod
+- [x] Auth bypass when REVIEW_MODE=true
+- [x] Global sticky banner "REVIEW MODE - Login disabled - Read-only"
+- [x] Read-only enforcement for admin pages (403 on POST/PUT/PATCH/DELETE)
+- [x] UI action buttons disabled with tooltip in review mode
+- [x] Hard guard: APP_ENV=prod AND REVIEW_MODE=true must refuse to start
+- [x] Create /review/all-pages listing every route (72 routes)
+
+### Phase 1: Full Platform Audit
+- [x] Enumerate ALL routes including hidden/admin (86 routes)
+- [x] Enumerate ALL database tables and classify usage (80 tables)
+- [x] Enumerate ALL API endpoints and label used/unused (252 procedures)
+- [x] Find and fix broken links (all routes verified)
+- [x] Fix empty states to show "Not available yet" + gap ticket
+- [x] Ensure all pages have CTAs and navigation
+- [x] Create /docs/REQ_GAP_ANALYSIS.md (updated)
+
+### Phase 2: Data Foundation
+- [ ] Verify all core tables exist and are populated
+- [ ] Source registry fully populated with real sources
+- [ ] Evidence pack engine mandatory for all numbers
+- [ ] Split-system enforcement (regime_tag, fx_market_type_tag)
+
+### Phase 3: Dynamic Visualization Engine
+- [ ] Template library stored in DB
+- [ ] Query builder for indicator + geo + time + regime + source
+- [ ] Renderer for interactive charts
+- [ ] Validator to block charts if data incomplete
+- [ ] Evidence integration in all charts
+- [ ] All required chart types working
+
+### Phase 4: Reports & Auto-Publication
+- [ ] Monthly Pulse report template
+- [ ] Quarterly Outlook template
+- [ ] Annual State of Yemen Economy template
+- [ ] 3 thematic briefs templates
+- [ ] Workflow: Template -> Data pull -> Charts -> Draft -> QA -> Approve -> Publish
+
+### Phase 5: AI One Brain Enhancement
+- [ ] RAG-only behavior enforced
+- [ ] 9-part output format
+- [ ] Embedded visuals in answers
+- [ ] All specialized modes working
+- [ ] AI quality dashboard for admin
+
+### Phase 6: Admin Portal Completion
+- [ ] Source registry + discovery queue
+- [ ] Ingestion monitor
+- [ ] Data QA dashboard
+- [ ] Knowledge graph browser
+- [ ] Glossary + translation manager
+- [ ] Report approvals workflow
+- [ ] Corrections & disputes workflow
+- [ ] Security logs + audit logs
+- [ ] Export center (full project bundle)
+
+### Phase 7: Quality & Security
+- [ ] CI enforces no placeholders
+- [ ] Evidence pack required
+- [ ] Broken link check
+- [ ] Route crawl in review mode
+- [ ] Unit + integration + E2E tests
+- [ ] Security hardening complete
+- [ ] Downloadable ZIP package
+

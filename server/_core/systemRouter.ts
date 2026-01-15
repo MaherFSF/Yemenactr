@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { notifyOwner } from "./notification";
 import { adminProcedure, publicProcedure, router } from "./trpc";
+import { getReviewModeStatus } from "../middleware/reviewMode";
 
 export const systemRouter = router({
   health: publicProcedure
@@ -12,6 +13,9 @@ export const systemRouter = router({
     .query(() => ({
       ok: true,
     })),
+
+  reviewModeStatus: publicProcedure
+    .query(() => getReviewModeStatus()),
 
   notifyOwner: adminProcedure
     .input(

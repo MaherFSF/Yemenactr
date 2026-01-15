@@ -85,6 +85,8 @@ import VisualizationBuilder from "./pages/admin/VisualizationBuilder";
 import InsightMiner from "./pages/admin/InsightMiner";
 import ExportBundle from "./pages/admin/ExportBundle";
 import Sitemap from "./pages/Sitemap";
+import AllPages from "./pages/review/AllPages";
+import { ReviewModeBanner } from "./components/ReviewModeBanner";
 import GovernorDashboard from "./pages/GovernorDashboard";
 import DeputyGovernorDashboard from "./pages/DeputyGovernorDashboard";
 
@@ -179,6 +181,7 @@ function Router() {
       <Route path="/regional-zones" component={RegionalZones} />
       <Route path="/economic-actors" component={EconomicActors} />
       <Route path="/sitemap" component={Sitemap} />
+      <Route path="/review/all-pages" component={AllPages} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
@@ -203,6 +206,7 @@ function App() {
       >
         <LanguageProvider>
           <TooltipProvider>
+            <ReviewModeBanner />
             <Toaster />
             <Router />
           </TooltipProvider>
