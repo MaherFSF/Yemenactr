@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { InteractiveTourButton } from "@/components/onboarding/InteractiveTour";
+import { QuickTourButton } from "@/components/onboarding/WelcomeTour";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -263,8 +263,8 @@ export default function Header() {
           </div>
 
           {/* Language Switcher */}
-          {/* Interactive Tour Button */}
-          <InteractiveTourButton />
+          {/* Quick Tour Button */}
+          <QuickTourButton />
           
           <Button
             variant="ghost"

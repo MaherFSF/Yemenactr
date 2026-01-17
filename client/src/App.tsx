@@ -7,7 +7,6 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import ExchangeRateWidget from "./components/ExchangeRateWidget";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import About from "./pages/About";
@@ -51,7 +50,6 @@ import UserDashboard from "./pages/UserDashboard";
 import Changelog from "./pages/Changelog";
 import APIKeys from "./pages/APIKeys";
 import NotificationSettings from "./pages/NotificationSettings";
-import SubscriptionManagement from "./pages/SubscriptionManagement";
 import ComparisonTool from "./pages/ComparisonTool";
 import IndicatorCatalog from "./pages/IndicatorCatalog";
 import AdminMonitoring from "./pages/AdminMonitoring";
@@ -91,11 +89,6 @@ import AllPages from "./pages/review/AllPages";
 import { ReviewModeBanner } from "./components/ReviewModeBanner";
 import GovernorDashboard from "./pages/GovernorDashboard";
 import DeputyGovernorDashboard from "./pages/DeputyGovernorDashboard";
-import ReportArchive from "./pages/ReportArchive";
-import Annotations from "@/pages/Annotations";
-import AnnotationAnalytics from "@/pages/AnnotationAnalytics";
-import ReportScheduler from './pages/ReportScheduler';
-import DataComparison from './pages/DataComparison';
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -144,18 +137,12 @@ function Router() {
       <Route path={"/entities/bank/:id"} component={BankDetail} />
       <Route path={"/corrections"} component={Corrections} />
       <Route path={"/publications"} component={Publications} />
-      <Route path={"/report-archive"} component={ReportArchive} />
-      <Route path="/annotations" component={Annotations} />
-              <Route path="/annotation-analytics" component={AnnotationAnalytics} />
-              <Route path="/report-scheduler" component={ReportScheduler} />
-              <Route path="/data-comparison" component={DataComparison} />
       <Route path={"/coverage"} component={CoverageScorecard} />
       <Route path={"/compliance"} component={Compliance} />
       <Route path={"/my-dashboard"} component={UserDashboard} />
       <Route path={"/changelog"} component={Changelog} />
       <Route path={"/api-keys"} component={APIKeys} />
       <Route path={"/notifications"} component={NotificationSettings} />
-      <Route path={"/subscriptions"} component={SubscriptionManagement} />
       <Route path={"/legal/privacy"} component={Legal} />
       <Route path={"/legal/terms"} component={Legal} />
       <Route path={"/legal/data-license"} component={Legal} />
@@ -201,7 +188,6 @@ function Router() {
     </Switch>
       </main>
       <Footer />
-      <ExchangeRateWidget position="bottom-right" />
     </div>
   );
 }
