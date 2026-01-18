@@ -4829,3 +4829,194 @@ Based on review of master design documents and data source register:
 - [ ] Add service worker for offline support
 - [ ] Implement request caching
 
+
+
+## Phase 77: PostgreSQL Migration & Evidence-First Schema (CURRENT)
+- [ ] Set up PostgreSQL database with TimescaleDB extension
+- [ ] Implement evidence-first schema (2,637 lines) with 7 approval stages
+- [ ] Create data migration scripts from MySQL to PostgreSQL
+- [ ] Update Drizzle ORM configuration for PostgreSQL
+- [ ] Migrate all 6,659 records from MySQL
+- [ ] Verify all 320 tests pass with PostgreSQL
+
+## Phase 78: Data Ingestion Infrastructure & Source Registry
+- [ ] Create master source registry with all 84+ sources
+- [ ] Build API connectors for World Bank, IMF, WFP, FTS, IATI, ACLED, UNHCR
+- [ ] Implement scheduler for automated data ingestion
+- [ ] Create data validation pipeline
+- [ ] Build ingestion monitoring dashboard
+- [ ] Document all connectors in CONNECTORS.md
+
+## Phase 79: Historical Data Backfill & Validation
+- [ ] Backfill World Bank data (2010-2026)
+- [ ] Backfill IMF data (2010-2026)
+- [ ] Backfill CBY exchange rates (2010-2026)
+- [ ] Backfill humanitarian data (WFP, UNHCR, OCHA)
+- [ ] Backfill conflict events (ACLED)
+- [ ] Validate all data and populate Data Gap Tracker
+
+## Phase 80: Manus Ingestion Agent Implementation
+- [ ] Implement Manus agent with ETL capabilities
+- [ ] Create ingestion prompt with no-hallucination rules
+- [ ] Integrate with data API for validation
+- [ ] Build cross-triangulation logic
+- [ ] Create self-coaching feedback loop
+- [ ] Add comprehensive logging and audit trails
+
+## Phase 81: Frontend Dashboard Integration & Data Visualization
+- [ ] Fix homepage tour modal UX issue
+- [ ] Fix exchange rate widget overlap
+- [ ] Build dynamic dashboard with tRPC queries
+- [ ] Create time-series charts with Recharts
+- [ ] Implement regime toggle (IRG vs DFA)
+- [ ] Build sector-specific pages with indicators
+- [ ] Implement data filters and search
+- [ ] Ensure mobile responsiveness and RTL support
+
+## Phase 82: Multi-Agent AI System
+- [ ] Implement Maher AI (Founder Assistant)
+- [ ] Build sector-specific agents
+- [ ] Create user-facing conversational assistant
+- [ ] Integrate all agents with data API
+- [ ] Train translation model on economic terminology
+- [ ] Implement dynamic learning from user interactions
+
+## Phase 83: Research Library, Timeline & Provenance Pages
+- [ ] Ingest narrative documents into search index
+- [ ] Build Research & Reports page
+- [ ] Create Timeline page with conflict/policy events
+- [ ] Implement cross-links from events to data points
+- [ ] Build Data Catalogue with provenance pages
+- [ ] Create transparency pages
+
+## Phase 84: Testing, QA & Deployment Preparation
+- [ ] Run comprehensive QA on all features
+- [ ] Test ingestion pipelines and validations
+- [ ] Verify translation quality
+- [ ] Test AI agent outputs
+- [ ] Security audit and compliance review
+- [ ] Performance testing and optimization
+- [ ] Create deployment documentation
+- [ ] Prepare for public beta launch
+
+
+## Phase 85: PostgreSQL Migration Complete
+- [ ] Deploy PostgreSQL with evidence-first schema
+- [ ] Migrate 6,659 records from MySQL
+- [ ] Verify all 320 tests pass
+- [ ] Update Drizzle ORM configuration
+
+## Phase 86: Master Source Registry (225+ Sources)
+- [ ] Implement source table with all 225+ sources
+- [ ] Create API connectors for World Bank, IMF, UN Comtrade
+- [ ] Add regional sources (Arab Monetary Fund, ESCWA)
+- [ ] Integrate Yemen national sources (CBY, CSO, SEMC)
+- [ ] Add humanitarian sources (WFP, UNHCR, OCHA, IPC)
+- [ ] Add conflict/security sources (ACLED, UN Panel of Experts)
+- [ ] Create source discovery engine
+- [ ] Build source validation pipeline
+
+## Phase 87: Data Ingestion Infrastructure
+- [ ] Build ETL framework for API connectors
+- [ ] Implement World Bank WDI connector
+- [ ] Implement IMF SDMX connector
+- [ ] Implement UN Comtrade connector
+- [ ] Implement FAO FAOSTAT connector
+- [ ] Implement WFP VAM connector
+- [ ] Implement UNHCR connector
+- [ ] Implement ACLED connector
+- [ ] Create scheduler for automated ingestion
+- [ ] Build ingestion monitoring dashboard
+- [ ] Create data validation pipeline
+- [ ] Document all connectors in CONNECTORS.md
+
+## Phase 88: Historical Data Backfill (2010-Present)
+- [ ] Backfill World Bank indicators (1960-2026)
+- [ ] Backfill IMF macro data (2000-2026)
+- [ ] Backfill UN Comtrade trade data (2010-2026)
+- [ ] Backfill CBY exchange rates (2010-2026)
+- [ ] Backfill humanitarian data (2010-2026)
+- [ ] Backfill conflict events (2010-2026)
+- [ ] Backfill food security data (2010-2026)
+- [ ] Validate all data and populate Data Gap Tracker
+- [ ] Create data quality report
+
+## Phase 89: Manus Ingestion Agent
+- [ ] Implement Manus agent with ETL capabilities
+- [ ] Create ingestion prompt with no-hallucination rules
+- [ ] Integrate with data API for validation
+- [ ] Build cross-triangulation logic
+- [ ] Create self-coaching feedback loop
+- [ ] Add comprehensive logging and audit trails
+- [ ] Implement evidence pack generation
+- [ ] Create agent monitoring dashboard
+
+## Phase 90: Frontend Dashboard Integration
+- [ ] Fix homepage tour modal UX issue
+- [ ] Fix exchange rate widget overlap
+- [ ] Build dynamic dashboard with tRPC queries
+- [ ] Create time-series charts with Recharts
+- [ ] Implement regime toggle (IRG vs DFA)
+- [ ] Build sector-specific pages with indicators
+- [ ] Implement data filters and search
+- [ ] Ensure mobile responsiveness and RTL support
+- [ ] Create comparative dashboards (Yemen vs regional peers)
+- [ ] Build scenario simulation modules
+- [ ] Implement custom data export tools
+- [ ] Create interactive timeline overlays
+
+## Phase 91: Multi-Agent AI System
+- [ ] Implement Maher AI (Founder Assistant)
+- [ ] Build sector-specific agents
+- [ ] Create user-facing conversational assistant
+- [ ] Integrate all agents with data API
+- [ ] Train translation model on economic terminology
+- [ ] Implement dynamic learning from user interactions
+- [ ] Add code generation for new chart types
+- [ ] Create automatic report generation for donors
+
+## Phase 92: Research Library & Timeline
+- [ ] Ingest narrative documents into search index
+- [ ] Build Research & Reports page
+- [ ] Create Timeline page with conflict/policy events
+- [ ] Implement cross-links from events to data points
+- [ ] Build Data Catalogue with provenance pages
+- [ ] Create transparency pages
+- [ ] Implement document search and filtering
+- [ ] Create evidence pack visualization
+
+## Phase 93: Advanced Analytics & ML
+- [ ] Implement inflation forecasting models
+- [ ] Build humanitarian funding gap simulator
+- [ ] Create trade flow anomaly detection
+- [ ] Build scenario simulation engine
+- [ ] Implement transparency components for ML models
+- [ ] Create model explainability dashboard
+
+## Phase 94: Community & Partner Integration
+- [ ] Enable partner data upload portal
+- [ ] Create data formatting guidelines
+- [ ] Build contributor training materials
+- [ ] Implement data quality review workflow
+- [ ] Create contributor dashboard
+- [ ] Build feedback and rating system
+- [ ] Implement data sharing agreements
+
+## Phase 95: Continuous Monitoring & Updates
+- [ ] Create satisfaction survey system
+- [ ] Build site usage analytics
+- [ ] Implement Data Gap Ticket backlog
+- [ ] Create documentation update workflow
+- [ ] Build glossary maintenance system
+- [ ] Schedule annual methodological reviews
+- [ ] Create update publication workflow
+
+## Phase 96: Testing, QA & Deployment
+- [ ] Run comprehensive QA on all features
+- [ ] Test ingestion pipelines and validations
+- [ ] Verify translation quality
+- [ ] Test AI agent outputs
+- [ ] Security audit and compliance review
+- [ ] Performance testing and optimization
+- [ ] Create deployment documentation
+- [ ] Prepare for public beta launch
