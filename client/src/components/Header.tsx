@@ -56,6 +56,12 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [location] = useLocation();
 
+  const adminLinks = [
+    { nameEn: "Admin Hub", nameAr: "مركز الإدارة", href: "/admin-hub", icon: Shield },
+    { nameEn: "Scheduler Status", nameAr: "حالة الجدولة", href: "/admin/scheduler-status", icon: Clock },
+    { nameEn: "Ingestion Dashboard", nameAr: "لوحة البيانات", href: "/admin/ingestion", icon: Database },
+  ];
+
   const toggleLanguage = () => {
     setLanguage(language === "ar" ? "en" : "ar");
     setMobileMenuOpen(false);
@@ -244,15 +250,48 @@ export default function Header() {
             {language === "ar" ? "الاشتراكات" : "Pricing"}
           </Link>
 
-          {/* Admin Hub Link */}
-          <Link href="/admin-hub" className={`px-3 py-2 text-sm font-medium rounded-md transition-colors flex items-center gap-1 ${
-            location.startsWith("/admin") 
-              ? "text-[#107040] bg-[#107040]/10" 
-              : "text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5"
-          }`}>
-            <Shield className="h-4 w-4" />
-            {language === "ar" ? "الإدارة" : "Admin"}
-          </Link>
+          {/* Admin Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                location.startsWith("/admin")
+                  ? "text-[#107040] bg-[#107040]/10"
+                  : "text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5"
+              }`}>
+                <Shield className="h-4 w-4" />
+                {language === "ar" ? "الإدارة" : "Admin"}
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuLabel>
+                {language === "ar" ? "لوحة التحكم" : "Admin Panel"}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/admin-hub" className="flex items-center gap-2 w-full cursor-pointer">
+                  <Shield className="h-4 w-4 text-muted-foreground" />
+                  {language === "ar" ? "مركز الإدارة" : "Admin Hub"}
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel className="text-xs text-muted-foreground">
+                {language === "ar" ? "الجدولة والبيانات" : "Scheduling & Data"}
+              </DropdownMenuLabel>
+              <DropdownMenuItem asChild>
+                <Link href="/admin/scheduler-status" className="flex items-center gap-2 w-full cursor-pointer">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  {language === "ar" ? "حالة الجدولة" : "Scheduler Status"}
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/admin/ingestion" className="flex items-center gap-2 w-full cursor-pointer">
+                  <Database className="h-4 w-4 text-muted-foreground" />
+                  {language === "ar" ? "لوحة البيانات" : "Ingestion Dashboard"}
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
 
         {/* Right Side Actions */}
