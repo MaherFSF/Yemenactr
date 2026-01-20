@@ -8,6 +8,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { initializeSchedulerJobs, runDueJobs } from "../services/dailyScheduler";
+import { initializeScheduler } from "../init-scheduler";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -63,6 +64,13 @@ async function startServer() {
     
     // Initialize scheduler jobs in database
     await initializeSchedulerJobs();
+    
+    // Initialize YETO ingestion scheduler
+    try {
+      await initializeScheduler();
+    } catch (error) {
+      console.error('[YETO Scheduler] Failed to initialize:', error);
+    }
     
     // Check for due jobs every 5 minutes
     setInterval(async () => {

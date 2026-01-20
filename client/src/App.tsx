@@ -58,6 +58,8 @@ import ApiDocs from "./pages/ApiDocs";
 import PolicyImpact from "./pages/PolicyImpact";
 import DataExchangeHub from "./pages/DataExchangeHub";
 import AccuracyDashboard from "./pages/AccuracyDashboard";
+import SchedulerStatus from "./pages/SchedulerStatus";
+import IngestionDashboard from "./pages/IngestionDashboard";
 import AdvancedSearch from "./pages/AdvancedSearch";
 import SchedulerDashboard from "./pages/SchedulerDashboard";
 import AlertsDashboard from "./pages/AlertsDashboard";
@@ -155,6 +157,8 @@ function Router() {
       <Route path="/data-exchange" component={DataExchangeHub} />
       <Route path="/accuracy" component={AccuracyDashboard} />
       <Route path="/admin/scheduler" component={SchedulerDashboard} />
+      <Route path="/admin/scheduler-status" component={SchedulerStatus} />
+      <Route path="/admin/ingestion" component={IngestionDashboard} />
           <Route path="/admin/alerts" component={AlertsDashboard} />
           <Route path="/admin/api-health" component={ApiHealthDashboard} />
           <Route path="/admin/alert-history" component={AlertHistory} />
