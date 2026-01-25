@@ -5099,3 +5099,327 @@ Based on review of master design documents and data source register:
 - [ ] Deploy to production environment
 - [ ] Conduct data quality audit
 - [ ] Train operations team
+
+
+## YETO v1.6 COMPREHENSIVE IMPLEMENTATION ROADMAP
+
+### PHASE 1: DATABASE SCHEMA UPGRADE (v1.6) - COMPLETE ✅
+- [x] Upgrade MySQL schema with full provenance tracking
+  - [ ] Add `calendar_day` table for 2010-2026 daily timeline
+  - [ ] Enhance `observation` table with vintage_date versioning
+  - [ ] Add `gap_ticket` table for automated gap detection
+  - [ ] Add `agent_run` table for multi-agent approval logging
+  - [ ] Add `content_evidence` table for evidence tracking
+  - [ ] Add `document_text_chunk` with pgvector embeddings
+  - [ ] Create indexes for performance optimization
+- [x] Implement source registry with 225+ connectors
+  - [x] Central Bank of Yemen (Aden & Sana'a)
+  - [x] World Bank, IMF, OCHA
+  - [x] WFP, UNHCR, IOM
+  - [x] Academic institutions and think tanks
+  - [x] News archives and press releases
+- [x] Create bilingual glossary (EN/AR) with controlled terminology
+- [x] Set up audit logging for all data modifications
+- [x] Implement role-based access control (RBAC)
+  - [x] Admin role with full control
+  - [x] Editor role for content creation
+  - [x] Analyst role for data access
+  - [x] Subscriber role for dashboard access
+  - [x] Citizen role for limited public access
+
+### PHASE 2: HISTORICAL DATA INGESTION (2010-PRESENT)
+- [ ] Build registry-driven connector framework
+  - [ ] HTTP/REST connectors with retry logic
+  - [ ] CSV/Excel file parsers
+  - [ ] PDF text extraction with OCR
+  - [ ] Database connectors (MySQL, MSSQL, PostgreSQL)
+  - [ ] API connectors with authentication
+- [ ] Implement connector health monitoring
+  - [ ] Latency tracking
+  - [ ] Error rate monitoring
+  - [ ] Data quality metrics
+  - [ ] Automatic alerting for failures
+- [ ] Backfill all indicators from 2010-2026
+  - [ ] Exchange rates (daily): CBY Aden vs CBY Sana'a
+  - [ ] Inflation rates (monthly): CPI by regime
+  - [ ] Banking sector metrics (quarterly)
+  - [ ] Trade data (monthly): Import/export volumes
+  - [ ] Humanitarian indicators (weekly)
+  - [ ] Energy production (monthly)
+  - [ ] Poverty rates (annual)
+  - [ ] Labor market (quarterly)
+  - [ ] Public finance (monthly)
+- [ ] Create versioning system for "as-of" snapshots
+  - [ ] Store vintage_date for each observation
+  - [ ] Track revision_no for corrections
+  - [ ] Maintain audit trail of all changes
+- [ ] Implement automated data quality checks
+  - [ ] Range validation
+  - [ ] Consistency checks
+  - [ ] Outlier detection
+  - [ ] Duplicate detection
+  - [ ] Missing value flagging
+- [ ] Create data quality scoring system
+  - [ ] Source credibility (0-100)
+  - [ ] Data completeness (0-100)
+  - [ ] Timeliness score (0-100)
+  - [ ] Consistency score (0-100)
+  - [ ] Overall confidence rating (A-D)
+
+### PHASE 3: ADVANCED FILTERING & DATE RANGE SELECTION
+- [ ] Implement multi-dimensional filters
+  - [ ] Date range picker (single day to multi-year)
+  - [ ] Regime selector (Aden, Sana'a, Mixed, National)
+  - [ ] Sector selector (15+ sectors)
+  - [ ] Indicator type selector
+  - [ ] Source tier filter (T1, T2, T3)
+  - [ ] Confidence level filter (A, B, C, D)
+  - [ ] Geography selector (governorate, district, port)
+- [ ] Create saved filter presets
+  - [ ] "Last 30 days"
+  - [ ] "Year-to-date"
+  - [ ] "Last 5 years"
+  - [ ] "Since 2010"
+  - [ ] Custom date ranges
+- [ ] Implement filter persistence
+  - [ ] Save to user profile
+  - [ ] Share filter URLs
+  - [ ] Export filter definitions
+- [ ] Build visual query builder
+  - [ ] Multiple condition support (AND/OR logic)
+  - [ ] Comparison operators (=, !=, >, <, >=, <=, BETWEEN)
+  - [ ] Text search with fuzzy matching
+  - [ ] Regex support for advanced users
+- [ ] Create query templates
+  - [ ] "Compare regimes over time"
+  - [ ] "Identify outliers"
+  - [ ] "Track indicator trends"
+  - [ ] "Find data gaps"
+- [ ] Implement time series analysis
+  - [ ] Daily → Weekly → Monthly → Quarterly → Annual aggregations
+  - [ ] Moving averages (7-day, 30-day, 365-day)
+  - [ ] Year-over-year comparisons
+  - [ ] Seasonal decomposition
+- [ ] Create trend analysis tools
+  - [ ] Linear regression
+  - [ ] Exponential smoothing
+  - [ ] Change point detection
+  - [ ] Forecasting (ARIMA, Prophet)
+
+### PHASE 4: AI AGENT ENHANCEMENT & RAG SYSTEM
+- [ ] Implement 8-stage approval engine
+  - [ ] Stage 1: DRAFTING - Content creation
+  - [ ] Stage 2: EVIDENCE - Verify all claims have sources
+  - [ ] Stage 3: CONSISTENCY - Check for contradictions
+  - [ ] Stage 4: SAFETY - Screen for harmful content
+  - [ ] Stage 5: AR_COPY - Validate Arabic translation
+  - [ ] Stage 6: EN_COPY - Validate English translation
+  - [ ] Stage 7: STANDARDS - Check formatting and style
+  - [ ] Stage 8: FINAL_APPROVAL - Human review if needed
+- [ ] Create specialized agent implementations
+  - [ ] Evidence Agent: Validates all claims against sources
+  - [ ] Consistency Agent: Checks for contradictions
+  - [ ] Safety Agent: Screens for harmful/biased content
+  - [ ] Translation Agent: Validates bilingual parity
+  - [ ] Format Agent: Checks compliance with standards
+  - [ ] Uniqueness Agent: Detects plagiarism/duplication
+  - [ ] Quality Agent: Scores content quality
+  - [ ] Final Agent: Makes approval decision
+- [ ] Implement agent logging and auditability
+  - [ ] Log all agent decisions
+  - [ ] Store reasoning and scores
+  - [ ] Allow admin override
+  - [ ] Track approval history
+- [ ] Build document ingestion pipeline
+  - [ ] PDF extraction with layout preservation
+  - [ ] Text chunking with semantic boundaries
+  - [ ] Bilingual chunk handling (EN/AR)
+  - [ ] Metadata extraction (title, author, date, source)
+- [ ] Implement embedding system
+  - [ ] Use pgvector for vector storage
+  - [ ] Generate embeddings for all chunks
+  - [ ] Support semantic search
+  - [ ] Implement similarity ranking
+- [ ] Create RAG query engine
+  - [ ] Retrieve relevant documents
+  - [ ] Rank by relevance
+  - [ ] Generate evidence-backed responses
+  - [ ] Include citations in responses
+- [ ] Enhance AI Assistant
+  - [ ] Advanced question answering
+  - [ ] Multi-turn conversation support
+  - [ ] Context preservation across turns
+  - [ ] Confidence scoring for responses
+  - [ ] Specialized sector agents
+  - [ ] Response generation with citations
+
+### PHASE 5: MULTI-USER DASHBOARDS & ROLE-BASED FEATURES
+- [ ] Create comprehensive user profiles
+  - [ ] Profile information (name, email, organization)
+  - [ ] Role assignment (admin, editor, analyst, subscriber)
+  - [ ] Preferences (language, theme, notifications)
+  - [ ] Saved filters and queries
+  - [ ] Bookmarked content
+  - [ ] Download history
+- [ ] Implement user authentication
+  - [ ] OAuth 2.0 integration
+  - [ ] Multi-factor authentication
+  - [ ] Session management
+  - [ ] Password reset flow
+- [ ] Build role-based dashboards
+  - [ ] Admin Dashboard: System health, user management, content approval
+  - [ ] Editor Dashboard: Content creation, approval tracking, collaboration
+  - [ ] Analyst Dashboard: Data exploration, custom reports, exports
+  - [ ] Subscriber Dashboard: Saved reports, watchlists, alerts
+- [ ] Implement user preferences
+  - [ ] Default language (EN/AR)
+  - [ ] Theme selection (light/dark)
+  - [ ] Notification preferences
+  - [ ] Default date range
+  - [ ] Default sectors/indicators
+- [ ] Create watchlist functionality
+  - [ ] Add/remove indicators
+  - [ ] Set alert thresholds
+  - [ ] Receive notifications
+  - [ ] Track changes over time
+- [ ] Implement recommendations
+  - [ ] Similar indicators
+  - [ ] Related sectors
+  - [ ] Trending reports
+  - [ ] Personalized insights
+
+### PHASE 6: AUTO-PUBLICATION ENGINE & REPORT GENERATION
+- [ ] Implement publication scheduler
+  - [ ] Daily reports (economic summary)
+  - [ ] Weekly reports (sector updates)
+  - [ ] Monthly reports (comprehensive analysis)
+  - [ ] Quarterly reports (detailed sector analysis)
+  - [ ] Annual reports (year-end review)
+  - [ ] Special reports (triggered by events)
+- [ ] Create publication templates
+  - [ ] Executive summary
+  - [ ] Key metrics
+  - [ ] Sector analysis
+  - [ ] Comparative analysis (Aden vs Sana'a)
+  - [ ] Trend analysis
+  - [ ] Gap identification
+  - [ ] Recommendations
+- [ ] Implement quality scoring
+  - [ ] Evidence coverage (0-100)
+  - [ ] Data freshness (0-100)
+  - [ ] Completeness (0-100)
+  - [ ] Accuracy (0-100)
+  - [ ] Overall quality score (A-D)
+- [ ] Implement multi-format export
+  - [ ] PDF (bilingual, formatted)
+  - [ ] Excel (data + charts)
+  - [ ] CSV (data only)
+  - [ ] JSON (structured data)
+  - [ ] PNG/SVG (charts)
+  - [ ] HTML (web-ready)
+- [ ] Create export customization
+  - [ ] Select sections to include
+  - [ ] Choose chart types
+  - [ ] Select color scheme
+  - [ ] Add custom branding
+  - [ ] Include/exclude metadata
+- [ ] Implement provenance in exports
+  - [ ] Source attribution
+  - [ ] Data quality scores
+  - [ ] Vintage dates
+  - [ ] Revision history
+  - [ ] Methodology notes
+- [ ] Implement email distribution
+  - [ ] Scheduled email delivery
+  - [ ] Recipient management
+  - [ ] Unsubscribe handling
+  - [ ] Bounce handling
+- [ ] Create webhook system
+  - [ ] Publish webhooks for new reports
+  - [ ] Include report metadata
+  - [ ] Support custom payloads
+- [ ] Implement RSS feeds
+  - [ ] Feed generation
+  - [ ] Feed subscription
+  - [ ] Feed customization
+
+### PHASE 7: COMPREHENSIVE TESTING & BROWSER VERIFICATION
+- [ ] Unit testing (backend & frontend)
+- [ ] Integration testing (pipelines & workflows)
+- [ ] End-to-end testing (user journeys)
+- [ ] Performance testing (load & stress)
+- [ ] Security testing (auth, authz, data)
+- [ ] Bilingual testing (Arabic/English)
+- [ ] Accessibility testing (keyboard, screen reader)
+- [ ] Browser compatibility testing (Chrome, Firefox, Safari, Edge)
+
+### PHASE 8: PRODUCTION DEPLOYMENT & OPTIMIZATION
+- [ ] Deploy to production environment (AWS)
+  - [ ] AWS RDS for PostgreSQL
+  - [ ] AWS S3 for file storage
+  - [ ] AWS CloudFront for CDN
+  - [ ] AWS Lambda for serverless functions
+  - [ ] AWS EventBridge for scheduling
+  - [ ] AWS ECS Fargate for containers
+- [ ] Configure monitoring and logging
+  - [ ] CloudWatch for metrics
+  - [ ] CloudWatch Logs for logging
+  - [ ] X-Ray for tracing
+  - [ ] SNS for alerting
+- [ ] Set up disaster recovery
+  - [ ] Database backups
+  - [ ] Cross-region replication
+  - [ ] Failover procedures
+  - [ ] Recovery time objectives (RTO)
+- [ ] Optimize database queries
+  - [ ] Index optimization
+  - [ ] Query plan analysis
+  - [ ] Caching strategy
+  - [ ] Connection pooling
+- [ ] Optimize frontend performance
+  - [ ] Code splitting
+  - [ ] Lazy loading
+  - [ ] Image optimization
+  - [ ] CSS/JS minification
+- [ ] Implement caching strategy
+  - [ ] HTTP caching headers
+  - [ ] CDN caching
+  - [ ] Application-level caching
+  - [ ] Database query caching
+- [ ] Implement security best practices
+  - [ ] HTTPS only
+  - [ ] CSP headers
+  - [ ] CORS configuration
+  - [ ] Rate limiting
+  - [ ] DDoS protection
+- [ ] Secrets management
+  - [ ] AWS Secrets Manager
+  - [ ] Rotation policies
+  - [ ] Access logging
+  - [ ] Audit trails
+- [ ] Create comprehensive documentation
+  - [ ] Architecture documentation
+  - [ ] API documentation
+  - [ ] User guides
+  - [ ] Admin guides
+  - [ ] Developer guides
+- [ ] Create training materials
+  - [ ] Video tutorials
+  - [ ] Interactive walkthroughs
+  - [ ] FAQ documents
+  - [ ] Troubleshooting guides
+- [ ] Set up support systems
+  - [ ] Help desk
+  - [ ] FAQ system
+  - [ ] Community forum
+  - [ ] Feedback collection
+- [ ] Implement monitoring and analytics
+  - [ ] User behavior tracking
+  - [ ] Feature usage analytics
+  - [ ] Error tracking
+  - [ ] Performance monitoring
+- [ ] Establish feedback loops
+  - [ ] User surveys
+  - [ ] Feature requests
+  - [ ] Bug reports
+  - [ ] Performance feedback
