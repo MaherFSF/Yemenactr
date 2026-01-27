@@ -91,6 +91,7 @@ import AllPages from "./pages/review/AllPages";
 import { ReviewModeBanner } from "./components/ReviewModeBanner";
 import GovernorDashboard from "./pages/GovernorDashboard";
 import DeputyGovernorDashboard from "./pages/DeputyGovernorDashboard";
+import FXDashboard from "./pages/dashboards/FXDashboard";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -142,6 +143,7 @@ function Router() {
       <Route path={"/coverage"} component={CoverageScorecard} />
       <Route path={"/compliance"} component={Compliance} />
       <Route path={"/my-dashboard"} component={UserDashboard} />
+      <Route path={"/dashboards/fx"} component={FXDashboard} />
       <Route path={"/changelog"} component={Changelog} />
       <Route path={"/api-keys"} component={APIKeys} />
       <Route path={"/notifications"} component={NotificationSettings} />
