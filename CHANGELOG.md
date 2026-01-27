@@ -210,11 +210,118 @@ This is the initial release. No migration required.
 
 ---
 
+## [1.6.0] - 2026-01-28
+
+### 🚀 Major Release - FX Dashboard & Production Hardening
+
+#### Added
+
+**FX Dashboard**
+- Yemen Exchange Rates Dashboard with three regime tracking (Aden IRG, Sana'a DFA, Parallel Market)
+- Historical chart with dual-line visualization (2010-present)
+- Data gap tickets system for quality tracking
+- Source registry with bilingual labels
+- Full Arabic/English support with RTL layout
+
+**Data Infrastructure**
+- Canonical Query Layer for unified data access
+- Calendar Spine with freshness tracking (2010-present)
+- Coverage Map for data gap visualization
+- Ingestion Ledger with full provenance
+- Backfill Engine for historical data
+- Vintage Manager for as-of queries
+- Static Detector for hardcoded data scanning
+
+**Production Gates**
+- Go-Live Gate System with admin dashboard
+- AI Safety Gates for claim verification
+- Enhanced Publication Gate with 8 hard gates
+- Reliability Lab integration
+- Route health checks
+
+**Documentation**
+- Comprehensive README with unique narrative
+- ARCHITECTURE.md with system diagrams
+- API.md with full endpoint reference
+- OPERATIONS.md for deployment guide
+- INDEX.md for repository navigation
+- CONTRIBUTING.md for open source guidelines
+- SECURITY.md for vulnerability reporting
+
+#### Changed
+- Enhanced Truth Layer with 8 governing laws
+- Improved provenance tracking with vintage dates
+- Updated CI/CD pipeline with security scanning
+- Migrated to Tailwind CSS 4 with OKLCH colors
+
+#### Fixed
+- Date parsing in FX connector for MySQL compatibility
+- RTL layout issues in Arabic mode
+- TypeScript strict mode compliance
+- Database connection pooling issues
+
+---
+
+## [1.5.0] - 2026-01-20
+
+### Added
+- **One Brain AI Assistant** - Bilingual AI chat with evidence-backed responses
+- **Research Library** - 370+ publications with full-text search
+- **Banking Sector Dashboard** - 31 commercial banks profiled
+- **Telecom Sector Dashboard** - Operator analysis
+- **Humanitarian Dashboard** - Aid flow tracking
+
+### Changed
+- Migrated to React 19 with concurrent features
+- Enhanced mobile responsiveness
+
+---
+
+## [1.4.0] - 2026-01-10
+
+### Added
+- **ETL Pipeline Framework** - Modular data ingestion system
+- **26 Data Connectors** - World Bank, IMF, UN agencies, etc.
+- **Scheduler Service** - Automated data refresh
+- **Reliability Lab** - Data quality monitoring
+
+---
+
+## [1.3.0] - 2025-12-15
+
+### Added
+- **Truth Layer** - Evidence verification system
+- **Publication Gate** - Data quality enforcement
+- **Provenance Tracking** - Full data lineage
+- **Audit Logging** - Security audit trail
+
+---
+
+## [1.2.0] - 2025-11-20
+
+### Added
+- **15 Sector Pages** - Comprehensive sector analysis
+- **Economic Indicators Catalog** - 150+ indicators
+- **Time Series API** - Historical data access
+- **Data Export** - CSV/Excel/JSON export
+
+---
+
+## [1.1.0] - 2025-10-15
+
+### Added
+- **Homepage Dashboard** - Hero KPIs and statistics
+- **Authentication** - OAuth 2.0 integration
+- **User Management** - Role-based access control
+- **Arabic Localization** - Full RTL support
+
+---
+
 ## [Unreleased]
 
 ### Planned
 
-- [ ] Automated data source connectors
+- [x] Automated data source connectors (Completed in 1.4.0)
 - [ ] Real-time collaboration features
 - [ ] Mobile application
 - [ ] Advanced ML-based anomaly detection
