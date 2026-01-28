@@ -1878,6 +1878,7 @@ export type InsertEvidenceSource = typeof evidenceSources.$inferInsert;
 
 // Import backfill infrastructure tables
 export * from "./schema-backfill";
+export * from "./schema-source-registry";
 
 /**
  * Evidence Documents - PDFs, reports, publications with storage and hashing

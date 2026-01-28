@@ -25,6 +25,10 @@ export const sourceCredentials = mysqlTable("source_credentials", {
   isActive: boolean("isActive").default(true).notNull(),
   lastValidatedAt: timestamp("lastValidatedAt"),
   validationStatus: mysqlEnum("validationStatus", ["valid", "invalid", "expired", "untested"]).default("untested").notNull(),
+  validationMessage: text("validationMessage"), // Error message or success details
+  expiresAt: timestamp("expiresAt"), // For time-limited keys
+  rateLimit: int("rateLimit"), // Requests per day/hour
+  rateLimitPeriod: varchar("rateLimitPeriod", { length: 50 }), // 'day', 'hour', 'minute'
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -32,6 +36,7 @@ export const sourceCredentials = mysqlTable("source_credentials", {
 }, (table) => ({
   sourceIdx: index("source_cred_source_idx").on(table.sourceId),
   activeIdx: index("source_cred_active_idx").on(table.isActive),
+  expiryIdx: index("source_cred_expiry_idx").on(table.expiresAt),
 }));
 
 export type SourceCredential = typeof sourceCredentials.$inferSelect;

@@ -73,6 +73,7 @@ import { oneBrainRouter } from "./routers/oneBrainRouter";
 import { fxRouter } from "./routers/fxRouter";
 import { dataInfraRouter } from "./routers/dataInfraRouter";
 import { backfillRouter } from "./routers/backfillRouter";
+import { apiKeysRouter } from "./routers/apiKeysRouter";
 import { sql, desc, eq, like, or, and, inArray } from "drizzle-orm";
 
 export const appRouter = router({
@@ -84,6 +85,7 @@ export const appRouter = router({
   dataInfra: dataInfraRouter,
   fx: fxRouter,
   backfill: backfillRouter,
+  apiKeys: apiKeysRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

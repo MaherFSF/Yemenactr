@@ -1,0 +1,378 @@
+/**
+ * API Keys Router - tRPC endpoints for credential management
+ */
+
+import { z } from 'zod';
+import { adminProcedure, router } from '../_core/trpc';
+import { eq, and, desc } from 'drizzle-orm';
+import { getDb } from '../db';
+import { 
+  sourceCredentials, 
+  evidenceSources, 
+  sourceContacts, 
+  apiRegistrationInstructions 
+} from '../../drizzle/schema';
+
+export const apiKeysRouter = router({
+  /**
+   * Get all credentials with source information
+   */
+  getAllCredentials: adminProcedure
+    .query(async () => {
+      const db = await getDb();
+      if (!db) throw new Error('Database connection failed');
+      
+      const creds = await db
+        .select({
+          id: sourceCredentials.id,
+          sourceId: sourceCredentials.sourceId,
+          sourceName: evidenceSources.name,
+          credentialType: sourceCredentials.credentialType,
+          isActive: sourceCredentials.isActive,
+          validationStatus: sourceCredentials.validationStatus,
+          validationMessage: sourceCredentials.validationMessage,
+          lastValidatedAt: sourceCredentials.lastValidatedAt,
+          expiresAt: sourceCredentials.expiresAt,
+          rateLimit: sourceCredentials.rateLimit,
+          rateLimitPeriod: sourceCredentials.rateLimitPeriod,
+          notes: sourceCredentials.notes,
+          createdAt: sourceCredentials.createdAt,
+          updatedAt: sourceCredentials.updatedAt,
+        })
+        .from(sourceCredentials)
+        .leftJoin(evidenceSources, eq(sourceCredentials.sourceId, evidenceSources.id))
+        .orderBy(desc(sourceCredentials.createdAt));
+
+      return creds;
+    }),
+
+  /**
+   * Get sources with registration instructions and contacts
+   */
+  getSourcesWithInstructions: adminProcedure
+    .query(async () => {
+      const db = await getDb();
+      if (!db) throw new Error('Database connection failed');
+
+      // Get all sources with instructions
+      const sourcesWithInstructions = await db
+        .select({
+          id: evidenceSources.id,
+          name: evidenceSources.name,
+          nameAr: evidenceSources.nameAr,
+          acronym: evidenceSources.acronym,
+          category: evidenceSources.category,
+          baseUrl: evidenceSources.baseUrl,
+          apiEndpoint: evidenceSources.apiEndpoint,
+          apiType: evidenceSources.apiType,
+        })
+        .from(evidenceSources)
+        .where(eq(evidenceSources.isWhitelisted, true));
+
+      // Get contacts and instructions for each source
+      const result = await Promise.all(
+        sourcesWithInstructions.map(async (source) => {
+          const contacts = await db
+            .select()
+            .from(sourceContacts)
+            .where(and(
+              eq(sourceContacts.sourceId, source.id),
+              eq(sourceContacts.isActive, true)
+            ))
+            .orderBy(desc(sourceContacts.isPrimary));
+
+          const instructions = await db
+            .select()
+            .from(apiRegistrationInstructions)
+            .where(eq(apiRegistrationInstructions.sourceId, source.id))
+            .limit(1);
+
+          return {
+            ...source,
+            organization: source.name, // For compatibility
+            contacts,
+            instructions: instructions[0] || null,
+          };
+        })
+      );
+
+      return result.filter(s => s.instructions !== null); // Only return sources with instructions
+    }),
+
+  /**
+   * Get single source with full details
+   */
+  getSourceDetails: adminProcedure
+    .input(z.object({
+      sourceId: z.number(),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database connection failed');
+
+      const source = await db
+        .select()
+        .from(evidenceSources)
+        .where(eq(evidenceSources.id, input.sourceId))
+        .limit(1);
+
+      if (!source[0]) {
+        throw new Error('Source not found');
+      }
+
+      const contacts = await db
+        .select()
+        .from(sourceContacts)
+        .where(eq(sourceContacts.sourceId, input.sourceId));
+
+      const instructions = await db
+        .select()
+        .from(apiRegistrationInstructions)
+        .where(eq(apiRegistrationInstructions.sourceId, input.sourceId))
+        .limit(1);
+
+      return {
+        ...source[0],
+        contacts,
+        instructions: instructions[0] || null,
+      };
+    }),
+
+  /**
+   * Add new credential
+   */
+  addCredential: adminProcedure
+    .input(z.object({
+      sourceId: z.number(),
+      credentialType: z.enum(['api_key', 'oauth_token', 'basic_auth', 'certificate']),
+      apiKey: z.string().optional(),
+      username: z.string().optional(),
+      password: z.string().optional(),
+      oauthAccessToken: z.string().optional(),
+      oauthRefreshToken: z.string().optional(),
+      expiresAt: z.string().optional(),
+      rateLimit: z.number().optional(),
+      rateLimitPeriod: z.string().optional(),
+      notes: z.string().optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database connection failed');
+
+      // Check if credential already exists for this source
+      const existing = await db
+        .select()
+        .from(sourceCredentials)
+        .where(and(
+          eq(sourceCredentials.sourceId, input.sourceId),
+          eq(sourceCredentials.isActive, true)
+        ))
+        .limit(1);
+
+      if (existing.length > 0) {
+        throw new Error('Active credential already exists for this source. Please delete or deactivate it first.');
+      }
+
+      const [result] = await db.insert(sourceCredentials).values({
+        sourceId: input.sourceId,
+        credentialType: input.credentialType,
+        apiKey: input.apiKey,
+        username: input.username,
+        password: input.password, // TODO: Encrypt in production
+        oauthAccessToken: input.oauthAccessToken,
+        oauthRefreshToken: input.oauthRefreshToken,
+        expiresAt: input.expiresAt ? new Date(input.expiresAt) : null,
+        rateLimit: input.rateLimit,
+        rateLimitPeriod: input.rateLimitPeriod,
+        notes: input.notes,
+        isActive: true,
+        validationStatus: 'untested',
+        createdBy: ctx.user.openId,
+      });
+
+      return { success: true, id: result.insertId };
+    }),
+
+  /**
+   * Update credential
+   */
+  updateCredential: adminProcedure
+    .input(z.object({
+      credentialId: z.number(),
+      apiKey: z.string().optional(),
+      username: z.string().optional(),
+      password: z.string().optional(),
+      oauthAccessToken: z.string().optional(),
+      oauthRefreshToken: z.string().optional(),
+      expiresAt: z.string().optional(),
+      rateLimit: z.number().optional(),
+      rateLimitPeriod: z.string().optional(),
+      notes: z.string().optional(),
+      isActive: z.boolean().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database connection failed');
+
+      const updateData: any = {};
+      if (input.apiKey !== undefined) updateData.apiKey = input.apiKey;
+      if (input.username !== undefined) updateData.username = input.username;
+      if (input.password !== undefined) updateData.password = input.password;
+      if (input.oauthAccessToken !== undefined) updateData.oauthAccessToken = input.oauthAccessToken;
+      if (input.oauthRefreshToken !== undefined) updateData.oauthRefreshToken = input.oauthRefreshToken;
+      if (input.expiresAt !== undefined) updateData.expiresAt = new Date(input.expiresAt);
+      if (input.rateLimit !== undefined) updateData.rateLimit = input.rateLimit;
+      if (input.rateLimitPeriod !== undefined) updateData.rateLimitPeriod = input.rateLimitPeriod;
+      if (input.notes !== undefined) updateData.notes = input.notes;
+      if (input.isActive !== undefined) updateData.isActive = input.isActive;
+
+      // Reset validation status if credentials changed
+      if (input.apiKey || input.username || input.password || input.oauthAccessToken) {
+        updateData.validationStatus = 'untested';
+        updateData.lastValidatedAt = null;
+        updateData.validationMessage = null;
+      }
+
+      await db
+        .update(sourceCredentials)
+        .set(updateData)
+        .where(eq(sourceCredentials.id, input.credentialId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Delete credential
+   */
+  deleteCredential: adminProcedure
+    .input(z.object({
+      credentialId: z.number(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database connection failed');
+
+      await db
+        .delete(sourceCredentials)
+        .where(eq(sourceCredentials.id, input.credentialId));
+
+      return { success: true };
+    }),
+
+  /**
+   * Validate credential
+   */
+  validateCredential: adminProcedure
+    .input(z.object({
+      credentialId: z.number(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database connection failed');
+
+      // Get credential with source info
+      const [cred] = await db
+        .select({
+          id: sourceCredentials.id,
+          sourceId: sourceCredentials.sourceId,
+          credentialType: sourceCredentials.credentialType,
+          apiKey: sourceCredentials.apiKey,
+          username: sourceCredentials.username,
+          password: sourceCredentials.password,
+          sourceName: evidenceSources.name,
+          apiEndpoint: evidenceSources.apiEndpoint,
+        })
+        .from(sourceCredentials)
+        .leftJoin(evidenceSources, eq(sourceCredentials.sourceId, evidenceSources.id))
+        .where(eq(sourceCredentials.id, input.credentialId))
+        .limit(1);
+
+      if (!cred) {
+        throw new Error('Credential not found');
+      }
+
+      // Perform validation based on credential type
+      let isValid = false;
+      let message = '';
+
+      try {
+        if (cred.credentialType === 'api_key') {
+          // Test API key with a simple request
+          if (!cred.apiEndpoint) {
+            message = 'No API endpoint configured for this source';
+            isValid = false;
+          } else {
+            // Make a test request (simplified - in production, use source-specific logic)
+            const testUrl = cred.apiEndpoint;
+            const response = await fetch(testUrl, {
+              headers: cred.apiKey ? {
+                'Authorization': `Bearer ${cred.apiKey}`,
+                'X-API-Key': cred.apiKey,
+              } : {},
+            });
+
+            if (response.ok || response.status === 404) {
+              // 404 is acceptable - means endpoint exists but resource not found
+              isValid = true;
+              message = `Validation successful. Status: ${response.status}`;
+            } else if (response.status === 401 || response.status === 403) {
+              isValid = false;
+              message = `Authentication failed. Status: ${response.status}`;
+            } else {
+              isValid = false;
+              message = `Unexpected response. Status: ${response.status}`;
+            }
+          }
+        } else {
+          // For other types, just mark as untested for now
+          message = 'Validation not implemented for this credential type yet';
+          isValid = false;
+        }
+      } catch (error: any) {
+        isValid = false;
+        message = `Validation error: ${error.message}`;
+      }
+
+      // Update validation status
+      await db
+        .update(sourceCredentials)
+        .set({
+          validationStatus: isValid ? 'valid' : 'invalid',
+          validationMessage: message,
+          lastValidatedAt: new Date(),
+        })
+        .where(eq(sourceCredentials.id, input.credentialId));
+
+      return {
+        isValid,
+        message,
+      };
+    }),
+
+  /**
+   * Get credential health summary
+   */
+  getHealthSummary: adminProcedure
+    .query(async () => {
+      const db = await getDb();
+      if (!db) throw new Error('Database connection failed');
+
+      const allCreds = await db.select().from(sourceCredentials);
+
+      const summary = {
+        total: allCreds.length,
+        active: allCreds.filter((c: any) => c.isActive).length,
+        valid: allCreds.filter((c: any) => c.validationStatus === 'valid').length,
+        invalid: allCreds.filter((c: any) => c.validationStatus === 'invalid').length,
+        expired: allCreds.filter((c: any) => c.validationStatus === 'expired').length,
+        untested: allCreds.filter((c: any) => c.validationStatus === 'untested').length,
+        expiringSoon: allCreds.filter((c: any) => {
+          if (!c.expiresAt) return false;
+          const daysUntilExpiry = Math.floor((c.expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+          return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
+        }).length,
+      };
+
+      return summary;
+    }),
+});
