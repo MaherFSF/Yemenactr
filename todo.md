@@ -5934,3 +5934,37 @@ Based on review of master design documents and data source register:
 - [ ] Verify README guides new engineer in <15 min
 - [ ] Verify no secrets detected
 - [ ] Verify no files >20MB committed
+
+
+## Data Source Expansion - 60+ Sources (January 28, 2026)
+
+### Parallel Research - 20 Additional Yemen-Specific Sources
+- [x] OCHA Yemen (UN Office for Coordination of Humanitarian Affairs)
+- [x] CEIC Data Yemen
+- [x] IOM DTM Yemen (Displacement Tracking Matrix)
+- [x] ACLED (Armed Conflict Location & Event Data)
+- [x] Yemen Data Project (Airstrikes Database)
+- [x] WFP VAM (Vulnerability Analysis Mapping)
+- [x] IPC (Integrated Food Security Phase Classification)
+- [x] UNHCR Yemen (Refugee Data)
+- [x] WHO Yemen (Health Data)
+- [x] UNICEF MICS Yemen (Multiple Indicator Cluster Surveys)
+- [x] FAO GIEWS (Global Information and Early Warning System)
+- [x] Trading Economics Yemen
+- [x] Statista Yemen
+- [x] Knoema Yemen
+- [x] Macrotrends Yemen
+- [x] Global Economy Yemen
+- [x] Index Mundi Yemen
+- [x] Data Commons Yemen
+- [x] Our World in Data Yemen
+- [x] SIPRI (Arms Trade Database)
+
+### Integration Tasks
+- [x] Research API endpoints and authentication methods
+- [x] Collect contact information (emails, departments)
+- [x] Document registration instructions
+- [x] Populate evidence_sources table
+- [x] Add source_contacts records
+- [x] Add api_registration_instructions records
+- [x] Test backfill integration
