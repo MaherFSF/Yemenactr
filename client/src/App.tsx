@@ -87,6 +87,7 @@ import VisualizationBuilder from "./pages/admin/VisualizationBuilder";
 import InsightMiner from "./pages/admin/InsightMiner";
 import ExportBundle from "./pages/admin/ExportBundle";
 import CoverageMap from "./pages/admin/CoverageMap";
+import BackfillDashboard from "./pages/admin/BackfillDashboardPage";
 import Sitemap from "./pages/Sitemap";
 import AllPages from "./pages/review/AllPages";
 import { ReviewModeBanner } from "./components/ReviewModeBanner";
@@ -170,6 +171,7 @@ function Router() {
           <Route path="/admin/connector-thresholds" component={ConnectorThresholds} />
           <Route path="/admin/autopilot" component={AutopilotControlRoom} />
           <Route path="/admin/coverage-map" component={CoverageMap} />
+          <Route path="/admin/backfill" component={BackfillDashboard} />
           <Route path="/admin/reports" component={ReportWorkflow} />
           <Route path="/admin/visualizations" component={VisualizationBuilder} />
           <Route path="/admin/insights" component={InsightMiner} />

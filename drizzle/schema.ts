@@ -1876,6 +1876,9 @@ export const evidenceSources = mysqlTable("evidence_sources", {
 export type EvidenceSource = typeof evidenceSources.$inferSelect;
 export type InsertEvidenceSource = typeof evidenceSources.$inferInsert;
 
+// Import backfill infrastructure tables
+export * from "./schema-backfill";
+
 /**
  * Evidence Documents - PDFs, reports, publications with storage and hashing
  */
