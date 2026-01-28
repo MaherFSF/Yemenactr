@@ -5893,3 +5893,44 @@ Based on review of master design documents and data source register:
 - [ ] Configure git remote for Causeway-banking-financial/yeto
 - [ ] Push all code to GitHub repository
 - [ ] Verify push was successful
+
+
+## GitHub Repository Setup - Causeway-banking-financial/yeto-platform (January 28, 2026)
+
+### Step 1: Repo Structure
+- [ ] Create/organize all top-level folders (client, server, shared, scripts, infra, docs, manifests, tests)
+- [ ] Create all root files (README.md, LICENSE, .gitignore, .gitattributes, .editorconfig, etc.)
+- [ ] Create CODEOWNERS, SECURITY.md, CONTRIBUTING.md
+
+### Step 2: Source-of-Truth Documentation
+- [ ] Create /docs/OPERATIONS.md (local run, tests, publish, env vars)
+- [ ] Create /docs/RECOVERY_RUNBOOK.md (DB restore, S3 restore)
+- [ ] Create /docs/ARCHITECTURE.md (4-layer architecture)
+- [ ] Create /docs/DATA_GOVERNANCE.md (provenance, contradictions, versioning)
+- [ ] Create /docs/API.md (endpoints, auth, rate limits)
+
+### Step 3: S3 Alignment
+- [ ] Create /manifests/aws_env_map.json (region, bucket, prefixes)
+- [ ] Create /manifests/s3-assets.json (asset mapping)
+
+### Step 4: Cleanup & Organization
+- [ ] Remove Manus transient files
+- [ ] Implement /scripts/check-large-files.sh
+- [ ] Normalize filenames with broken encodings
+- [ ] Create manifest for filename mappings
+
+### Step 5: CI/CD Workflows
+- [ ] Create .github/workflows/ci.yml (lint, typecheck, tests, E2E, build)
+- [ ] Create .github/workflows/release.yml (tag, artifacts)
+
+### Step 6: Branching & Protection
+- [ ] Create main and dev branches
+- [ ] Document branch protection rules in OPERATIONS.md
+
+### Step 7: Acceptance Tests
+- [ ] Verify git status is clean
+- [ ] Verify CI passes locally
+- [ ] Verify repo builds successfully
+- [ ] Verify README guides new engineer in <15 min
+- [ ] Verify no secrets detected
+- [ ] Verify no files >20MB committed
