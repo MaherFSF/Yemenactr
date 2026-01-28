@@ -406,6 +406,7 @@ export default function DataRepository() {
                       <SelectItem value="all">{language === "ar" ? "جميع القطاعات" : "All Sectors"}</SelectItem>
                       <SelectItem value="banking">{language === "ar" ? "المصرفي والمالي" : "Banking & Finance"}</SelectItem>
                       <SelectItem value="trade">{language === "ar" ? "التجارة" : "Trade & Commerce"}</SelectItem>
+                      <SelectItem value="monetary">{language === "ar" ? "السياسة النقدية" : "Monetary Policy"}</SelectItem>
                       <SelectItem value="poverty">{language === "ar" ? "الفقر والتنمية" : "Poverty & Development"}</SelectItem>
                     </SelectContent>
                   </Select>

@@ -14,7 +14,7 @@ import { Link } from "wouter";
 
 interface AdminGuardProps {
   children: React.ReactNode;
-  requiredRole?: 'admin' | 'analyst' | 'partner_contributor';
+  requiredRole?: 'admin' | 'editor' | 'viewer' | 'analyst' | 'partner_contributor';
 }
 
 export function AdminGuard({ children, requiredRole = 'admin' }: AdminGuardProps) {
@@ -53,9 +53,11 @@ export function AdminGuard({ children, requiredRole = 'admin' }: AdminGuardProps
     );
   }
 
-  // Check role-based access
+  // Check role-based access - hierarchical permissions
   const allowedRoles: Record<string, string[]> = {
     'admin': ['admin'],
+    'editor': ['admin', 'editor'],
+    'viewer': ['admin', 'editor', 'viewer'],
     'analyst': ['admin', 'analyst'],
     'partner_contributor': ['admin', 'analyst', 'partner_contributor'],
   };
@@ -74,7 +76,7 @@ export function AdminGuard({ children, requiredRole = 'admin' }: AdminGuardProps
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
             {isArabic 
-              ? `هذه الصفحة تتطلب صلاحيات ${requiredRole === 'admin' ? 'المشرف' : requiredRole === 'analyst' ? 'المحلل' : 'الشريك'}. صلاحياتك الحالية: ${user.role}`
+              ? `هذه الصفحة تتطلب صلاحيات ${requiredRole === 'admin' ? 'المشرف' : requiredRole === 'editor' ? 'المحرر' : requiredRole === 'viewer' ? 'المشاهد' : requiredRole === 'analyst' ? 'المحلل' : 'الشريك'}. صلاحياتك الحالية: ${user.role}`
               : `This page requires ${requiredRole} privileges. Your current role: ${user.role}`}
           </p>
           <div className="flex gap-4 justify-center">

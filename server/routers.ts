@@ -1,7 +1,8 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, protectedProcedure, adminProcedure, analystProcedure, partnerProcedure, router } from "./_core/trpc";
+import { publicProcedure, protectedProcedure, adminProcedure, analystProcedure, partnerProcedure, editorProcedure, viewerProcedure, router } from "./_core/trpc";
+import { getRecentAuditLogs, getUserAuditLogs, logUserAction } from "./services/auditLogger";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { invokeLLM } from "./_core/llm";
@@ -3512,6 +3513,47 @@ Answer the user's question based on this research. Be specific and cite sources 
         ]);
         await conn.end();
         return { success: true, id: (result as any).insertId };
+      }),
+  }),
+
+  // ============================================================================
+  // AUDIT LOGS
+  // ============================================================================
+  
+  audit: router({
+    getRecent: adminProcedure
+      .input(z.object({
+        limit: z.number().min(1).max(500).default(100),
+      }).optional())
+      .query(async ({ input }) => {
+        return await getRecentAuditLogs(input?.limit ?? 100);
+      }),
+
+    getByUser: adminProcedure
+      .input(z.object({
+        userId: z.number(),
+        limit: z.number().min(1).max(100).default(50),
+      }))
+      .query(async ({ input }) => {
+        return await getUserAuditLogs(input.userId, input.limit);
+      }),
+
+    logAction: adminProcedure
+      .input(z.object({
+        action: z.string(),
+        resourceType: z.string().optional(),
+        resourceId: z.string().optional(),
+        details: z.record(z.string(), z.unknown()).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await logUserAction(
+          ctx,
+          input.action,
+          input.resourceType,
+          input.resourceId,
+          input.details
+        );
+        return { success: true };
       }),
   }),
 });

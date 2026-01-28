@@ -174,6 +174,39 @@ function getKnownCBYData(
 // Data Processing
 // ============================================
 
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000;
+
+/**
+ * Retry wrapper for database operations
+ */
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  context: string,
+  maxRetries: number = MAX_RETRIES
+): Promise<T | null> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error: any) {
+      const isRetryable = error.code === 'ECONNRESET' ||
+                         error.code === 'ETIMEDOUT' ||
+                         error.code === 'PROTOCOL_CONNECTION_LOST' ||
+                         error.message?.includes('Connection lost');
+      
+      if (!isRetryable || attempt === maxRetries) {
+        console.error(`[CBY] ${context} failed after ${attempt} attempts:`, error.message);
+        return null;
+      }
+      
+      const delay = RETRY_DELAY * Math.pow(2, attempt - 1);
+      console.warn(`[CBY] ${context} attempt ${attempt} failed, retrying in ${delay}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+  return null;
+}
+
 async function processCBYData(
   data: CBYDataValue[],
   indicatorInfo: typeof CBY_INDICATORS[0],
@@ -183,9 +216,10 @@ async function processCBYData(
   if (!db) return 0;
   
   let recordCount = 0;
+  let errorCount = 0;
   
   for (const record of data) {
-    try {
+    const result = await withRetry(async () => {
       const dateForYear = new Date(record.year, 11, 31);
       const regimeSuffix = record.regime === "aden_irg" ? "ADEN" : "SANAA";
       
@@ -202,10 +236,21 @@ async function processCBYData(
         set: { value: record.value.toString() },
       });
       
+      return true;
+    }, `store ${indicatorInfo.code} for ${record.year}`);
+    
+    if (result) {
       recordCount++;
-    } catch (error) {
-      console.error(`[CBY] Error storing ${indicatorInfo.code} for ${record.year}:`, error);
+    } else {
+      errorCount++;
     }
+  }
+  
+  // Log error rate for monitoring
+  const totalAttempts = recordCount + errorCount;
+  const errorRate = totalAttempts > 0 ? (errorCount / totalAttempts * 100).toFixed(2) : '0';
+  if (errorCount > 0) {
+    console.warn(`[CBY] ${indicatorInfo.code}: ${errorCount}/${totalAttempts} records failed (${errorRate}% error rate)`);
   }
   
   return recordCount;

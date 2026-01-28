@@ -79,3 +79,39 @@ export const partnerProcedure = t.procedure.use(
     });
   }),
 );
+
+// Editor procedure - for users with editor or admin role (can modify content)
+export const editorProcedure = t.procedure.use(
+  t.middleware(async opts => {
+    const { ctx, next } = opts;
+
+    if (!ctx.user || !['admin', 'editor'].includes(ctx.user.role)) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Editor access required" });
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        user: ctx.user,
+      },
+    });
+  }),
+);
+
+// Viewer procedure - for users with viewer, editor, or admin role (read-only access to protected content)
+export const viewerProcedure = t.procedure.use(
+  t.middleware(async opts => {
+    const { ctx, next } = opts;
+
+    if (!ctx.user || !['admin', 'editor', 'viewer'].includes(ctx.user.role)) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Viewer access required" });
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        user: ctx.user,
+      },
+    });
+  }),
+);

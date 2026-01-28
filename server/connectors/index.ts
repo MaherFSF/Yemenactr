@@ -358,6 +358,39 @@ export class HDXConnector implements DataConnector {
   sourceName = 'Humanitarian Data Exchange (HAPI)';
   
   private baseUrl = 'https://hapi.humdata.org/api/v1';
+  private maxRetries = 3;
+  private retryDelay = 2000; // 2 seconds
+  
+  /**
+   * Retry wrapper for API calls with exponential backoff
+   */
+  private async withRetry<T>(fn: () => Promise<T>, context: string): Promise<T | null> {
+    let lastError: Error | null = null;
+    
+    for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
+      try {
+        return await fn();
+      } catch (error: any) {
+        lastError = error;
+        const isRetryable = error.code === 'ECONNRESET' || 
+                           error.code === 'ETIMEDOUT' || 
+                           error.code === 'ENOTFOUND' ||
+                           error.response?.status >= 500 ||
+                           error.response?.status === 429;
+        
+        if (!isRetryable || attempt === this.maxRetries) {
+          console.error(`[HDX] ${context} failed after ${attempt} attempts:`, error.message);
+          return null;
+        }
+        
+        const delay = this.retryDelay * Math.pow(2, attempt - 1);
+        console.warn(`[HDX] ${context} attempt ${attempt} failed, retrying in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+    
+    return null;
+  }
   
   async discover(): Promise<{ datasets: string[]; series: string[] }> {
     return {
@@ -397,36 +430,27 @@ export class HDXConnector implements DataConnector {
   }
   
   async fetchPopulation(): Promise<any> {
-    try {
+    return this.withRetry(async () => {
       const url = `${this.baseUrl}/population-social/population?location_code=YEM&output_format=json&limit=1000`;
       const response = await axios.get(url, { timeout: 30000 });
       return response.data;
-    } catch (error) {
-      console.error('[HDX] Failed to fetch population data:', error);
-      return null;
-    }
+    }, 'fetchPopulation');
   }
   
   async fetchFoodSecurity(): Promise<any> {
-    try {
+    return this.withRetry(async () => {
       const url = `${this.baseUrl}/food/food-security?location_code=YEM&output_format=json&limit=1000`;
       const response = await axios.get(url, { timeout: 30000 });
       return response.data;
-    } catch (error) {
-      console.error('[HDX] Failed to fetch food security data:', error);
-      return null;
-    }
+    }, 'fetchFoodSecurity');
   }
   
   async fetchHumanitarianNeeds(): Promise<any> {
-    try {
+    return this.withRetry(async () => {
       const url = `${this.baseUrl}/affected-people/humanitarian-needs?location_code=YEM&output_format=json&limit=1000`;
       const response = await axios.get(url, { timeout: 30000 });
       return response.data;
-    } catch (error) {
-      console.error('[HDX] Failed to fetch humanitarian needs:', error);
-      return null;
-    }
+    }, 'fetchHumanitarianNeeds');
   }
   
   async normalize(rawData: any): Promise<NormalizedSeries[]> {

@@ -39,6 +39,7 @@ import Methodology from "./pages/Methodology";
 import ReportBuilder from "./pages/ReportBuilder";
 import Pricing from "./pages/Pricing";
 import Legal from "./pages/Legal";
+import DataPolicy from "./pages/DataPolicy";
 import Entities from "./pages/Entities";
 import EntityDetail from "./pages/EntityDetail";
 import BankDetail from "./pages/entities/BankDetail";
@@ -140,7 +141,7 @@ function Router() {
       <Route path={"/report-builder"} component={ReportBuilder} />
       <Route path={"/pricing"} component={Pricing} />
       <Route path="/subscriptions">{() => { window.location.href = '/pricing'; return null; }}</Route>
-      <Route path="/data-policy" component={Legal} />
+      <Route path="/data-policy" component={DataPolicy} />
       <Route path={"/legal"} component={Legal} />
       <Route path={"/entities"} component={Entities} />
       <Route path={"/entities/:id"} component={EntityDetail} />

@@ -20,7 +20,7 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["user", "admin", "analyst", "partner_contributor"]).default("user").notNull(),
+  role: mysqlEnum("role", ["user", "admin", "editor", "viewer", "analyst", "partner_contributor"]).default("user").notNull(),
   subscriptionTier: mysqlEnum("subscriptionTier", ["free", "researcher", "institutional"]).default("free").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -29,6 +29,49 @@ export const users = mysqlTable("users", {
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
+
+// Session tokens for timeout management
+export const sessionTokens = mysqlTable("session_tokens", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  token: varchar("token", { length: 255 }).notNull().unique(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  lastActivityAt: timestamp("lastActivityAt").defaultNow().notNull(),
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: text("userAgent"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("session_user_idx").on(table.userId),
+  tokenIdx: index("session_token_idx").on(table.token),
+  expiresIdx: index("session_expires_idx").on(table.expiresAt),
+}));
+
+export type SessionToken = typeof sessionTokens.$inferSelect;
+export type InsertSessionToken = typeof sessionTokens.$inferInsert;
+
+// Audit logs for tracking admin actions
+export const auditLogs = mysqlTable("audit_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").references(() => users.id),
+  userEmail: varchar("userEmail", { length: 320 }),
+  userRole: varchar("userRole", { length: 50 }),
+  action: varchar("action", { length: 100 }).notNull(), // e.g., "user.create", "data.update", "settings.change"
+  resourceType: varchar("resourceType", { length: 100 }), // e.g., "user", "dataset", "indicator"
+  resourceId: varchar("resourceId", { length: 100 }), // ID of affected resource
+  details: text("details"), // JSON with additional context
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: text("userAgent"),
+  status: mysqlEnum("status", ["success", "failure", "warning"]).default("success").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("audit_user_idx").on(table.userId),
+  actionIdx: index("audit_action_idx").on(table.action),
+  resourceIdx: index("audit_resource_idx").on(table.resourceType, table.resourceId),
+  createdAtIdx: index("audit_created_idx").on(table.createdAt),
+}));
+
+export type AuditLog = typeof auditLogs.$inferSelect;
+export type InsertAuditLog = typeof auditLogs.$inferInsert;
 
 // ============================================================================
 // PROVENANCE & SOURCES

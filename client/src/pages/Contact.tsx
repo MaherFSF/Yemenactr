@@ -24,9 +24,22 @@ export default function Contact() {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [honeypot, setHoneypot] = useState(""); // Anti-spam honeypot field
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Anti-spam: if honeypot field is filled, it's a bot
+    if (honeypot) {
+      console.log('[Contact] Spam detected via honeypot');
+      toast.success(
+        language === "ar" 
+          ? "تم إرسال رسالتك بنجاح!"
+          : "Your message has been sent successfully!"
+      );
+      return; // Silently reject spam
+    }
+    
     setIsSubmitting(true);
 
     // Simulate form submission
@@ -140,6 +153,20 @@ export default function Contact() {
                       required
                       rows={6}
                       placeholder={language === "ar" ? "اكتب رسالتك هنا..." : "Write your message here..."}
+                    />
+                  </div>
+
+                  {/* Honeypot anti-spam field - hidden from users, visible to bots */}
+                  <div className="absolute -left-[9999px]" aria-hidden="true">
+                    <Label htmlFor="website">Website</Label>
+                    <Input
+                      id="website"
+                      name="website"
+                      type="text"
+                      value={honeypot}
+                      onChange={(e) => setHoneypot(e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
                     />
                   </div>
 
