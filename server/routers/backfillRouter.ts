@@ -14,6 +14,9 @@ import {
 } from '../services/backfillOrchestrator';
 import { getAllCheckpoints } from '../services/historicalBackfill';
 import { createAdapter } from '../services/sourceAdapters';
+import { runWorldBankBackfill, fetchWorldBankIndicator, YEMEN_INDICATORS } from '../services/worldBankFetcher';
+import { runHDXBackfill } from '../services/hdxFetcher';
+import { runReliefWebBackfill, fetchReliefWebReports } from '../services/reliefwebFetcher';
 
 export const backfillRouter = router({
   /**
@@ -164,4 +167,117 @@ export const backfillRouter = router({
         dataPoint,
       };
     }),
+
+  /**
+   * Trigger World Bank API backfill (2010-present)
+   */
+  triggerWorldBankBackfill: adminProcedure
+    .mutation(async () => {
+      console.log('[Backfill] Starting World Bank backfill...');
+      const result = await runWorldBankBackfill();
+      console.log('[Backfill] World Bank backfill complete:', result);
+      return result;
+    }),
+
+  /**
+   * Trigger HDX HAPI backfill
+   */
+  triggerHDXBackfill: adminProcedure
+    .mutation(async () => {
+      console.log('[Backfill] Starting HDX HAPI backfill...');
+      const result = await runHDXBackfill();
+      console.log('[Backfill] HDX HAPI backfill complete:', result);
+      return result;
+    }),
+
+  /**
+   * Trigger ReliefWeb API backfill (2010-present)
+   */
+  triggerReliefWebBackfill: adminProcedure
+    .mutation(async () => {
+      console.log('[Backfill] Starting ReliefWeb backfill...');
+      const result = await runReliefWebBackfill();
+      console.log('[Backfill] ReliefWeb backfill complete:', result);
+      return result;
+    }),
+
+  /**
+   * Test World Bank API connection
+   */
+  testWorldBankAPI: adminProcedure
+    .query(async () => {
+      try {
+        const data = await fetchWorldBankIndicator(YEMEN_INDICATORS.GDP, 2020, 2023);
+        return {
+          success: true,
+          dataPoints: data.length,
+          sample: data.slice(0, 3),
+        };
+      } catch (error) {
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        };
+      }
+    }),
+
+  /**
+   * Test ReliefWeb API connection
+   */
+  testReliefWebAPI: adminProcedure
+    .query(async () => {
+      try {
+        const data = await fetchReliefWebReports(5);
+        return {
+          success: true,
+          totalReports: data.totalCount,
+          sample: data.data.slice(0, 3).map(r => ({
+            id: r.id,
+            title: r.fields.title,
+            date: r.fields.date.original,
+          })),
+        };
+      } catch (error) {
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        };
+      }
+    }),
+
+  /**
+   * Get available World Bank indicators
+   */
+  getWorldBankIndicators: adminProcedure
+    .query(async () => {
+      return Object.entries(YEMEN_INDICATORS).map(([name, code]) => ({
+        name,
+        code,
+        description: getIndicatorDescription(name),
+      }));
+    }),
 });
+
+// Helper function for indicator descriptions
+function getIndicatorDescription(name: string): string {
+  const descriptions: Record<string, string> = {
+    GDP: 'Gross Domestic Product (current US$)',
+    GDP_PER_CAPITA: 'GDP per capita (current US$)',
+    INFLATION: 'Inflation, consumer prices (annual %)',
+    UNEMPLOYMENT: 'Unemployment, total (% of labor force)',
+    POPULATION: 'Total population',
+    CURRENT_ACCOUNT: 'Current account balance (BoP, current US$)',
+    EXPORTS_PCT_GDP: 'Exports of goods and services (% of GDP)',
+    IMPORTS_PCT_GDP: 'Imports of goods and services (% of GDP)',
+    EXTERNAL_DEBT: 'External debt stocks, total (DOD, current US$)',
+    REMITTANCES: 'Personal remittances, received (current US$)',
+    FDI_INFLOWS: 'Foreign direct investment, net inflows (BoP, current US$)',
+    TRADE_PCT_GDP: 'Trade (% of GDP)',
+    GROSS_SAVINGS: 'Gross savings (% of GDP)',
+    MILITARY_EXPENDITURE: 'Military expenditure (% of GDP)',
+    LIFE_EXPECTANCY: 'Life expectancy at birth, total (years)',
+    INFANT_MORTALITY: 'Mortality rate, infant (per 1,000 live births)',
+    POVERTY_RATIO: 'Poverty headcount ratio at $2.15 a day (2017 PPP)',
+  };
+  return descriptions[name] || name;
+}

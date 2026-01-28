@@ -12,6 +12,7 @@
 
 import { useState } from 'react';
 import { trpc } from '@/lib/trpc';
+import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -54,8 +55,44 @@ export default function BackfillDashboardPage() {
   const { language } = useLanguage();
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
 
-  const { data: recommendations, isLoading: loadingRecs } = trpc.backfill.getRecommendations.useQuery();
-  const { data: checkpoints, isLoading: loadingCheckpoints } = trpc.backfill.getCheckpoints.useQuery();
+  const { data: recommendations, isLoading: loadingRecs, refetch: refetchRecs } = trpc.backfill.getRecommendations.useQuery();
+  const { data: checkpoints, isLoading: loadingCheckpoints, refetch: refetchCheckpoints } = trpc.backfill.getCheckpoints.useQuery();
+
+  // Backfill trigger mutations
+  const worldBankBackfill = trpc.backfill.triggerWorldBankBackfill.useMutation({
+    onSuccess: (data) => {
+      toast.success(`World Bank backfill complete: ${data.dataPointsInserted} data points inserted`);
+      refetchRecs();
+      refetchCheckpoints();
+    },
+    onError: (error) => {
+      toast.error(`World Bank backfill failed: ${error.message}`);
+    },
+  });
+
+  const hdxBackfill = trpc.backfill.triggerHDXBackfill.useMutation({
+    onSuccess: (data) => {
+      toast.success(`HDX HAPI backfill complete: ${data.dataPointsRetrieved} records retrieved`);
+      refetchRecs();
+      refetchCheckpoints();
+    },
+    onError: (error) => {
+      toast.error(`HDX HAPI backfill failed: ${error.message}`);
+    },
+  });
+
+  const reliefWebBackfill = trpc.backfill.triggerReliefWebBackfill.useMutation({
+    onSuccess: (data) => {
+      toast.success(`ReliefWeb backfill complete: ${data.reportsRetrieved} reports retrieved`);
+      refetchRecs();
+      refetchCheckpoints();
+    },
+    onError: (error) => {
+      toast.error(`ReliefWeb backfill failed: ${error.message}`);
+    },
+  });
+
+  const isBackfillRunning = worldBankBackfill.isPending || hdxBackfill.isPending || reliefWebBackfill.isPending;
 
   const isArabic = language === 'ar';
 
@@ -72,6 +109,71 @@ export default function BackfillDashboardPage() {
             : 'Manage historical data ingestion from 2010 to present across multiple sources'}
         </p>
       </div>
+
+      {/* Quick Actions - Trigger Backfill */}
+      <Card className="border-green-200 bg-green-50/50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Play className="h-5 w-5 text-green-600" />
+            {isArabic ? 'تشغيل الملء السريع' : 'Quick Backfill Actions'}
+          </CardTitle>
+          <CardDescription>
+            {isArabic
+              ? 'ابدأ استيراد البيانات من المصادر الجاهزة (World Bank, HDX, ReliefWeb)'
+              : 'Start data ingestion from ready sources (World Bank, HDX, ReliefWeb)'}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-4">
+            <Button
+              onClick={() => worldBankBackfill.mutate()}
+              disabled={isBackfillRunning}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              {worldBankBackfill.isPending ? (
+                <><RefreshCw className="h-4 w-4 mr-2 animate-spin" /> {isArabic ? 'جاري التحميل...' : 'Loading...'}</>
+              ) : (
+                <><Database className="h-4 w-4 mr-2" /> World Bank (2010-{new Date().getFullYear()})</>
+              )}
+            </Button>
+
+            <Button
+              onClick={() => hdxBackfill.mutate()}
+              disabled={isBackfillRunning}
+              className="bg-orange-600 hover:bg-orange-700"
+            >
+              {hdxBackfill.isPending ? (
+                <><RefreshCw className="h-4 w-4 mr-2 animate-spin" /> {isArabic ? 'جاري التحميل...' : 'Loading...'}</>
+              ) : (
+                <><Database className="h-4 w-4 mr-2" /> HDX HAPI (Humanitarian)</>
+              )}
+            </Button>
+
+            <Button
+              onClick={() => reliefWebBackfill.mutate()}
+              disabled={isBackfillRunning}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {reliefWebBackfill.isPending ? (
+                <><RefreshCw className="h-4 w-4 mr-2 animate-spin" /> {isArabic ? 'جاري التحميل...' : 'Loading...'}</>
+              ) : (
+                <><FileText className="h-4 w-4 mr-2" /> ReliefWeb (Reports)</>
+              )}
+            </Button>
+          </div>
+
+          {isBackfillRunning && (
+            <div className="mt-4 p-3 bg-yellow-100 border border-yellow-300 rounded-lg">
+              <p className="text-sm text-yellow-800 flex items-center gap-2">
+                <RefreshCw className="h-4 w-4 animate-spin" />
+                {isArabic
+                  ? 'جاري استيراد البيانات... قد يستغرق هذا عدة دقائق'
+                  : 'Data ingestion in progress... This may take several minutes'}
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

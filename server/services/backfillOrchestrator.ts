@@ -67,10 +67,10 @@ export async function analyzeSource(sourceId: string): Promise<SourceAnalysis> {
   // Fetch source metadata
   const [rows] = await db.execute(sql`
     SELECT 
-      id, name, organization, url, description, dataFormat,
+      id, name, organization, baseUrl, notes, dataFormat,
       updateFrequency, license, isActive, apiEndpoint, authType,
       requiresKey, partnershipRequired, scrapingAllowed,
-      contactEmail, notes
+      contactEmail
     FROM evidence_sources
     WHERE id = ${sourceId}
   `) as any;
@@ -79,7 +79,11 @@ export async function analyzeSource(sourceId: string): Promise<SourceAnalysis> {
     throw new Error(`Source ${sourceId} not found`);
   }
 
-  const source = rows[0];
+  const source = {
+    ...rows[0],
+    url: rows[0].baseUrl,
+    description: rows[0].notes,
+  };
   
   // Strategy detection logic
   let strategy: SourceStrategy = 'unavailable';
