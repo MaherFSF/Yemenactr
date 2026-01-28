@@ -5885,3 +5885,11 @@ Based on review of master design documents and data source register:
 - [x] Unique indicators: 17 economic indicators
 - [x] Data range: 2010 to 2024
 - [x] Source: World Bank
+
+
+## GitHub Push - Causeway-banking-financial/yeto (January 28, 2026)
+
+- [ ] Save checkpoint with historical backfill changes
+- [ ] Configure git remote for Causeway-banking-financial/yeto
+- [ ] Push all code to GitHub repository
+- [ ] Verify push was successful
