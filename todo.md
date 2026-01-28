@@ -5497,3 +5497,11 @@ Based on review of master design documents and data source register:
 - [ ] Backfill 5 flagship datasets
 - [ ] Show Coverage Map working
 - [ ] Save checkpoint for publishing
+
+
+## Wire Coverage Map Data (January 28, 2026)
+
+- [ ] Update Coverage Map service to query time_series table for real coverage data
+- [ ] Wire Coverage Map endpoints to dataInfra router
+- [ ] Test Coverage Map dashboard with real indicator coverage
+- [ ] Verify coverage percentages and gap detection

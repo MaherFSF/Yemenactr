@@ -1,0 +1,25 @@
+{
+  "query": "\nSELECT COUNT(*) as count FROM indicators;\nSELECT COUNT(DISTINCT indicatorCode) as covered, MAX(updatedAt) as lastUpdated FROM time_series;\nSELECT COUNT(*) as count FROM (\n  SELECT indicatorCode, COUNT(*) as records\n  FROM time_series\n  GROUP BY indicatorCode\n  HAVING records < 1000\n) as gaps;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute \nSELECT COUNT(*) as count FROM indicators;\nSELECT COUNT(DISTINCT indicatorCode) as covered, MAX(updatedAt) as lastUpdated FROM time_series;\nSELECT COUNT(*) as count FROM (\n  SELECT indicatorCode, COUNT(*) as records\n  FROM time_series\n  GROUP BY indicatorCode\n  HAVING records < 1000\n) as gaps;\n",
+  "rows": [
+    {
+      "count": "66"
+    },
+    {
+      "count": "covered\tlastUpdated"
+    },
+    {
+      "count": "159\t2026-01-27 20:12:41"
+    },
+    {
+      "count": "count"
+    },
+    {
+      "count": "159"
+    }
+  ],
+  "messages": [],
+  "stdout": "count\n66\ncovered\tlastUpdated\n159\t2026-01-27 20:12:41\ncount\n159\n",
+  "stderr": "",
+  "execution_time_ms": 1922
+}

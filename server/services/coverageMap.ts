@@ -97,7 +97,7 @@ export async function getIndicatorCoverage(
   // Get indicator metadata
   const [indicators] = await db.execute(sql`
     SELECT code, name, nameAr, sector, sourceId
-    FROM economic_indicators
+    FROM indicators
     WHERE code = ${indicatorCode}
     LIMIT 1
   `) as any;
@@ -180,9 +180,9 @@ export async function generateCoverageMap(
   }
   
   // Get all indicators
-  let query = sql`SELECT code, name, nameAr, sector, sourceId FROM economic_indicators`;
+  let query = sql`SELECT code, name, nameAr, sector, sourceId FROM indicators`;
   if (filters?.sector) {
-    query = sql`SELECT code, name, nameAr, sector, sourceId FROM economic_indicators WHERE sector = ${filters.sector}`;
+    query = sql`SELECT code, name, nameAr, sector, sourceId FROM indicators WHERE sector = ${filters.sector}`;
   }
   
   const [indicators] = await db.execute(query) as any;
@@ -308,7 +308,7 @@ export async function getQuickCoverageStats(): Promise<{
   
   // Count indicators
   const [indicatorCount] = await db.execute(sql`
-    SELECT COUNT(*) as count FROM economic_indicators
+    SELECT COUNT(*) as count FROM indicators
   `) as any;
   
   // Count time series records
