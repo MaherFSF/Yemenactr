@@ -6072,3 +6072,94 @@ Based on review of master design documents and data source register:
 - [x] Test admin functions with auth (AdminGuard protecting routes)
 - [x] Test data exports (CSV, PDF, Excel) (download functions working)
 - [x] Run security audit (RBAC, session management, audit logging)RF, XSS)
+
+
+## Comprehensive Platform Upgrade (Jan 29, 2026)
+
+### PHASE 1 - Data Ingestion & Backfill
+- [ ] Research and ingest World Bank Yemen data (2010-2025)
+- [ ] Research and ingest IMF Yemen data (2010-2025)
+- [ ] Research and ingest UN OCHA humanitarian data (2010-2025)
+- [ ] Research and ingest WFP food security data (2010-2025)
+- [ ] Research and ingest ACLED conflict data (2010-2025)
+- [ ] Research and ingest CBY Aden exchange rates (2010-2025)
+- [ ] Research and ingest CBY Sanaa exchange rates (2010-2025)
+- [ ] Research and ingest HDX humanitarian datasets (2010-2025)
+- [ ] Research and ingest IOM displacement data (2010-2025)
+- [ ] Research and ingest UNHCR refugee data (2010-2025)
+- [ ] Research and ingest WHO health data (2010-2025)
+- [ ] Research and ingest FAO agriculture data (2010-2025)
+- [ ] Research and ingest Trading Economics data (2010-2025)
+- [ ] Research and ingest SIPRI arms trade data (2010-2025)
+- [ ] Research and ingest Yemen sanctions data from OFAC/EU
+
+### PHASE 2 - UI/UX Upgrades
+- [ ] Upgrade Admin Operations Console (based on mockup)
+  - [ ] Add System Health status cards
+  - [ ] Add Active Ingestion Jobs tracker
+  - [ ] Add Pending Reviews counter
+  - [ ] Add Data Quality Score (A+ rating)
+  - [ ] Add Recent Ingestion Activity table
+  - [ ] Add QA Alerts section
+  - [ ] Add Model Performance chart
+  - [ ] Add Coverage Scorecard Summary
+  - [ ] Add System Status indicators
+- [ ] Upgrade Partner Contributor Portal
+  - [ ] Add Organization Profile section
+  - [ ] Add Data Upload wizard (5 steps)
+  - [ ] Add Metadata form with validation
+  - [ ] Add Data Preview table
+  - [ ] Add Schema Validation checks
+  - [ ] Add Submission Guidelines sidebar
+  - [ ] Add Recent Submissions list
+- [ ] Upgrade Glossary Interface
+  - [ ] Add Alphabetical filter (A-Z)
+  - [ ] Add Category filter dropdown
+  - [ ] Add Detailed Term View panel
+  - [ ] Add Yemen-Specific Context sections
+  - [ ] Add Related Indicators links
+  - [ ] Add Source Citations
+  - [ ] Add Visual Examples with charts
+  - [ ] Add Related Terms tags
+- [ ] Upgrade Comparison Tool
+  - [ ] Add Regional Peers selector (Jordan, Lebanon, Sudan, Iraq)
+  - [ ] Add GDP Comparison bar chart
+  - [ ] Add Inflation Comparison line chart
+  - [ ] Add Unemployment Comparison horizontal bars
+  - [ ] Add Trade Balance stacked bars
+  - [ ] Add Key Insights sidebar
+  - [ ] Add Export Comparison button
+- [ ] Upgrade Scenario Simulator
+  - [ ] Add Base Scenario dropdown
+  - [ ] Add Shock Parameters sliders (Oil, Exchange, Aid, Remittances, Fuel)
+  - [ ] Add Time Horizon options (6mo, 1yr, 2yr)
+  - [ ] Add Scenario Results cards with confidence bands
+  - [ ] Add Key Economic Indicator Projection chart
+  - [ ] Add Transmission Pathway diagram
+  - [ ] Add Assumptions & Evidence panel
+  - [ ] Add Sensitivity Analysis section
+  - [ ] Add Compare Scenarios button
+  - [ ] Add Export Results (PDF, Excel, JSON)
+- [ ] Upgrade Sanctions Dashboard
+  - [ ] Add Entity Type filters (Banks, MFIs, Money Exchangers)
+  - [ ] Add Jurisdiction toggle (Aden, Sana'a, Both)
+  - [ ] Add Sanction Status filter (Active, Lifted, Under Review)
+  - [ ] Add Date Range picker
+  - [ ] Add Sanctions Overview cards (Active, Under Investigation, Lifted, Watchlist)
+  - [ ] Add Sanctions History timeline
+  - [ ] Add Monitored Entities table with pagination
+  - [ ] Add Compliance Alerts section
+  - [ ] Add Regulatory Actions list
+  - [ ] Add Compliance Scorecard (AML, CFT, Reporting, Capital)
+
+### PHASE 3 - Methodology & Documentation
+- [ ] Complete Methodology page with full documentation
+- [ ] Add Data Collection methodology
+- [ ] Add Quality Assurance methodology
+- [ ] Add Confidence Scoring methodology
+- [ ] Add Source Verification methodology
+
+### PHASE 4 - Final Steps
+- [ ] Run comprehensive tests
+- [ ] Export to GitHub
+- [ ] Save final checkpoint

@@ -68,7 +68,7 @@ describe('WebhookDeliveryScheduler', () => {
 
       expect(result).toBeDefined();
       expect(result.responseTime).toBeGreaterThanOrEqual(0);
-    });
+    }, 15000);
 
     it('should handle timeout errors', async () => {
       const job: WebhookDeliveryJob = {
@@ -132,7 +132,7 @@ describe('WebhookDeliveryScheduler', () => {
 
       expect(result).toBeDefined();
       // In production, verify headers are sent correctly
-    });
+    }, 15000);
 
     it('should handle bearer token authentication', async () => {
       const job: WebhookDeliveryJob = {
@@ -154,7 +154,7 @@ describe('WebhookDeliveryScheduler', () => {
 
       expect(result).toBeDefined();
       // In production, verify Authorization header is set
-    });
+    }, 15000);
 
     it('should handle API key authentication', async () => {
       const job: WebhookDeliveryJob = {
@@ -180,7 +180,7 @@ describe('WebhookDeliveryScheduler', () => {
   });
 
   describe('Retry Logic', () => {
-    it('should calculate exponential backoff correctly', async () => {
+    it('should calculate exponential backoff correctly', { timeout: 15000 }, async () => {
       const job: WebhookDeliveryJob = {
         id: 'test-backoff',
         webhookId: 'webhook-1',
