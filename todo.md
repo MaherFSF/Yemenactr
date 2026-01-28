@@ -5597,3 +5597,103 @@ Based on review of master design documents and data source register:
 - [x] Validate integration with existing platform architecture
 - [ ] Run vitest tests for API key management (future enhancement)
 - [ ] Save checkpoint with all changes
+
+
+## YETO Production Readiness - 10-Step Plan (January 28, 2026)
+
+### Step 1: Smoke Test & Runtime Wiring Audit
+- [ ] Browser smoke tests on all routes (/, /dashboard, /data, /data/repository, /research, /research/reports, /updates, /timeline, /glossary, /methodology, /contact, /legal)
+- [ ] Test each route in English and Arabic
+- [ ] Check console errors and network failures
+- [ ] Click every KPI card and verify evidence popover exists
+- [ ] Test all export buttons (CSV/JSON/XLSX/PDF)
+- [ ] Create /docs/INVENTORY_RUNTIME_WIRING.md with subsystem status
+- [ ] Build /admin/release-gate page with deployment criteria
+- [ ] Document P0 blockers with file paths
+
+### Step 2: GitHub Synchronisation & Branch Discipline
+- [ ] Set up branch structure (main, dev, feature branches)
+- [ ] Apply branch protections
+- [ ] Document policies in /docs/OPERATIONS.md
+- [ ] Create .gitignore entries for transient files
+- [ ] Add large file guard (>20MB)
+- [ ] Set up GitHub Actions CI/CD
+
+### Step 3: S3 Storage Adapter
+- [ ] Implement unified storage adapter (putObject, getObject, getSignedUrl)
+- [ ] Configure S3 prefixes (documents/, raw-data/, processed-data/, exports/, logs/, backups/)
+- [ ] Validate with dataset export, report PDF, and CBY publication
+- [ ] Update /admin/release-gate with S3 status
+
+### Step 4: Master Registry Backfill & Coverage Map
+- [ ] Lint source registry CSV in CI
+- [ ] Implement historical backfill from Jan 1, 2010
+- [ ] Create day-spine with persistent checkpoints
+- [ ] Build /admin/coverage-map visualization
+- [ ] Set up stale data alerts and gap tickets
+
+### Step 5: Trust Engine & Evidence Popovers
+- [ ] Implement provenance ledger (observation → series → dataset_version → ingestion_run → raw_object → source)
+- [ ] Add evidence popovers to all KPIs/charts/tables
+- [ ] Implement contradiction detection (IRG vs DFA side-by-side)
+- [ ] Add vintage preservation and comparison
+- [ ] Create corrections workflow with "Report issue" link
+
+### Step 6: Full RAG & Role Agents
+- [ ] Index all documents with hybrid search (keyword + semantic)
+- [ ] Implement 6 role-based agents (Citizen, Policymaker, Donor, Bank, Librarian, Steward)
+- [ ] Set up nightly learning job for reindexing
+- [ ] Test 10 questions across roles in English and Arabic
+
+### Step 7: Admin Command Centre
+- [ ] Build API key management UI (rotate, expire, scope)
+- [ ] Implement access-needed workflow with email drafting
+- [ ] Set up alert system (connector failure, staleness, anomalies)
+- [ ] Create partner portal for secure data uploads
+
+### Step 8: Finish Sector Pages & Visualisation
+- [ ] Complete Microfinance page with real data
+- [ ] Polish main dashboard with critical alerts
+- [ ] Ensure all sector pages use dynamic queries
+- [ ] Remove hardcoded arrays and ensure evidence coverage
+
+### Step 9: Clear Remaining P0 Issues
+- [ ] Resolve all P0 blockers from /admin/release-gate
+- [ ] No new features, only fixes
+
+### Step 10: Final Release & Monitoring
+- [ ] Confirm CI green and release-gate passes
+- [ ] Tag release v1.0.0
+- [ ] Write /docs/POST_LAUNCH_MONITORING.md
+- [ ] Write /docs/DECISIONS.md
+- [ ] Set up nightly ingestion and RAG indexing
+
+
+## YETO Production Readiness Sprint - Step 1 (IN PROGRESS - January 28, 2026)
+
+### Smoke Test & Runtime Wiring Audit
+- [x] Test all routes in Arabic (Home, Dashboard, Research, Glossary, Methodology, Contact, Banking sector)
+- [x] Test all routes in English (Home, Banking sector, Data Repository)
+- [x] Check console for errors on each route (Scheduler error identified - GAP-101)
+- [x] Verify evidence popovers on KPI cards (Working on Homepage)
+- [x] Test export buttons (CSV, PDF, JSON) - Working on Data Repository
+- [x] Create runtime wiring inventory (SMOKE_TEST_RESULTS.md)
+- [x] Document all GAP tickets (GAP_TICKETS.md)
+- [x] **FIX GAP-001:** Added /data/repository route to App.tsx
+- [x] **FIX GAP-101:** Created scheduler_jobs table in database
+- [ ] Build release gate page
+- [ ] Complete remaining route tests
+
+### Routes Tested (15/60+)
+| Route | Status |
+|-------|--------|
+| `/` (Home) | ✅ PASS |
+| `/dashboard` | ✅ PASS |
+| `/data/repository` | ✅ PASS (Fixed) |
+| `/research` | ✅ PASS |
+| `/glossary` | ✅ PASS |
+| `/methodology` | ✅ PASS |
+| `/contact` | ✅ PASS |
+| `/sectors/banking` | ✅ PASS |
+| `/admin/api-keys` | ✅ PASS |
+| `/admin/backfill` | ✅ PASS |

@@ -133,6 +133,7 @@ function Router() {
       <Route path={"/sectors/investment"} component={Investment} />
       <Route path={"/sectors/microfinance"} component={Microfinance} />
       <Route path={"/data-repository"} component={DataRepository} />
+      <Route path={"/data/repository"} component={DataRepository} />
       <Route path={"/timeline"} component={Timeline} />
       <Route path={"/methodology"} component={Methodology} />
       <Route path={"/report-builder"} component={ReportBuilder} />
