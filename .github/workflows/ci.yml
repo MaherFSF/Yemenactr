@@ -183,6 +183,15 @@ jobs:
         run: pnpm audit --audit-level=high
         continue-on-error: true
 
+  large-files:
+    name: Large File Guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for large files
+        run: bash scripts/check-large-files.sh
+        continue-on-error: true
+
   deploy-preview:
     name: Deploy Preview
     runs-on: ubuntu-latest
