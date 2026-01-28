@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AdminGuard from "@/components/AdminGuard";
 import { trpc } from "@/lib/trpc";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

@@ -1,4 +1,5 @@
 /**
+import AdminGuard from "@/components/AdminGuard";
  * Banking Administration Page
  * 
  * Admin controls for managing banking sector data:

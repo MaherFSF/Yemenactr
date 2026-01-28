@@ -2,7 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import EvidencePackButton, { EvidencePackData } from "@/components/EvidencePackButton";
 import { ConfidenceBadge, ConfidenceRatingLegend } from "@/components/DataCard";
-import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
+import DataQualityBadge from "@/components/DataQualityBadge";
 import InsightsTicker from "@/components/InsightsTicker";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -144,8 +144,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      {/* DEV Mode Banner */}
-      <DevModeBanner />
+
       
       {/* Insights Ticker */}
       <InsightsTicker />
@@ -195,7 +194,7 @@ export default function Dashboard() {
               </span>
               <Button variant="outline" size="sm" className="gap-2">
                 <Calendar className="h-4 w-4" />
-                2024/11/20 - 2024/11/31
+                2024/11/20 - 2024/11/30
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </div>

@@ -42,28 +42,29 @@ export default function ComparisonTool() {
     { id: "iraq", nameEn: "Iraq", nameAr: "العراق" },
   ];
 
-  // GDP Comparison Data
+  // GDP Comparison Data (2024 estimates)
   const gdpData = [
-    { country: language === 'ar' ? 'اليمن' : 'Yemen', value: 20.5, color: YETO_COLORS.green },
-    { country: language === 'ar' ? 'الأردن' : 'Jordan', value: 44.2, color: '#9CA3AF' },
-    { country: language === 'ar' ? 'العراق' : 'Iraq', value: 38.1, color: '#9CA3AF' },
+    { country: language === 'ar' ? 'اليمن' : 'Yemen', value: 21.8, color: YETO_COLORS.green },
+    { country: language === 'ar' ? 'الأردن' : 'Jordan', value: 50.8, color: '#9CA3AF' },
+    { country: language === 'ar' ? 'العراق' : 'Iraq', value: 267.9, color: '#9CA3AF' },
   ];
 
-  // Inflation Comparison Data
+  // Inflation Comparison Data (updated through 2025)
   const inflationData = [
-    { year: '2018', yemen: 15, peers: 5.3 },
     { year: '2019', yemen: 28, peers: 3 },
     { year: '2020', yemen: 16, peers: 3 },
     { year: '2021', yemen: 35.2, peers: 12 },
     { year: '2022', yemen: 35, peers: 6 },
     { year: '2023', yemen: 28, peers: 12 },
+    { year: '2024', yemen: 22, peers: 4.5 },
+    { year: '2025', yemen: 18, peers: 3.8 },
   ];
 
-  // Unemployment Comparison Data
+  // Unemployment Comparison Data (2024 estimates)
   const unemploymentData = [
-    { country: language === 'ar' ? 'اليمن' : 'Yemen', value: 32.5, color: YETO_COLORS.green },
-    { country: language === 'ar' ? 'الأردن' : 'Jordan', value: 18.2, color: '#9CA3AF' },
-    { country: language === 'ar' ? 'العراق' : 'Iraq', value: 14.1, color: '#9CA3AF' },
+    { country: language === 'ar' ? 'اليمن' : 'Yemen', value: 38.2, color: YETO_COLORS.green },
+    { country: language === 'ar' ? 'الأردن' : 'Jordan', value: 21.4, color: '#9CA3AF' },
+    { country: language === 'ar' ? 'العراق' : 'Iraq', value: 15.5, color: '#9CA3AF' },
   ];
 
   // Trade Balance Comparison Data

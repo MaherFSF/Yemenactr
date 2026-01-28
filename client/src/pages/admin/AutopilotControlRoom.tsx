@@ -1,4 +1,5 @@
 /**
+import AdminGuard from "@/components/AdminGuard";
  * Autopilot Control Room
  * 
  * Admin dashboard for monitoring and controlling the YETO Autopilot OS.

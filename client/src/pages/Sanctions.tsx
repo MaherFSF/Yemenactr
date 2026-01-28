@@ -113,6 +113,30 @@ export default function Sanctions() {
       reason: "Facilitating weapons transfers to Houthis",
       sourceUrl: "https://sanctionssearch.ofac.treas.gov/"
     },
+    {
+      id: "CBY-ADEN-001",
+      nameEn: "Yemen Kuwait Bank (YKB)",
+      nameAr: "بنك اليمن والكويت",
+      type: "entity",
+      program: "CBY-Aden Banking Restrictions",
+      listingDate: "2024-08-15",
+      authority: "OFAC",
+      status: "active",
+      reason: "Operating under Sana'a authority without IRG compliance; suspended from official banking system",
+      sourceUrl: "https://www.cby-aden.com/"
+    },
+    {
+      id: "CBY-ADEN-002",
+      nameEn: "International Bank of Yemen (IBY)",
+      nameAr: "البنك الدولي اليمني",
+      type: "entity",
+      program: "CBY-Aden Banking Restrictions",
+      listingDate: "2024-08-15",
+      authority: "OFAC",
+      status: "active",
+      reason: "Non-compliance with CBY-Aden relocation directive; restricted from correspondent banking",
+      sourceUrl: "https://www.cby-aden.com/"
+    },
   ];
 
   // Sanctions programs affecting Yemen

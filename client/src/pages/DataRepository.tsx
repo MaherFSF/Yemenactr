@@ -177,6 +177,126 @@ export default function DataRepository() {
       source: "Aden Port Authority",
       sourceAr: "هيئة ميناء عدن"
     },
+    {
+      id: 7,
+      titleEn: "Exchange Rate Time Series (YER/USD)",
+      titleAr: "سلسلة أسعار الصرف (ريال/دولار)",
+      sector: "monetary",
+      regime: "both",
+      dataPoints: 2456,
+      lastUpdated: "2026-01-15",
+      confidence: "high",
+      source: "Central Bank of Yemen",
+      sourceAr: "البنك المركزي اليمني"
+    },
+    {
+      id: 8,
+      titleEn: "Consumer Price Index (CPI)",
+      titleAr: "مؤشر أسعار المستهلك",
+      sector: "monetary",
+      regime: "both",
+      dataPoints: 1824,
+      lastUpdated: "2026-01-10",
+      confidence: "medium",
+      source: "Central Statistical Organization",
+      sourceAr: "الجهاز المركزي للإحصاء"
+    },
+    {
+      id: 9,
+      titleEn: "Food Security Indicators",
+      titleAr: "مؤشرات الأمن الغذائي",
+      sector: "poverty",
+      regime: "both",
+      dataPoints: 892,
+      lastUpdated: "2025-12-20",
+      confidence: "high",
+      source: "WFP VAM",
+      sourceAr: "برنامج الغذاء العالمي"
+    },
+    {
+      id: 10,
+      titleEn: "Oil Production & Exports",
+      titleAr: "إنتاج وصادرات النفط",
+      sector: "trade",
+      regime: "aden",
+      dataPoints: 456,
+      lastUpdated: "2025-11-30",
+      confidence: "medium",
+      source: "Ministry of Oil & Minerals",
+      sourceAr: "وزارة النفط والمعادن"
+    },
+    {
+      id: 11,
+      titleEn: "Internal Displacement Statistics",
+      titleAr: "إحصائيات النزوح الداخلي",
+      sector: "poverty",
+      regime: "both",
+      dataPoints: 1245,
+      lastUpdated: "2026-01-05",
+      confidence: "high",
+      source: "IOM DTM Yemen",
+      sourceAr: "منظمة الهجرة الدولية"
+    },
+    {
+      id: 12,
+      titleEn: "Remittance Inflows",
+      titleAr: "تدفقات التحويلات المالية",
+      sector: "monetary",
+      regime: "both",
+      dataPoints: 324,
+      lastUpdated: "2025-12-15",
+      confidence: "medium",
+      source: "World Bank",
+      sourceAr: "البنك الدولي"
+    },
+    {
+      id: 13,
+      titleEn: "Fuel Prices by Governorate",
+      titleAr: "أسعار الوقود حسب المحافظة",
+      sector: "trade",
+      regime: "both",
+      dataPoints: 2156,
+      lastUpdated: "2026-01-12",
+      confidence: "high",
+      source: "Yemen Petroleum Company",
+      sourceAr: "شركة النفط اليمنية"
+    },
+    {
+      id: 14,
+      titleEn: "Government Revenue & Expenditure",
+      titleAr: "الإيرادات والنفقات الحكومية",
+      sector: "monetary",
+      regime: "aden",
+      dataPoints: 156,
+      lastUpdated: "2025-10-30",
+      confidence: "medium",
+      source: "Ministry of Finance (Aden)",
+      sourceAr: "وزارة المالية (عدن)"
+    },
+    {
+      id: 15,
+      titleEn: "Conflict Events Database",
+      titleAr: "قاعدة بيانات أحداث الصراع",
+      sector: "poverty",
+      regime: "both",
+      dataPoints: 8945,
+      lastUpdated: "2026-01-14",
+      confidence: "high",
+      source: "ACLED",
+      sourceAr: "مشروع بيانات النزاعات المسلحة"
+    },
+    {
+      id: 16,
+      titleEn: "GDP Estimates by Sector",
+      titleAr: "تقديرات الناتج المحلي حسب القطاع",
+      sector: "monetary",
+      regime: "both",
+      dataPoints: 245,
+      lastUpdated: "2025-09-30",
+      confidence: "low",
+      source: "IMF / World Bank",
+      sourceAr: "صندوق النقد الدولي / البنك الدولي"
+    },
   ];
 
   const filteredDatasets = datasets.filter(dataset => {

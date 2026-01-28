@@ -1,4 +1,5 @@
 /**
+import AdminGuard from "@/components/AdminGuard";
  * Backfill Dashboard - Admin interface for managing historical data backfill
  * 
  * Features:

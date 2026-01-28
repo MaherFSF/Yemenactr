@@ -146,7 +146,7 @@ export default function Footer() {
                 />
               </span>
               <span className="text-white/30">|</span>
-              <Link href="/methodology" className="hover:text-white transition-colors">
+              <Link href="/data-policy" className="hover:text-white transition-colors">
                 {language === "ar" ? "سياسة البيانات" : "Data Policy"}
               </Link>
             </div>

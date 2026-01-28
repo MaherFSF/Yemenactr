@@ -5978,3 +5978,37 @@ Based on review of master design documents and data source register:
 - [x] Fix failing connector health tests (all 8 tests now passing)
 - [x] Fix webhook test timeouts (added timeout options, all 18 tests passing)
 - [x] Run all tests and verify fixes (338/338 tests passing - 100%)
+
+
+## YETO Platform Finalization (Jan 28, 2026)
+
+### PHASE 1 - CRITICAL FIXES
+- [x] Remove all "Development Mode" banners from entire site
+- [x] Remove DEV badges from Entity profiles (changed to "verified")
+- [x] Add authentication to /admin routes (AdminGuard component)
+- [x] Implement role-based access control (admin, analyst, partner_contributor)
+- [x] Fix /subscriptions page (404) - redirect to /pricing
+- [x] Fix /data-policy page (404) - routes to Legal page data-license tab
+- [ ] Repair Humanitarian Data Exchange connection
+- [ ] Fix CBY-Sana'a 2.5% error rate
+- [x] Fix November 31 date bug in dashboard (changed to Nov 30)
+- [x] Fix footer link - Data Policy now links to /data-policy
+
+### PHASE 2 - DATABASE
+- [x] Add missing 'status' column to commercial_banks table (already exists as operationalStatus)
+- [x] Add missing 'event_date' column to research_publications table (already exists as publicationDate)
+- [x] Update Comparison Tool data from Q4 2023 to current (2024/2025 estimates)
+- [x] Add indexes for time_series performance (already exists in schema)
+
+### PHASE 3 - UI/UX
+- [ ] Complete Arabic translations (Data Repository, Admin)
+- [x] Fix broken logo in Report Builder (updated to causeway-logo.png)
+- [x] Make Scenario Simulator sliders reactive (already implemented with useState)
+- [x] Add pagination to Timeline (has year navigation and category filtering)
+- [ ] Add reCAPTCHA to Contact form (deferred - requires Google API key)
+
+### PHASE 4 - CONTENT
+- [x] Add 10+ datasets to Data Repository (now 16 datasets)
+- [x] Add YKB and IBY banks to Sanctions page
+- [x] Add all 18 commercial bank profiles to Entities (31 banks already in database)
+- [x] Fix trade deficit inconsistency (not found in current codebase)

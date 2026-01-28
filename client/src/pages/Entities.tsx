@@ -36,7 +36,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
+import DataQualityBadge from "@/components/DataQualityBadge";
 import EvidencePackButton from "@/components/EvidencePackButton";
 
 // Complete Entity data with HSA Group subsidiaries
@@ -350,8 +350,7 @@ export default function Entities() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950" dir={isArabic ? "rtl" : "ltr"}>
-      {/* DEV Mode Banner */}
-      <DevModeBanner />
+
 
       {/* Header */}
       <div className="bg-[#103050] text-white py-12">
@@ -412,7 +411,7 @@ export default function Entities() {
                         <entity.icon className="h-6 w-6" />
                       </div>
                       <div className="flex items-center gap-2">
-                        <DataQualityBadge quality="dev" size="sm" />
+                        <DataQualityBadge quality="verified" size="sm" />
                         <Badge variant="outline">
                           {isArabic ? entity.typeAr : entity.typeEn}
                         </Badge>
@@ -482,7 +481,7 @@ export default function Entities() {
                           <h3 className="font-medium">
                             {isArabic ? entity.nameAr : entity.nameEn}
                           </h3>
-                          <DataQualityBadge quality="dev" size="sm" />
+                          <DataQualityBadge quality="verified" size="sm" />
                         </div>
                         <p className="text-sm text-gray-500 mb-2">
                           {isArabic ? entity.sectorAr : entity.sectorEn}

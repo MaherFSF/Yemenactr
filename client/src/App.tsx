@@ -139,6 +139,8 @@ function Router() {
       <Route path={"/methodology"} component={Methodology} />
       <Route path={"/report-builder"} component={ReportBuilder} />
       <Route path={"/pricing"} component={Pricing} />
+      <Route path="/subscriptions">{() => { window.location.href = '/pricing'; return null; }}</Route>
+      <Route path="/data-policy" component={Legal} />
       <Route path={"/legal"} component={Legal} />
       <Route path={"/entities"} component={Entities} />
       <Route path={"/entities/:id"} component={EntityDetail} />

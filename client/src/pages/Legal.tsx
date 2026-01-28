@@ -22,7 +22,7 @@ export default function Legal() {
   const getInitialTab = () => {
     if (location.includes("privacy")) return "privacy";
     if (location.includes("terms")) return "terms";
-    if (location.includes("data-license")) return "data-license";
+    if (location.includes("data-license") || location.includes("data-policy")) return "data-license";
     if (location.includes("accessibility")) return "accessibility";
     return "privacy";
   };

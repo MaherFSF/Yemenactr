@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import DashboardLayout from "@/components/DashboardLayout";
+import AdminGuard from "@/components/AdminGuard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -190,6 +191,7 @@ const categories = [
 
 export default function AdminHub() {
   return (
+    <AdminGuard>
     <DashboardLayout>
       <div className="space-y-8">
         {/* Header with impressive gradient */}
@@ -312,5 +314,6 @@ export default function AdminHub() {
         </Card>
       </div>
     </DashboardLayout>
+    </AdminGuard>
   );
 }

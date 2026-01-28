@@ -1,4 +1,5 @@
 /**
+import AdminGuard from "@/components/AdminGuard";
  * API Key Management - Professional admin interface for managing data source credentials
  * 
  * Features:

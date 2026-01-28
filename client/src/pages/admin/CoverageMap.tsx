@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import AdminGuard from "@/components/AdminGuard";
 import { useLanguage } from '@/contexts/LanguageContext';
 import { trpc } from '@/lib/trpc';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

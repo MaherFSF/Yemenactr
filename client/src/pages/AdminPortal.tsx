@@ -42,12 +42,44 @@ import {
   TrendingUp,
   TrendingDown
 } from "lucide-react";
-import DataQualityBadge, { DevModeBanner } from "@/components/DataQualityBadge";
+import DataQualityBadge from "@/components/DataQualityBadge";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { getLoginUrl } from "@/const";
 
 export default function AdminPortal() {
   const { language } = useLanguage();
   const isArabic = language === "ar";
   const [activeTab, setActiveTab] = useState("overview");
+  const { user, loading } = useAuth();
+
+  // Require admin authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#107040]"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    window.location.href = getLoginUrl();
+    return null;
+  }
+
+  if (user.role !== 'admin') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950" dir={isArabic ? "rtl" : "ltr"}>
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">
+            {isArabic ? "الوصول مرفوض" : "Access Denied"}
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            {isArabic ? "يتطلب صلاحيات المشرف" : "Admin privileges required"}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   // Ingestion Health Data
   const ingestionSources = [
@@ -258,8 +290,7 @@ export default function AdminPortal() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950" dir={isArabic ? "rtl" : "ltr"}>
-      {/* DEV Mode Banner */}
-      <DevModeBanner />
+
 
       {/* Header */}
       <div className="bg-[#103050] text-white py-6">
