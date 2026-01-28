@@ -5697,3 +5697,120 @@ Based on review of master design documents and data source register:
 | `/sectors/banking` | ✅ PASS |
 | `/admin/api-keys` | ✅ PASS |
 | `/admin/backfill` | ✅ PASS |
+
+
+## YETO Production Readiness Sprint - Step 2 (COMPLETED - January 28, 2026)
+
+### GitHub Synchronisation & Branch Discipline
+- [x] Document branch structure in OPERATIONS.md (main/dev/feature/fix/hotfix)
+- [x] Define branch protection rules for main branch
+- [x] Create GitHub Actions CI workflow (.github/workflows/ci.yml)
+- [x] Add Manus transient files to .gitignore
+- [x] Add large file patterns to .gitignore (*.mp4, *.zip, etc.)
+- [x] Create pre-commit hook for large file guard (.husky/pre-commit)
+- [x] Create S3 asset manifest (manifests/s3-assets.json)
+- [x] Document CI/CD pipeline in OPERATIONS.md
+
+## YETO Production Readiness Sprint - Step 3 (COMPLETED - January 28, 2026)
+
+### S3 Storage Adapter
+- [x] Verify S3 helpers in server/storage.ts
+- [x] Create s3StorageService.ts with prefix management
+- [x] Implement document upload to S3 documents/ prefix
+- [x] Implement raw data storage to S3 raw-data/ prefix
+- [x] Implement processed data storage to S3 processed-data/ prefix
+- [x] Implement export file storage to S3 exports/ prefix
+- [x] Implement log storage to S3 logs/ prefix
+- [x] Implement backup storage to S3 backups/ prefix
+- [x] Implement asset storage to S3 assets/ prefix
+- [x] Add signed URL generation for secure downloads
+- [x] Create storageRouter.ts with tRPC endpoints
+- [x] Add storage router to main routers.ts
+
+
+## YETO Production Readiness Sprint - Step 4 (COMPLETED - January 28, 2026)
+
+### Master Registry Backfill & Coverage Map
+- [x] Verify evidence_sources table has 24 sources (with 15 Yemen-specific added)
+- [x] Check coverage map at /admin/coverage-map (page loads correctly)
+- [x] Sources have proper metadata (category, isWhitelisted)
+- [x] Backfill orchestrator connected via backfillRouter
+- [x] Coverage map shows filters (Sector, Regime) and 3 tabs
+- [x] Data range configured: 2010 → Today
+- [ ] Populate coverage data from time series (future enhancement)
+
+
+## YETO Production Readiness Sprint - Step 5 (COMPLETED - January 28, 2026)
+
+### Trust Engine & Evidence Popovers
+- [x] Verify ProvenanceBadge component exists and works
+- [x] Test evidence popovers on KPI cards (Conf. A badge displaying correctly)
+- [x] Ensure confidence levels (A-E) display correctly with color coding
+- [x] Verify source attribution in popovers (CBY-Aden Official Statement with date)
+- [x] Evidence pack shows value, confidence, last updated, sources
+- [x] Provenance statement explains confidence levels
+- [x] External source links working with icons
+
+
+## YETO Production Readiness Sprint - Step 6 (COMPLETED - January 28, 2026)
+
+### Full RAG & Role Agents
+- [x] Verify One Brain AI Assistant works with RAG retrieval
+- [x] AI provides contextual answers with real-time data (Jan 2026)
+- [x] Evidence-packed answer structure with sources and confidence levels
+- [x] Source attribution: Central Bank of Yemen (A), CBY (A)
+- [x] Caveats section: "Please verify original sources for critical decisions"
+- [x] Data freshness indicator: "Data updated as of January 2026"
+- [x] Interactive features: Copy, thumbs up/down feedback
+- [x] Follow-up question suggestions working
+- [x] Topic filters: Exchange Rate, Banking, Humanitarian, Political, Economy
+
+
+## YETO Production Readiness Sprint - Step 7 (COMPLETED - January 28, 2026)
+
+### Admin Command Centre
+- [x] Verify admin dashboard at /admin (Operations Console)
+- [x] 5 tabs: Overview, Ingestion, QA Alerts, Coverage, Submissions
+- [x] 4 action buttons: Upload Dataset, Force Sync All, Generate Report, Manage Users
+- [x] System Health: Good (5/6 sources active)
+- [x] QA Alerts: 3 (1 critical)
+- [x] Coverage Score: 70% (43 gaps)
+- [x] Pending Reviews: 3 (140 data points)
+- [x] Today's Ingestion Summary with 4 sources and record counts
+- [x] Critical Alerts with Resolve buttons
+- [x] Data source status monitoring (Healthy/Warning indicators)
+
+
+## YETO Production Readiness Sprint - Step 8 (COMPLETED - January 28, 2026)
+
+### Finish Sector Pages & Visualisation
+- [x] Test Banking & Finance sector page (fully functional with Arabic RTL)
+- [x] 4 KPI cards with confidence levels (A, B, C)
+- [x] 3 tabs: Overview, Operating Banks, System Comparison
+- [x] Trends & Challenges section (Liquidity Crisis, Institutional Split, Sanctions)
+- [x] Sector Alerts with OFAC sanctions and World Bank reports
+- [x] Resources & Downloads section with international reports
+- [x] CBY Circulars section
+- [x] Analytical Tools links (Scenario Simulator, Bank Comparison, Risk Analysis)
+- [x] Proper Arabic RTL layout throughout
+
+
+## YETO Production Readiness Sprint - Step 9 (COMPLETED - January 28, 2026)
+
+### Clear Remaining P0 Issues
+- [x] Review GAP_TICKETS.md for open issues
+- [x] GAP-001: /data/repository 404 - FIXED (route added to App.tsx)
+- [x] GAP-002: /research - FIXED (verified working)
+- [x] GAP-003: /research/reports - FIXED (verified working)
+- [x] GAP-101: Scheduler DrizzleQueryError - FIXED (created scheduler_jobs table)
+- [x] All P0 and P1 issues resolved
+- [x] All critical routes verified working
+
+
+## YETO Production Readiness Sprint - Step 10 (IN PROGRESS - January 28, 2026)
+
+### Final Release & Monitoring
+- [ ] Save final checkpoint with all changes
+- [ ] Verify Release Gate page shows all checks passing
+- [ ] Document deployment readiness
+- [ ] Create final sprint summary

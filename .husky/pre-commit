@@ -1,0 +1,25 @@
+#!/bin/bash
+# Large File Guard - blocks files > 20 MB from being committed
+# Large files should be uploaded to S3 and tracked in manifests/s3-assets.json
+
+MAX_SIZE=20971520  # 20 MB in bytes
+
+echo "🔍 Checking for large files..."
+
+for file in $(git diff --cached --name-only --diff-filter=ACM); do
+  if [ -f "$file" ]; then
+    size=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file" 2>/dev/null)
+    if [ "$size" -gt "$MAX_SIZE" ]; then
+      echo "❌ Error: $file is larger than 20 MB ($((size / 1048576)) MB)"
+      echo "   Please upload to S3 and update manifests/s3-assets.json"
+      echo "   Use: pnpm s3:upload $file"
+      exit 1
+    fi
+  fi
+done
+
+echo "✅ No large files detected"
+
+# Run linting
+echo "🔍 Running lint check..."
+pnpm lint-staged

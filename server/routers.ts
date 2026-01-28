@@ -74,6 +74,7 @@ import { fxRouter } from "./routers/fxRouter";
 import { dataInfraRouter } from "./routers/dataInfraRouter";
 import { backfillRouter } from "./routers/backfillRouter";
 import { apiKeysRouter } from "./routers/apiKeysRouter";
+import { storageRouter } from "./routers/storageRouter";
 import { sql, desc, eq, like, or, and, inArray } from "drizzle-orm";
 
 export const appRouter = router({
@@ -86,6 +87,7 @@ export const appRouter = router({
   fx: fxRouter,
   backfill: backfillRouter,
   apiKeys: apiKeysRouter,
+  storage: storageRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

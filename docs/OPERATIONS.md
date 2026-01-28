@@ -6,14 +6,95 @@ This document provides comprehensive guidance for deploying, operating, and main
 
 ## Table of Contents
 
-1. [System Requirements](#system-requirements)
-2. [Environment Setup](#environment-setup)
-3. [Deployment Guide](#deployment-guide)
-4. [Database Operations](#database-operations)
-5. [Monitoring & Alerts](#monitoring--alerts)
-6. [Backup & Recovery](#backup--recovery)
-7. [Troubleshooting](#troubleshooting)
-8. [Security Operations](#security-operations)
+1. [Branch Structure & Protection Policies](#branch-structure--protection-policies)
+2. [CI/CD Pipeline](#cicd-pipeline)
+3. [Repository Hygiene](#repository-hygiene)
+4. [System Requirements](#system-requirements)
+5. [Environment Setup](#environment-setup)
+6. [Deployment Guide](#deployment-guide)
+7. [Database Operations](#database-operations)
+8. [Monitoring & Alerts](#monitoring--alerts)
+9. [Backup & Recovery](#backup--recovery)
+10. [Troubleshooting](#troubleshooting)
+11. [Security Operations](#security-operations)
+
+---
+
+## Branch Structure & Protection Policies
+
+### Branch Hierarchy
+
+```
+main (production)
+  └── dev (development)
+        └── feature/* (feature branches)
+        └── fix/* (bug fix branches)
+        └── hotfix/* (urgent production fixes)
+```
+
+### Branch Descriptions
+
+| Branch | Purpose | Deploys To | Protection Level |
+|--------|---------|------------|------------------|
+| `main` | Production-ready code | https://yeto.causewaygrp.com | **Strict** |
+| `dev` | Development integration | https://yteocauseway.manus.space | **Moderate** |
+| `feature/*` | New features | Preview environments | None |
+| `fix/*` | Bug fixes | Preview environments | None |
+| `hotfix/*` | Urgent production fixes | Direct to main | **Strict** |
+
+### Branch Protection Rules (main)
+
+The `main` branch has the following protection rules:
+
+1. **Require Pull Request Reviews**
+   - Minimum 1 approving review required
+   - Dismiss stale reviews when new commits are pushed
+   - Require review from code owners
+
+2. **Require Status Checks**
+   - All CI checks must pass before merging:
+     - ✅ Linting (`pnpm lint`)
+     - ✅ Type checking (`pnpm check`)
+     - ✅ Unit tests (`pnpm test`)
+     - ✅ Integration tests (if applicable)
+     - ✅ E2E tests (Playwright)
+     - ✅ Build (`pnpm build`)
+
+3. **Require Signed Commits**
+   - All commits must be signed with GPG
+
+4. **Restrict Force Pushes**
+   - Force pushes are disabled on `main`
+
+5. **Restrict Deletions**
+   - Branch deletion is disabled
+
+---
+
+## CI/CD Pipeline
+
+### GitHub Actions Workflow
+
+The CI/CD pipeline is defined in `.github/workflows/ci.yml` and runs on every push and PR.
+
+### CI Status in Release Gate
+
+The `/admin/release-gate` page displays CI status:
+- Green: All checks passing
+- Yellow: Some checks pending
+- Red: One or more checks failing
+
+---
+
+## Repository Hygiene
+
+### Large File Guard
+
+A pre-commit hook blocks files larger than 20 MB. Large assets should be moved to S3 and tracked in `manifests/s3-assets.json`.
+
+### S3 Asset Manifest
+
+Large assets are stored in S3 and tracked in `manifests/s3-assets.json` with checksums and metadata.
 
 ---
 

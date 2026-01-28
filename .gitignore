@@ -105,3 +105,27 @@ temp/
 *.db
 *.sqlite
 *.sqlite3
+
+# Manus transient files
+.manus/db/db-query-*.json
+.manus/cache/
+.manus/logs/
+.manus/temp/
+
+# Large files (should be in S3)
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Test artifacts
+playwright-report/
+test-results/
+
+# Uploaded files (use S3)
+uploads/
+*.pdf.bak

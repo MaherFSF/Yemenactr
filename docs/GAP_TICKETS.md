@@ -8,14 +8,14 @@
 | ID | Route | Issue | Severity | Status | Assigned |
 |----|-------|-------|----------|--------|----------|
 | GAP-001 | `/data/repository` | 404 Page Not Found | P0 | **FIXED** | Route added to App.tsx |
-| GAP-002 | `/research` | TBD | TBD | PENDING | TBD |
-| GAP-003 | `/research/reports` | TBD | TBD | PENDING | TBD |
+| GAP-002 | `/research` | Verified working | P0 | **FIXED** | Tested in smoke test |
+| GAP-003 | `/research/reports` | Verified working | P0 | **FIXED** | Tested in smoke test |
 
 ## P1 Issues (Should Fix)
 
 | ID | Route | Issue | Severity | Status | Assigned |
 |----|-------|-------|----------|--------|----------|
-| GAP-101 | Scheduler | DrizzleQueryError on scheduler_jobs table | P1 | OPEN | TBD |
+| GAP-101 | Scheduler | DrizzleQueryError on scheduler_jobs table | P1 | **FIXED** | Created scheduler_jobs table |
 
 ## P2 Enhancements (Nice to Have)
 
