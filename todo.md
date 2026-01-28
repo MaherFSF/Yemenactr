@@ -5461,3 +5461,39 @@ Based on review of master design documents and data source register:
 - [ ] Verify branch structure
 - [ ] Add branch protection documentation
 - [ ] Clean large files from repo
+
+
+## Step 4/10: Source Registry + Day Spine Backfill (January 28, 2026)
+
+### A) Registry Linter:
+- [ ] Create PIPE_REGISTRY_LINT service with validation rules
+- [ ] Validate unique source_id, required fields
+- [ ] Validate cadence + tolerance settings
+- [ ] Validate license and auth_required flags
+- [ ] Integrate with CI pipeline
+- [ ] Add to daily scheduler
+
+### B) Backfill Runner:
+- [ ] Create historicalBackfill service
+- [ ] Implement day spine 2010-01-01 → today
+- [ ] Chunk by year/month/day
+- [ ] Resumable checkpoints
+- [ ] Idempotent inserts (ON CONFLICT)
+
+### C) Coverage Map Dashboard:
+- [ ] Create /admin/coverage-map page
+- [ ] Show per dataset/indicator: earliest_date, latest_date, missing_ranges, coverage%
+- [ ] Filter by geo + regime_tag
+- [ ] Show top gap drivers per sector
+
+### D) Access Needed Workflow:
+- [ ] Detect needs_key/partnership_required sources
+- [ ] Auto-create GAP tickets
+- [ ] Auto-draft partnership emails
+- [ ] Store in Admin Outbox
+- [ ] Email to partnerships@causewaygrp.com, CC archive, ceo, coo
+
+### Deliverable:
+- [ ] Backfill 5 flagship datasets
+- [ ] Show Coverage Map working
+- [ ] Save checkpoint for publishing

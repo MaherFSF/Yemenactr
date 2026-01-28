@@ -71,6 +71,7 @@ import { autopilotRouter } from "./routers/autopilot";
 import { mlRouter } from "./routers/mlRouter";
 import { oneBrainRouter } from "./routers/oneBrainRouter";
 import { fxRouter } from "./routers/fxRouter";
+import { dataInfraRouter } from "./routers/dataInfraRouter";
 import { sql, desc, eq, like, or, and, inArray } from "drizzle-orm";
 
 export const appRouter = router({
@@ -79,6 +80,7 @@ export const appRouter = router({
   autopilot: autopilotRouter,
   ml: mlRouter,
   oneBrain: oneBrainRouter,
+  dataInfra: dataInfraRouter,
   fx: fxRouter,
   
   auth: router({
