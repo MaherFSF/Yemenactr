@@ -1,0 +1,35 @@
+{
+  "query": "SHOW CREATE TABLE evidence_sources;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SHOW CREATE TABLE evidence_sources;",
+  "rows": [
+    {
+      "Table": "evidence_sources",
+      "Create Table": "CREATE TABLE `evidence_sources` ("
+    }
+  ],
+  "messages": [
+    "  `id` int(11) NOT NULL AUTO_INCREMENT,",
+    "  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,",
+    "  `nameAr` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `acronym` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `category` enum('humanitarian','ifi','un_agency','sanctions','domestic_aden','domestic_sanaa','academic','think_tank','media','partner','other') COLLATE utf8mb4_unicode_ci NOT NULL,",
+    "  `isWhitelisted` tinyint(1) NOT NULL DEFAULT '1',",
+    "  `trustLevel` enum('high','medium','low','unverified') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'medium',",
+    "  `baseUrl` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `apiEndpoint` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `apiType` enum('rest','graphql','sdmx','ckan','manual','none') COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `updateFrequency` enum('realtime','daily','weekly','monthly','quarterly','annual','irregular') COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `lastVerifiedAt` timestamp NULL DEFAULT NULL,",
+    "  `notes` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+    "  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,",
+    "  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */,",
+    "  KEY `evidence_source_name_idx` (`name`),",
+    "  KEY `evidence_source_category_idx` (`category`),",
+    "  KEY `evidence_source_whitelist_idx` (`isWhitelisted`)",
+    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=60001"
+  ],
+  "stdout": "Table\tCreate Table\nevidence_sources\tCREATE TABLE `evidence_sources` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `nameAr` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `acronym` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `category` enum('humanitarian','ifi','un_agency','sanctions','domestic_aden','domestic_sanaa','academic','think_tank','media','partner','other') COLLATE utf8mb4_unicode_ci NOT NULL,\n  `isWhitelisted` tinyint(1) NOT NULL DEFAULT '1',\n  `trustLevel` enum('high','medium','low','unverified') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'medium',\n  `baseUrl` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `apiEndpoint` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `apiType` enum('rest','graphql','sdmx','ckan','manual','none') COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `updateFrequency` enum('realtime','daily','weekly','monthly','quarterly','annual','irregular') COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `lastVerifiedAt` timestamp NULL DEFAULT NULL,\n  `notes` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */,\n  KEY `evidence_source_name_idx` (`name`),\n  KEY `evidence_source_category_idx` (`category`),\n  KEY `evidence_source_whitelist_idx` (`isWhitelisted`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=60001\n",
+  "stderr": "",
+  "execution_time_ms": 1588
+}

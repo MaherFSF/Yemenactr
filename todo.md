@@ -5582,3 +5582,18 @@ Based on review of master design documents and data source register:
 - [x] Export research results to CSV and JSON formats
 - [ ] Fix evidence_sources schema to support new sources (category enum issue)
 - [ ] Populate database with 15 Yemen sources
+
+
+## Holistic Platform Integration: Schema Fix + Sources + Testing (COMPLETED - January 28, 2026)
+
+- [x] Analyze evidence_sources schema and identify category enum values (humanitarian, ifi, un_agency, domestic_aden, domestic_sanaa, academic, think_tank, etc.)
+- [x] Schema already supports all required categories - no migration needed
+- [x] Populate 15 Yemen sources with complete metadata (CBY-Aden, CBY-Sanaa, HDX, WFP, FAO, IOM, UNICEF, UNDP, YDP, SCSS, YPC, CSO, ReliefWeb, FSC, World Bank)
+- [x] Add 26 source contacts for all sources (emails, departments, contact types)
+- [x] Add 10 API registration instructions with step-by-step guides, rate limits, example requests
+- [x] Test API Keys page shows all 10 sources in Sources tab with contact info
+- [x] Test registration instructions modal - accordion steps, tips, example cURL commands
+- [x] Verify bilingual support (Arabic/English) working correctly
+- [x] Validate integration with existing platform architecture
+- [ ] Run vitest tests for API key management (future enhancement)
+- [ ] Save checkpoint with all changes
