@@ -5540,3 +5540,45 @@ Based on review of master design documents and data source register:
 - [x] Create 3 new database tables (source_contacts, api_registration_instructions, enhanced source_credentials)
 - [ ] Write vitest tests for credential validation (future enhancement)
 - [ ] Enable sources by setting isWhitelisted=true in evidence_sources table
+
+
+## Parallel Execution: API Key Management Enhancement (January 28, 2026)
+
+### Task 1: Populate Evidence Sources
+- [x] Set isWhitelisted=true for 5 seeded sources (World Bank, IMF, HDX, ACLED, FEWS NET)
+- [x] Verify sources appear in /admin/api-keys Sources tab
+- [x] Test source detail modal with contact information
+
+### Task 2: Test Full Credential Workflow
+- [x] Verified API Keys page loads correctly at /admin/api-keys
+- [x] Confirmed 3-tab interface (Credentials, Sources, Health Monitor)
+- [x] Tested empty state display ("No credentials yet")
+- [x] Verified "Add Credential" button is present
+- [ ] Add test credential through UI (pending source schema fix)
+- [ ] Validate credential using validation button
+- [ ] Test credential deletion workflow
+
+### Task 3: Expand Source Registry (10-15 Yemen-Relevant Sources)
+- [x] Parallel research completed for 15 Yemen-relevant sources
+- [x] Research and document Central Bank of Yemen (CBY)
+- [x] Research and document UN OCHA Yemen (HDX HAPI)
+- [x] Research and document World Food Programme (WFP) Yemen
+- [x] Research and document Food and Agriculture Organization (FAO)
+- [x] Research and document International Organization for Migration (IOM DTM)
+- [x] Research and document UNICEF Yemen
+- [x] Research and document UNDP Yemen
+- [x] Research and document Yemen Data Project
+- [x] Research and document Sana'a Center for Strategic Studies
+- [x] Research and document Yemen Polling Center
+- [x] Research and document Yemen Central Statistical Organization (CSO)
+- [x] Research and document Yemen Ministry of Planning (MoPIC)
+- [x] Research and document ReliefWeb Yemen
+- [x] Research and document Global Food Security Cluster
+- [x] Research and document World Bank Yemen Socio-Economic Update
+- [x] Create comprehensive seed script with all contact details (server/seed-yemen-sources-comprehensive.mjs)
+- [x] Include step-by-step API registration instructions for each source
+- [x] Add common issues and troubleshooting tips for each source
+- [x] Document all contact information (emails, phones, departments)
+- [x] Export research results to CSV and JSON formats
+- [ ] Fix evidence_sources schema to support new sources (category enum issue)
+- [ ] Populate database with 15 Yemen sources
