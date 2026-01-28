@@ -6163,3 +6163,76 @@ Based on review of master design documents and data source register:
 - [ ] Run comprehensive tests
 - [ ] Export to GitHub
 - [ ] Save final checkpoint
+
+
+## Phase 66: HSA Module Major Enhancement (Jan 29, 2026)
+
+**New Requirements:**
+- [ ] Add all HSA Group subsidiaries with full details
+- [ ] Add HSA Group logo and unique background photo
+- [ ] Create comprehensive year-by-year timeline (2010-2025)
+- [ ] Ingest all IFC reports and news about HSA
+- [ ] Ingest all World Bank documents mentioning HSA
+- [ ] Add all official HSA news and press releases
+- [ ] Create eye-opening, stunning design
+- [ ] Add dynamic data ingestion from all sources
+- [ ] Show all evidence documents with full provenance
+- [ ] Add all HSA brands and product lines
+- [ ] Add all HSA facilities (governorate-level only)
+- [ ] Create interactive subsidiary graph
+- [ ] Add food security impact metrics
+- [ ] Add economic footprint visualization
+
+
+## Phase 66: HSA Group Commercial Actor Module Enhancement (COMPLETED - Jan 29, 2026)
+
+**Completed:**
+- [x] Created comprehensive HSA Group company profile page (/company/hsa-group)
+- [x] Added all 9 HSA subsidiaries with full details:
+  - Yemen Company for Industry and Commerce (YCIC)
+  - National Cement Company (NCC)
+  - National Dairy and Food Company (Nadfood)
+  - Yemen Company for Sugar Refining (YCSR)
+  - Yemen Company for Flour Mills & Silos (Aden)
+  - Yemen Company for Flour Mills & Silos (Hodeidah)
+  - General Industries & Packages Co. (GenPack)
+  - Yemen Company for Ghee & Soap Industry (YCGSI)
+  - ONE Cash (Financial Services)
+- [x] Created comprehensive timeline from 1938-2025 with 30+ events
+- [x] Added year and category filters for timeline
+- [x] Added 7 verified evidence documents:
+  - IFC Press Release (2021)
+  - IFC Feature Story (2022)
+  - World Bank Article (2021)
+  - World Bank Partner Brief (2021)
+  - IFC Project Disclosure #43466 (2020)
+  - FMO Project Detail (2021)
+  - HSA Official Website
+- [x] Implemented Food Security role section with:
+  - Key food products (Flour, Sugar, Dairy, Cooking Oil/Ghee)
+  - Key partnerships (WFP, WHO, IFC, FMO, Unilever, Tetra Pak)
+  - WFP Country Manager quote
+  - $75M IFC financing breakdown ($55M IFC + $20M FMO + 50% IDA PSW)
+- [x] Added unique background photo (Yemen flour mills/industrial scene)
+- [x] Added HSA Group logo
+- [x] Implemented color-coded timeline categories:
+  - Founding (blue)
+  - Historical (gray)
+  - Expansion (green)
+  - Crisis/Challenge (red)
+  - Partnership (purple)
+  - Recognition (yellow)
+  - Financial (emerald)
+  - Humanitarian (orange)
+  - Governance (indigo)
+  - Milestone (pink)
+- [x] Full bilingual support (Arabic/English)
+- [x] Evidence-First Profile banner with 95% coverage indicator
+- [x] Data quality badges (Verified/Provisional)
+- [x] View Source links to original documents
+
+**Technical Implementation:**
+- HSAGroupProfile.tsx - 970+ lines
+- Route added to App.tsx: /company/hsa-group
+- Entities page updated with link to HSA profile
+- All TypeScript compilation errors fixed

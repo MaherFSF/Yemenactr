@@ -77,6 +77,7 @@ import PublicDebt from "./pages/PublicDebt";
 import HumanitarianFunding from "./pages/HumanitarianFunding";
 import RegionalZones from "./pages/RegionalZones";
 import EconomicActors from "./pages/EconomicActors";
+import HSAGroupProfile from "./pages/HSAGroupProfile";
 import ApiHealthDashboard from "./pages/admin/ApiHealthDashboard";
 import AlertHistory from "./pages/admin/AlertHistory";
 import AdminHub from "./pages/admin/AdminHub";
@@ -144,6 +145,7 @@ function Router() {
       <Route path="/data-policy" component={DataPolicy} />
       <Route path={"/legal"} component={Legal} />
       <Route path={"/entities"} component={Entities} />
+      <Route path="/company/hsa-group" component={HSAGroupProfile} />
       <Route path={"/entities/:id"} component={EntityDetail} />
       <Route path={"/entities/bank/:id"} component={BankDetail} />
       <Route path={"/corrections"} component={Corrections} />
