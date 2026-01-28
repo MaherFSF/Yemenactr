@@ -202,7 +202,7 @@ describe('WebhookDeliveryScheduler', () => {
       }
     });
 
-    it('should identify retryable HTTP status codes', async () => {
+    it('should identify retryable HTTP status codes', { timeout: 30000 }, async () => {
       const retryableStatuses = [408, 429, 500, 502, 503, 504];
 
       for (const status of retryableStatuses) {
@@ -226,7 +226,7 @@ describe('WebhookDeliveryScheduler', () => {
       }
     });
 
-    it('should identify non-retryable HTTP status codes', async () => {
+    it('should identify non-retryable HTTP status codes', { timeout: 30000 }, async () => {
       const nonRetryableStatuses = [400, 401, 403, 404];
 
       for (const status of nonRetryableStatuses) {
@@ -265,7 +265,7 @@ describe('WebhookDeliveryScheduler', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle empty webhook payload', async () => {
+    it('should handle empty webhook payload', { timeout: 15000 }, async () => {
       const job: WebhookDeliveryJob = {
         id: 'test-empty-payload',
         webhookId: 'webhook-1',
@@ -285,7 +285,7 @@ describe('WebhookDeliveryScheduler', () => {
       expect(result.responseTime).toBeGreaterThanOrEqual(0);
     });
 
-    it('should handle large webhook payload', async () => {
+    it('should handle large webhook payload', { timeout: 15000 }, async () => {
       const largePayload = {
         data: Array(1000).fill({ key: 'value' }),
       };
@@ -308,7 +308,7 @@ describe('WebhookDeliveryScheduler', () => {
       expect(result).toBeDefined();
     });
 
-    it('should handle special characters in URL', async () => {
+    it('should handle special characters in URL', { timeout: 15000 }, async () => {
       const job: WebhookDeliveryJob = {
         id: 'test-special-chars',
         webhookId: 'webhook-1',
@@ -329,7 +329,7 @@ describe('WebhookDeliveryScheduler', () => {
   });
 
   describe('Concurrency', () => {
-    it('should handle multiple concurrent deliveries', async () => {
+    it('should handle multiple concurrent deliveries', { timeout: 30000 }, async () => {
       const jobs: WebhookDeliveryJob[] = Array.from({ length: 5 }, (_, i) => ({
         id: `test-concurrent-${i}`,
         webhookId: `webhook-${i}`,

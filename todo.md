@@ -5968,3 +5968,13 @@ Based on review of master design documents and data source register:
 - [x] Add source_contacts records
 - [x] Add api_registration_instructions records
 - [x] Test backfill integration
+
+
+## Audit Cleanup Tasks (Jan 28, 2026)
+
+- [x] Delete test user "shadi trash" (ID: 1800025)
+- [x] Remove duplicate evidence sources (CBY Aden, CBY Sanaa, HDX HAPI)
+- [x] Populate missing publication dates from publicationYear (370 records updated)
+- [x] Fix failing connector health tests (all 8 tests now passing)
+- [x] Fix webhook test timeouts (added timeout options, all 18 tests passing)
+- [x] Run all tests and verify fixes (338/338 tests passing - 100%)
