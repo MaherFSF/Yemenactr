@@ -8,6 +8,9 @@ import { useRoute } from "wouter";
 import { SectorPageTemplate } from "@/components/sectors/SectorPageTemplate";
 import MacroIntelligenceWall from "@/components/sectors/MacroIntelligenceWall";
 import PricesIntelligenceWall from "@/components/sectors/PricesIntelligenceWall";
+import BankingIntelligenceWall from "@/components/sectors/BankingIntelligenceWall";
+import TradeIntelligenceWall from "@/components/sectors/TradeIntelligenceWall";
+import HumanitarianIntelligenceWall from "@/components/sectors/HumanitarianIntelligenceWall";
 
 // Sectors that use specialized intelligence wall components
 const SPECIALIZED_SECTORS: Record<string, React.ComponentType<any>> = {
@@ -17,6 +20,16 @@ const SPECIALIZED_SECTORS: Record<string, React.ComponentType<any>> = {
   'prices': PricesIntelligenceWall,
   'cost-of-living': PricesIntelligenceWall,
   'inflation': PricesIntelligenceWall,
+  'banking': BankingIntelligenceWall,
+  'finance': BankingIntelligenceWall,
+  'financial': BankingIntelligenceWall,
+  'trade': TradeIntelligenceWall,
+  'ports': TradeIntelligenceWall,
+  'imports': TradeIntelligenceWall,
+  'exports': TradeIntelligenceWall,
+  'humanitarian': HumanitarianIntelligenceWall,
+  'aid': HumanitarianIntelligenceWall,
+  'relief': HumanitarianIntelligenceWall,
 };
 
 export default function SectorPage() {
