@@ -6444,3 +6444,62 @@ Based on review of master design documents and data source register:
 2. Reports page shows 5 reports with download buttons (2.1-8.1 MB)
 3. 3 report types available (Monthly FX, Quarterly, Annual)
 4. Evidence-first architecture maintained with 95% coverage indicator
+
+
+## Phase 72: Wide Research Across All Data Sources
+
+**Tier 1 Priority Sources (20):**
+- [ ] Arab Monetary Fund (AMF) - Macro & Monetary data
+- [ ] UN ESCWA - Socio-economic indicators
+- [ ] World Bank Enterprise Surveys 2010 Yemen
+- [ ] FEWS NET Monthly Price Bulletins
+- [ ] UNICEF MICS Yemen
+- [ ] IMF Direction of Trade Statistics (DOTS)
+- [ ] Open Budget Survey (IBP)
+- [ ] UN General Assembly/Security Council Resolutions
+- [ ] UNCTAD Liner Shipping Connectivity Index
+- [ ] UNECE Vehicle Database
+- [ ] World Bank Logistics Performance Index
+- [ ] Economic Research Forum (ERF) Trade Papers
+- [ ] ICCIA Islamic Chamber of Commerce
+- [ ] AidData (William & Mary)
+- [ ] IFAD Projects Yemen
+- [ ] Islamic Development Bank Projects
+- [ ] EU ECHO Humanitarian Aid
+- [ ] KSrelief Projects
+- [ ] China CIDCA
+- [ ] ICE Brent Crude Price
+
+**International Organization Sources (15):**
+- [ ] World Bank Macro PovcalNet
+- [ ] World Bank International Debt Statistics
+- [ ] IMF World Economic Outlook
+- [ ] IMF Fiscal Monitor
+- [ ] UN Population Division
+- [ ] UN Human Development Reports
+- [ ] UN SDG Indicators Database
+- [ ] IFC Investments Portal
+- [ ] OECD Development Statistics
+- [ ] WTO Tariff Database
+- [ ] UNCTAD World Investment Report
+- [ ] BIS Triennial Survey
+- [ ] WHO Global Health Observatory
+- [ ] ILO Regional Studies
+- [ ] UNFPA Youth Studies
+
+**Humanitarian & Food Security Sources (15):**
+- [ ] WFP VAM Commodity Price API
+- [ ] FAO Food Price Monitoring
+- [ ] SEMC Yemen Price Bulletins
+- [ ] IPC Food Security Classification
+- [ ] FAO AQUASTAT Water Resources
+- [ ] FSIS Food Security Bulletins
+- [ ] OCHA 3W Datasets
+- [ ] OCHA Humanitarian Needs Overview
+- [ ] WFP Project Pipeline
+- [ ] UNICEF Education Cluster Reports
+- [ ] WHO/UNICEF JMP WASH Data
+- [ ] Yemen Desert Locust Programme
+- [ ] AMIS Agricultural Market Info
+- [ ] USDA PSD Database
+- [ ] UN Women Gender Data
