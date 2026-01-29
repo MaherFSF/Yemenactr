@@ -1,9 +1,9 @@
 # YETO Platform - Build Status
 
-**Version**: v1.2.0  
-**Last Updated**: January 29, 2025 - 12:15 UTC  
-**Status**: OPERATIONAL
-**Control Pack Tag**: v0.1-evidence-tribunal
+**Version**: v1.2.1  
+**Last Updated**: January 29, 2025 - 12:45 UTC  
+**Status**: OPERATIONAL - PROMPT 2/3 COMPLETE
+**Control Pack Tag**: v0.1-evidence-tribunal-demos
 
 ---
 

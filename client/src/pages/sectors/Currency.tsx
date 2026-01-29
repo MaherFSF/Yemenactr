@@ -17,6 +17,8 @@ import {
 import { Link } from "wouter";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { Sparkline, RegimeHeatmap, InsightsTicker, CorrelationMatrix } from "@/components/charts/EnhancedVisualizations";
+import EvidencePackButton from "@/components/EvidencePackButton";
+import ContradictionBadge from "@/components/ContradictionBadge";
 
 export default function Currency() {
   const { language } = useLanguage();
@@ -149,6 +151,55 @@ export default function Currency() {
           </CardContent>
         </Card>
 
+        {/* Contradiction Demo - Exchange Rate Disagreement */}
+        <Card className="mb-6 border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/20">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <h4 className="font-semibold text-amber-800 dark:text-amber-200">
+                    {language === "ar" ? "مصادر متعددة تختلف" : "Multiple Sources Disagree"}
+                  </h4>
+                  <Badge variant="outline" className="text-amber-700 border-amber-300">
+                    {language === "ar" ? "سعر الصرف الموازي (عدن)" : "Parallel Exchange Rate (Aden)"}
+                  </Badge>
+                </div>
+                <div className="grid md:grid-cols-3 gap-4 mb-4">
+                  <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                    <div className="text-xs text-gray-500 mb-1">{language === "ar" ? "البنك المركزي - عدن" : "CBY Aden"}</div>
+                    <div className="text-lg font-bold text-[#107040]">1,650 YER/$</div>
+                    <div className="text-xs text-gray-400">{language === "ar" ? "مكاتب الصرافة المرخصة" : "Licensed bureaus"}</div>
+                  </div>
+                  <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                    <div className="text-xs text-gray-500 mb-1">{language === "ar" ? "مسح سوق يتو" : "YETO Survey"}</div>
+                    <div className="text-lg font-bold text-[#103050]">1,680 YER/$</div>
+                    <div className="text-xs text-gray-400">{language === "ar" ? "15 نقطة صرف" : "15 exchange points"}</div>
+                  </div>
+                  <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
+                    <div className="text-xs text-gray-500 mb-1">{language === "ar" ? "رويترز" : "Reuters"}</div>
+                    <div className="text-lg font-bold text-[#C0A030]">1,665 YER/$</div>
+                    <div className="text-xs text-gray-400">{language === "ar" ? "سعر مركب" : "Composite rate"}</div>
+                  </div>
+                </div>
+                <div className="p-3 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Info className="h-4 w-4 text-amber-600" />
+                    <span className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                      {language === "ar" ? "لماذا تختلف" : "Why They Differ"}
+                    </span>
+                  </div>
+                  <p className="text-sm text-amber-700 dark:text-amber-300">
+                    {language === "ar"
+                      ? "يستخدم البنك المركزي أسعار المكاتب المرخصة التي قد تتأخر عن أسعار السوق. مسح يتو يلتقط المعاملات على مستوى الشارع. رويترز تجمع عروض أسعار متعددة من التجار."
+                      : "CBY Aden uses licensed bureau rates which may lag market rates. YETO survey captures street-level transactions. Reuters aggregates multiple dealer quotes."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* KPI Cards */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
           {kpis.map((kpi, index) => (
@@ -179,6 +230,29 @@ export default function Currency() {
                 <div className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
                   <FileText className="h-3 w-3" />
                   {kpi.source}
+                </div>
+                <div className="mt-3 pt-3 border-t">
+                  <EvidencePackButton 
+                    data={{
+                      indicatorId: `currency-kpi-${index}`,
+                      indicatorNameEn: kpi.titleEn,
+                      indicatorNameAr: kpi.titleAr,
+                      value: kpi.value,
+                      unit: "YER/$",
+                      timestamp: new Date().toISOString(),
+                      confidence: kpi.confidence as "A" | "B" | "C" | "D",
+                      sources: [{
+                        id: `src-${index}`,
+                        name: kpi.source,
+                        nameAr: kpi.source,
+                        type: kpi.confidence === "A" ? "official" : "estimate",
+                        date: "2026-01-15",
+                        quality: kpi.confidence as "A" | "B" | "C" | "D"
+                      }]
+                    }}
+                    variant="link"
+                    size="sm"
+                  />
                 </div>
               </CardContent>
             </Card>

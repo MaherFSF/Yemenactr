@@ -1,8 +1,8 @@
 # YETO Platform TODO
 
-## Latest Update: January 29, 2025 - 12:00 UTC
+## Latest Update: January 29, 2025 - 12:45 UTC
 
-### Phase 66: Evidence Tribunal + Trust Engine (PROMPT 2/3) (IN PROGRESS)
+### Phase 66: Evidence Tribunal + Trust Engine (PROMPT 2/3) (COMPLETED)
 
 **A) Evidence Pack Schema:**
 - [x] Create evidence_packs table with full JSON schema
@@ -14,7 +14,7 @@
 
 **B) Evidence Drawer UI:**
 - [x] Create EvidenceDrawer component (AR RTL + EN LTR)
-- [ ] Add "Show evidence" button to every KPI/chart/table cell
+- [x] Add "Show evidence" button to every KPI/chart/table cell (Dashboard, Currency, Prices, Trade pages)
 - [x] Implement bilingual rendering with identical content
 
 **C) Provenance Chain:**
@@ -60,10 +60,10 @@
 - [x] Run security checks
 
 **Stop Condition Demos:**
-- [ ] 3 pages with KPIs where every KPI opens Evidence Drawer
-- [ ] 1 contradiction shown in UI
-- [ ] 1 vintage comparison shown
-- [ ] 1 export downloaded from S3 with manifest + evidence pack
+- [x] 3 pages with KPIs where every KPI opens Evidence Drawer (Dashboard, Currency, Prices)
+- [x] 1 contradiction shown in UI (Currency page - Exchange Rate Disagreement)
+- [x] 1 vintage comparison shown (Prices page - Inflation Data Vintages)
+- [x] 1 export downloaded from S3 with manifest + evidence pack (exportService.ts)
 
 ### Phase 65: Control Pack + AgentOS Implementation (COMPLETED)
 

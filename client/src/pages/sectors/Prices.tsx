@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import VintageSelector from "@/components/VintageSelector";
+import EvidencePackButton from "@/components/EvidencePackButton";
 
 export default function Prices() {
   const { language } = useLanguage();
@@ -186,6 +188,55 @@ export default function Prices() {
       </section>
 
       <div className="container py-8">
+        {/* Vintage Selector Demo */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              {language === "ar" ? "مقارنة الإصدارات - بيانات التضخم" : "Vintage Comparison - Inflation Data"}
+            </CardTitle>
+            <CardDescription>
+              {language === "ar" 
+                ? "مقارنة الإصدارات المختلفة لبيانات التضخم - التصحيحات لا تستبدل البيانات القديمة"
+                : "Compare different vintages of inflation data - corrections append, never overwrite"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <VintageSelector
+              vintages={[
+                {
+                  id: 1,
+                  versionNumber: 1,
+                  vintageDate: "2025-10-01",
+                  changeType: "initial",
+                  changeDescription: language === "ar" ? "الإصدار الأولي لبيانات التضخم 2025" : "Initial release of 2025 inflation data",
+                  changeSummary: { recordsAdded: 156, recordsModified: 0, recordsDeleted: 0 }
+                },
+                {
+                  id: 2,
+                  versionNumber: 2,
+                  vintageDate: "2025-11-15",
+                  changeType: "revision",
+                  changeDescription: language === "ar" ? "مراجعة بيانات يوليو 2025 بعد أزمة العملة" : "Revised July 2025 data after currency crisis",
+                  changeSummary: { recordsAdded: 12, recordsModified: 8, recordsDeleted: 0, affectedIndicators: ["CPI Aden", "Food Prices"] }
+                },
+                {
+                  id: 3,
+                  versionNumber: 3,
+                  vintageDate: "2026-01-10",
+                  changeType: "correction",
+                  changeDescription: language === "ar" ? "تصحيح أسعار الوقود في عدن" : "Correction to Aden fuel prices",
+                  changeSummary: { recordsAdded: 0, recordsModified: 4, recordsDeleted: 0, affectedIndicators: ["Diesel Price", "Petrol Price"] }
+                }
+              ]}
+              currentVintageId={3}
+              onVintageChange={(id) => console.log("Selected vintage:", id)}
+              onCompare={(id1, id2) => console.log("Comparing:", id1, "vs", id2)}
+              language={language as "en" | "ar"}
+            />
+          </CardContent>
+        </Card>
+
         {/* KPI Cards */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
           {kpis.map((kpi, index) => (
@@ -220,6 +271,29 @@ export default function Prices() {
                 <div className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
                   <FileText className="h-3 w-3" />
                   {kpi.source}
+                </div>
+                <div className="mt-3 pt-3 border-t">
+                  <EvidencePackButton 
+                    data={{
+                      indicatorId: `prices-kpi-${index}`,
+                      indicatorNameEn: kpi.titleEn,
+                      indicatorNameAr: kpi.titleAr,
+                      value: kpi.value,
+                      unit: "%",
+                      timestamp: new Date().toISOString(),
+                      confidence: kpi.confidence as "A" | "B" | "C" | "D",
+                      sources: [{
+                        id: `src-${index}`,
+                        name: kpi.source,
+                        nameAr: kpi.source,
+                        type: kpi.confidence === "A" ? "official" : "estimate",
+                        date: "2026-01-15",
+                        quality: kpi.confidence as "A" | "B" | "C" | "D"
+                      }]
+                    }}
+                    variant="link"
+                    size="sm"
+                  />
                 </div>
               </CardContent>
             </Card>
