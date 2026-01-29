@@ -7454,3 +7454,84 @@ Based on review of master design documents and data source register:
 - [ ] Dataset detail shows related docs and events + contradictions panel
 - [ ] Admin graph console exists with review queue and rule editor
 - [ ] Nightly job produces new suggested links and logs metrics
+
+
+### Phase 74: Macroeconomy & Growth as Live Intelligence Wall (PROMPT 16/31) (COMPLETED)
+
+**0) Audit Existing Macro Infrastructure:**
+- [x] Find existing macro routes/components (/sectors/macro)
+- [x] Check Now Layer integration (Prompt 13)
+- [x] Check entity graph (Prompt 6), timeline (Prompt 15), publications (Prompt 9)
+- [x] Update INVENTORY_RUNTIME_WIRING.md with macro wiring status
+
+**1) Sources & Coverage (2010→Today):**
+- [ ] World Bank Indicators API connector for macro
+- [ ] IMF SDMX connector (IFS/WEO/GFS)
+- [ ] UN Comtrade trade totals link
+- [ ] UNCTADstat FDI link
+- [ ] ILOStat labor proxies link
+- [ ] FAOSTAT agri output proxy link
+- [ ] OCHA FTS/HPC humanitarian pressure link
+- [ ] HDX HAPI humanitarian indicators
+- [ ] IATI project pipeline link
+- [ ] ReliefWeb documents for shocks/reforms
+- [ ] VIIRS nightlights proxy index
+- [ ] Yemen institutional sources (CBY, MoF, CSO)
+
+**2) Macro Page Intelligence Wall (6 Panels):**
+- [x] Panel A: Today/This Week Day Feed (from Now Layer) - MacroIntelligenceWall.tsx
+- [x] Panel B: Macro KPIs (8 tiles max, evidence-linked) - MacroIntelligenceWall.tsx
+- [x] Panel C: Long Arc 2010→Today Charts (GDP, growth, proxies) - MacroIntelligenceWall.tsx
+- [x] Panel D: Mechanism Explainer (evidence-locked) - MacroIntelligenceWall.tsx
+- [x] Panel E: Contradictions & Vintages (transparency) - MacroIntelligenceWall.tsx
+- [x] Panel F: Connected Intelligence (auto-linked entities, docs, events) - MacroIntelligenceWall.tsx
+- [x] Date lens: user can select any date 2010→today
+- [x] Mobile-first responsive design
+
+**3) Macro Sector Agent:**
+- [x] Nightly macro context pack build (macroSectorAgent.ts)
+- [x] Daily macro signal digest (admin/VIP) (macroSectorAgent.ts)
+- [x] Weekly macro brief (public + VIP versions) (macroSectorAgent.ts)
+- [x] Macro alert triage and brief generation (macroSectorAgent.ts)
+
+**4) Macro Alerts System:**
+- [x] Freshness SLA breach alerts (macroSectorAgent.ts)
+- [x] New contradiction event alerts (macroSectorAgent.ts)
+- [ ] Vintage revision detected alerts
+- [x] Proxy divergence diagnostic alerts (macroSectorAgent.ts)
+- [x] Macro stress spike alerts (macroSectorAgent.ts)
+- [ ] Major report released alerts
+
+**5) Admin Controls:**
+- [ ] /admin/sectors macro watchlist thresholds
+- [ ] /admin/alerts macro rule editor
+- [ ] /admin/updates macro feed pins
+- [ ] /admin/methodology macro notes
+- [ ] /admin/credibility DQAF for macro datasets
+
+**6) Documentation:**
+- [ ] "How we track growth with incomplete official data"
+- [ ] "What proxies are, and what they are not"
+- [ ] "How contradictions are shown"
+- [ ] "How revisions/vintages work"
+- [ ] Update DATA_SOURCES_CATALOG.md
+- [ ] Update METHODOLOGY docs
+
+**7) Tests + Release Gates:**
+- [ ] Unit tests: proxy labeling, contradiction logic, evidence requirement
+- [ ] Integration tests: macro API returns evidence_pack_id
+- [ ] E2E tests: macro page EN+AR + export + evidence drawer
+- [ ] Release Gate: evidence coverage >= 95%
+- [ ] Release Gate: day feed wired
+- [ ] Release Gate: exports working
+- [ ] Release Gate: bilingual parity
+
+**Stop Conditions:**
+- [ ] Macro page with 6 panels and day feed wired
+- [ ] Every KPI/chart opens Evidence Drawer
+- [ ] Year/date lens works (2010→today)
+- [ ] Contradictions/vintages shown
+- [ ] Macro snapshot export (AR+EN PDF)
+- [ ] Macro agent daily digest + weekly brief
+- [ ] Admin can pin updates and edit thresholds
+

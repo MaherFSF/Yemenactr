@@ -7366,3 +7366,34 @@ export const relatedItemsCache = mysqlTable("related_items_cache", {
 }));
 export type RelatedItemsCacheEntry = typeof relatedItemsCache.$inferSelect;
 export type InsertRelatedItemsCacheEntry = typeof relatedItemsCache.$inferInsert;
+
+
+// ============================================================================
+// SECTOR AGENT RUNS
+// ============================================================================
+
+// Sector Agent Runs: Track agent execution history
+export const sectorAgentRuns = mysqlTable("sector_agent_runs", {
+  id: int("id").autoincrement().primaryKey(),
+  sectorCode: varchar("sectorCode", { length: 50 }).notNull(),
+  runType: mysqlEnum("runType", ["nightly", "daily", "weekly", "manual"]).notNull(),
+  startedAt: timestamp("startedAt").notNull(),
+  completedAt: timestamp("completedAt"),
+  status: mysqlEnum("status", ["pending", "running", "completed", "failed"]).default("pending").notNull(),
+  outputFiles: json("outputFiles").$type<string[]>(),
+  errorMessage: text("errorMessage"),
+  metrics: json("metrics").$type<{
+    kpisProcessed?: number;
+    alertsGenerated?: number;
+    documentsLinked?: number;
+    executionTimeMs?: number;
+  }>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  sectorIdx: index("agent_run_sector_idx").on(table.sectorCode),
+  statusIdx: index("agent_run_status_idx").on(table.status),
+  startedIdx: index("agent_run_started_idx").on(table.startedAt),
+}));
+
+export type SectorAgentRun = typeof sectorAgentRuns.$inferSelect;
+export type InsertSectorAgentRun = typeof sectorAgentRuns.$inferInsert;
