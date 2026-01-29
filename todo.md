@@ -6503,3 +6503,31 @@ Based on review of master design documents and data source register:
 - [ ] AMIS Agricultural Market Info
 - [ ] USDA PSD Database
 - [ ] UN Women Gender Data
+
+
+## Phase 73: Comprehensive YETO Enhancement - Part 1
+
+**Part 1A: Audit & Clean Backend**
+- [ ] Audit all pages for empty/placeholder items
+- [ ] Identify and fix all "coming soon" placeholders
+- [ ] Remove any fabricated/made-up data
+- [ ] Verify all displayed numbers have real sources
+
+**Part 1B: Live Data Feeds**
+- [ ] Connect World Bank WDI API for GDP, inflation, trade
+- [ ] Connect IMF WEO API for economic forecasts
+- [ ] Connect WFP VAM API for food prices
+- [ ] Connect FAO GIEWS API for agricultural data
+- [ ] Implement automatic daily refresh scheduler
+
+**Part 1C: Source Detail Pages**
+- [ ] Create /source/:id route for source details
+- [ ] Display source methodology and update frequency
+- [ ] Show all indicators sourced from each source
+- [ ] Add data freshness and last update timestamp
+
+**Part 1D: Data Quality Dashboard (Admin)**
+- [ ] Create admin data quality overview page
+- [ ] Show data freshness by source
+- [ ] Display coverage gaps and missing data
+- [ ] Add source health status monitoring

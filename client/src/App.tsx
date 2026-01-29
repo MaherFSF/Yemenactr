@@ -95,6 +95,7 @@ import ReleaseGate from "./pages/admin/ReleaseGate";
 import ReportsDashboard from "./pages/admin/ReportsDashboard";
 import Sitemap from "./pages/Sitemap";
 import Reports from "./pages/Reports";
+import SourceDetail from "./pages/SourceDetail";
 import AllPages from "./pages/review/AllPages";
 import { ReviewModeBanner } from "./components/ReviewModeBanner";
 import GovernorDashboard from "./pages/GovernorDashboard";
@@ -141,6 +142,7 @@ function Router() {
       <Route path={"/data/repository"} component={DataRepository} />
       <Route path={"/timeline"} component={Timeline} />
       <Route path={"/methodology"} component={Methodology} />
+      <Route path="/source/:sourceId" component={SourceDetail} />
       <Route path={"/report-builder"} component={ReportBuilder} />
       <Route path={"/pricing"} component={Pricing} />
       <Route path="/subscriptions">{() => { window.location.href = '/pricing'; return null; }}</Route>
