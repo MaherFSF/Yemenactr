@@ -2894,3 +2894,125 @@ export type InsertIntegrityReport = typeof integrityReports.$inferInsert;
 // RE-EXPORT VISUALIZATION & REPORTING SCHEMA
 // ============================================================================
 export * from "./schema-visualization";
+
+
+// ============================================================================
+// TIME-TRAVEL WHAT-IF SYSTEM (Step 5)
+// ============================================================================
+
+/**
+ * Key Historical Events - Stores significant events that influence economic indicators
+ * Used for the Time-Travel slider event markers and causality visualization
+ */
+export const keyEvents = mysqlTable("key_events", {
+  id: int("id").autoincrement().primaryKey(),
+  eventDate: timestamp("eventDate").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }),
+  description: text("description").notNull(),
+  descriptionAr: text("descriptionAr"),
+  category: mysqlEnum("category", [
+    "political",
+    "economic",
+    "military",
+    "humanitarian",
+    "monetary",
+    "fiscal",
+    "trade",
+    "infrastructure",
+    "social"
+  ]).notNull(),
+  impactLevel: int("impactLevel").notNull(), // 1-5 (Low to Critical)
+  regimeTag: mysqlEnum("regimeTag", ["aden_irg", "sanaa_defacto", "all", "international"]).notNull(),
+  affectedIndicators: json("affectedIndicators").$type<string[]>(), // Indicator codes affected by this event
+  sourceCitation: text("sourceCitation").notNull(),
+  sourceUrl: text("sourceUrl"),
+  isNeutralizable: boolean("isNeutralizable").default(true).notNull(), // Can be disabled in what-if scenarios
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  dateIdx: index("key_event_date_idx").on(table.eventDate),
+  categoryIdx: index("key_event_category_idx").on(table.category),
+  regimeIdx: index("key_event_regime_idx").on(table.regimeTag),
+  impactIdx: index("key_event_impact_idx").on(table.impactLevel),
+}));
+
+export type KeyEvent = typeof keyEvents.$inferSelect;
+export type InsertKeyEvent = typeof keyEvents.$inferInsert;
+
+/**
+ * AI Projections Cache - Stores AI-generated projections for "what-if" scenarios
+ * Caches results to avoid repeated LLM calls for the same scenario
+ */
+export const aiProjections = mysqlTable("ai_projections", {
+  id: int("id").autoincrement().primaryKey(),
+  scenarioHash: varchar("scenarioHash", { length: 64 }).notNull().unique(), // SHA256 hash of (timestamp + neutralized_event_ids)
+  timestamp: timestamp("timestamp").notNull(), // The point in time for this projection
+  neutralizedEventIds: json("neutralizedEventIds").$type<number[]>().notNull(), // IDs of events that were "disabled"
+  projectionData: json("projectionData").$type<{
+    projectedIndicators: Array<{
+      indicatorCode: string;
+      originalValue: number;
+      projectedValue: number;
+      confidence: number; // 0-1
+      reasoning: string;
+    }>;
+    narrativeSummary: string;
+    narrativeSummaryAr: string;
+    methodology: string;
+    caveats: string[];
+  }>().notNull(),
+  modelUsed: varchar("modelUsed", { length: 100 }).notNull(),
+  generationTimeMs: int("generationTimeMs"),
+  requestedBy: int("requestedBy").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  expiresAt: timestamp("expiresAt"), // Cache expiration
+}, (table) => ({
+  hashIdx: index("ai_projection_hash_idx").on(table.scenarioHash),
+  timestampIdx: index("ai_projection_timestamp_idx").on(table.timestamp),
+  createdIdx: index("ai_projection_created_idx").on(table.createdAt),
+}));
+
+export type AiProjection = typeof aiProjections.$inferSelect;
+export type InsertAiProjection = typeof aiProjections.$inferInsert;
+
+/**
+ * Historical State Snapshots - Pre-computed snapshots for fast time-travel queries
+ * Stores aggregated state at key points in time
+ */
+export const historicalSnapshots = mysqlTable("historical_snapshots", {
+  id: int("id").autoincrement().primaryKey(),
+  snapshotDate: timestamp("snapshotDate").notNull(),
+  snapshotType: mysqlEnum("snapshotType", ["monthly", "quarterly", "annual", "event_triggered"]).notNull(),
+  
+  // Aggregated indicator values at this point
+  indicatorValues: json("indicatorValues").$type<Array<{
+    indicatorCode: string;
+    regimeTag: string;
+    value: number;
+    unit: string;
+    confidenceRating: string;
+  }>>().notNull(),
+  
+  // Events that occurred up to this point
+  eventCount: int("eventCount").notNull(),
+  
+  // Summary statistics
+  summaryStats: json("summaryStats").$type<{
+    fxRateAden: number | null;
+    fxRateSanaa: number | null;
+    inflationAden: number | null;
+    inflationSanaa: number | null;
+    gdpEstimate: number | null;
+    tradeBalance: number | null;
+    humanitarianNeed: number | null;
+  }>(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  dateIdx: index("snapshot_date_idx").on(table.snapshotDate),
+  typeIdx: index("snapshot_type_idx").on(table.snapshotType),
+}));
+
+export type HistoricalSnapshot = typeof historicalSnapshots.$inferSelect;
+export type InsertHistoricalSnapshot = typeof historicalSnapshots.$inferInsert;

@@ -20,6 +20,8 @@ import {
 import { useState } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, ComposedChart } from 'recharts';
 import { Link } from "wouter";
+import TimeTravelSlider from "@/components/TimeTravelSlider";
+import { useHistoricalStore, useIsTimeTravelActive } from "@/stores/historicalStore";
 import {
   Select,
   SelectContent,
@@ -578,8 +580,11 @@ export default function Dashboard() {
             </Card>
           </div>
 
-          {/* Right Sidebar - Empty for now, can add more widgets */}
+          {/* Right Sidebar */}
           <div className={`space-y-6 ${language === 'ar' ? 'lg:order-1' : ''}`}>
+            {/* Time-Travel Slider */}
+            <TimeTravelSlider compact={false} />
+            
             {/* Sector Quick Links */}
             <Card>
               <CardHeader className="pb-3">

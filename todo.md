@@ -6244,3 +6244,30 @@ Based on review of master design documents and data source register:
 - [x] Fix /subscriptions redirect to /pricing (already working)
 - [x] Create comprehensive /data-policy page with bilingual support (already exists with 6 sections)
 - [x] Verify all routes are working correctly
+
+
+## Phase 68: Comprehensive YETO Enhancements (Jan 29, 2026)
+
+**Step 5: Time-Travel What-If System**
+- [x] Add key_events table to database schema
+- [x] Add ai_projections table for what-if caching
+- [x] Add historical_snapshots table for fast queries
+- [x] Create historical router with getStateAtTimestamp endpoint
+- [x] Build TimeTravelSlider component with year selector
+- [x] Create Zustand store for global historical state
+- [x] Integrate Time-Travel into Dashboard page
+- [x] Add event markers on timeline slider
+- [x] Seed 30+ key historical events (2011-2025) - 26 events inserted
+
+**Step 6: Methodology Enhancements**
+- [x] Add CBY-Sana'a to data sources
+- [x] Add OCHA, FAO, ILO, UNCTAD, WFP, UNDP sources
+- [x] Document calculation formulas (existing in Methodology page)
+- [x] Add data revision policy section (Corrections tab exists)
+
+**Dashboard Fixes**
+- [x] Time-Travel Slider integrated into Dashboard
+- [x] All 15 Time-Travel tests passing
+- [ ] Standardize language per view
+- [ ] Add source citations to charts
+- [ ] Add last-updated timestamps

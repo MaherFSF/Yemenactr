@@ -70,19 +70,26 @@ export default function Methodology() {
       categoryEn: "Official Government Sources",
       categoryAr: "المصادر الحكومية الرسمية",
       sources: [
-        { name: "Central Bank of Yemen - Aden", type: "Primary", reliability: "A-B" },
-        { name: "Ministry of Finance - IRG", type: "Primary", reliability: "B-C" },
-        { name: "Central Statistical Organization", type: "Primary", reliability: "C" },
+        { name: "Central Bank of Yemen - Aden (CBY-Aden)", nameAr: "البنك المركزي اليمني - عدن", type: "Primary", reliability: "A-B", url: "https://www.centralbank.gov.ye" },
+        { name: "Central Bank of Yemen - Sana'a (CBY-Sana'a)", nameAr: "البنك المركزي اليمني - صنعاء", type: "Primary", reliability: "B-C", url: "https://www.cby-ye.com" },
+        { name: "Ministry of Finance - IRG", nameAr: "وزارة المالية - الحكومة الشرعية", type: "Primary", reliability: "B-C" },
+        { name: "Ministry of Finance - DFA", nameAr: "وزارة المالية - سلطة الأمر الواقع", type: "Primary", reliability: "C" },
+        { name: "Central Statistical Organization", nameAr: "الجهاز المركزي للإحصاء", type: "Primary", reliability: "C" },
       ]
     },
     {
       categoryEn: "International Organizations",
       categoryAr: "المنظمات الدولية",
       sources: [
-        { name: "World Bank", type: "Primary", reliability: "A" },
-        { name: "IMF", type: "Primary", reliability: "A" },
-        { name: "OCHA / UN Agencies", type: "Primary", reliability: "A" },
-        { name: "IPC (Food Security)", type: "Primary", reliability: "A" },
+        { name: "World Bank", nameAr: "البنك الدولي", type: "Primary", reliability: "A", url: "https://www.worldbank.org/en/country/yemen" },
+        { name: "International Monetary Fund (IMF)", nameAr: "صندوق النقد الدولي", type: "Primary", reliability: "A", url: "https://www.imf.org/en/Countries/YEM" },
+        { name: "UN OCHA", nameAr: "مكتب الأمم المتحدة لتنسيق الشؤون الإنسانية", type: "Primary", reliability: "A", url: "https://www.unocha.org/yemen" },
+        { name: "Food and Agriculture Organization (FAO)", nameAr: "منظمة الأغذية والزراعة", type: "Primary", reliability: "A", url: "https://www.fao.org/yemen" },
+        { name: "International Labour Organization (ILO)", nameAr: "منظمة العمل الدولية", type: "Primary", reliability: "A", url: "https://www.ilo.org" },
+        { name: "UNCTAD", nameAr: "مؤتمر الأمم المتحدة للتجارة والتنمية", type: "Primary", reliability: "A", url: "https://unctad.org" },
+        { name: "IPC (Food Security)", nameAr: "التصنيف المرحلي المتكامل للأمن الغذائي", type: "Primary", reliability: "A", url: "https://www.ipcinfo.org" },
+        { name: "World Food Programme (WFP)", nameAr: "برنامج الأغذية العالمي", type: "Primary", reliability: "A", url: "https://www.wfp.org/countries/yemen" },
+        { name: "UNDP Yemen", nameAr: "برنامج الأمم المتحدة الإنمائي - اليمن", type: "Primary", reliability: "A", url: "https://www.undp.org/yemen" },
       ]
     },
     {
