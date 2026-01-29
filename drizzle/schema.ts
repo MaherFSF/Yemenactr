@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, json, boolean, index, unique, date } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, json, boolean, index, unique, uniqueIndex, date } from "drizzle-orm/mysql-core";
 
 /**
  * YETO Platform Database Schema
@@ -5947,3 +5947,296 @@ export const governancePolicies = mysqlTable("governance_policies", {
 }));
 export type GovernancePolicy = typeof governancePolicies.$inferSelect;
 export type InsertGovernancePolicy = typeof governancePolicies.$inferInsert;
+
+
+// ============================================================================
+// NOW LAYER: Updates + Signals + Governed Publishing (Prompt 13)
+// ============================================================================
+
+// UpdateItem - First-class evidence object for updates/news
+export const updateItems = mysqlTable("update_items", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Bilingual content
+  titleEn: varchar("titleEn", { length: 500 }).notNull(),
+  titleAr: varchar("titleAr", { length: 500 }).notNull(),
+  summaryEn: text("summaryEn").notNull(),
+  summaryAr: text("summaryAr").notNull(),
+  bodyEn: text("bodyEn"), // Optional - only if licensed
+  bodyAr: text("bodyAr"),
+  
+  // Source information
+  sourceId: int("sourceId").references(() => sources.id),
+  sourcePublisher: varchar("sourcePublisher", { length: 255 }),
+  sourceUrl: varchar("sourceUrl", { length: 1000 }).notNull(),
+  publishedAt: timestamp("publishedAt").notNull(),
+  retrievedAt: timestamp("retrievedAt").defaultNow().notNull(),
+  
+  // Deduplication
+  contentHash: varchar("contentHash", { length: 64 }).notNull(), // SHA-256
+  seenCount: int("seenCount").default(1),
+  
+  // Classification tags (JSON arrays)
+  sectors: json("sectors").$type<string[]>().default([]),
+  themes: json("themes").$type<string[]>().default([]),
+  entities: json("entities").$type<string[]>().default([]),
+  geography: json("geography").$type<string[]>().default([]),
+  regimeTag: mysqlEnum("regimeTag", ["aden", "sanaa", "both", "neutral"]),
+  
+  // Sensitivity and confidence
+  sensitivityLevel: mysqlEnum("sensitivityLevel", [
+    "public_safe",
+    "needs_review",
+    "restricted_metadata_only"
+  ]).default("needs_review").notNull(),
+  confidenceGrade: mysqlEnum("confidenceGrade", ["A", "B", "C", "D"]).default("B"),
+  confidenceReason: text("confidenceReason"),
+  
+  // DQAF quality summary
+  dqafSummary: json("dqafSummary").$type<{
+    accuracy: string;
+    timeliness: string;
+    coherence: string;
+    accessibility: string;
+  }>(),
+  
+  // Evidence (MANDATORY for publishable items)
+  evidencePackId: int("evidencePackId").references(() => evidencePacks.id),
+  
+  // Status and visibility
+  status: mysqlEnum("status", [
+    "draft",
+    "queued_for_review",
+    "published",
+    "rejected",
+    "archived"
+  ]).default("draft").notNull(),
+  visibility: mysqlEnum("visibility", [
+    "public",
+    "vip_only",
+    "admin_only"
+  ]).default("admin_only").notNull(),
+  
+  // Update type
+  updateType: mysqlEnum("updateType", [
+    "publication",
+    "funding",
+    "policy",
+    "data_release",
+    "report",
+    "announcement",
+    "other"
+  ]).default("other"),
+  
+  // Review metadata
+  reviewedBy: int("reviewedBy").references(() => users.id),
+  reviewedAt: timestamp("reviewedAt"),
+  rejectionReason: text("rejectionReason"),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  contentHashIdx: uniqueIndex("update_content_hash_idx").on(table.contentHash),
+  sourceUrlIdx: index("update_source_url_idx").on(table.sourceUrl),
+  statusIdx: index("update_status_idx").on(table.status),
+  publishedAtIdx: index("update_published_at_idx").on(table.publishedAt),
+  sourceIdIdx: index("update_source_id_idx").on(table.sourceId),
+}));
+export type UpdateItem = typeof updateItems.$inferSelect;
+export type InsertUpdateItem = typeof updateItems.$inferInsert;
+
+// UpdateEvidenceBundle - Evidence pack for update items
+export const updateEvidenceBundles = mysqlTable("update_evidence_bundles", {
+  id: int("id").autoincrement().primaryKey(),
+  updateItemId: int("updateItemId").notNull().references(() => updateItems.id),
+  
+  // Citations
+  citations: json("citations").$type<Array<{
+    text: string;
+    sourceUrl: string;
+    anchor: string;
+    pageNumber?: number;
+    section?: string;
+  }>>().default([]),
+  
+  // License information
+  licenseType: varchar("licenseType", { length: 100 }),
+  licenseUrl: varchar("licenseUrl", { length: 500 }),
+  licensePermissions: json("licensePermissions").$type<{
+    fullText: boolean;
+    metadataOnly: boolean;
+    derivative: boolean;
+    commercial: boolean;
+  }>(),
+  
+  // What changed extraction
+  whatChanged: json("whatChanged").$type<Array<{
+    claim: string;
+    evidence: string;
+    sourceAnchor: string;
+  }>>().default([]),
+  
+  // Raw artifact storage
+  rawArtifactUrl: varchar("rawArtifactUrl", { length: 1000 }),
+  rawArtifactHash: varchar("rawArtifactHash", { length: 64 }),
+  
+  // Extraction anchors
+  extractionAnchors: json("extractionAnchors").$type<Array<{
+    type: "page" | "section" | "table" | "figure";
+    reference: string;
+    content: string;
+  }>>().default([]),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  updateItemIdx: index("evidence_update_item_idx").on(table.updateItemId),
+}));
+export type UpdateEvidenceBundle = typeof updateEvidenceBundles.$inferSelect;
+export type InsertUpdateEvidenceBundle = typeof updateEvidenceBundles.$inferInsert;
+
+// UpdateSignal - Internal signals derived from updates
+export const updateSignals = mysqlTable("update_signals", {
+  id: int("id").autoincrement().primaryKey(),
+  updateItemId: int("updateItemId").notNull().references(() => updateItems.id),
+  
+  // Signal type
+  signalType: mysqlEnum("signalType", [
+    "timeline_event",
+    "sector_signal",
+    "vip_alert",
+    "admin_alert",
+    "entity_update"
+  ]).notNull(),
+  
+  // Target
+  targetType: mysqlEnum("targetType", [
+    "timeline",
+    "sector",
+    "vip_cockpit",
+    "admin_dashboard",
+    "entity_page"
+  ]).notNull(),
+  targetId: varchar("targetId", { length: 100 }), // sector code, entity id, etc.
+  
+  // Signal content
+  signalTitleEn: varchar("signalTitleEn", { length: 255 }).notNull(),
+  signalTitleAr: varchar("signalTitleAr", { length: 255 }).notNull(),
+  signalSummaryEn: text("signalSummaryEn"),
+  signalSummaryAr: text("signalSummaryAr"),
+  
+  // Priority
+  priority: mysqlEnum("priority", ["critical", "high", "medium", "low"]).default("medium"),
+  
+  // Status
+  status: mysqlEnum("status", [
+    "pending",
+    "approved",
+    "rejected",
+    "processed"
+  ]).default("pending"),
+  
+  // Evidence
+  evidencePackId: int("evidencePackId").references(() => evidencePacks.id),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  processedAt: timestamp("processedAt"),
+}, (table) => ({
+  updateItemIdx: index("signal_update_item_idx").on(table.updateItemId),
+  signalTypeIdx: index("signal_type_idx").on(table.signalType),
+  statusIdx: index("signal_status_idx").on(table.status),
+}));
+export type UpdateSignal = typeof updateSignals.$inferSelect;
+export type InsertUpdateSignal = typeof updateSignals.$inferInsert;
+
+// UpdateIngestionCheckpoint - Track ingestion progress per source
+export const updateIngestionCheckpoints = mysqlTable("update_ingestion_checkpoints", {
+  id: int("id").autoincrement().primaryKey(),
+  sourceId: int("sourceId").notNull().references(() => sources.id),
+  
+  // Checkpoint state
+  lastCursor: varchar("lastCursor", { length: 500 }),
+  lastSeenDate: timestamp("lastSeenDate"),
+  lastHash: varchar("lastHash", { length: 64 }),
+  lastSuccessfulRun: timestamp("lastSuccessfulRun"),
+  
+  // Statistics
+  totalIngested: int("totalIngested").default(0),
+  totalDuplicates: int("totalDuplicates").default(0),
+  totalErrors: int("totalErrors").default(0),
+  
+  // Rate limiting
+  rateLimitRemaining: int("rateLimitRemaining"),
+  rateLimitResetAt: timestamp("rateLimitResetAt"),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  sourceIdIdx: uniqueIndex("checkpoint_source_id_idx").on(table.sourceId),
+}));
+export type UpdateIngestionCheckpoint = typeof updateIngestionCheckpoints.$inferSelect;
+export type InsertUpdateIngestionCheckpoint = typeof updateIngestionCheckpoints.$inferInsert;
+
+// UpdateNotification - Notifications triggered by updates
+export const updateNotifications = mysqlTable("update_notifications", {
+  id: int("id").autoincrement().primaryKey(),
+  updateItemId: int("updateItemId").references(() => updateItems.id),
+  updateSignalId: int("updateSignalId").references(() => updateSignals.id),
+  
+  // Notification type
+  notificationType: mysqlEnum("notificationType", [
+    "high_importance_update",
+    "funding_shift",
+    "new_report",
+    "staleness_breach",
+    "translation_qa_failure",
+    "contradiction_detected"
+  ]).notNull(),
+  
+  // Target audience
+  targetRole: mysqlEnum("targetRole", [
+    "admin",
+    "data_steward",
+    "vip_president",
+    "vip_finance_minister",
+    "vip_central_bank_governor",
+    "vip_humanitarian_coordinator",
+    "vip_donor_analyst",
+    "partner",
+    "public"
+  ]),
+  targetUserId: int("targetUserId").references(() => users.id),
+  
+  // Content
+  titleEn: varchar("titleEn", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }).notNull(),
+  bodyEn: text("bodyEn"),
+  bodyAr: text("bodyAr"),
+  
+  // Channel
+  channel: mysqlEnum("channel", ["in_app", "email", "webhook"]).default("in_app"),
+  
+  // Status
+  status: mysqlEnum("status", [
+    "pending",
+    "sent",
+    "failed",
+    "read"
+  ]).default("pending"),
+  sentAt: timestamp("sentAt"),
+  readAt: timestamp("readAt"),
+  failureReason: text("failureReason"),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  updateItemIdx: index("notification_update_item_idx").on(table.updateItemId),
+  statusIdx: index("notification_status_idx").on(table.status),
+  targetRoleIdx: index("notification_target_role_idx").on(table.targetRole),
+}));
+export type UpdateNotification = typeof updateNotifications.$inferSelect;
+export type InsertUpdateNotification = typeof updateNotifications.$inferInsert;
+

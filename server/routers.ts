@@ -85,6 +85,7 @@ import { vipCockpitRouter } from "./routers/vipCockpit";
 import { sectorPagesRouter } from "./routers/sectorPages";
 import { publicationsRouter } from "./routers/publications";
 import { partnerEngineRouter } from "./routers/partnerEngine";
+import { updatesRouter } from "./routers/updates";
 import { sql, desc, eq, like, or, and, inArray } from "drizzle-orm";
 
 export const appRouter = router({
@@ -107,6 +108,7 @@ export const appRouter = router({
   sectorPages: sectorPagesRouter,
   publications: publicationsRouter,
   partnerEngine: partnerEngineRouter,
+  updates: updatesRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

@@ -597,3 +597,42 @@ Platform is production-ready with all core systems implemented.
 ---
 
 *Updated: January 29, 2026 - Prompt 11/12 Final Release*
+
+
+---
+
+## Prompt 13 Audit: NOW Layer (Updates + Signals + Governed Publishing)
+
+### Existing Components Found
+
+| Component | File Path | Status | Notes |
+|-----------|-----------|--------|-------|
+| VIP Cockpit Signals | drizzle/schema.ts:4186 | ✅ WIRED | vipCockpitSignals table exists |
+| Notification Preferences | drizzle/schema.ts:527 | ✅ WIRED | notification_preferences table |
+| Email Outbox | drizzle/schema.ts:654 | ✅ WIRED | emailOutbox table |
+| Auto-Brief Service | server/services/autoBriefService.ts | ✅ WIRED | Brief generation service |
+| VIP Cockpit Service | server/services/vipCockpitService.ts | ✅ WIRED | Cockpit data generation |
+| Scheduler | scripts/scheduler.ts | ✅ WIRED | Scheduled jobs system |
+| Source Registry | drizzle/schema.ts:sources | ✅ WIRED | Approved sources list |
+
+### Missing Components (To Be Built)
+
+| Component | Status | Action |
+|-----------|--------|--------|
+| UpdateItem table | ❌ MISSING | Create in schema |
+| UpdateEvidenceBundle table | ❌ MISSING | Create in schema |
+| UpdateSignal table | ❌ MISSING | Create in schema |
+| Updates ingestion pipeline | ❌ MISSING | Create service |
+| Updates router | ❌ MISSING | Create router |
+| /updates public page | ❌ MISSING | Create page |
+| /admin/updates review queue | ❌ MISSING | Create admin page |
+| Homepage Latest Updates wiring | ⚠️ PARTIAL | Wire to real data |
+
+### Decision: Extend Existing, Don't Rebuild
+
+The existing vipCockpitSignals and notification systems will be extended rather than rebuilt. The new UpdateItem system will integrate with the existing evidence pack infrastructure.
+
+---
+
+*Updated: January 29, 2026 - Prompt 13/∞*
+

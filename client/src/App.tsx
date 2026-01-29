@@ -116,7 +116,10 @@ import PartnerDashboard from "./pages/PartnerDashboard";
 import ContributorPortal from "./pages/ContributorPortal";
 import SultaniCommandCenter from "./pages/admin/SultaniCommandCenter";
 import HomepageCMS from "./pages/admin/HomepageCMS";
+import UpdatesReviewQueue from "./pages/admin/UpdatesReviewQueue";
 import RoleAwareEntryPoints from "./components/RoleAwareEntryPoints";
+import Updates from "./pages/Updates";
+import UpdateDetail from "./pages/UpdateDetail";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -217,6 +220,9 @@ function Router() {
           <Route path="/admin/partners" component={PartnerManagement} />
           <Route path="/admin/sultani" component={SultaniCommandCenter} />
           <Route path="/admin/homepage" component={HomepageCMS} />
+          <Route path="/admin/updates" component={UpdatesReviewQueue} />
+      <Route path="/updates" component={Updates} />
+      <Route path="/updates/:id" component={UpdateDetail} />
       <Route path="/publications-hub" component={PublicationsHub} />
       <Route path="/partner-dashboard" component={PartnerDashboard} />
       <Route path="/contribute" component={ContributorPortal} />

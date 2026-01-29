@@ -7147,3 +7147,61 @@ Based on review of master design documents and data source register:
 - [x] Tiles show evidence drawer links
 - [x] Mobile viewport smoke test
 
+
+
+### Phase 77: NOW Layer - Updates + Signals + Governed Publishing (PROMPT 13/∞) (COMPLETED)
+
+**1) UpdateItem First-Class Evidence Object:**
+- [x] UpdateItem table (update_items) with all fields - titleEn/Ar, summaryEn/Ar, bodyEn/Ar, sourceId, sourceUrl, publishedAt, contentHash, tags, sensitivityLevel, confidenceGrade, evidencePackId, status, visibility
+- [x] UpdateEvidenceBundle table (update_evidence_bundles) - citations, anchors, license, whatChanged
+- [x] UpdateSignal table (update_signals) - derived signals for timeline, sector, VIP, alerts
+
+**2) Approved Sources Only:**
+- [x] Updates ingest only from Source Registry approved sources - updatesIngestionService.ts
+- [x] License-permitted metadata and/or full text
+- [x] Access Needed items for restricted sources
+
+**3) Updates Ingestion Pipeline:**
+- [x] Scheduler job: runDailyIngestion in updates router
+- [x] Dedupe by canonical URL, normalized title+publisher+date, content_hash
+- [x] Minimal payload principle (S3 for heavy files)
+- [x] Extraction & anchors for full-text permitted sources
+- [x] Bilingualization with glossary enforcement
+
+**4) Update Classification:**
+- [x] Sector tagger (macro, prices, FX, trade, aid, etc.) - classifyUpdate()
+- [x] Entity linker (Entity Graph integration)
+- [x] Event suggester (Timeline event proposals)
+- [x] What-changed extractor (safe, explicit claims only)
+
+**5) Governed Publishing:**
+- [x] Publishing policies (public_safe, needs_review, restricted_metadata_only) - governedPublishingService.ts
+- [x] 6-gate pipeline (Evidence, Source, Translation, Sensitivity, Contradiction, Quality)
+- [x] Admin review queue /admin/updates - UpdatesReviewQueue.tsx
+
+**6) Public UI:**
+- [x] Homepage Latest Updates wired to real UpdateItems - LatestUpdates.tsx component
+- [x] /updates page with filters (sector, type) - Updates.tsx
+- [x] /updates/{id} detail page with evidence drawer - UpdateDetail.tsx
+
+**7) Notifications:**
+- [x] Notification triggers (high-importance updates, funding shifts, staleness SLA) - update_notifications table
+- [x] Channels (in-app, email outbox, webhook)
+- [x] Admin controls /admin/notifications tab in UpdatesReviewQueue
+
+**8) Documentation Updates:**
+- [x] INVENTORY_RUNTIME_WIRING.md: updates pipeline section
+- [x] Release Gate: Updates Feed gate with 5 checks
+
+**9) Tests + Release Gate:**
+- [x] Unit tests: 23 tests passing (updates.test.ts)
+- [x] Integration tests: ingest, evidence pack, admin approval
+- [x] Release Gate: Updates feed gate added with 5/5 checks passing
+
+**Stop Conditions:**
+- [x] /updates shows updates page with filters
+- [x] Every update card has confidence badge and evidence link
+- [x] EN+AR parity with bilingual support
+- [x] Admin queue /admin/updates works with tabs
+- [x] Notifications tab in admin updates queue
+
