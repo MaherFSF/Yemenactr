@@ -6240,3 +6240,682 @@ export const updateNotifications = mysqlTable("update_notifications", {
 export type UpdateNotification = typeof updateNotifications.$inferSelect;
 export type InsertUpdateNotification = typeof updateNotifications.$inferInsert;
 
+
+// ============================================================================
+// LITERATURE & KNOWLEDGE BASE TABLES (Prompt 14/31)
+// ============================================================================
+
+/**
+ * Library Documents - First-class evidence objects with full provenance
+ * Extends the concept of evidenceDocuments with comprehensive metadata
+ */
+export const libraryDocuments = mysqlTable("library_documents", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Identity
+  docId: varchar("docId", { length: 50 }).notNull().unique(), // UUID or canonical ID
+  
+  // Titles (bilingual)
+  titleEn: varchar("titleEn", { length: 500 }).notNull(),
+  titleAr: varchar("titleAr", { length: 500 }),
+  
+  // Publisher (entity reference if resolvable)
+  publisherName: varchar("publisherName", { length: 255 }).notNull(),
+  publisherEntityId: int("publisherEntityId").references(() => entities.id),
+  
+  // Source reference
+  sourceId: int("sourceId").references(() => sources.id),
+  
+  // URLs
+  canonicalUrl: text("canonicalUrl"),
+  
+  // Dates
+  publishedAt: timestamp("publishedAt"), // From publisher
+  retrievedAt: timestamp("retrievedAt").notNull(), // System retrieval date
+  
+  // License classification
+  licenseFlag: mysqlEnum("licenseFlag", [
+    "open",
+    "restricted_metadata_only",
+    "unknown_requires_review"
+  ]).default("unknown_requires_review").notNull(),
+  licenseDetails: varchar("licenseDetails", { length: 255 }),
+  
+  // Original language
+  languageOriginal: mysqlEnum("languageOriginal", ["en", "ar", "both", "other"]).default("en").notNull(),
+  
+  // Document type
+  docType: mysqlEnum("docType", [
+    "report",
+    "working_paper",
+    "policy_brief",
+    "dataset_doc",
+    "sitrep",
+    "evaluation",
+    "annex",
+    "law_regulation",
+    "bulletin",
+    "circular",
+    "press_release",
+    "academic_paper",
+    "thesis",
+    "methodology_note",
+    "other"
+  ]).notNull(),
+  
+  // Sector associations
+  sectors: json("sectors").$type<string[]>().default([]),
+  
+  // Entity associations
+  entityIds: json("entityIds").$type<number[]>().default([]),
+  
+  // Geography references
+  geographies: json("geographies").$type<string[]>().default([]),
+  
+  // Regime applicability
+  regimeTagApplicability: mysqlEnum("regimeTagApplicability", [
+    "aden_irg",
+    "sanaa_defacto",
+    "both",
+    "mixed",
+    "unknown"
+  ]).default("unknown"),
+  
+  // Current version reference
+  currentVersionId: int("currentVersionId"),
+  
+  // Status
+  status: mysqlEnum("status", [
+    "draft",
+    "queued_for_review",
+    "published",
+    "archived"
+  ]).default("draft").notNull(),
+  
+  // Importance ranking (for prioritization)
+  importanceScore: int("importanceScore").default(50), // 0-100
+  
+  // Summary (evidence-only or AI-generated with label)
+  summaryEn: text("summaryEn"),
+  summaryAr: text("summaryAr"),
+  summaryIsAiGenerated: boolean("summaryIsAiGenerated").default(false),
+  
+  // Metadata
+  metadata: json("metadata").$type<Record<string, unknown>>(),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  createdBy: int("createdBy").references(() => users.id),
+}, (table) => ({
+  docIdIdx: uniqueIndex("lib_doc_id_idx").on(table.docId),
+  sourceIdx: index("lib_doc_source_idx").on(table.sourceId),
+  publisherIdx: index("lib_doc_publisher_idx").on(table.publisherEntityId),
+  typeIdx: index("lib_doc_type_idx").on(table.docType),
+  statusIdx: index("lib_doc_status_idx").on(table.status),
+  publishedAtIdx: index("lib_doc_published_at_idx").on(table.publishedAt),
+  licenseIdx: index("lib_doc_license_idx").on(table.licenseFlag),
+}));
+export type LibraryDocument = typeof libraryDocuments.$inferSelect;
+export type InsertLibraryDocument = typeof libraryDocuments.$inferInsert;
+
+/**
+ * Document Versions - Track versions and content changes
+ */
+export const documentVersions = mysqlTable("document_versions", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Document reference
+  documentId: int("documentId").notNull().references(() => libraryDocuments.id),
+  
+  // Version info
+  versionNumber: int("versionNumber").default(1).notNull(),
+  
+  // Content hash for dedupe
+  contentHash: varchar("contentHash", { length: 64 }).notNull(), // SHA-256
+  
+  // S3 storage (if licensed to store)
+  s3OriginalKey: varchar("s3OriginalKey", { length: 500 }),
+  s3OriginalUrl: text("s3OriginalUrl"),
+  
+  // File info
+  mimeType: varchar("mimeType", { length: 100 }),
+  fileSize: int("fileSize"),
+  pageCount: int("pageCount"),
+  
+  // Extraction status
+  extractionStatus: mysqlEnum("extractionStatus", [
+    "pending",
+    "ok",
+    "failed",
+    "partial"
+  ]).default("pending").notNull(),
+  extractionMethod: mysqlEnum("extractionMethod", [
+    "pdf_text",
+    "table_parser",
+    "ocr",
+    "html_parse",
+    "api_text",
+    "manual"
+  ]),
+  extractionQualityScore: int("extractionQualityScore"), // 0-100, null if unknown
+  extractionNotes: text("extractionNotes"),
+  
+  // Extracted text storage
+  extractedTextKey: varchar("extractedTextKey", { length: 500 }), // S3 key for extracted text
+  extractedTextUrl: text("extractedTextUrl"),
+  
+  // Translation status
+  translationStatus: mysqlEnum("translationStatus", [
+    "pending",
+    "en_done",
+    "ar_done",
+    "both_done",
+    "needs_review"
+  ]).default("pending").notNull(),
+  
+  // Indexing status
+  indexStatus: mysqlEnum("indexStatus", [
+    "pending",
+    "keyword_indexed",
+    "vector_indexed",
+    "both_indexed",
+    "failed"
+  ]).default("pending").notNull(),
+  vectorEmbeddingKey: varchar("vectorEmbeddingKey", { length: 500 }),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  processedAt: timestamp("processedAt"),
+}, (table) => ({
+  documentIdx: index("doc_version_document_idx").on(table.documentId),
+  hashIdx: index("doc_version_hash_idx").on(table.contentHash),
+  extractionIdx: index("doc_version_extraction_idx").on(table.extractionStatus),
+  translationIdx: index("doc_version_translation_idx").on(table.translationStatus),
+  indexIdx: index("doc_version_index_idx").on(table.indexStatus),
+}));
+export type DocumentVersion = typeof documentVersions.$inferSelect;
+export type InsertDocumentVersion = typeof documentVersions.$inferInsert;
+
+/**
+ * Citation Anchors - Quoteable anchors within documents
+ */
+export const citationAnchors = mysqlTable("citation_anchors", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Anchor ID
+  anchorId: varchar("anchorId", { length: 50 }).notNull().unique(),
+  
+  // Version reference
+  versionId: int("versionId").notNull().references(() => documentVersions.id),
+  
+  // Anchor type
+  anchorType: mysqlEnum("anchorType", [
+    "page_text",
+    "page_bbox",
+    "table_cell",
+    "figure_caption",
+    "section_header",
+    "paragraph",
+    "footnote"
+  ]).notNull(),
+  
+  // Location info
+  pageNumber: int("pageNumber"),
+  sectionNumber: varchar("sectionNumber", { length: 50 }),
+  
+  // Bounding box (if available)
+  bboxX: decimal("bboxX", { precision: 10, scale: 2 }),
+  bboxY: decimal("bboxY", { precision: 10, scale: 2 }),
+  bboxWidth: decimal("bboxWidth", { precision: 10, scale: 2 }),
+  bboxHeight: decimal("bboxHeight", { precision: 10, scale: 2 }),
+  
+  // Character offsets (if text-based)
+  charStart: int("charStart"),
+  charEnd: int("charEnd"),
+  
+  // Snippet text (small, licensed excerpt only)
+  snippetText: text("snippetText"),
+  snippetTextAr: text("snippetTextAr"), // Translated snippet
+  snippetHash: varchar("snippetHash", { length: 64 }), // Integrity check
+  
+  // Page image reference (for evidence drawer preview)
+  s3PageImageKey: varchar("s3PageImageKey", { length: 500 }),
+  s3PageImageUrl: text("s3PageImageUrl"),
+  
+  // Confidence
+  confidence: mysqlEnum("confidence", ["high", "medium", "low"]).default("medium"),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  anchorIdIdx: uniqueIndex("citation_anchor_id_idx").on(table.anchorId),
+  versionIdx: index("citation_anchor_version_idx").on(table.versionId),
+  typeIdx: index("citation_anchor_type_idx").on(table.anchorType),
+  pageIdx: index("citation_anchor_page_idx").on(table.pageNumber),
+}));
+export type CitationAnchor = typeof citationAnchors.$inferSelect;
+export type InsertCitationAnchor = typeof citationAnchors.$inferInsert;
+
+/**
+ * Extracted Tables - Tables extracted from documents
+ */
+export const extractedTables = mysqlTable("extracted_tables", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Table ID
+  tableId: varchar("tableId", { length: 50 }).notNull().unique(),
+  
+  // Version reference
+  versionId: int("versionId").notNull().references(() => documentVersions.id),
+  
+  // Location
+  pageNumber: int("pageNumber"),
+  tableIndex: int("tableIndex").default(0), // Index on page if multiple tables
+  
+  // Table metadata
+  titleEn: varchar("titleEn", { length: 255 }),
+  titleAr: varchar("titleAr", { length: 255 }),
+  
+  // Schema guess
+  schemaGuess: json("schemaGuess").$type<Array<{
+    columnName: string;
+    columnNameAr?: string;
+    dataType: "string" | "number" | "date" | "boolean" | "unknown";
+    unit?: string;
+  }>>(),
+  
+  // Row/column counts
+  rowCount: int("rowCount"),
+  columnCount: int("columnCount"),
+  
+  // S3 storage
+  s3TableCsvKey: varchar("s3TableCsvKey", { length: 500 }),
+  s3TableJsonKey: varchar("s3TableJsonKey", { length: 500 }),
+  s3TableImageKey: varchar("s3TableImageKey", { length: 500 }),
+  
+  // Extraction notes
+  extractionMethod: mysqlEnum("extractionMethod", [
+    "camelot",
+    "tabula",
+    "ocr",
+    "manual",
+    "api"
+  ]).default("manual"),
+  extractionQuality: mysqlEnum("extractionQuality", [
+    "high",
+    "medium",
+    "low",
+    "needs_review"
+  ]).default("needs_review"),
+  extractionNotes: text("extractionNotes"),
+  
+  // Promotion status (to dataset)
+  promotionStatus: mysqlEnum("promotionStatus", [
+    "not_promoted",
+    "pending_review",
+    "promoted",
+    "rejected"
+  ]).default("not_promoted"),
+  promotedDatasetId: int("promotedDatasetId"),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  reviewedAt: timestamp("reviewedAt"),
+  reviewedBy: int("reviewedBy").references(() => users.id),
+}, (table) => ({
+  tableIdIdx: uniqueIndex("extracted_table_id_idx").on(table.tableId),
+  versionIdx: index("extracted_table_version_idx").on(table.versionId),
+  promotionIdx: index("extracted_table_promotion_idx").on(table.promotionStatus),
+}));
+export type ExtractedTable = typeof extractedTables.$inferSelect;
+export type InsertExtractedTable = typeof extractedTables.$inferInsert;
+
+/**
+ * Translation Records - Track translations with quality metrics
+ */
+export const translationRecords = mysqlTable("translation_records", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Translation ID
+  translationId: varchar("translationId", { length: 50 }).notNull().unique(),
+  
+  // Version reference
+  versionId: int("versionId").notNull().references(() => documentVersions.id),
+  
+  // Target language
+  targetLang: mysqlEnum("targetLang", ["en", "ar"]).notNull(),
+  
+  // Method (stored but not shown publicly)
+  method: mysqlEnum("method", [
+    "human",
+    "machine",
+    "hybrid",
+    "api"
+  ]).default("machine").notNull(),
+  modelVersion: varchar("modelVersion", { length: 100 }), // Internal tracking only
+  
+  // Quality metrics
+  glossaryAdherenceScore: decimal("glossaryAdherenceScore", { precision: 5, scale: 2 }), // 0-100
+  numericIntegrityPass: boolean("numericIntegrityPass").default(false),
+  
+  // Glossary issues found
+  glossaryIssues: json("glossaryIssues").$type<Array<{
+    term: string;
+    expected: string;
+    found: string;
+    location: string;
+  }>>(),
+  
+  // Numeric issues found
+  numericIssues: json("numericIssues").$type<Array<{
+    original: string;
+    translated: string;
+    location: string;
+  }>>(),
+  
+  // Status
+  status: mysqlEnum("status", [
+    "pending",
+    "ok",
+    "needs_review",
+    "rejected"
+  ]).default("pending").notNull(),
+  
+  // S3 storage for translated text
+  s3TranslatedKey: varchar("s3TranslatedKey", { length: 500 }),
+  s3TranslatedUrl: text("s3TranslatedUrl"),
+  
+  // Review info
+  reviewedBy: int("reviewedBy").references(() => users.id),
+  reviewedAt: timestamp("reviewedAt"),
+  reviewNotes: text("reviewNotes"),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  translationIdIdx: uniqueIndex("translation_record_id_idx").on(table.translationId),
+  versionIdx: index("translation_record_version_idx").on(table.versionId),
+  statusIdx: index("translation_record_status_idx").on(table.status),
+  langIdx: index("translation_record_lang_idx").on(table.targetLang),
+}));
+export type TranslationRecord = typeof translationRecords.$inferSelect;
+export type InsertTranslationRecord = typeof translationRecords.$inferInsert;
+
+/**
+ * Document-Indicator Links - Connect documents to indicator series
+ */
+export const documentIndicatorLinks = mysqlTable("document_indicator_links", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Document reference
+  documentId: int("documentId").notNull().references(() => libraryDocuments.id),
+  
+  // Series reference
+  seriesId: int("seriesId").notNull().references(() => timeSeries.id),
+  
+  // Relation type
+  relationType: mysqlEnum("relationType", [
+    "source",
+    "methodology",
+    "analysis",
+    "forecast",
+    "validation",
+    "contradiction"
+  ]).notNull(),
+  
+  // Evidence anchor
+  evidenceAnchorId: int("evidenceAnchorId").references(() => citationAnchors.id),
+  
+  // Notes
+  notes: text("notes"),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  createdBy: int("createdBy").references(() => users.id),
+}, (table) => ({
+  documentIdx: index("doc_indicator_link_doc_idx").on(table.documentId),
+  seriesIdx: index("doc_indicator_link_series_idx").on(table.seriesId),
+  relationIdx: index("doc_indicator_link_relation_idx").on(table.relationType),
+}));
+export type DocumentIndicatorLink = typeof documentIndicatorLinks.$inferSelect;
+export type InsertDocumentIndicatorLink = typeof documentIndicatorLinks.$inferInsert;
+
+/**
+ * Document-Event Links - Connect documents to events
+ */
+export const documentEventLinks = mysqlTable("document_event_links", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Document reference
+  documentId: int("documentId").notNull().references(() => libraryDocuments.id),
+  
+  // Event reference
+  eventId: int("eventId").notNull().references(() => economicEvents.id),
+  
+  // Evidence anchor
+  evidenceAnchorId: int("evidenceAnchorId").references(() => citationAnchors.id),
+  
+  // Notes
+  notes: text("notes"),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  createdBy: int("createdBy").references(() => users.id),
+}, (table) => ({
+  documentIdx: index("doc_event_link_doc_idx").on(table.documentId),
+  eventIdx: index("doc_event_link_event_idx").on(table.eventId),
+}));
+export type DocumentEventLink = typeof documentEventLinks.$inferSelect;
+export type InsertDocumentEventLink = typeof documentEventLinks.$inferInsert;
+
+/**
+ * Literature Gap Tickets - Track missing literature
+ */
+export const literatureGapTickets = mysqlTable("literature_gap_tickets", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Ticket ID
+  ticketId: varchar("ticketId", { length: 50 }).notNull().unique(),
+  
+  // Gap description
+  titleEn: varchar("titleEn", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }),
+  descriptionEn: text("descriptionEn").notNull(),
+  descriptionAr: text("descriptionAr"),
+  
+  // Gap scope
+  yearStart: int("yearStart"),
+  yearEnd: int("yearEnd"),
+  sectors: json("sectors").$type<string[]>().default([]),
+  publishers: json("publishers").$type<string[]>().default([]),
+  
+  // Why it matters
+  impactEn: text("impactEn"),
+  impactAr: text("impactAr"),
+  
+  // Candidate sources
+  candidateSources: json("candidateSources").$type<Array<{
+    name: string;
+    url?: string;
+    notes?: string;
+  }>>(),
+  
+  // Acquisition plan
+  acquisitionPlan: text("acquisitionPlan"),
+  
+  // Priority
+  priority: mysqlEnum("priority", ["critical", "high", "medium", "low"]).default("medium"),
+  
+  // Status
+  status: mysqlEnum("status", [
+    "open",
+    "in_progress",
+    "resolved",
+    "wont_fix"
+  ]).default("open").notNull(),
+  
+  // Resolution
+  resolvedBy: int("resolvedBy").references(() => users.id),
+  resolvedAt: timestamp("resolvedAt"),
+  resolutionNotes: text("resolutionNotes"),
+  resolvedDocumentId: int("resolvedDocumentId").references(() => libraryDocuments.id),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  createdBy: int("createdBy").references(() => users.id),
+}, (table) => ({
+  ticketIdIdx: uniqueIndex("lit_gap_ticket_id_idx").on(table.ticketId),
+  statusIdx: index("lit_gap_status_idx").on(table.status),
+  priorityIdx: index("lit_gap_priority_idx").on(table.priority),
+}));
+export type LiteratureGapTicket = typeof literatureGapTickets.$inferSelect;
+export type InsertLiteratureGapTicket = typeof literatureGapTickets.$inferInsert;
+
+/**
+ * Literature Ingestion Runs - Track ingestion pipeline runs
+ */
+export const literatureIngestionRuns = mysqlTable("literature_ingestion_runs", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Run ID
+  runId: varchar("runId", { length: 50 }).notNull().unique(),
+  
+  // Source
+  sourceId: int("sourceId").references(() => sources.id),
+  sourceName: varchar("sourceName", { length: 255 }).notNull(),
+  
+  // Run type
+  runType: mysqlEnum("runType", [
+    "scheduled",
+    "manual",
+    "backfill"
+  ]).default("scheduled").notNull(),
+  
+  // Time window
+  windowStart: timestamp("windowStart"),
+  windowEnd: timestamp("windowEnd"),
+  
+  // Statistics
+  documentsFound: int("documentsFound").default(0),
+  documentsNew: int("documentsNew").default(0),
+  documentsUpdated: int("documentsUpdated").default(0),
+  documentsDuplicate: int("documentsDuplicate").default(0),
+  documentsFailed: int("documentsFailed").default(0),
+  
+  // Extraction stats
+  extractionsAttempted: int("extractionsAttempted").default(0),
+  extractionsSucceeded: int("extractionsSucceeded").default(0),
+  extractionsFailed: int("extractionsFailed").default(0),
+  
+  // Translation stats
+  translationsAttempted: int("translationsAttempted").default(0),
+  translationsSucceeded: int("translationsSucceeded").default(0),
+  translationsFailed: int("translationsFailed").default(0),
+  
+  // Indexing stats
+  indexingAttempted: int("indexingAttempted").default(0),
+  indexingSucceeded: int("indexingSucceeded").default(0),
+  indexingFailed: int("indexingFailed").default(0),
+  
+  // Status
+  status: mysqlEnum("status", [
+    "running",
+    "completed",
+    "failed",
+    "partial"
+  ]).default("running").notNull(),
+  
+  // Error info
+  errorMessage: text("errorMessage"),
+  errorDetails: json("errorDetails").$type<Record<string, unknown>>(),
+  
+  // Timestamps
+  startedAt: timestamp("startedAt").defaultNow().notNull(),
+  completedAt: timestamp("completedAt"),
+  
+  // Triggered by
+  triggeredBy: int("triggeredBy").references(() => users.id),
+}, (table) => ({
+  runIdIdx: uniqueIndex("lit_ingestion_run_id_idx").on(table.runId),
+  sourceIdx: index("lit_ingestion_source_idx").on(table.sourceId),
+  statusIdx: index("lit_ingestion_status_idx").on(table.status),
+  startedAtIdx: index("lit_ingestion_started_at_idx").on(table.startedAt),
+}));
+export type LiteratureIngestionRun = typeof literatureIngestionRuns.$inferSelect;
+export type InsertLiteratureIngestionRun = typeof literatureIngestionRuns.$inferInsert;
+
+/**
+ * Literature Coverage Map - Track coverage by year/sector/publisher
+ */
+export const literatureCoverageMap = mysqlTable("literature_coverage_map", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Dimensions
+  year: int("year").notNull(),
+  sector: varchar("sector", { length: 100 }).notNull(),
+  publisherEntityId: int("publisherEntityId").references(() => entities.id),
+  publisherName: varchar("publisherName", { length: 255 }),
+  
+  // Coverage metrics
+  documentCount: int("documentCount").default(0),
+  expectedDocumentCount: int("expectedDocumentCount"),
+  coveragePercent: decimal("coveragePercent", { precision: 5, scale: 2 }),
+  
+  // Quality metrics
+  avgExtractionQuality: decimal("avgExtractionQuality", { precision: 5, scale: 2 }),
+  avgTranslationQuality: decimal("avgTranslationQuality", { precision: 5, scale: 2 }),
+  
+  // Gap status
+  hasGap: boolean("hasGap").default(false),
+  gapTicketId: int("gapTicketId").references(() => literatureGapTickets.id),
+  
+  // Last updated
+  lastUpdated: timestamp("lastUpdated").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  yearIdx: index("lit_coverage_year_idx").on(table.year),
+  sectorIdx: index("lit_coverage_sector_idx").on(table.sector),
+  publisherIdx: index("lit_coverage_publisher_idx").on(table.publisherEntityId),
+  yearSectorIdx: index("lit_coverage_year_sector_idx").on(table.year, table.sector),
+}));
+export type LiteratureCoverageMapEntry = typeof literatureCoverageMap.$inferSelect;
+export type InsertLiteratureCoverageMapEntry = typeof literatureCoverageMap.$inferInsert;
+
+/**
+ * Document Search Index - For keyword search
+ */
+export const documentSearchIndex = mysqlTable("document_search_index", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Document reference
+  documentId: int("documentId").notNull().references(() => libraryDocuments.id),
+  versionId: int("versionId").notNull().references(() => documentVersions.id),
+  
+  // Language
+  language: mysqlEnum("language", ["en", "ar"]).notNull(),
+  
+  // Searchable content
+  titleText: text("titleText"),
+  bodyText: text("bodyText"),
+  
+  // Keywords extracted
+  keywords: json("keywords").$type<string[]>().default([]),
+  
+  // Named entities extracted
+  namedEntities: json("namedEntities").$type<Array<{
+    text: string;
+    type: string;
+    count: number;
+  }>>(),
+  
+  // Last indexed
+  indexedAt: timestamp("indexedAt").defaultNow().notNull(),
+}, (table) => ({
+  documentIdx: index("doc_search_document_idx").on(table.documentId),
+  versionIdx: index("doc_search_version_idx").on(table.versionId),
+  languageIdx: index("doc_search_language_idx").on(table.language),
+}));
+export type DocumentSearchIndexEntry = typeof documentSearchIndex.$inferSelect;
+export type InsertDocumentSearchIndexEntry = typeof documentSearchIndex.$inferInsert;
+

@@ -86,6 +86,7 @@ import { sectorPagesRouter } from "./routers/sectorPages";
 import { publicationsRouter } from "./routers/publications";
 import { partnerEngineRouter } from "./routers/partnerEngine";
 import { updatesRouter } from "./routers/updates";
+import { libraryRouter } from "./routes/library";
 import { sql, desc, eq, like, or, and, inArray } from "drizzle-orm";
 
 export const appRouter = router({
@@ -109,6 +110,7 @@ export const appRouter = router({
   publications: publicationsRouter,
   partnerEngine: partnerEngineRouter,
   updates: updatesRouter,
+  library: libraryRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

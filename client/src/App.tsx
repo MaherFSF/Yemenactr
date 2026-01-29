@@ -117,9 +117,12 @@ import ContributorPortal from "./pages/ContributorPortal";
 import SultaniCommandCenter from "./pages/admin/SultaniCommandCenter";
 import HomepageCMS from "./pages/admin/HomepageCMS";
 import UpdatesReviewQueue from "./pages/admin/UpdatesReviewQueue";
+import LibraryConsole from "./pages/admin/LibraryConsole";
 import RoleAwareEntryPoints from "./components/RoleAwareEntryPoints";
 import Updates from "./pages/Updates";
 import UpdateDetail from "./pages/UpdateDetail";
+import ResearchHub from "./pages/ResearchHub";
+import DocumentDetail from "./pages/DocumentDetail";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -140,7 +143,9 @@ function Router() {
       <Route path={"/research-analytics"} component={ResearchVisualization} />
       <Route path={"/research-assistant"} component={ResearchAssistant} />
       <Route path={"/research-library"} component={ResearchLibrary} />
-      <Route path={"/research-audit"} component={ResearchAudit} />
+      <Route path="/research-audit" component={ResearchAudit} />
+      <Route path="/research-hub" component={ResearchHub} />
+      <Route path="/research/:docId" component={DocumentDetail} />
       <Route path="/sectors" component={SectorsHub} />
       <Route path="/sectors/:sectorCode" component={SectorPage} />
       <Route path={"/sectors/banking"} component={Banking} />
@@ -221,6 +226,7 @@ function Router() {
           <Route path="/admin/sultani" component={SultaniCommandCenter} />
           <Route path="/admin/homepage" component={HomepageCMS} />
           <Route path="/admin/updates" component={UpdatesReviewQueue} />
+          <Route path="/admin/library" component={LibraryConsole} />
       <Route path="/updates" component={Updates} />
       <Route path="/updates/:id" component={UpdateDetail} />
       <Route path="/publications-hub" component={PublicationsHub} />

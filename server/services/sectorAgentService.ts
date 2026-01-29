@@ -133,16 +133,16 @@ export async function getSectorIndicators(sectorCode: string): Promise<SectorInd
     // Get indicators linked to this sector
     const result = await db.execute(sql`
       SELECT 
-        i.indicatorCode,
+        i.code as indicatorCode,
         i.nameEn,
         i.nameAr,
         ts.value as currentValue,
         ts.date as lastUpdated,
         ts.sourceId,
         s.nameEn as sourceName,
-        ts.regime
+        ts.regimeTag as regime
       FROM indicators i
-      LEFT JOIN time_series ts ON i.indicatorCode = ts.indicatorCode
+      LEFT JOIN time_series ts ON i.code = ts.indicatorCode
       LEFT JOIN sources s ON ts.sourceId = s.id
       WHERE i.sector = ${sectorCode} AND i.isActive = 1
       ORDER BY ts.date DESC

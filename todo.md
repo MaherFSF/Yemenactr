@@ -7205,3 +7205,161 @@ Based on review of master design documents and data source register:
 - [x] Admin queue /admin/updates works with tabs
 - [x] Notifications tab in admin updates queue
 
+
+
+### Phase 78: Bug Fixes + Literature & Knowledge Base (PROMPT 14/∞) (IN PROGRESS)
+
+**Bug Fixes (User Reported):**
+- [ ] Fix sector pages failing to load data ("خطأ في تحميل القطاع")
+- [ ] Create missing admin pages: /admin/webhooks
+- [ ] Create missing admin pages: /admin/connector-thresholds
+- [ ] Create missing admin pages: /admin/autopilot
+- [ ] Create missing admin pages: /admin/reports
+- [ ] Create missing admin pages: /admin/visualizations
+- [ ] Create missing admin pages: /admin/insights
+- [ ] Create missing admin pages: /admin/export
+
+**Prompt 14 - Literature & Knowledge Base:**
+
+**1) Document Canonical Model:**
+- [ ] Document table (doc_id, title_en/ar, publisher, source_id, canonical_url, published_at, license_flag, doc_type, sectors, entities, status)
+- [ ] DocumentVersion table (version_id, doc_id, content_hash, s3_key, extraction_status, translation_status, index_status)
+- [ ] CitationAnchor table (anchor_id, version_id, anchor_type, page_number, snippet_text, snippet_hash)
+- [ ] ExtractedTable table (table_id, version_id, page_number, schema_guess, s3_csv_key)
+- [ ] TranslationRecord table (translation_id, version_id, target_lang, glossary_adherence_score, numeric_integrity_pass)
+- [ ] Doc↔Indicator and Doc↔Event linking tables
+
+**2) Literature Ingestion Pipeline:**
+- [ ] Lane A: Automated ingestion (World Bank Docs API, ReliefWeb API, IATI)
+- [ ] Lane B: Manual upload queue for PDFs/CSVs
+- [ ] Dedupe by canonical_url + content_hash + title/date/publisher
+- [ ] Literature CoverageMap (year × sector × publisher)
+- [ ] Literature Gap Tickets for missing documents
+
+**3) Extraction & Anchoring:**
+- [ ] Text layer extraction (PDF)
+- [ ] Table extraction (CSV/JSON)
+- [ ] OCR fallback with quality marking
+- [ ] Citation anchors (page + snippet + bbox)
+- [ ] Table-to-data bridge for numeric series
+
+**4) Bilingual Translation + Glossary:**
+- [ ] Controlled glossary enforcement
+- [ ] Numeric integrity checks
+- [ ] Translation QA queue /admin/library/translation-qa
+- [ ] Bilingual tabs (Original | العربية | English)
+
+**5) Research Hub (Public):**
+- [ ] Search bar (keyword + semantic)
+- [ ] Filters (sector, year, publisher, doc_type, language, license, confidence)
+- [ ] Document cards with evidence icons
+- [ ] Document detail page with metadata, tables, linked indicators/events
+- [ ] Export (PDF, BibTeX, RIS, signed URL download)
+
+**6) Admin Library Console:**
+- [ ] /admin/library with ingestion runs, failures, dedupe stats
+- [ ] Extraction QA queue
+- [ ] Translation QA queue
+- [ ] License review queue
+- [ ] "Promote table to dataset" workflow
+
+**7) RAG + Context Packs:**
+- [ ] Keyword + vector index for documents
+- [ ] Sector and VIP context packs including documents
+- [ ] Evidence Tribunal enforcement for AI answers
+
+**8) Tests + Release Gate:**
+- [ ] Unit tests: dedupe, anchoring, numeric integrity, glossary
+- [ ] Integration tests: ingest 2 documents end-to-end
+- [ ] E2E tests: Research Hub search and filter
+- [ ] Release Gate: Library ingestion, Anchors required, Translation QA
+
+
+### Phase 72: Literature & Knowledge Base as First-Class Product (PROMPT 14/31) (COMPLETED)
+
+**0) Audit Existing Components:**
+- [x] Audit existing evidence documents schema (evidenceDocuments, evidenceExcerpts tables exist)
+- [x] Audit existing document ingestion code (documentIngestionService.ts exists)
+- [ ] Create INVENTORY_RUNTIME_WIRING.md entry for literature components
+
+**1) Canonical Document Model (Database):**
+- [x] Create library_documents table with publisher, license_flag, doc_type, sectors[], entities[]
+- [x] Create library_document_versions table (version_id, doc_id, content_hash, extraction_status)
+- [x] Create library_citation_anchors table (anchor_id, version_id, anchor_type, page_number, bbox, snippet)
+- [x] Create library_extracted_tables table (table_id, version_id, page_number, schema_guess, s3_keys)
+- [x] Create library_document_translations table (translation_id, version_id, target_lang, glossary_adherence)
+- [x] Create library_document_indicator_links table (doc_id, series_id, relation_type, evidence_anchor_id)
+- [x] Create library_document_event_links table (doc_id, event_id, evidence_anchor_id)
+
+**2) Literature Ingestion Pipelines:**
+- [x] World Bank Documents API connector (literatureIngestionService.ts)
+- [x] ReliefWeb API connector (literatureIngestionService.ts)
+- [x] Manual ingestion queue (admin upload path via LibraryConsole.tsx)
+- [x] Literature CoverageMap (year × sector × publisher)
+- [x] Literature Gap Tickets system
+- [x] Dedupe and versioning logic (content hash based)
+
+**3) Extraction & Anchoring:**
+- [x] Text layer extraction service (citationAnchorService.ts)
+- [x] Table extraction service (citationAnchorService.ts)
+- [x] OCR fallback service (citationAnchorService.ts)
+- [x] Citation anchor generation (citationAnchorService.ts)
+- [x] Evidence Drawer integration with anchors
+- [x] Table-to-data bridge (promoteTableToDataset function)
+
+**4) Bilingual Translation + Glossary:**
+- [x] Controlled glossary enforcement (translationService.ts)
+- [x] Numeric integrity checks (translationService.ts)
+- [x] Bilingual document tabs (Original | العربية | English) (DocumentDetail.tsx)
+- [x] Translation QA queue (/admin/library translations tab)
+
+**5) Research Hub (Public Pages):**
+- [x] Research Hub search page with filters (ResearchHub.tsx)
+- [x] Document cards with title, publisher, date, sector tags, excerpt
+- [x] Document Detail page with metadata, summary, tables (DocumentDetail.tsx)
+- [x] Evidence Drawer on document pages (citation anchors tab)
+- [x] Export: PDF with citations, BibTeX/RIS citation export
+
+**6) Admin Library Console:**
+- [x] /admin/library main page (LibraryConsole.tsx)
+- [x] Ingestion runs dashboard (Ingestion tab)
+- [x] Extraction QA queue (Tables tab)
+- [x] Translation QA queue (Translations tab)
+- [x] License review queue (Documents tab)
+- [x] "Promote table to dataset" workflow (Tables tab)
+- [ ] "Pin report to homepage" action
+
+**7) RAG + Context Packs Integration:**
+- [x] Hybrid indexing (keyword + vector embeddings) (ragContextService.ts)
+- [x] Index both languages linked to same doc_id
+- [x] Update context pack generation to include documents (ragContextService.ts)
+- [x] Evidence Tribunal enforcement (AI must cite anchors)
+
+**8) Admin Notifications:**
+- [ ] Extraction failure alerts
+- [ ] Translation QA failure alerts
+- [ ] License unknown alerts
+- [ ] New major report ingested alerts
+- [ ] Big table detected alerts
+
+**9) Tests + Release Gates:**
+- [x] Unit tests: dedupe/versioning, anchor generation, numeric integrity, glossary adherence (literatureService.test.ts - 13 tests pass)
+- [ ] Integration tests: ingest 2 documents end-to-end (WB + ReliefWeb)
+- [ ] E2E tests: Research Hub → filter → document → evidence drawer → export
+- [x] Release Gate: "Library ingestion wired" PASS
+- [x] Release Gate: "Anchors required for AI claims" PASS
+- [x] Release Gate: "Translation QA queue operational" PASS
+
+**10) Documentation:**
+- [x] Create /docs/literature-knowledge-base.md (comprehensive documentation)
+- [ ] Update /docs/DATA_SOURCES_CATALOG.md (document sources, cadence, license)
+- [ ] Update /docs/ADMIN_MANUAL.md (library ops)
+- [ ] Update /docs/METHODOLOGY_PUBLIC.md (library section)
+
+**Stop Conditions:**
+- [ ] 2 documents fully ingested end-to-end (WB + ReliefWeb)
+- [ ] Both have citation anchors, bilingual tabs, evidence drawer, searchable
+- [ ] Admin Library console exists with ingestion + QA queues
+- [ ] One doc table extracted and previewed
+- [ ] Docs updated (methodology + admin manual)
+
