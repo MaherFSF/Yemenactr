@@ -7397,3 +7397,239 @@ export const sectorAgentRuns = mysqlTable("sector_agent_runs", {
 
 export type SectorAgentRun = typeof sectorAgentRuns.$inferSelect;
 export type InsertSectorAgentRun = typeof sectorAgentRuns.$inferInsert;
+
+
+// ============================================================================
+// COMPREHENSIVE SOURCE REGISTRY (225+ Sources)
+// ============================================================================
+
+// Source Registry: Full catalog of all data sources with tier system
+export const sourceRegistry = mysqlTable("source_registry", {
+  id: int("id").autoincrement().primaryKey(),
+  sourceId: varchar("sourceId", { length: 50 }).notNull().unique(), // e.g., "SRC-001"
+  name: varchar("name", { length: 500 }).notNull(),
+  altName: varchar("altName", { length: 500 }),
+  publisher: varchar("publisher", { length: 255 }),
+  
+  // Access information
+  apiUrl: text("apiUrl"),
+  webUrl: text("webUrl"),
+  accessType: mysqlEnum("accessType", ["API", "SDMX", "RSS", "WEB", "PDF", "CSV", "XLSX", "MANUAL", "PARTNER", "REMOTE_SENSING"]).default("WEB").notNull(),
+  apiKeyRequired: boolean("apiKeyRequired").default(false).notNull(),
+  apiKeyContact: varchar("apiKeyContact", { length: 255 }),
+  
+  // Classification
+  tier: mysqlEnum("tier", ["T0", "T1", "T2", "T3", "T4", "UNKNOWN"]).default("UNKNOWN").notNull(), // T0=official, T1=high credibility, T2=credible, T3=media, T4=unverified
+  status: mysqlEnum("status", ["ACTIVE", "PENDING_REVIEW", "NEEDS_KEY", "INACTIVE", "DEPRECATED"]).default("PENDING_REVIEW").notNull(),
+  allowedUse: json("allowedUse").$type<string[]>(), // DATA_NUMERIC, DOC_NARRATIVE, EVENT_DETECTION, PROXY, METADATA_ONLY
+  
+  // Update schedule
+  updateFrequency: mysqlEnum("updateFrequency", ["REALTIME", "DAILY", "WEEKLY", "MONTHLY", "QUARTERLY", "ANNUAL", "IRREGULAR"]).default("IRREGULAR").notNull(),
+  freshnessSla: int("freshnessSla"), // Days until considered stale
+  lastFetch: timestamp("lastFetch"),
+  nextFetch: timestamp("nextFetch"),
+  
+  // Coverage
+  geographicScope: varchar("geographicScope", { length: 100 }), // Global, National, Regional
+  regimeApplicability: mysqlEnum("regimeApplicability", ["ADEN_IRG", "SANAA_DFA", "BOTH", "MIXED", "GLOBAL"]).default("GLOBAL"),
+  historicalStart: int("historicalStart"), // Year, e.g., 2010
+  historicalEnd: int("historicalEnd"), // Year or null for ongoing
+  language: varchar("language", { length: 50 }).default("en"), // ar, en, fr, de, multi
+  
+  // Metadata
+  description: text("description"),
+  license: varchar("license", { length: 500 }),
+  confidenceRating: varchar("confidenceRating", { length: 10 }), // A, B, C, D, or A+, B-, etc.
+  latency: varchar("latency", { length: 100 }), // e.g., "Low", "Moderate", "High"
+  
+  // Partnership
+  needsPartnership: boolean("needsPartnership").default(false).notNull(),
+  partnershipContact: varchar("partnershipContact", { length: 255 }),
+  
+  // Connector configuration
+  connectorType: varchar("connectorType", { length: 100 }), // connector_api, connector_web, connector_manual
+  connectorOwner: varchar("connectorOwner", { length: 100 }).default("Manus"),
+  connectorConfig: json("connectorConfig").$type<Record<string, unknown>>(),
+  backfillStatus: mysqlEnum("backfillStatus", ["NOT_STARTED", "IN_PROGRESS", "COMPLETED", "FAILED"]).default("NOT_STARTED"),
+  
+  // Routing
+  sectorsFed: json("sectorsFed").$type<string[]>(), // List of sector codes this source feeds
+  pagesFed: json("pagesFed").$type<string[]>(), // List of page/module names this source feeds
+  
+  // Flags
+  isPrimary: boolean("isPrimary").default(false).notNull(),
+  isProxy: boolean("isProxy").default(false).notNull(),
+  isMedia: boolean("isMedia").default(false).notNull(),
+  
+  // Additional
+  limitations: text("limitations"),
+  notes: text("notes"),
+  sectorCategory: varchar("sectorCategory", { length: 100 }),
+  registryType: mysqlEnum("registryType", ["master", "extended", "inclusive_pdf", "url_extract"]).default("master"),
+  
+  // Audit
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  createdBy: int("createdBy").references(() => users.id),
+  updatedBy: int("updatedBy").references(() => users.id),
+}, (table) => ({
+  sourceIdIdx: index("source_registry_source_id_idx").on(table.sourceId),
+  nameIdx: index("source_registry_name_idx").on(table.name),
+  tierIdx: index("source_registry_tier_idx").on(table.tier),
+  statusIdx: index("source_registry_status_idx").on(table.status),
+  publisherIdx: index("source_registry_publisher_idx").on(table.publisher),
+}));
+
+export type SourceRegistry = typeof sourceRegistry.$inferSelect;
+export type InsertSourceRegistry = typeof sourceRegistry.$inferInsert;
+
+// Source Tier Audit Log: Track changes to source tiers
+export const sourceTierAuditLog = mysqlTable("source_tier_audit_log", {
+  id: int("id").autoincrement().primaryKey(),
+  sourceRegistryId: int("sourceRegistryId").notNull().references(() => sourceRegistry.id),
+  previousTier: mysqlEnum("previousTier", ["T0", "T1", "T2", "T3", "T4", "UNKNOWN"]),
+  newTier: mysqlEnum("newTier", ["T0", "T1", "T2", "T3", "T4", "UNKNOWN"]).notNull(),
+  reason: text("reason"),
+  changedBy: int("changedBy").references(() => users.id),
+  changedAt: timestamp("changedAt").defaultNow().notNull(),
+}, (table) => ({
+  sourceIdx: index("tier_audit_source_idx").on(table.sourceRegistryId),
+  changedAtIdx: index("tier_audit_changed_idx").on(table.changedAt),
+}));
+
+export type SourceTierAuditLog = typeof sourceTierAuditLog.$inferSelect;
+export type InsertSourceTierAuditLog = typeof sourceTierAuditLog.$inferInsert;
+
+// Source Year Coverage: Track which years each source covers
+export const sourceYearCoverage = mysqlTable("source_year_coverage", {
+  id: int("id").autoincrement().primaryKey(),
+  sourceRegistryId: int("sourceRegistryId").notNull().references(() => sourceRegistry.id),
+  year: int("year").notNull(),
+  hasData: boolean("hasData").default(false).notNull(),
+  missingReason: mysqlEnum("missingReason", ["CONFLICT", "INSTITUTIONAL_SPLIT", "SITE_OFFLINE", "NOT_PUBLISHED", "UNKNOWN"]),
+  missingReasonDoc: text("missingReasonDoc"), // Citation for why data is missing
+  gapTicketId: int("gapTicketId"), // Reference to gap ticket if created
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  sourceYearIdx: index("source_year_idx").on(table.sourceRegistryId, table.year),
+}));
+
+export type SourceYearCoverage = typeof sourceYearCoverage.$inferSelect;
+export type InsertSourceYearCoverage = typeof sourceYearCoverage.$inferInsert;
+
+// ============================================================================
+// VERIFICATION QUEUE FOR MEDIA EVENTS
+// ============================================================================
+
+// Verification Queue: Media events that need verification before becoming facts
+export const verificationQueue = mysqlTable("verification_queue", {
+  id: int("id").autoincrement().primaryKey(),
+  eventType: mysqlEnum("eventType", ["PRICE_CHANGE", "POLICY_ANNOUNCEMENT", "CONFLICT_EVENT", "ECONOMIC_INDICATOR", "ENTITY_ACTION", "OTHER"]).notNull(),
+  title: varchar("title", { length: 500 }).notNull(),
+  titleAr: varchar("titleAr", { length: 500 }),
+  description: text("description"),
+  descriptionAr: text("descriptionAr"),
+  
+  // Source information
+  sourceRegistryId: int("sourceRegistryId").references(() => sourceRegistry.id),
+  sourceUrl: text("sourceUrl"),
+  sourceName: varchar("sourceName", { length: 255 }),
+  detectedAt: timestamp("detectedAt").notNull(),
+  
+  // Extracted data
+  extractedData: json("extractedData").$type<{
+    values?: Record<string, unknown>;
+    entities?: string[];
+    locations?: string[];
+    dates?: string[];
+  }>(),
+  
+  // Verification status
+  status: mysqlEnum("status", ["PENDING", "VERIFIED", "REJECTED", "NEEDS_MORE_EVIDENCE"]).default("PENDING").notNull(),
+  verifiedBy: int("verifiedBy").references(() => users.id),
+  verifiedAt: timestamp("verifiedAt"),
+  verificationNotes: text("verificationNotes"),
+  
+  // Corroboration
+  corroboratingSources: json("corroboratingSources").$type<{
+    sourceId: string;
+    url: string;
+    matchScore: number;
+  }[]>(),
+  corroborationScore: int("corroborationScore"), // 0-100
+  
+  // Routing
+  sectorCode: varchar("sectorCode", { length: 50 }),
+  entityIds: json("entityIds").$type<number[]>(),
+  
+  // If verified, link to created record
+  createdRecordType: varchar("createdRecordType", { length: 100 }), // e.g., "timeline_event", "price_observation"
+  createdRecordId: int("createdRecordId"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  statusIdx: index("verification_status_idx").on(table.status),
+  eventTypeIdx: index("verification_event_type_idx").on(table.eventType),
+  detectedAtIdx: index("verification_detected_idx").on(table.detectedAt),
+  sectorIdx: index("verification_sector_idx").on(table.sectorCode),
+}));
+
+export type VerificationQueue = typeof verificationQueue.$inferSelect;
+export type InsertVerificationQueue = typeof verificationQueue.$inferInsert;
+
+// Source Feed Matrix: Track which sources feed which sectors/pages
+export const sourceFeedMatrix = mysqlTable("source_feed_matrix", {
+  id: int("id").autoincrement().primaryKey(),
+  sourceRegistryId: int("sourceRegistryId").notNull().references(() => sourceRegistry.id),
+  targetType: mysqlEnum("targetType", ["SECTOR", "PAGE", "MODULE", "ENTITY_TYPE"]).notNull(),
+  targetCode: varchar("targetCode", { length: 100 }).notNull(), // e.g., "macro", "trade", "dashboard"
+  feedType: mysqlEnum("feedType", ["PRIMARY", "SECONDARY", "PROXY", "CONTEXT"]).default("PRIMARY").notNull(),
+  lastDataDate: timestamp("lastDataDate"),
+  coverageStart: int("coverageStart"), // Year
+  coverageEnd: int("coverageEnd"), // Year
+  gapYears: json("gapYears").$type<number[]>(),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  sourceTargetIdx: index("feed_matrix_source_target_idx").on(table.sourceRegistryId, table.targetType, table.targetCode),
+  targetIdx: index("feed_matrix_target_idx").on(table.targetType, table.targetCode),
+}));
+
+export type SourceFeedMatrix = typeof sourceFeedMatrix.$inferSelect;
+export type InsertSourceFeedMatrix = typeof sourceFeedMatrix.$inferInsert;
+
+// Source Discovery Queue: Candidates from discovery jobs awaiting review
+export const sourceDiscoveryQueue = mysqlTable("source_discovery_queue", {
+  id: int("id").autoincrement().primaryKey(),
+  discoveredUrl: text("discoveredUrl").notNull(),
+  discoveredName: varchar("discoveredName", { length: 500 }),
+  discoveryMethod: mysqlEnum("discoveryMethod", ["SEARCH_ENGINE", "CITATION_CRAWL", "PARTNER_SUGGESTION", "MANUAL"]).notNull(),
+  searchQuery: varchar("searchQuery", { length: 500 }),
+  language: varchar("language", { length: 10 }).default("en"),
+  
+  // Proposed metadata
+  proposedTier: mysqlEnum("proposedTier", ["T0", "T1", "T2", "T3", "T4", "UNKNOWN"]).default("UNKNOWN"),
+  proposedSectors: json("proposedSectors").$type<string[]>(),
+  proposedPublisher: varchar("proposedPublisher", { length: 255 }),
+  
+  // Review status
+  status: mysqlEnum("status", ["PENDING", "APPROVED", "REJECTED", "DUPLICATE"]).default("PENDING").notNull(),
+  reviewedBy: int("reviewedBy").references(() => users.id),
+  reviewedAt: timestamp("reviewedAt"),
+  reviewNotes: text("reviewNotes"),
+  
+  // If approved, link to created source
+  createdSourceId: int("createdSourceId").references(() => sourceRegistry.id),
+  
+  discoveredAt: timestamp("discoveredAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  statusIdx: index("discovery_status_idx").on(table.status),
+  discoveredAtIdx: index("discovery_discovered_idx").on(table.discoveredAt),
+}));
+
+export type SourceDiscoveryQueue = typeof sourceDiscoveryQueue.$inferSelect;
+export type InsertSourceDiscoveryQueue = typeof sourceDiscoveryQueue.$inferInsert;

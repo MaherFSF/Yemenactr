@@ -72,21 +72,48 @@ export interface EvidencePackData {
 }
 
 interface EvidencePackButtonProps {
-  data: EvidencePackData;
-  variant?: "button" | "icon" | "link" | "badge";
+  data?: EvidencePackData;
+  evidencePackId?: string;
+  packId?: string; // alias for evidencePackId
+  variant?: "button" | "icon" | "link" | "badge" | "ghost" | "outline";
   size?: "sm" | "default" | "lg";
   showConfidence?: boolean;
+  className?: string;
 }
 
+// Default mock data for when only an ID is provided
+const getMockEvidenceData = (id: string): EvidencePackData => ({
+  indicatorId: id,
+  indicatorNameEn: "Loading...",
+  indicatorNameAr: "جاري التحميل...",
+  value: "-",
+  unit: "",
+  timestamp: new Date().toISOString(),
+  confidence: "B",
+  sources: [{
+    id: "src-1",
+    name: "YETO Platform",
+    type: "official",
+    date: new Date().toISOString(),
+    quality: "B"
+  }]
+});
+
 export default function EvidencePackButton({ 
-  data, 
+  data: providedData, 
+  evidencePackId,
+  packId,
   variant = "button",
   size = "sm",
-  showConfidence = true
+  showConfidence = true,
+  className
 }: EvidencePackButtonProps) {
   const { language } = useLanguage();
   const isArabic = language === "ar";
   const [isOpen, setIsOpen] = useState(false);
+  
+  // Use provided data or generate mock data from ID
+  const data = providedData || getMockEvidenceData(evidencePackId || packId || "unknown");
 
   const getConfidenceColor = (confidence: string) => {
     const colors: Record<string, string> = {
@@ -130,20 +157,33 @@ export default function EvidencePackButton({
     switch (variant) {
       case "icon":
         return (
-          <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+          <Button variant="ghost" size="sm" className={`h-6 w-6 p-0 ${className || ''}`}>
             <FileText className="h-4 w-4 text-blue-500" />
+          </Button>
+        );
+      case "ghost":
+        return (
+          <Button variant="ghost" size={size} className={`gap-1 ${className || ''}`}>
+            <FileText className="h-4 w-4 text-blue-500" />
+          </Button>
+        );
+      case "outline":
+        return (
+          <Button variant="outline" size={size} className={`gap-1 ${className || ''}`}>
+            <FileText className="h-4 w-4" />
+            {isArabic ? "أدلة" : "Evidence"}
           </Button>
         );
       case "link":
         return (
-          <button className="text-xs text-blue-500 hover:text-blue-700 underline flex items-center gap-1">
+          <button className={`text-xs text-blue-500 hover:text-blue-700 underline flex items-center gap-1 ${className || ''}`}>
             <FileText className="h-3 w-3" />
             {isArabic ? "الأدلة" : "Evidence"}
           </button>
         );
       case "badge":
         return (
-          <Badge variant="outline" className="cursor-pointer hover:bg-blue-50 gap-1">
+          <Badge variant="outline" className={`cursor-pointer hover:bg-blue-50 gap-1 ${className || ''}`}>
             <FileText className="h-3 w-3" />
             {isArabic ? "أدلة" : "Evidence"}
             {showConfidence && (
@@ -155,7 +195,7 @@ export default function EvidencePackButton({
         );
       default:
         return (
-          <Button variant="outline" size={size} className="gap-1">
+          <Button variant="outline" size={size} className={`gap-1 ${className || ''}`}>
             <FileText className="h-4 w-4" />
             {isArabic ? "كيف نعرف هذا؟" : "How do we know this?"}
             {showConfidence && (

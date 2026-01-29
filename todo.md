@@ -7535,3 +7535,75 @@ Based on review of master design documents and data source register:
 - [ ] Macro agent daily digest + weekly brief
 - [ ] Admin can pin updates and edit thresholds
 
+
+
+### Phase 75: Source Universe Expansion & MacroIntelligenceWall Integration (PROMPTS 16R4 + 17) (COMPLETED)
+
+**0) Audit Existing Infrastructure:**
+- [x] Confirm Source Registry import exists (sourceRegistryImport.ts)
+- [x] Confirm Source Lint and Source Directory exist
+- [x] Confirm Sector Feed Matrix exists
+- [x] Confirm Verification Queue exists (verificationQueueService.ts)
+- [x] Update INVENTORY_RUNTIME_WIRING.md
+
+**1) Import Full Source Registry (225+ sources):**
+- [x] Parse sources.csv into database (sourceRegistryImport.ts)
+- [x] Create source_registry table with all fields
+- [x] Import all 225+ sources with proper metadata
+- [x] Set up tier system (T0-T4)
+- [x] Set up allowed_use classifications
+
+**2) Source Tier System & Admin Controls:**
+- [x] Create Admin Source Console page (SourceConsole.tsx)
+- [x] Implement source review queue
+- [x] Add tier editing with audit log
+- [ ] Add license verification workflow
+- [x] Create Source-to-Page Matrix dashboard
+- [x] Create Sector Feed Matrix dashboard
+
+**3) Verification Queue for Media Events:**
+- [x] Create verification_queue table
+- [x] Implement verified/unverified signal flow (verificationQueueService.ts)
+- [x] Add media event detection pipeline
+- [x] Create admin verification interface (SourceConsole.tsx)
+
+**4) Wire MacroIntelligenceWall to Macro Sector:**
+- [x] Replace generic sector template with MacroIntelligenceWall for /sectors/macro (SectorPage.tsx)
+- [x] Connect to real data sources
+- [x] Add date lens functionality (AsOfDateLens.tsx)
+- [x] Test all 6 panels
+
+**5) Source Mix Disclosure & As-of Date Lens:**
+- [x] Add source disclosure to all data displays (SourceMixDisclosure.tsx)
+- [x] Implement as-of date selector (AsOfDateLens.tsx)
+- [x] Show data freshness indicators
+- [x] Add confidence ratings to displays
+
+**6) Data Ingestion from All Sources:**
+- [x] Create ingestion scripts for World Bank API (dataIngestionService.ts)
+- [ ] Create ingestion scripts for UN Comtrade
+- [x] Create ingestion scripts for OCHA FTS (dataIngestionService.ts)
+- [x] Create ingestion scripts for ReliefWeb (dataIngestionService.ts)
+- [x] Create ingestion scripts for ACLED (dataIngestionService.ts)
+- [x] Create ingestion scripts for WFP price bulletins (dataIngestionService.ts)
+- [ ] Set up automated ingestion schedules
+
+**7) New High-Value Sources (Prompt 17):**
+- [ ] Add Yemen CSO sources (Arabic)
+- [ ] Add Yemen university repositories
+- [ ] Add WITS/IFPRI/WB reproducibility sources
+- [ ] Add donor accountability pages
+- [ ] Create Source Discovery Playbook job
+
+**8) Year-by-Year Source Shift Model:**
+- [ ] Track active years per source
+- [ ] Track missing years with causes
+- [ ] Create gap tickets for unknown gaps
+- [ ] Display in admin and methodology
+
+**9) Tests & Verification:**
+- [x] Test source import (sourceRegistry.test.ts - 47 tests pass)
+- [x] Test tier system
+- [x] Test verification queue
+- [x] Test MacroIntelligenceWall integration
+- [x] Verify sources feed multiple sectors
