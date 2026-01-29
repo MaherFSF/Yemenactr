@@ -456,3 +456,81 @@ Draft email templates for data access requests:
 ---
 
 *Updated: January 29, 2026 - Prompt 9/∞*
+
+
+---
+
+## Prompt 10 Additions: Partner Engine + Admin Mission Control
+
+### Partner/Contributor Engine Audit
+
+| Component | File Path | Status | Notes |
+|-----------|-----------|--------|-------|
+| Partner Organizations | `drizzle/schema.ts:partnerOrganizations` | ✅ WIRED | Table exists |
+| Partner Submissions | `drizzle/schema.ts:partnerSubmissions` | ✅ WIRED | Table exists |
+| Partner Contributions | `drizzle/schema.ts:partnerContributions` | ✅ WIRED | Table exists |
+| Provenance Ledger | `drizzle/schema.ts:provenanceLedgerFull` | ✅ WIRED | Full chain |
+| User Roles | `drizzle/schema.ts:users.role` | ⚠️ PARTIAL | Has partner_contributor |
+| Data Contracts | N/A | ❌ MISSING | Needs schema + templates |
+| Validation Pipeline | N/A | ❌ MISSING | 3-layer validation |
+| Moderation Workflow | N/A | ❌ MISSING | Dual-lane publishing |
+| Partner Dashboard | N/A | ❌ MISSING | Incentives UI |
+| Access Needed Engine | `server/services/accessNeededWorkflow.ts` | ✅ WIRED | Email drafts |
+
+### Admin Mission Control Audit
+
+| Page | Route | Status | Notes |
+|------|-------|--------|-------|
+| Admin Hub | /admin | ✅ WIRED | Main dashboard |
+| API Keys | /admin/api-keys | ✅ WIRED | API key management |
+| Backfill | /admin/backfill | ✅ WIRED | Historical data |
+| Coverage Map | /admin/coverage | ✅ WIRED | Data coverage |
+| Data Freshness | /admin/freshness | ✅ WIRED | SLA monitoring |
+| Publishing | /admin/publishing | ✅ WIRED | Publication pipeline |
+| Release Gate | /admin/release-gate | ✅ WIRED | Release management |
+| Source Registry | /admin/sources | ✅ WIRED | Data sources |
+| System Health | /admin/system-health | ✅ WIRED | System monitoring |
+| Command Center | /admin/command-center | ❌ MISSING | Executive console |
+| Key Vault | /admin/keys | ❌ MISSING | Connector credentials |
+| Schedules | /admin/schedules | ❌ MISSING | Job management |
+| Governance | /admin/governance | ❌ MISSING | Policy controls |
+| Incidents | /admin/incidents | ❌ MISSING | Incident log |
+| Audit | /admin/audit | ❌ MISSING | Admin actions |
+
+### What Needs to Be Added (Prompt 10)
+
+**Part A - Partner Engine:**
+| Component | Purpose | Priority |
+|-----------|---------|----------|
+| data_contracts | Schema governance for partner data | HIGH |
+| contract_templates | Downloadable templates (CBY, MoF, etc.) | HIGH |
+| submission_validation | 3-layer validation results | HIGH |
+| moderation_queue | Approval workflow tracking | HIGH |
+| partner_dashboard_data | Aggregated insights for partners | HIGH |
+| partnerEngineRouter | tRPC endpoints for partner workflows | HIGH |
+| PartnerValidationService | 3-layer validation pipeline | HIGH |
+| PartnerModerationService | Dual-lane publishing logic | HIGH |
+
+**Part B - Admin Mission Control:**
+| Component | Purpose | Priority |
+|-----------|---------|----------|
+| AdminCommandCenter.tsx | Executive admin console | HIGH |
+| AdminKeyVault.tsx | Connector credentials UI | HIGH |
+| AdminSchedules.tsx | Job management UI | HIGH |
+| AdminGovernance.tsx | Policy controls UI | HIGH |
+| AdminIncidents.tsx | Incident log UI | MEDIUM |
+| AdminAudit.tsx | Admin action log UI | MEDIUM |
+
+**Part C - Documentation:**
+| Document | Purpose | Status |
+|----------|---------|--------|
+| CONTRIBUTOR_MANUAL.md | Partner onboarding guide | ❌ MISSING |
+| DATA_CONTRACTS.md | Contract specifications | ❌ MISSING |
+| DATA_GOVERNANCE.md | Governance policies | ❌ MISSING |
+| ADMIN_MANUAL.md | Admin operations guide | ❌ MISSING |
+| RUNBOOK.md | Operational procedures | ❌ MISSING |
+| SECURITY.md | Security policies | ❌ MISSING |
+
+---
+
+*Updated: January 29, 2026 - Prompt 10/∞*

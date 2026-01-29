@@ -7014,3 +7014,47 @@ Based on review of master design documents and data source register:
 - [x] AR PDF + EN PDF + evidence bundle + S3 signed URLs configured
 - [x] Admin Publishing Command Center shows templates and stage logs
 - [x] Public Publications Hub shows publications with evidence appendix
+
+
+### Phase 74: Partner Engine + Admin Mission Control + Consistency (PROMPT 10/∞) (COMPLETED)
+
+**Part A - Partner/Contributor Engine:**
+- [x] RBAC + Org Boundaries - partnerOrganizations, partnerSubmissions tables with role-based access
+- [x] Data Contracts schema - data_contracts table with required_fields, validation_rules, privacy_classification
+- [x] Data Contract templates - 8 templates seeded (FX, Trade, Aid, Prices, Banking, Fiscal, Labor, Humanitarian)
+- [x] Provenance Attestation - submission_validations with content hash tracking
+- [x] S3 storage structure - fileUrl field in submissions for document storage
+- [x] 3-layer validation pipeline - partnerValidationService.ts (schema, range, contradiction, vintage)
+- [x] Moderation workflow - moderation_queue with pending_review → approved/rejected flow
+- [x] Dual-lane publishing - Lane A (public ≥90%) and Lane B (restricted ≥70%) with QA signoff
+- [x] Partner incentives dashboard - PartnerDashboard.tsx with stats and submission tracking
+- [x] Access Needed engine - access_needed_items table with admin_outbox for email drafts
+
+**Part B - Admin Mission Control:**
+- [x] /admin/mission-control - System Health, Incidents, Policies, Audit Log tabs
+- [x] /admin/partners - Partner Management with contracts, submissions, moderation queue
+- [x] /admin/governance - governance_policies table with configurable thresholds
+- [x] /admin/incidents - admin_incidents table with lifecycle tracking
+- [x] /admin/audit - admin_audit_log table with full action tracking
+- [x] Consistency Sweep - Evidence Drawer integration across all KPI components
+- [x] Release Gate updates - sector_release_gates and publication gates
+
+**Part C - Docs + Methodology + Trust:**
+- [x] /docs/PARTNER_ENGINE.md - Comprehensive partner engine documentation
+- [x] /docs/INVENTORY_RUNTIME_WIRING.md - Runtime wiring inventory
+- [x] Public Methodology UX - evidence packs, contradictions, revisions, confidence grades
+- [x] Contributor Portal - /contribute page for public data corrections and suggestions
+
+**Part D - Tests + Release Gate:**
+- [x] Unit tests: 20 tests passing (partnerEngine.test.ts)
+- [x] Integration tests: contract schema, validation pipeline, dual-lane publishing
+- [x] E2E tests: partner upload flow, admin moderation verified in browser
+- [x] Release Gate: contributor pipeline with validation scores and audit logs
+
+**Stop Conditions:**
+- [x] 8 DataContracts exist with configurable templates
+- [x] Partner submission workflow with validation scores and moderation queue
+- [x] Admin moderation console with approve/reject/quarantine decisions
+- [x] Partner Dashboard shows submission stats and history
+- [x] Contributor Portal for public data corrections
+- [x] Admin Mission Control with incidents, policies, and audit trail

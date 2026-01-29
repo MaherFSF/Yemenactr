@@ -110,6 +110,10 @@ import SectorsManagement from "./pages/admin/SectorsManagement";
 import MethodologyManagement from "./pages/admin/MethodologyManagement";
 import PublishingCommandCenter from "./pages/admin/PublishingCommandCenter";
 import PublicationsHub from "./pages/PublicationsHub";
+import MissionControl from "./pages/admin/MissionControl";
+import PartnerManagement from "./pages/admin/PartnerManagement";
+import PartnerDashboard from "./pages/PartnerDashboard";
+import ContributorPortal from "./pages/ContributorPortal";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -206,7 +210,11 @@ function Router() {
           <Route path="/admin/sectors" component={SectorsManagement} />
           <Route path="/admin/methodology" component={MethodologyManagement} />
           <Route path="/admin/publishing" component={PublishingCommandCenter} />
+          <Route path="/admin/mission-control" component={MissionControl} />
+          <Route path="/admin/partners" component={PartnerManagement} />
       <Route path="/publications-hub" component={PublicationsHub} />
+      <Route path="/partner-dashboard" component={PartnerDashboard} />
+      <Route path="/contribute" component={ContributorPortal} />
       <Route path="/executive/governor" component={GovernorDashboard} />
       <Route path="/executive/deputy-governor" component={DeputyGovernorDashboard} />
       {/* VIP Cockpit Routes */}

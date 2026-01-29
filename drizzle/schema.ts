@@ -5546,3 +5546,404 @@ export const publicationMetrics = mysqlTable("publication_metrics", {
 }));
 export type PublicationMetric = typeof publicationMetrics.$inferSelect;
 export type InsertPublicationMetric = typeof publicationMetrics.$inferInsert;
+
+
+// ============================================================================
+// PARTNER ENGINE TABLES (Prompt 10/∞)
+// ============================================================================
+
+// Data Contracts: Schema governance for partner data submissions
+export const dataContracts = mysqlTable("data_contracts", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Identity
+  contractId: varchar("contractId", { length: 50 }).notNull().unique(),
+  nameEn: varchar("nameEn", { length: 200 }).notNull(),
+  nameAr: varchar("nameAr", { length: 200 }),
+  
+  // Classification
+  datasetFamily: varchar("datasetFamily", { length: 100 }).notNull(),
+  schemaVersion: varchar("schemaVersion", { length: 20 }).default("1.0").notNull(),
+  
+  // Schema definition
+  requiredFields: json("requiredFields").$type<Array<{
+    name: string;
+    type: "string" | "number" | "date" | "boolean" | "geo";
+    description: string;
+    required: boolean;
+    validation?: string;
+  }>>(),
+  allowedUnits: json("allowedUnits").$type<string[]>(),
+  frequency: mysqlEnum("frequency", ["daily", "weekly", "monthly", "quarterly", "annual", "irregular"]).notNull(),
+  geoLevel: mysqlEnum("geoLevel", ["national", "governorate", "district", "locality"]).default("national"),
+  
+  // Governance
+  regimeTagRules: json("regimeTagRules").$type<{
+    required: boolean;
+    allowedValues: string[];
+    splitRequired: boolean;
+  }>(),
+  validationRules: json("validationRules").$type<Array<{
+    rule: string;
+    severity: "error" | "warning";
+    message: string;
+  }>>(),
+  
+  // Metadata requirements
+  requiredMetadata: json("requiredMetadata").$type<{
+    sourceStatement: boolean;
+    methodDescription: boolean;
+    coverageWindow: boolean;
+    license: boolean;
+    contactInfo: boolean;
+  }>(),
+  
+  // Privacy & access
+  privacyClassification: mysqlEnum("privacyClassification", ["public", "restricted", "confidential"]).default("restricted").notNull(),
+  publicAggregationRule: text("publicAggregationRule"),
+  minimumCellSize: int("minimumCellSize").default(5),
+  
+  // Format
+  allowedFormats: json("allowedFormats").$type<string[]>().default(["csv", "xlsx", "json"]),
+  templateFileUrl: varchar("templateFileUrl", { length: 500 }),
+  
+  // Status
+  status: mysqlEnum("status", ["draft", "active", "deprecated"]).default("draft").notNull(),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+  createdBy: int("createdBy"),
+}, (table) => ({
+  contractIdIdx: index("contract_id_idx").on(table.contractId),
+  familyIdx: index("contract_family_idx").on(table.datasetFamily),
+  statusIdx: index("contract_status_idx").on(table.status),
+}));
+export type DataContract = typeof dataContracts.$inferSelect;
+export type InsertDataContract = typeof dataContracts.$inferInsert;
+
+// Partner Submission Validation: 3-layer validation results
+export const submissionValidations = mysqlTable("submission_validations", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // References
+  submissionId: int("submissionId").notNull().references(() => partnerSubmissions.id),
+  contractId: int("contractId").references(() => dataContracts.id),
+  
+  // Layer 1: Format/Schema
+  layer1Passed: boolean("layer1Passed").default(false),
+  layer1Errors: json("layer1Errors").$type<Array<{
+    field: string;
+    error: string;
+    severity: "error" | "warning";
+  }>>(),
+  
+  // Layer 2: Continuity/Duplicates
+  layer2Passed: boolean("layer2Passed").default(false),
+  layer2Issues: json("layer2Issues").$type<Array<{
+    type: "duplicate" | "gap" | "outlier" | "missing_period";
+    description: string;
+    affectedRecords: number[];
+  }>>(),
+  
+  // Layer 3: Contradiction scan
+  layer3Passed: boolean("layer3Passed").default(false),
+  contradictionsFound: json("contradictionsFound").$type<Array<{
+    indicator: string;
+    period: string;
+    existingValue: number;
+    submittedValue: number;
+    existingSource: string;
+    resolution: "pending" | "accepted" | "rejected";
+  }>>(),
+  
+  // Overall result
+  overallPassed: boolean("overallPassed").default(false),
+  validationScore: decimal("validationScore", { precision: 5, scale: 2 }),
+  
+  // Report
+  validationReportUrl: varchar("validationReportUrl", { length: 500 }),
+  
+  // Metadata
+  validatedAt: timestamp("validatedAt").defaultNow().notNull(),
+  validatedBy: varchar("validatedBy", { length: 50 }).default("system"),
+}, (table) => ({
+  submissionIdx: index("validation_submission_idx").on(table.submissionId),
+  contractIdx: index("validation_contract_idx").on(table.contractId),
+}));
+export type SubmissionValidation = typeof submissionValidations.$inferSelect;
+export type InsertSubmissionValidation = typeof submissionValidations.$inferInsert;
+
+// Moderation Queue: Approval workflow tracking
+export const moderationQueue = mysqlTable("moderation_queue", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // References
+  submissionId: int("submissionId").notNull().references(() => partnerSubmissions.id),
+  validationId: int("validationId").references(() => submissionValidations.id),
+  
+  // Status tracking
+  status: mysqlEnum("status", [
+    "received",
+    "validating",
+    "failed_validation",
+    "quarantined",
+    "pending_review",
+    "approved_restricted",
+    "approved_public_aggregate",
+    "published",
+    "rejected"
+  ]).default("received").notNull(),
+  
+  // Lane assignment
+  publishingLane: mysqlEnum("publishingLane", ["lane_a_public", "lane_b_restricted", "none"]).default("none"),
+  
+  // Review details
+  reviewedBy: int("reviewedBy"),
+  reviewedAt: timestamp("reviewedAt"),
+  reviewNotes: text("reviewNotes"),
+  
+  // QA signoff (for public publishing)
+  qaSignoffBy: int("qaSignoffBy"),
+  qaSignoffAt: timestamp("qaSignoffAt"),
+  qaSignoffNotes: text("qaSignoffNotes"),
+  
+  // Evidence coverage (for public publishing)
+  evidenceCoverage: decimal("evidenceCoverage", { precision: 5, scale: 2 }),
+  evidencePackId: int("evidencePackId"),
+  
+  // Rejection details
+  rejectionReason: text("rejectionReason"),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+}, (table) => ({
+  submissionIdx: index("moderation_submission_idx").on(table.submissionId),
+  statusIdx: index("moderation_status_idx").on(table.status),
+  laneIdx: index("moderation_lane_idx").on(table.publishingLane),
+}));
+export type ModerationQueueItem = typeof moderationQueue.$inferSelect;
+export type InsertModerationQueueItem = typeof moderationQueue.$inferInsert;
+
+// Access Needed Items: Track sources needing partnership/keys
+export const accessNeededItems = mysqlTable("access_needed_items", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Source reference
+  sourceId: varchar("sourceId", { length: 100 }).notNull(),
+  sourceName: varchar("sourceName", { length: 200 }).notNull(),
+  
+  // Access type
+  accessType: mysqlEnum("accessType", ["needs_key", "partnership_required", "subscription", "restricted"]).notNull(),
+  
+  // Organization contact
+  organizationName: varchar("organizationName", { length: 200 }),
+  organizationEmail: varchar("organizationEmail", { length: 200 }),
+  organizationWebsite: varchar("organizationWebsite", { length: 500 }),
+  
+  // Blocked datasets
+  blockedDatasets: json("blockedDatasets").$type<Array<{
+    datasetId: string;
+    name: string;
+    importance: "critical" | "high" | "medium" | "low";
+  }>>(),
+  
+  // Benefits framing (RoleLens)
+  benefitsForYeto: text("benefitsForYeto"),
+  benefitsForPartner: text("benefitsForPartner"),
+  
+  // Outreach status
+  outreachStatus: mysqlEnum("outreachStatus", ["queued", "draft_ready", "sent", "responded", "successful", "failed"]).default("queued"),
+  
+  // Email draft
+  emailDraftId: int("emailDraftId"),
+  
+  // Priority
+  priority: mysqlEnum("priority", ["critical", "high", "medium", "low"]).default("medium"),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+  createdBy: int("createdBy"),
+}, (table) => ({
+  sourceIdx: index("access_source_idx").on(table.sourceId),
+  statusIdx: index("access_status_idx").on(table.outreachStatus),
+  typeIdx: index("access_type_idx").on(table.accessType),
+}));
+export type AccessNeededItem = typeof accessNeededItems.$inferSelect;
+export type InsertAccessNeededItem = typeof accessNeededItems.$inferInsert;
+
+// Admin Outbox: Email drafts for partnership outreach
+export const adminOutbox = mysqlTable("admin_outbox", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Email details
+  toEmail: varchar("toEmail", { length: 200 }).notNull(),
+  toName: varchar("toName", { length: 200 }),
+  subject: varchar("subject", { length: 500 }).notNull(),
+  bodyHtml: text("bodyHtml").notNull(),
+  bodyText: text("bodyText"),
+  
+  // Template used
+  templateType: mysqlEnum("templateType", ["initial_outreach", "follow_up", "data_sharing_agreement", "thank_you"]).default("initial_outreach"),
+  
+  // Reference
+  accessNeededItemId: int("accessNeededItemId").references(() => accessNeededItems.id),
+  
+  // Status
+  status: mysqlEnum("status", ["draft", "queued", "sent", "failed", "bounced"]).default("draft").notNull(),
+  
+  // Send details
+  sentAt: timestamp("sentAt"),
+  sentBy: int("sentBy"),
+  failureReason: text("failureReason"),
+  
+  // Response tracking
+  responseReceived: boolean("responseReceived").default(false),
+  responseReceivedAt: timestamp("responseReceivedAt"),
+  responseNotes: text("responseNotes"),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+  createdBy: int("createdBy"),
+}, (table) => ({
+  statusIdx: index("outbox_status_idx").on(table.status),
+  accessItemIdx: index("outbox_access_item_idx").on(table.accessNeededItemId),
+}));
+export type AdminOutboxItem = typeof adminOutbox.$inferSelect;
+export type InsertAdminOutboxItem = typeof adminOutbox.$inferInsert;
+
+// Admin Incidents: Incident log for platform issues
+export const adminIncidents = mysqlTable("admin_incidents", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Incident details
+  title: varchar("title", { length: 200 }).notNull(),
+  description: text("description").notNull(),
+  severity: mysqlEnum("severity", ["critical", "high", "medium", "low"]).default("medium").notNull(),
+  category: mysqlEnum("category", ["pipeline_outage", "data_anomaly", "security", "performance", "integration", "other"]).default("other"),
+  
+  // Status
+  status: mysqlEnum("status", ["open", "investigating", "mitigating", "resolved", "closed"]).default("open").notNull(),
+  
+  // Impact
+  affectedDatasets: json("affectedDatasets").$type<string[]>(),
+  affectedPublications: json("affectedPublications").$type<string[]>(),
+  affectedVipAlerts: json("affectedVipAlerts").$type<string[]>(),
+  
+  // Timeline
+  detectedAt: timestamp("detectedAt").defaultNow().notNull(),
+  acknowledgedAt: timestamp("acknowledgedAt"),
+  resolvedAt: timestamp("resolvedAt"),
+  closedAt: timestamp("closedAt"),
+  
+  // Assignment
+  assignedTo: int("assignedTo"),
+  
+  // Post-mortem
+  postMortemUrl: varchar("postMortemUrl", { length: 500 }),
+  rootCause: text("rootCause"),
+  preventionMeasures: text("preventionMeasures"),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+  createdBy: int("createdBy"),
+}, (table) => ({
+  severityIdx: index("incident_severity_idx").on(table.severity),
+  statusIdx: index("incident_status_idx").on(table.status),
+  categoryIdx: index("incident_category_idx").on(table.category),
+}));
+export type AdminIncident = typeof adminIncidents.$inferSelect;
+export type InsertAdminIncident = typeof adminIncidents.$inferInsert;
+
+// Admin Audit Log: Track admin actions
+export const adminAuditLog = mysqlTable("admin_audit_log", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Actor
+  userId: int("userId").notNull(),
+  userName: varchar("userName", { length: 100 }),
+  userRole: varchar("userRole", { length: 50 }),
+  
+  // Action
+  action: varchar("action", { length: 100 }).notNull(),
+  actionCategory: mysqlEnum("actionCategory", [
+    "user_management",
+    "data_management",
+    "publication",
+    "moderation",
+    "configuration",
+    "security",
+    "incident",
+    "other"
+  ]).default("other"),
+  
+  // Target
+  targetType: varchar("targetType", { length: 50 }),
+  targetId: varchar("targetId", { length: 100 }),
+  targetName: varchar("targetName", { length: 200 }),
+  
+  // Change details
+  previousValue: json("previousValue"),
+  newValue: json("newValue"),
+  
+  // Context
+  ipAddress: varchar("ipAddress", { length: 50 }),
+  userAgent: varchar("userAgent", { length: 500 }),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("audit_user_idx").on(table.userId),
+  actionIdx: index("audit_action_idx").on(table.action),
+  categoryIdx: index("audit_category_idx").on(table.actionCategory),
+  targetIdx: index("audit_target_idx").on(table.targetType, table.targetId),
+  createdAtIdx: index("audit_created_idx").on(table.createdAt),
+}));
+export type AdminAuditLogEntry = typeof adminAuditLog.$inferSelect;
+export type InsertAdminAuditLogEntry = typeof adminAuditLog.$inferInsert;
+
+// Governance Policies: Configurable policy settings
+export const governancePolicies = mysqlTable("governance_policies", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Policy identity
+  policyKey: varchar("policyKey", { length: 100 }).notNull().unique(),
+  policyName: varchar("policyName", { length: 200 }).notNull(),
+  description: text("description"),
+  
+  // Policy value
+  policyValue: json("policyValue").notNull(),
+  defaultValue: json("defaultValue"),
+  
+  // Constraints
+  minValue: json("minValue"),
+  maxValue: json("maxValue"),
+  allowedValues: json("allowedValues"),
+  
+  // Category
+  category: mysqlEnum("category", [
+    "evidence",
+    "publication",
+    "moderation",
+    "security",
+    "freshness",
+    "quality",
+    "other"
+  ]).default("other"),
+  
+  // Status
+  isActive: boolean("isActive").default(true),
+  
+  // Metadata
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+  updatedBy: int("updatedBy"),
+}, (table) => ({
+  keyIdx: index("policy_key_idx").on(table.policyKey),
+  categoryIdx: index("policy_category_idx").on(table.category),
+}));
+export type GovernancePolicy = typeof governancePolicies.$inferSelect;
+export type InsertGovernancePolicy = typeof governancePolicies.$inferInsert;
