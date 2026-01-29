@@ -4690,3 +4690,543 @@ export const cockpitSnapshots = mysqlTable("cockpit_snapshots", {
 
 export type CockpitSnapshot = typeof cockpitSnapshots.$inferSelect;
 export type InsertCockpitSnapshot = typeof cockpitSnapshots.$inferInsert;
+
+
+// ============================================================================
+// SECTOR INTELLIGENCE PRODUCTS (PROMPT 8/∞)
+// ============================================================================
+
+// Sector Definitions: Master configuration for each sector page
+export const sectorDefinitions = mysqlTable("sector_definitions", {
+  id: int("id").autoincrement().primaryKey(),
+  sectorCode: varchar("sectorCode", { length: 50 }).notNull().unique(),
+  
+  // Display names
+  nameEn: varchar("nameEn", { length: 255 }).notNull(),
+  nameAr: varchar("nameAr", { length: 255 }).notNull(),
+  
+  // Mission statements (1-2 lines)
+  missionEn: text("missionEn"),
+  missionAr: text("missionAr"),
+  
+  // Navigation and ordering
+  displayOrder: int("displayOrder").default(0),
+  navLabelEn: varchar("navLabelEn", { length: 100 }),
+  navLabelAr: varchar("navLabelAr", { length: 100 }),
+  iconName: varchar("iconName", { length: 50 }), // Lucide icon name
+  heroImageUrl: varchar("heroImageUrl", { length: 500 }),
+  heroColor: varchar("heroColor", { length: 50 }), // Primary color for hero gradient
+  
+  // Flagship indicator (primary chart)
+  flagshipIndicatorCode: varchar("flagshipIndicatorCode", { length: 100 }),
+  
+  // Core dataset list (what must exist for coverage)
+  coreDatasets: json("coreDatasets").$type<{
+    datasetCode: string;
+    nameEn: string;
+    nameAr: string;
+    required: boolean;
+    sourceId?: number;
+  }[]>(),
+  
+  // Regime relevance
+  hasRegimeSplit: boolean("hasRegimeSplit").default(false),
+  defaultRegime: mysqlEnum("defaultRegime", ["both", "aden_irg", "sanaa_dfa"]).default("both"),
+  
+  // Status
+  isActive: boolean("isActive").default(true),
+  isPublished: boolean("isPublished").default(false),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  codeIdx: index("sector_def_code_idx").on(table.sectorCode),
+  orderIdx: index("sector_def_order_idx").on(table.displayOrder),
+}));
+
+export type SectorDefinition = typeof sectorDefinitions.$inferSelect;
+export type InsertSectorDefinition = typeof sectorDefinitions.$inferInsert;
+
+// Sector KPIs: Top 5 KPIs for "Sector in 60 Seconds"
+export const sectorKpis = mysqlTable("sector_kpis", {
+  id: int("id").autoincrement().primaryKey(),
+  sectorCode: varchar("sectorCode", { length: 50 }).notNull(),
+  
+  // KPI definition
+  indicatorCode: varchar("indicatorCode", { length: 100 }).notNull(),
+  displayOrder: int("displayOrder").default(0),
+  
+  // Display configuration
+  titleEn: varchar("titleEn", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }).notNull(),
+  unitEn: varchar("unitEn", { length: 50 }),
+  unitAr: varchar("unitAr", { length: 50 }),
+  formatType: mysqlEnum("formatType", ["number", "percent", "currency", "index"]).default("number"),
+  decimalPlaces: int("decimalPlaces").default(1),
+  
+  // Thresholds for status
+  warningThreshold: decimal("warningThreshold", { precision: 15, scale: 4 }),
+  criticalThreshold: decimal("criticalThreshold", { precision: 15, scale: 4 }),
+  thresholdDirection: mysqlEnum("thresholdDirection", ["above", "below"]).default("above"),
+  
+  // Regime specificity
+  regimeTag: mysqlEnum("regimeTag", ["both", "aden_irg", "sanaa_dfa"]).default("both"),
+  
+  // Status
+  isActive: boolean("isActive").default(true),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  sectorIdx: index("sector_kpi_sector_idx").on(table.sectorCode),
+  indicatorIdx: index("sector_kpi_indicator_idx").on(table.indicatorCode),
+  orderIdx: index("sector_kpi_order_idx").on(table.sectorCode, table.displayOrder),
+}));
+
+export type SectorKpi = typeof sectorKpis.$inferSelect;
+export type InsertSectorKpi = typeof sectorKpis.$inferInsert;
+
+// Sector Mechanism Explainers: Evidence-locked explanations
+export const sectorMechanisms = mysqlTable("sector_mechanisms", {
+  id: int("id").autoincrement().primaryKey(),
+  sectorCode: varchar("sectorCode", { length: 50 }).notNull(),
+  
+  // Content
+  sectionOrder: int("sectionOrder").default(0),
+  headingEn: varchar("headingEn", { length: 255 }).notNull(),
+  headingAr: varchar("headingAr", { length: 255 }).notNull(),
+  contentEn: text("contentEn").notNull(),
+  contentAr: text("contentAr").notNull(),
+  
+  // Evidence requirement
+  contentType: mysqlEnum("contentType", ["evidence_backed", "conceptual"]).default("evidence_backed"),
+  
+  // Citations (for evidence_backed content)
+  citations: json("citations").$type<{
+    citationId: string;
+    sourceId: number;
+    documentId?: number;
+    pageRef?: string;
+    quote?: string;
+  }[]>(),
+  
+  // Gap tracking (if evidence insufficient)
+  hasGap: boolean("hasGap").default(false),
+  gapTicketId: int("gapTicketId"),
+  
+  // Status
+  isActive: boolean("isActive").default(true),
+  lastReviewedAt: timestamp("lastReviewedAt"),
+  reviewedBy: int("reviewedBy"),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  sectorIdx: index("sector_mech_sector_idx").on(table.sectorCode),
+  orderIdx: index("sector_mech_order_idx").on(table.sectorCode, table.sectionOrder),
+}));
+
+export type SectorMechanism = typeof sectorMechanisms.$inferSelect;
+export type InsertSectorMechanism = typeof sectorMechanisms.$inferInsert;
+
+// Sector Watchlist Items: What to watch next
+export const sectorWatchlistItems = mysqlTable("sector_watchlist_items", {
+  id: int("id").autoincrement().primaryKey(),
+  sectorCode: varchar("sectorCode", { length: 50 }).notNull(),
+  
+  // Item type and reference
+  itemType: mysqlEnum("itemType", ["indicator", "entity", "project", "event", "risk"]).notNull(),
+  itemId: varchar("itemId", { length: 100 }).notNull(), // Reference to the actual item
+  
+  // Display
+  titleEn: varchar("titleEn", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }).notNull(),
+  descriptionEn: text("descriptionEn"),
+  descriptionAr: text("descriptionAr"),
+  
+  // Importance
+  importance: mysqlEnum("importance", ["critical", "high", "medium", "low"]).default("medium"),
+  displayOrder: int("displayOrder").default(0),
+  
+  // Role visibility (public vs VIP)
+  visibilityLevel: mysqlEnum("visibilityLevel", ["public", "vip_only"]).default("public"),
+  vipRoles: json("vipRoles").$type<string[]>(), // Which VIP roles see this
+  
+  // Reason for watching
+  reasonEn: text("reasonEn"),
+  reasonAr: text("reasonAr"),
+  evidencePackId: int("evidencePackId"),
+  
+  // Status
+  isActive: boolean("isActive").default(true),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  sectorIdx: index("sector_watch_sector_idx").on(table.sectorCode),
+  typeIdx: index("sector_watch_type_idx").on(table.itemType),
+  visibilityIdx: index("sector_watch_visibility_idx").on(table.visibilityLevel),
+}));
+
+export type SectorWatchlistItem = typeof sectorWatchlistItems.$inferSelect;
+export type InsertSectorWatchlistItem = typeof sectorWatchlistItems.$inferInsert;
+
+// Sector FAQs: Auto-generated but evidence-only
+export const sectorFaqs = mysqlTable("sector_faqs", {
+  id: int("id").autoincrement().primaryKey(),
+  sectorCode: varchar("sectorCode", { length: 50 }).notNull(),
+  
+  // Question and answer
+  questionEn: text("questionEn").notNull(),
+  questionAr: text("questionAr").notNull(),
+  answerEn: text("answerEn").notNull(),
+  answerAr: text("answerAr").notNull(),
+  
+  // Evidence
+  citations: json("citations").$type<{
+    citationId: string;
+    sourceId: number;
+    documentId?: number;
+    quote?: string;
+  }[]>(),
+  
+  // If evidence insufficient
+  isRefusalAnswer: boolean("isRefusalAnswer").default(false),
+  refusalReasonEn: text("refusalReasonEn"),
+  refusalReasonAr: text("refusalReasonAr"),
+  
+  // Display
+  displayOrder: int("displayOrder").default(0),
+  isActive: boolean("isActive").default(true),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  sectorIdx: index("sector_faq_sector_idx").on(table.sectorCode),
+  orderIdx: index("sector_faq_order_idx").on(table.sectorCode, table.displayOrder),
+}));
+
+export type SectorFaq = typeof sectorFaqs.$inferSelect;
+export type InsertSectorFaq = typeof sectorFaqs.$inferInsert;
+
+// Sector Alerts: Sector-specific alerts
+export const sectorAlerts = mysqlTable("sector_alerts", {
+  id: int("id").autoincrement().primaryKey(),
+  sectorCode: varchar("sectorCode", { length: 50 }).notNull(),
+  
+  // Alert details
+  alertType: mysqlEnum("alertType", [
+    "threshold_breach",
+    "staleness",
+    "contradiction_detected",
+    "significant_change",
+    "data_gap",
+    "source_update"
+  ]).notNull(),
+  
+  severity: mysqlEnum("severity", ["critical", "warning", "info"]).default("info"),
+  
+  // Content
+  titleEn: varchar("titleEn", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }).notNull(),
+  descriptionEn: text("descriptionEn"),
+  descriptionAr: text("descriptionAr"),
+  
+  // Related indicator/entity
+  indicatorCode: varchar("indicatorCode", { length: 100 }),
+  entityId: int("entityId"),
+  
+  // Evidence
+  evidencePackId: int("evidencePackId"),
+  
+  // Status
+  status: mysqlEnum("status", ["active", "acknowledged", "resolved"]).default("active"),
+  acknowledgedAt: timestamp("acknowledgedAt"),
+  acknowledgedBy: int("acknowledgedBy"),
+  resolvedAt: timestamp("resolvedAt"),
+  
+  // Metadata
+  triggeredAt: timestamp("triggeredAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  sectorIdx: index("sector_alert_sector_idx").on(table.sectorCode),
+  typeIdx: index("sector_alert_type_idx").on(table.alertType),
+  statusIdx: index("sector_alert_status_idx").on(table.status),
+  severityIdx: index("sector_alert_severity_idx").on(table.severity),
+}));
+
+export type SectorAlert = typeof sectorAlerts.$inferSelect;
+export type InsertSectorAlert = typeof sectorAlerts.$inferInsert;
+
+// Sector Context Packs: Generated by sector agents
+export const sectorContextPacks = mysqlTable("sector_context_packs", {
+  id: int("id").autoincrement().primaryKey(),
+  sectorCode: varchar("sectorCode", { length: 50 }).notNull(),
+  
+  // Pack metadata
+  packDate: timestamp("packDate").notNull(),
+  packVersion: int("packVersion").default(1),
+  
+  // Content sections
+  keyIndicators: json("keyIndicators").$type<{
+    indicatorCode: string;
+    nameEn: string;
+    nameAr: string;
+    currentValue: number;
+    previousValue?: number;
+    changePercent?: number;
+    confidence: string;
+    sourceId: number;
+    lastUpdated: string;
+  }[]>(),
+  
+  topEvents: json("topEvents").$type<{
+    eventId: number;
+    titleEn: string;
+    titleAr: string;
+    date: string;
+    evidencePackId?: number;
+  }[]>(),
+  
+  topDocuments: json("topDocuments").$type<{
+    documentId: number;
+    titleEn: string;
+    titleAr: string;
+    sourceId: number;
+    publishDate: string;
+  }[]>(),
+  
+  contradictions: json("contradictions").$type<{
+    indicatorCode: string;
+    sources: string[];
+    descriptionEn: string;
+    descriptionAr: string;
+  }[]>(),
+  
+  gaps: json("gaps").$type<{
+    gapType: string;
+    descriptionEn: string;
+    descriptionAr: string;
+    ticketId?: number;
+  }[]>(),
+  
+  whatChanged: json("whatChanged").$type<{
+    indicatorCode: string;
+    changeType: string;
+    descriptionEn: string;
+    descriptionAr: string;
+    evidencePackId?: number;
+  }[]>(),
+  
+  whatToWatch: json("whatToWatch").$type<{
+    itemType: string;
+    itemId: string;
+    titleEn: string;
+    titleAr: string;
+    reasonEn: string;
+    reasonAr: string;
+  }[]>(),
+  
+  // Quality metrics
+  dataCoveragePercent: decimal("dataCoveragePercent", { precision: 5, scale: 2 }),
+  dataFreshnessPercent: decimal("dataFreshnessPercent", { precision: 5, scale: 2 }),
+  contradictionCount: int("contradictionCount").default(0),
+  gapCount: int("gapCount").default(0),
+  
+  // Storage
+  s3Key: varchar("s3Key", { length: 500 }),
+  
+  // Metadata
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  sectorIdx: index("sector_ctx_sector_idx").on(table.sectorCode),
+  dateIdx: index("sector_ctx_date_idx").on(table.packDate),
+  sectorDateIdx: index("sector_ctx_sector_date_idx").on(table.sectorCode, table.packDate),
+}));
+
+export type SectorContextPack = typeof sectorContextPacks.$inferSelect;
+export type InsertSectorContextPack = typeof sectorContextPacks.$inferInsert;
+
+// Sector Briefs: Weekly briefs (public + VIP)
+export const sectorBriefs = mysqlTable("sector_briefs", {
+  id: int("id").autoincrement().primaryKey(),
+  sectorCode: varchar("sectorCode", { length: 50 }).notNull(),
+  
+  // Brief metadata
+  briefType: mysqlEnum("briefType", ["public", "vip"]).notNull(),
+  weekStart: timestamp("weekStart").notNull(),
+  weekEnd: timestamp("weekEnd").notNull(),
+  
+  // Content
+  titleEn: varchar("titleEn", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }).notNull(),
+  summaryEn: text("summaryEn"),
+  summaryAr: text("summaryAr"),
+  
+  // Sections
+  sections: json("sections").$type<{
+    sectionType: string;
+    titleEn: string;
+    titleAr: string;
+    contentEn: string;
+    contentAr: string;
+    citations?: { citationId: string; sourceId: number }[];
+  }[]>(),
+  
+  // Evidence appendix
+  evidenceAppendix: json("evidenceAppendix").$type<{
+    citationId: string;
+    sourceId: number;
+    sourceName: string;
+    documentId?: number;
+    pageRef?: string;
+    quote?: string;
+  }[]>(),
+  
+  // Storage
+  pdfUrlEn: varchar("pdfUrlEn", { length: 500 }),
+  pdfUrlAr: varchar("pdfUrlAr", { length: 500 }),
+  s3KeyEn: varchar("s3KeyEn", { length: 500 }),
+  s3KeyAr: varchar("s3KeyAr", { length: 500 }),
+  
+  // Status
+  status: mysqlEnum("status", ["draft", "review", "published"]).default("draft"),
+  publishedAt: timestamp("publishedAt"),
+  
+  // Metadata
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  sectorIdx: index("sector_brief_sector_idx").on(table.sectorCode),
+  typeIdx: index("sector_brief_type_idx").on(table.briefType),
+  weekIdx: index("sector_brief_week_idx").on(table.weekStart),
+  statusIdx: index("sector_brief_status_idx").on(table.status),
+}));
+
+export type SectorBrief = typeof sectorBriefs.$inferSelect;
+export type InsertSectorBrief = typeof sectorBriefs.$inferInsert;
+
+// Sector Release Gates: Per-sector quality gates
+export const sectorReleaseGates = mysqlTable("sector_release_gates", {
+  id: int("id").autoincrement().primaryKey(),
+  sectorCode: varchar("sectorCode", { length: 50 }).notNull(),
+  
+  // Gate checks
+  evidenceCoveragePercent: decimal("evidenceCoveragePercent", { precision: 5, scale: 2 }),
+  evidenceCoveragePassed: boolean("evidenceCoveragePassed").default(false),
+  
+  exportsWorking: boolean("exportsWorking").default(false),
+  contradictionsVisible: boolean("contradictionsVisible").default(false),
+  bilingualParityPassed: boolean("bilingualParityPassed").default(false),
+  noPlaceholdersPassed: boolean("noPlaceholdersPassed").default(false),
+  
+  // Overall status
+  allGatesPassed: boolean("allGatesPassed").default(false),
+  lastCheckedAt: timestamp("lastCheckedAt"),
+  
+  // Notes
+  notes: text("notes"),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  sectorIdx: index("sector_gate_sector_idx").on(table.sectorCode),
+  passedIdx: index("sector_gate_passed_idx").on(table.allGatesPassed),
+}));
+
+export type SectorReleaseGate = typeof sectorReleaseGates.$inferSelect;
+export type InsertSectorReleaseGate = typeof sectorReleaseGates.$inferInsert;
+
+// Methodology Notes: Public changelog entries
+export const methodologyNotes = mysqlTable("methodology_notes", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Content
+  titleEn: varchar("titleEn", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }).notNull(),
+  contentEn: text("contentEn").notNull(),
+  contentAr: text("contentAr").notNull(),
+  
+  // Categorization
+  category: mysqlEnum("category", [
+    "data_collection",
+    "contradiction_handling",
+    "confidence_grades",
+    "revisions_vintages",
+    "uncertainty_interpretation",
+    "missing_data",
+    "data_licenses",
+    "general"
+  ]).default("general"),
+  
+  // Scope
+  sectorCode: varchar("sectorCode", { length: 50 }), // null = global
+  
+  // Status
+  isPublished: boolean("isPublished").default(false),
+  publishedAt: timestamp("publishedAt"),
+  
+  // Author
+  authorId: int("authorId"),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  categoryIdx: index("method_note_category_idx").on(table.category),
+  sectorIdx: index("method_note_sector_idx").on(table.sectorCode),
+  publishedIdx: index("method_note_published_idx").on(table.isPublished),
+}));
+
+export type MethodologyNote = typeof methodologyNotes.$inferSelect;
+export type InsertMethodologyNote = typeof methodologyNotes.$inferInsert;
+
+// Credibility Metrics: Track credibility indicators
+export const credibilityMetrics = mysqlTable("credibility_metrics", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Scope
+  sectorCode: varchar("sectorCode", { length: 50 }), // null = platform-wide
+  
+  // Metrics
+  metricDate: timestamp("metricDate").notNull(),
+  
+  // Source tiers
+  tier1SourceCount: int("tier1SourceCount").default(0),
+  tier2SourceCount: int("tier2SourceCount").default(0),
+  tier3SourceCount: int("tier3SourceCount").default(0),
+  
+  // License flags
+  openLicenseCount: int("openLicenseCount").default(0),
+  restrictedLicenseCount: int("restrictedLicenseCount").default(0),
+  
+  // Contradictions
+  contradictionCount: int("contradictionCount").default(0),
+  resolvedContradictionCount: int("resolvedContradictionCount").default(0),
+  
+  // Revisions
+  revisionCount: int("revisionCount").default(0),
+  vintageCount: int("vintageCount").default(0),
+  
+  // Citation coverage
+  citationCoveragePercent: decimal("citationCoveragePercent", { precision: 5, scale: 2 }),
+  
+  // Evaluation results
+  evalPassRate: decimal("evalPassRate", { precision: 5, scale: 2 }),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  sectorIdx: index("cred_metric_sector_idx").on(table.sectorCode),
+  dateIdx: index("cred_metric_date_idx").on(table.metricDate),
+}));
+
+export type CredibilityMetric = typeof credibilityMetrics.$inferSelect;
+export type InsertCredibilityMetric = typeof credibilityMetrics.$inferInsert;

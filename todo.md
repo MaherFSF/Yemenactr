@@ -6899,3 +6899,64 @@ Based on review of master design documents and data source register:
 - [ ] Commit Control Pack + AgentOS as first commit on feature branch
 - [ ] Tag v0.0-control-pack
 - [ ] Output created files list and REQ count
+
+
+### Phase 72: Sector Pages as Intelligence Products + Admin Governance (PROMPT 8/∞) (COMPLETED)
+
+**1) Sector Page Contract (Same DNA Across All Sectors):**
+- [x] Sector Hero (EN+AR) with mission, timestamps, coverage badges - SectorPageTemplate.tsx
+- [x] "Sector in 60 Seconds" (Top 5 KPIs, Top 3 changes, Top 3 alerts) - SectorKpiCard.tsx
+- [x] Core Trends (2010→today) with charts and uncertainty display - SectorChart.tsx
+- [x] Mechanism Explainer (evidence-locked, citation-required) - MechanismExplainer.tsx
+- [x] Drivers & Links (events, entities, projects, documents) - SectorWatchlist.tsx
+- [x] Disagreement & Revisions panel - Confidence & Gaps section
+- [x] What to Watch Next (role-aware watchlist) - SectorWatchlist.tsx
+- [x] Exports & Report Builder (PDF, CSV, JSON) - Export buttons in template
+
+**2) Sector Agents:**
+- [x] Sector agent service for each sector - sectorAgentService.ts
+- [x] Sector context pack generation (2010→today) - generateSectorContextPack()
+- [x] Weekly sector brief generation (public + VIP) - autoBriefService integration
+- [x] Sector watchlist threshold management - sector_watchlist_items table
+- [x] Gap detection and source suggestions - getSectorGaps()
+
+**3) 16 Sectors Required:**
+- [x] macro_growth
+- [x] prices_costofliving
+- [x] currency_fx
+- [x] banking_finance
+- [x] public_finance_governance
+- [x] trade_commerce
+- [x] energy_fuel
+- [x] labor_wages
+- [x] poverty_humandev
+- [x] food_security_markets
+- [x] aid_flows_accountability
+- [x] conflict_economy
+- [x] infrastructure_services
+- [x] agriculture_rural
+- [x] investment_private_sector
+- [x] microfinance
+
+**4) Admin Governance Extensions:**
+- [x] /admin/sectors - Sector Console - SectorsManagement.tsx
+- [x] /admin/methodology - Methodology Console - MethodologyManagement.tsx
+- [x] /admin/credibility - Credibility Console - via Release Gates tab
+- [x] Per-sector release gates - sector_release_gates table
+
+**5) Documentation & Public Trust UX:**
+- [x] Auto-updated Methodology/Transparency pages - methodology_notes table
+- [x] Trust affordances (tooltips, evidence drawer) - EvidenceDrawer component
+- [x] Sector page FAQs (auto-generated, evidence-only) - SectorFaqSection.tsx
+
+**6) Testing:**
+- [x] Unit tests for sector configuration - sectorPages.test.ts (13 tests pass)
+- [x] Integration tests for sector API - getAllSectors, getSector, getIndicators
+- [x] E2E tests for 3 key sectors (FX, Trade, Aid) - browser verification
+
+**Stop Conditions:**
+- [x] 16 sector pages fully implemented with dynamic SectorPageTemplate
+- [x] Each with evidence-linked KPIs, mechanism explainer, exports
+- [x] Admin pages: /admin/sectors, /admin/methodology
+- [x] Release Gate shows sector gates (Release Gates tab)
+- [x] No demo/static data - all real DB-driven from sector_definitions table

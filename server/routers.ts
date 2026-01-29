@@ -82,6 +82,7 @@ import { evidenceRouter } from "./routers/evidence";
 import { bulkExportRouter } from "./routers/bulkExport";
 import { entitiesRouter } from "./routers/entities";
 import { vipCockpitRouter } from "./routers/vipCockpit";
+import { sectorPagesRouter } from "./routers/sectorPages";
 import { sql, desc, eq, like, or, and, inArray } from "drizzle-orm";
 
 export const appRouter = router({
@@ -101,6 +102,7 @@ export const appRouter = router({
   bulkExport: bulkExportRouter,
   entities: entitiesRouter,
   vipCockpit: vipCockpitRouter,
+  sectorPages: sectorPagesRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

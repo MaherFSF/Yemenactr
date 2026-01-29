@@ -104,6 +104,10 @@ import FXDashboard from "./pages/dashboards/FXDashboard";
 import RoleLensCockpit from "./pages/RoleLensCockpit";
 import DecisionJournal from "./pages/DecisionJournal";
 import AutoBriefs from "./pages/AutoBriefs";
+import SectorsHub from "./pages/SectorsHub";
+import SectorPage from "./pages/SectorPage";
+import SectorsManagement from "./pages/admin/SectorsManagement";
+import MethodologyManagement from "./pages/admin/MethodologyManagement";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -125,6 +129,8 @@ function Router() {
       <Route path={"/research-assistant"} component={ResearchAssistant} />
       <Route path={"/research-library"} component={ResearchLibrary} />
       <Route path={"/research-audit"} component={ResearchAudit} />
+      <Route path="/sectors" component={SectorsHub} />
+      <Route path="/sectors/:sectorCode" component={SectorPage} />
       <Route path={"/sectors/banking"} component={Banking} />
       <Route path={"/sectors/trade"} component={Trade} />
       <Route path={"/sectors/poverty"} component={Poverty} />
@@ -195,6 +201,8 @@ function Router() {
           <Route path="/admin/visualizations" component={VisualizationBuilder} />
           <Route path="/admin/insights" component={InsightMiner} />
           <Route path="/admin/export" component={ExportBundle} />
+          <Route path="/admin/sectors" component={SectorsManagement} />
+          <Route path="/admin/methodology" component={MethodologyManagement} />
       <Route path="/executive/governor" component={GovernorDashboard} />
       <Route path="/executive/deputy-governor" component={DeputyGovernorDashboard} />
       {/* VIP Cockpit Routes */}
