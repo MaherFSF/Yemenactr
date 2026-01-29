@@ -26,6 +26,9 @@ import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
+// Synchronous db instance for services that need it
+export const db = drizzle(process.env.DATABASE_URL || '');
+
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {

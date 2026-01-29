@@ -42,7 +42,9 @@ import {
   Globe,
   DollarSign,
   Heart,
+  Network,
 } from "lucide-react";
+import { RelatedInsightsPanel } from "@/components/RelatedInsights";
 
 // Role icons mapping
 const roleIcons: Record<string, React.ReactNode> = {
@@ -193,6 +195,10 @@ export default function RoleLensCockpit() {
             <TabsTrigger value="options">{isArabic ? "الخيارات" : "Options"}</TabsTrigger>
             <TabsTrigger value="watchlist">{isArabic ? "المراقبة" : "Watchlist"}</TabsTrigger>
             <TabsTrigger value="journal">{isArabic ? "سجل القرارات" : "Journal"}</TabsTrigger>
+            <TabsTrigger value="related">
+              <Network className="h-4 w-4 mr-1" />
+              {isArabic ? "ذات صلة" : "Related"}
+            </TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -606,6 +612,21 @@ export default function RoleLensCockpit() {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Related Tab */}
+          <TabsContent value="related" className="space-y-6 mt-6">
+            <RelatedInsightsPanel
+              sourceType="entity"
+              sourceId={0}
+              sourceLabel={selectedRole}
+              showDocuments={true}
+              showEntities={true}
+              showDatasets={true}
+              showEvents={true}
+              showContradictions={true}
+              maxItems={10}
+            />
           </TabsContent>
         </Tabs>
       ) : (

@@ -27,8 +27,10 @@ import {
   Shield,
   Languages,
   Hash,
-  Clock
+  Clock,
+  Network
 } from 'lucide-react';
+import { RelatedInsightsPanel } from '@/components/RelatedInsights';
 
 // Document type labels
 const DOC_TYPE_LABELS: Record<string, { en: string; ar: string }> = {
@@ -245,6 +247,10 @@ export default function DocumentDetail() {
             <TabsTrigger value="versions">
               <Clock className="h-4 w-4 mr-2" />
               {language === 'ar' ? 'الإصدارات' : 'Versions'}
+            </TabsTrigger>
+            <TabsTrigger value="related">
+              <Network className="h-4 w-4 mr-2" />
+              {language === 'ar' ? 'ذات صلة' : 'Related'}
             </TabsTrigger>
           </TabsList>
 
@@ -490,6 +496,23 @@ export default function DocumentDetail() {
                     : 'No versions available'}
                 </p>
               </Card>
+            )}
+          </TabsContent>
+
+          {/* Related Tab */}
+          <TabsContent value="related">
+            {document?.id && (
+              <RelatedInsightsPanel
+                sourceType="document"
+                sourceId={document.id}
+                sourceLabel={title}
+                showDocuments={true}
+                showEntities={true}
+                showDatasets={true}
+                showEvents={true}
+                showContradictions={true}
+                maxItems={10}
+              />
             )}
           </TabsContent>
         </Tabs>

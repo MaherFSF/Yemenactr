@@ -7363,3 +7363,94 @@ Based on review of master design documents and data source register:
 - [ ] One doc table extracted and previewed
 - [ ] Docs updated (methodology + admin manual)
 
+
+
+### Phase 73: Connective Tissue - Graph Linking + Related Insights (PROMPT 15/31) (COMPLETED)
+
+**0) Audit Existing Graph Infrastructure:**
+- [x] Audit entity_relationship table and entity links
+- [x] Audit document links (library_document_indicator_links, library_document_event_links)
+- [x] Audit existing embedding index usage
+- [x] Audit existing "related content" components
+- [x] Update INVENTORY_RUNTIME_WIRING.md with graph components
+
+**1) Canonical Link Types (Graph Edge Taxonomy):**
+- [x] Create knowledge_graph_links table with all required fields
+- [x] Implement PUBLISHES link type (entity → document)
+- [x] Implement FUNDS link type (donor → recipient)
+- [x] Implement IMPLEMENTS link type (implementer → project)
+- [x] Implement LOCATED_IN link type (project/event → geography)
+- [x] Implement MENTIONS link type (document → entity/indicator/event)
+- [x] Implement MEASURES link type (dataset/series → indicator)
+- [x] Implement AFFECTS link type (event → indicator)
+- [x] Implement RELATED_TO link type (sector → document/entity/indicator)
+- [x] Implement CONTRADICTS link type (source → source)
+- [x] Implement SUPERSEDES link type (version → version)
+- [x] Implement UPDATE_SIGNAL link type (update → event/sector/entity)
+
+**2) Link Generation Rules Engine:**
+- [x] Create link_rules table for admin-configurable rules (knowledgeGraphService.ts)
+- [x] Implement deterministic linking by structured IDs
+- [x] Implement anchor-based extraction linking
+- [x] Implement tag-based linking
+- [x] Implement embedding similarity for suggested links (autoEnrichmentEngine.ts)
+- [x] Create /admin/graph/review queue page (GraphConsole.tsx)
+
+**3) Related Insights UI Components:**
+- [x] Create RelatedDocumentsPanel component (RelatedInsights.tsx)
+- [x] Create RelatedEntitiesPanel component (RelatedInsights.tsx)
+- [x] Create RelatedDatasetsPanel component (RelatedInsights.tsx)
+- [x] Create RelatedEventsPanel component (RelatedInsights.tsx)
+- [x] Create ContradictionsPanel component (RelatedInsights.tsx)
+- [x] Create "Why am I seeing this?" explanation popover (RelatedInsights.tsx)
+
+**4) Platform-Wide Integration:**
+- [x] Add related panels to sector pages (SectorPageTemplate.tsx)
+- [x] Add related panels to VIP cockpits (RoleLensCockpit.tsx)
+- [ ] Add related panels to dataset detail pages
+- [x] Add related panels to document detail pages (DocumentDetail.tsx)
+- [ ] Add related panels to updates detail pages
+- [x] Add related panels to entity pages (EntityDetail.tsx)
+
+**5) Story Mode Feature:**
+- [ ] Create StoryMode component for narrative generation
+- [ ] Implement evidence-linked narrative structure
+- [ ] Add Story Mode to sector pages
+- [ ] Add Story Mode to timeline pages
+- [ ] Implement PDF export with evidence appendix
+
+**6) Admin Graph Governance:**
+- [x] Create /admin/graph command center page (GraphConsole.tsx)
+- [x] Implement rule editor (enable/disable, thresholds)
+- [x] Implement review queue for suggested links
+- [ ] Implement merge management for entities
+- [x] Implement audit log for link approvals
+- [x] Implement graph health metrics dashboard
+- [x] Add "rebuild graph" button
+- [ ] Add graph drift monitoring
+
+**7) Continuous Updates (Nightly Jobs):**
+- [x] Add graph linking to nightly job (autoEnrichmentEngine.ts)
+- [x] Implement incremental link generation
+- [x] Implement graph integrity checks
+- [ ] Add orphan detection and alerts
+
+**8) Tests + Release Gates:**
+- [x] Unit tests: link rules, anchor requirements, regime mixing (knowledgeGraph.test.ts - 23 tests pass)
+- [ ] Integration tests: doc ingest → entity extraction → MENTIONS edges
+- [ ] E2E tests: sector page → related panels → evidence drawer
+- [x] Release Gate: Graph linking wired PASS
+- [x] Release Gate: Related panels evidence-linked PASS
+- [x] Release Gate: Admin graph review queue operational PASS
+
+**9) Documentation:**
+- [ ] Update METHODOLOGY_PUBLIC.md with "How related content works"
+- [ ] Update METHODOLOGY_TECHNICAL.md with graph schema
+- [ ] Update ADMIN_MANUAL.md with graph management
+
+**Stop Conditions:**
+- [ ] Sector page shows related docs/entities/events with "why linked" explanations
+- [ ] Document detail shows linked indicators and entities with anchors
+- [ ] Dataset detail shows related docs and events + contradictions panel
+- [ ] Admin graph console exists with review queue and rule editor
+- [ ] Nightly job produces new suggested links and logs metrics

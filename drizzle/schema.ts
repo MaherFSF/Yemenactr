@@ -6919,3 +6919,450 @@ export const documentSearchIndex = mysqlTable("document_search_index", {
 export type DocumentSearchIndexEntry = typeof documentSearchIndex.$inferSelect;
 export type InsertDocumentSearchIndexEntry = typeof documentSearchIndex.$inferInsert;
 
+
+
+// ============================================================================
+// KNOWLEDGE GRAPH - CONNECTIVE TISSUE LAYER (PROMPT 15/31)
+// ============================================================================
+
+/**
+ * Knowledge Graph Links - Unified link table for all relationships
+ * This is the core "connective tissue" that makes YETO feel alive
+ */
+export const knowledgeGraphLinks = mysqlTable("knowledge_graph_links", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Link type (taxonomy of relationships)
+  linkType: mysqlEnum("linkType", [
+    "publishes",      // entity → document
+    "funds",          // donor → recipient
+    "implements",     // implementer → project
+    "located_in",     // project/event → geography
+    "mentions",       // document → entity/indicator/event
+    "measures",       // dataset/series → indicator concept
+    "affects",        // event → indicator (evidence-based only)
+    "related_to",     // sector → document/entity/indicator
+    "contradicts",    // source → source
+    "supersedes",     // version → version
+    "update_signal",  // update → event/sector/entity
+    "suspected_link", // uncertain correlation
+    "temporal_cooccurrence", // time-based correlation
+    "cites",          // document → document
+    "derived_from",   // dataset → dataset
+    "part_of",        // entity → entity (subsidiary)
+    "regulates",      // entity → entity/sector
+    "operates_in",    // entity → geography/sector
+  ]).notNull(),
+  
+  // Source reference (polymorphic)
+  srcType: mysqlEnum("srcType", [
+    "entity", "document", "series", "event", "project", 
+    "update", "sector", "indicator", "dataset", "geography"
+  ]).notNull(),
+  srcId: int("srcId").notNull(),
+  srcLabel: varchar("srcLabel", { length: 255 }), // Human-readable label
+  
+  // Destination reference (polymorphic)
+  dstType: mysqlEnum("dstType", [
+    "entity", "document", "series", "event", "project",
+    "update", "sector", "indicator", "dataset", "geography"
+  ]).notNull(),
+  dstId: int("dstId").notNull(),
+  dstLabel: varchar("dstLabel", { length: 255 }), // Human-readable label
+  
+  // Strength and confidence
+  strengthScore: decimal("strengthScore", { precision: 5, scale: 4 }).default("0.5"), // 0-1
+  confidenceLevel: mysqlEnum("confidenceLevel", ["high", "medium", "low", "uncertain"]).default("medium"),
+  
+  // Method of creation
+  method: mysqlEnum("method", [
+    "rule_based",           // Deterministic rule
+    "extracted_from_anchor", // NER/anchor extraction
+    "structured_data",      // From IDs (FTS, IATI, WB)
+    "tag_based",            // Shared tags
+    "embedding_similarity", // Vector similarity
+    "manual",               // Admin created
+    "imported"              // External source
+  ]).notNull(),
+  
+  // Evidence (must have one)
+  evidencePackId: int("evidencePackId").references(() => evidencePacks.id),
+  ruleId: int("ruleId").references(() => linkRules.id),
+  anchorId: int("anchorId").references(() => citationAnchors.id),
+  
+  // Evidence details
+  evidenceSnippet: text("evidenceSnippet"), // Brief excerpt proving the link
+  evidenceUrl: varchar("evidenceUrl", { length: 500 }),
+  
+  // Status
+  status: mysqlEnum("status", [
+    "active",       // Verified and public
+    "needs_review", // Suggested, awaiting admin approval
+    "deprecated",   // No longer valid
+    "rejected"      // Admin rejected
+  ]).default("active"),
+  
+  // Review info
+  reviewedBy: int("reviewedBy").references(() => users.id),
+  reviewedAt: timestamp("reviewedAt"),
+  reviewNotes: text("reviewNotes"),
+  
+  // Bidirectional flag
+  bidirectional: boolean("bidirectional").default(false),
+  
+  // Regime/split system awareness
+  regimeTag: mysqlEnum("regimeTag", ["aden", "sanaa", "unified", "pre_split"]),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  createdBy: int("createdBy").references(() => users.id),
+}, (table) => ({
+  linkTypeIdx: index("kg_link_type_idx").on(table.linkType),
+  srcIdx: index("kg_src_idx").on(table.srcType, table.srcId),
+  dstIdx: index("kg_dst_idx").on(table.dstType, table.dstId),
+  statusIdx: index("kg_status_idx").on(table.status),
+  methodIdx: index("kg_method_idx").on(table.method),
+  strengthIdx: index("kg_strength_idx").on(table.strengthScore),
+}));
+export type KnowledgeGraphLink = typeof knowledgeGraphLinks.$inferSelect;
+export type InsertKnowledgeGraphLink = typeof knowledgeGraphLinks.$inferInsert;
+
+/**
+ * Link Rules - Admin-configurable rules for generating links
+ */
+export const linkRules = mysqlTable("link_rules", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Rule identification
+  ruleId: varchar("ruleId", { length: 50 }).notNull().unique(),
+  nameEn: varchar("nameEn", { length: 255 }).notNull(),
+  nameAr: varchar("nameAr", { length: 255 }),
+  descriptionEn: text("descriptionEn"),
+  descriptionAr: text("descriptionAr"),
+  
+  // Input types this rule applies to
+  inputTypes: json("inputTypes").$type<string[]>().notNull(), // ["document", "event", "update"]
+  
+  // Match logic configuration
+  matchLogic: json("matchLogic").$type<{
+    type: "keyword" | "anchor" | "shared_id" | "tag" | "metadata" | "embedding";
+    keywords?: string[];
+    anchorTypes?: string[];
+    idFields?: string[];
+    tags?: string[];
+    metadataFields?: string[];
+    embeddingThreshold?: number;
+  }>().notNull(),
+  
+  // Minimum evidence requirements
+  minEvidenceRequirements: json("minEvidenceRequirements").$type<{
+    requireAnchor: boolean;
+    requireStructuredId: boolean;
+    requireTag: boolean;
+    minConfidence: number;
+  }>(),
+  
+  // Output configuration
+  outputLinkType: varchar("outputLinkType", { length: 50 }).notNull(),
+  strengthFormula: varchar("strengthFormula", { length: 255 }).default("0.5"), // e.g., "anchor_count * 0.1"
+  
+  // Visibility
+  isPublicSafe: boolean("isPublicSafe").default(false), // If false, links are admin-only
+  autoApprove: boolean("autoApprove").default(false), // If true, skip review queue
+  
+  // Status
+  isEnabled: boolean("isEnabled").default(true),
+  priority: int("priority").default(50), // Higher = runs first
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  createdBy: int("createdBy").references(() => users.id),
+}, (table) => ({
+  ruleIdIdx: index("link_rule_id_idx").on(table.ruleId),
+  enabledIdx: index("link_rule_enabled_idx").on(table.isEnabled),
+  priorityIdx: index("link_rule_priority_idx").on(table.priority),
+}));
+export type LinkRule = typeof linkRules.$inferSelect;
+export type InsertLinkRule = typeof linkRules.$inferInsert;
+
+/**
+ * Link Rule Runs - Audit trail for rule execution
+ */
+export const linkRuleRuns = mysqlTable("link_rule_runs", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Rule reference
+  ruleId: int("ruleId").notNull().references(() => linkRules.id),
+  
+  // Run statistics
+  startedAt: timestamp("startedAt").notNull(),
+  completedAt: timestamp("completedAt"),
+  status: mysqlEnum("status", ["running", "completed", "failed"]).default("running"),
+  
+  // Results
+  itemsProcessed: int("itemsProcessed").default(0),
+  linksCreated: int("linksCreated").default(0),
+  linksSuggested: int("linksSuggested").default(0),
+  linksSkipped: int("linksSkipped").default(0),
+  errors: int("errors").default(0),
+  
+  // Error details
+  errorLog: json("errorLog").$type<Array<{
+    itemId: number;
+    itemType: string;
+    error: string;
+    timestamp: string;
+  }>>(),
+  
+  // Trigger
+  triggeredBy: mysqlEnum("triggeredBy", ["nightly", "manual", "on_ingest"]).default("manual"),
+  triggeredByUser: int("triggeredByUser").references(() => users.id),
+}, (table) => ({
+  ruleIdx: index("link_rule_run_rule_idx").on(table.ruleId),
+  statusIdx: index("link_rule_run_status_idx").on(table.status),
+  startedIdx: index("link_rule_run_started_idx").on(table.startedAt),
+}));
+export type LinkRuleRun = typeof linkRuleRuns.$inferSelect;
+export type InsertLinkRuleRun = typeof linkRuleRuns.$inferInsert;
+
+/**
+ * Graph Review Queue - Admin review for suggested links
+ */
+export const graphReviewQueue = mysqlTable("graph_review_queue", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Link reference
+  linkId: int("linkId").notNull().references(() => knowledgeGraphLinks.id),
+  
+  // Review status
+  status: mysqlEnum("status", ["pending", "approved", "rejected", "merged"]).default("pending"),
+  
+  // Priority
+  priority: mysqlEnum("priority", ["high", "medium", "low"]).default("medium"),
+  
+  // Evidence for review
+  evidenceSummary: text("evidenceSummary"),
+  evidenceAnchors: json("evidenceAnchors").$type<Array<{
+    anchorId: number;
+    snippet: string;
+    page?: number;
+  }>>(),
+  
+  // Similar existing links (for merge consideration)
+  similarLinks: json("similarLinks").$type<number[]>(),
+  
+  // Review action
+  reviewedBy: int("reviewedBy").references(() => users.id),
+  reviewedAt: timestamp("reviewedAt"),
+  reviewAction: mysqlEnum("reviewAction", ["approve", "reject", "merge", "edit"]),
+  reviewNotes: text("reviewNotes"),
+  
+  // If merged, target link
+  mergedIntoLinkId: int("mergedIntoLinkId").references(() => knowledgeGraphLinks.id),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  expiresAt: timestamp("expiresAt"), // Auto-reject after this date
+}, (table) => ({
+  linkIdx: index("graph_review_link_idx").on(table.linkId),
+  statusIdx: index("graph_review_status_idx").on(table.status),
+  priorityIdx: index("graph_review_priority_idx").on(table.priority),
+}));
+export type GraphReviewQueueItem = typeof graphReviewQueue.$inferSelect;
+export type InsertGraphReviewQueueItem = typeof graphReviewQueue.$inferInsert;
+
+/**
+ * Graph Health Metrics - Track graph quality over time
+ */
+export const graphHealthMetrics = mysqlTable("graph_health_metrics", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Timestamp
+  measuredAt: timestamp("measuredAt").defaultNow().notNull(),
+  
+  // Coverage metrics
+  docsLinkedToSectors: decimal("docsLinkedToSectors", { precision: 5, scale: 2 }), // percentage
+  updatesLinkedToEntities: decimal("updatesLinkedToEntities", { precision: 5, scale: 2 }),
+  kpisWithRelatedDocs: decimal("kpisWithRelatedDocs", { precision: 5, scale: 2 }),
+  entitiesWithLinks: decimal("entitiesWithLinks", { precision: 5, scale: 2 }),
+  eventsWithEvidence: decimal("eventsWithEvidence", { precision: 5, scale: 2 }),
+  
+  // Quality metrics
+  linksWithEvidence: decimal("linksWithEvidence", { precision: 5, scale: 2 }),
+  linksWithAnchors: decimal("linksWithAnchors", { precision: 5, scale: 2 }),
+  averageStrengthScore: decimal("averageStrengthScore", { precision: 5, scale: 4 }),
+  
+  // Volume metrics
+  totalLinks: int("totalLinks").default(0),
+  activeLinks: int("activeLinks").default(0),
+  pendingReviewLinks: int("pendingReviewLinks").default(0),
+  deprecatedLinks: int("deprecatedLinks").default(0),
+  
+  // Link type distribution
+  linkTypeDistribution: json("linkTypeDistribution").$type<Record<string, number>>(),
+  
+  // Orphan detection
+  orphanDocuments: int("orphanDocuments").default(0),
+  orphanEntities: int("orphanEntities").default(0),
+  orphanEvents: int("orphanEvents").default(0),
+  
+  // Broken links
+  brokenLinks: int("brokenLinks").default(0),
+  brokenLinkDetails: json("brokenLinkDetails").$type<Array<{
+    linkId: number;
+    reason: string;
+  }>>(),
+  
+  // Drift detection
+  newLinksToday: int("newLinksToday").default(0),
+  removedLinksToday: int("removedLinksToday").default(0),
+  driftScore: decimal("driftScore", { precision: 5, scale: 4 }), // 0-1, higher = more drift
+}, (table) => ({
+  measuredAtIdx: index("graph_health_measured_idx").on(table.measuredAt),
+}));
+export type GraphHealthMetric = typeof graphHealthMetrics.$inferSelect;
+export type InsertGraphHealthMetric = typeof graphHealthMetrics.$inferInsert;
+
+/**
+ * Story Mode Narratives - Auto-generated evidence-linked stories
+ */
+export const storyModeNarratives = mysqlTable("story_mode_narratives", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Story identification
+  storyId: varchar("storyId", { length: 50 }).notNull().unique(),
+  
+  // Subject (what the story is about)
+  subjectType: mysqlEnum("subjectType", ["sector", "entity", "event", "period", "indicator"]).notNull(),
+  subjectId: int("subjectId"),
+  subjectLabel: varchar("subjectLabel", { length: 255 }),
+  
+  // Time scope
+  periodStart: date("periodStart"),
+  periodEnd: date("periodEnd"),
+  
+  // Narrative content (structured)
+  titleEn: varchar("titleEn", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }),
+  
+  // Section 1: What happened
+  whatHappenedEn: text("whatHappenedEn"),
+  whatHappenedAr: text("whatHappenedAr"),
+  
+  // Section 2: What changed in the data
+  dataChangesEn: text("dataChangesEn"),
+  dataChangesAr: text("dataChangesAr"),
+  dataChangesCharts: json("dataChangesCharts").$type<Array<{
+    seriesId: number;
+    chartType: string;
+    highlight: string;
+  }>>(),
+  
+  // Section 3: What documents say
+  documentInsightsEn: text("documentInsightsEn"),
+  documentInsightsAr: text("documentInsightsAr"),
+  citedDocuments: json("citedDocuments").$type<Array<{
+    documentId: number;
+    anchorId: number;
+    snippet: string;
+  }>>(),
+  
+  // Section 4: Contradictions & uncertainty
+  contradictionsEn: text("contradictionsEn"),
+  contradictionsAr: text("contradictionsAr"),
+  uncertaintyLevel: mysqlEnum("uncertaintyLevel", ["low", "medium", "high"]).default("medium"),
+  
+  // Section 5: Why it matters (role lens)
+  roleLensInsights: json("roleLensInsights").$type<Array<{
+    roleId: string;
+    insightEn: string;
+    insightAr: string;
+  }>>(),
+  
+  // Evidence pack
+  evidencePackId: int("evidencePackId").references(() => evidencePacks.id),
+  
+  // Generation metadata
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+  generatedBy: mysqlEnum("generatedBy", ["system", "admin"]).default("system"),
+  
+  // Quality
+  evidenceCoverage: decimal("evidenceCoverage", { precision: 5, scale: 2 }), // percentage
+  isPublished: boolean("isPublished").default(false),
+  
+  // Export
+  pdfUrl: varchar("pdfUrl", { length: 500 }),
+  
+  // Timestamps
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  storyIdIdx: index("story_story_id_idx").on(table.storyId),
+  subjectIdx: index("story_subject_idx").on(table.subjectType, table.subjectId),
+  publishedIdx: index("story_published_idx").on(table.isPublished),
+}));
+export type StoryModeNarrative = typeof storyModeNarratives.$inferSelect;
+export type InsertStoryModeNarrative = typeof storyModeNarratives.$inferInsert;
+
+/**
+ * Related Items Cache - Cached related items for performance
+ */
+export const relatedItemsCache = mysqlTable("related_items_cache", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Source item
+  sourceType: varchar("sourceType", { length: 50 }).notNull(),
+  sourceId: int("sourceId").notNull(),
+  
+  // Related items (cached result)
+  relatedDocuments: json("relatedDocuments").$type<Array<{
+    documentId: number;
+    title: string;
+    linkType: string;
+    strength: number;
+    whyLinked: string;
+  }>>(),
+  
+  relatedEntities: json("relatedEntities").$type<Array<{
+    entityId: number;
+    name: string;
+    linkType: string;
+    strength: number;
+    whyLinked: string;
+  }>>(),
+  
+  relatedDatasets: json("relatedDatasets").$type<Array<{
+    seriesId: number;
+    name: string;
+    linkType: string;
+    strength: number;
+    whyLinked: string;
+  }>>(),
+  
+  relatedEvents: json("relatedEvents").$type<Array<{
+    eventId: number;
+    title: string;
+    linkType: string;
+    strength: number;
+    whyLinked: string;
+  }>>(),
+  
+  contradictions: json("contradictions").$type<Array<{
+    sourceA: { type: string; id: number; value: string };
+    sourceB: { type: string; id: number; value: string };
+    notes: string;
+  }>>(),
+  
+  // Cache metadata
+  cachedAt: timestamp("cachedAt").defaultNow().notNull(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  isValid: boolean("isValid").default(true),
+}, (table) => ({
+  sourceIdx: index("related_cache_source_idx").on(table.sourceType, table.sourceId),
+  validIdx: index("related_cache_valid_idx").on(table.isValid),
+  expiresIdx: index("related_cache_expires_idx").on(table.expiresAt),
+}));
+export type RelatedItemsCacheEntry = typeof relatedItemsCache.$inferSelect;
+export type InsertRelatedItemsCacheEntry = typeof relatedItemsCache.$inferInsert;

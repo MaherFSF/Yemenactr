@@ -22,8 +22,10 @@ import {
   Share2,
   Eye,
   CheckCircle2,
-  Clock
+  Clock,
+  Network
 } from "lucide-react";
+import { RelatedInsightsPanel } from "@/components/RelatedInsights";
 import { Link, useParams } from "wouter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -247,6 +249,10 @@ export default function EntityDetail() {
             </TabsTrigger>
             <TabsTrigger value="sources">
               {language === "ar" ? "المصادر" : "Sources"}
+            </TabsTrigger>
+            <TabsTrigger value="related">
+              <Network className="h-4 w-4 mr-2" />
+              {language === "ar" ? "ذات صلة" : "Related"}
             </TabsTrigger>
           </TabsList>
 
@@ -499,6 +505,21 @@ export default function EntityDetail() {
                 ))}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Related Tab */}
+          <TabsContent value="related">
+            <RelatedInsightsPanel
+              sourceType="entity"
+              sourceId={parseInt(id || '0')}
+              sourceLabel={language === "ar" ? entity.nameAr : entity.nameEn}
+              showDocuments={true}
+              showEntities={true}
+              showDatasets={true}
+              showEvents={true}
+              showContradictions={true}
+              maxItems={10}
+            />
           </TabsContent>
         </Tabs>
       </div>

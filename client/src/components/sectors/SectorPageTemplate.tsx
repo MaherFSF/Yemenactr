@@ -36,6 +36,8 @@ import { SectorChart } from "./SectorChart";
 import { MechanismExplainer } from "./MechanismExplainer";
 import { SectorWatchlist } from "./SectorWatchlist";
 import { SectorFaqSection } from "./SectorFaqSection";
+import { RelatedInsightsPanel } from "@/components/RelatedInsights";
+import { Network } from "lucide-react";
 
 interface SectorPageTemplateProps {
   sectorCode: string;
@@ -187,6 +189,10 @@ export function SectorPageTemplate({ sectorCode }: SectorPageTemplateProps) {
             </TabsTrigger>
             <TabsTrigger value="faq">
               {isArabic ? 'الأسئلة' : 'FAQ'}
+            </TabsTrigger>
+            <TabsTrigger value="related">
+              <Network className="h-4 w-4 mr-1" />
+              {isArabic ? 'ذات صلة' : 'Related'}
             </TabsTrigger>
           </TabsList>
 
@@ -420,6 +426,21 @@ export function SectorPageTemplate({ sectorCode }: SectorPageTemplateProps) {
             <SectorFaqSection
               faqs={faqs}
               isArabic={isArabic}
+            />
+          </TabsContent>
+
+          {/* Related */}
+          <TabsContent value="related" className="space-y-6">
+            <RelatedInsightsPanel
+              sourceType="sector"
+              sourceId={definition.id || 0}
+              sourceLabel={isArabic ? definition.nameAr : definition.nameEn}
+              showDocuments={true}
+              showEntities={true}
+              showDatasets={true}
+              showEvents={true}
+              showContradictions={true}
+              maxItems={10}
             />
           </TabsContent>
         </Tabs>
