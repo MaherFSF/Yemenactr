@@ -1,6 +1,63 @@
 # YETO Platform TODO
 
-## Latest Update: January 29, 2025 - 13:00 UTC
+## Latest Update: January 29, 2025 - 14:30 UTC
+
+### Phase 68: Living Knowledge Spine + Evals + Drift + Teamwork (PROMPT 4/∞) (COMPLETED)
+
+**A) Living Knowledge Spine:**
+- [x] TimeSpineDay: one record per day from 2010-01-01 to today (DB table created)
+- [x] EvidenceSpine: all Evidence Packs searchable and versioned (DB table created)
+- [x] EntitySpine: stakeholder entities (WB, IMF, EU, OCHA, UN, CBY, etc.) (DB table created)
+- [x] SectorSpine: one per sector with indicators, definitions, contradictions (DB table created)
+- [x] PolicyEventSpine: key events timeline with citations (DB table created)
+- [x] PublicationSpine: all system-generated briefs + evidence appendices (DB table created)
+- [x] Deep Memory since 2010 retrieval capability (contextPackService.ts)
+- [x] Hybrid indexing (keyword + embedding) (ragService.ts)
+
+**B) Continuous Learning Loop:**
+- [x] Context Packs nightly build (contextPackService.ts)
+- [x] Nightly Job: connectors, indexes, context packs, evals, drift (continuousLearningService.ts)
+- [x] Admin Digest (EN+AR) with health summary (emailService.ts)
+- [x] Idle time intelligence for backfill (contextPackService.ts)
+
+**C) Eval Harness:**
+- [x] Golden questions per role (AR+EN) (evalHarnessService.ts)
+- [x] Golden questions per sector (AR+EN) (evalHarnessService.ts)
+- [x] Retrieval quality tests (Recall@K, Precision@K) (evalHarnessService.ts)
+- [x] Generation quality tests (evalHarnessService.ts)
+- [x] Citation Coverage Gate (95% threshold) (evalHarnessService.ts)
+- [x] Prompt versioning with regression tests (evalHarnessService.ts)
+- [x] Agent skills evals (evalHarnessService.ts)
+
+**D) Drift Monitoring:**
+- [x] Retrieval drift metrics (driftMonitoringService.ts)
+- [x] Evidence drift metrics (driftMonitoringService.ts)
+- [x] Translation drift metrics (driftMonitoringService.ts)
+- [x] Dashboard drift metrics (driftMonitoringService.ts)
+- [x] Model drift metrics (driftMonitoringService.ts)
+- [x] Auto-ticket on threshold breach (driftMonitoringService.ts)
+
+**E) Teamwork Engine:**
+- [x] Orchestration patterns (planner→specialists→verifier) (teamworkEngineService.ts)
+- [x] Multi-agent handoffs for VIP Options (teamworkEngineService.ts)
+- [x] Tribunal gates for publishing (teamworkEngineService.ts)
+- [x] No single agent publish rule (teamworkEngineService.ts)
+
+**F) Bilingual/RTL Output:**
+- [x] RTL mirroring rules (BilingualOutput.tsx)
+- [x] Typography rules (Inter EN, Cairo AR) (BilingualOutput.tsx)
+- [x] Output templates with 7 sections (BilingualOutput.tsx)
+
+**G) Admin Dashboards:**
+- [x] Evidence coverage over time (SystemHealthDashboard.tsx)
+- [x] Drift dashboard (SystemHealthDashboard.tsx)
+- [x] Eval pass/fail dashboard (SystemHealthDashboard.tsx)
+
+**Stop Conditions:**
+- [x] Working Nightly Job with context packs + eval + drift reports
+- [x] CI with make check + eval suite + drift checks (432 tests pass)
+- [x] Admin pages for evidence, drift, evals (SystemHealthDashboard.tsx)
+- [x] Phase Report with changes, test commands, next steps
 
 ### Phase 67: Full Agent Society + Priority Items (PROMPT 3/3) (COMPLETED)
 

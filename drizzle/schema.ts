@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, json, boolean, index, unique } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, json, boolean, index, unique, date } from "drizzle-orm/mysql-core";
 
 /**
  * YETO Platform Database Schema
@@ -3508,3 +3508,598 @@ export const releaseGateRuns = mysqlTable("release_gate_runs", {
 
 export type ReleaseGateRun = typeof releaseGateRuns.$inferSelect;
 export type InsertReleaseGateRun = typeof releaseGateRuns.$inferInsert;
+
+
+// ============================================================================
+// LIVING KNOWLEDGE SPINE (PROMPT 4/∞)
+// ============================================================================
+
+// TimeSpineDay: One record per day from 2010-01-01 to today (auto-extends daily)
+export const timeSpineDay = mysqlTable("time_spine_day", {
+  id: int("id").autoincrement().primaryKey(),
+  day: date("day").notNull().unique(),
+  dayOfWeek: int("dayOfWeek").notNull(), // 0-6 (Sunday-Saturday)
+  weekNumber: int("weekNumber").notNull(),
+  monthNumber: int("monthNumber").notNull(),
+  quarterNumber: int("quarterNumber").notNull(),
+  yearNumber: int("yearNumber").notNull(),
+  
+  // Regime context for that day
+  regimeTag: mysqlEnum("regimeTag", ["aden", "sanaa", "national", "pre_split"]),
+  geoScope: varchar("geoScope", { length: 100 }),
+  
+  // References (JSON arrays of IDs)
+  eventRefs: json("eventRefs").$type<number[]>(),
+  datasetRefs: json("datasetRefs").$type<number[]>(),
+  docRefs: json("docRefs").$type<number[]>(),
+  alerts: json("alerts").$type<{
+    type: string;
+    severity: string;
+    message: string;
+    messageAr: string;
+  }[]>(),
+  notes: text("notes"),
+  notesAr: text("notesAr"),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  dayIdx: index("time_spine_day_idx").on(table.day),
+  yearIdx: index("time_spine_year_idx").on(table.yearNumber),
+  regimeIdx: index("time_spine_regime_idx").on(table.regimeTag),
+}));
+
+export type TimeSpineDay = typeof timeSpineDay.$inferSelect;
+export type InsertTimeSpineDay = typeof timeSpineDay.$inferInsert;
+
+// EntitySpine: Stakeholder entities (WB, IMF, EU, OCHA, UN agencies, CBY branches, etc.)
+export const entitySpine = mysqlTable("entity_spine", {
+  id: int("id").autoincrement().primaryKey(),
+  entityCode: varchar("entityCode", { length: 50 }).notNull().unique(),
+  nameEn: varchar("nameEn", { length: 255 }).notNull(),
+  nameAr: varchar("nameAr", { length: 255 }),
+  
+  // Entity type
+  entityType: mysqlEnum("entityType", [
+    "international_org",
+    "un_agency",
+    "development_bank",
+    "bilateral_donor",
+    "central_bank",
+    "ministry",
+    "local_ngo",
+    "international_ngo",
+    "private_bank",
+    "microfinance",
+    "chamber_of_commerce",
+    "think_tank",
+    "research_institution",
+    "media_outlet",
+    "other"
+  ]).notNull(),
+  
+  // Affiliation
+  regimeAffiliation: mysqlEnum("regimeAffiliation", ["aden", "sanaa", "neutral", "international"]),
+  countryCode: varchar("countryCode", { length: 3 }),
+  
+  // Contact and links
+  website: text("website"),
+  dataPortalUrl: text("dataPortalUrl"),
+  apiEndpoint: text("apiEndpoint"),
+  
+  // Profile
+  descriptionEn: text("descriptionEn"),
+  descriptionAr: text("descriptionAr"),
+  keyFunctions: json("keyFunctions").$type<string[]>(),
+  keyPublications: json("keyPublications").$type<number[]>(),
+  keyDatasets: json("keyDatasets").$type<number[]>(),
+  
+  // Data quality assessment
+  reliabilityTier: mysqlEnum("reliabilityTier", ["tier1_official", "tier2_credible", "tier3_proxy", "tier4_disputed"]),
+  lastVerified: timestamp("lastVerified"),
+  verificationNotes: text("verificationNotes"),
+  
+  // Status
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  codeIdx: index("entity_code_idx").on(table.entityCode),
+  typeIdx: index("entity_type_idx").on(table.entityType),
+  reliabilityIdx: index("entity_reliability_idx").on(table.reliabilityTier),
+}));
+
+export type EntitySpine = typeof entitySpine.$inferSelect;
+export type InsertEntitySpine = typeof entitySpine.$inferInsert;
+
+// SectorSpine: One per sector page with indicators, definitions, contradictions
+export const sectorSpine = mysqlTable("sector_spine", {
+  id: int("id").autoincrement().primaryKey(),
+  sectorCode: varchar("sectorCode", { length: 50 }).notNull().unique(),
+  nameEn: varchar("nameEn", { length: 255 }).notNull(),
+  nameAr: varchar("nameAr", { length: 255 }),
+  
+  // Key indicators for this sector
+  keyIndicators: json("keyIndicators").$type<{
+    indicatorId: number;
+    indicatorCode: string;
+    nameEn: string;
+    nameAr: string;
+    importance: "primary" | "secondary" | "contextual";
+  }[]>(),
+  
+  // Definitions and mechanisms
+  definitionsEn: json("definitionsEn").$type<Record<string, string>>(),
+  definitionsAr: json("definitionsAr").$type<Record<string, string>>(),
+  mechanismsEn: text("mechanismsEn"),
+  mechanismsAr: text("mechanismsAr"),
+  
+  // Key documents for this sector
+  keyDocRefs: json("keyDocRefs").$type<number[]>(),
+  
+  // Known contradictions in this sector
+  knownContradictions: json("knownContradictions").$type<{
+    indicatorCode: string;
+    sources: string[];
+    description: string;
+    descriptionAr: string;
+    resolution: string;
+  }[]>(),
+  
+  // Quality notes
+  qualityNotes: text("qualityNotes"),
+  qualityNotesAr: text("qualityNotesAr"),
+  dataCoveragePercent: int("dataCoveragePercent"),
+  lastQualityReview: timestamp("lastQualityReview"),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  codeIdx: index("sector_code_idx").on(table.sectorCode),
+}));
+
+export type SectorSpine = typeof sectorSpine.$inferSelect;
+export type InsertSectorSpine = typeof sectorSpine.$inferInsert;
+
+// PolicyEventSpine: Key events timeline with citations
+export const policyEventSpine = mysqlTable("policy_event_spine", {
+  id: int("id").autoincrement().primaryKey(),
+  eventCode: varchar("eventCode", { length: 100 }).notNull().unique(),
+  
+  // Event details
+  titleEn: varchar("titleEn", { length: 500 }).notNull(),
+  titleAr: varchar("titleAr", { length: 500 }),
+  descriptionEn: text("descriptionEn"),
+  descriptionAr: text("descriptionAr"),
+  
+  // Timing
+  eventDate: date("eventDate").notNull(),
+  eventEndDate: date("eventEndDate"), // For events spanning multiple days
+  precision: mysqlEnum("precision", ["exact", "month", "quarter", "year"]).default("exact"),
+  
+  // Classification
+  eventType: mysqlEnum("eventType", [
+    "policy_change",
+    "central_bank_action",
+    "fiscal_measure",
+    "conflict_event",
+    "humanitarian_crisis",
+    "international_intervention",
+    "sanctions_action",
+    "market_event",
+    "political_event",
+    "natural_disaster",
+    "infrastructure_event",
+    "other"
+  ]).notNull(),
+  
+  // Impact
+  impactSectors: json("impactSectors").$type<string[]>(),
+  impactRegimes: json("impactRegimes").$type<("aden" | "sanaa" | "national")[]>(),
+  impactSeverity: mysqlEnum("impactSeverity", ["low", "medium", "high", "critical"]),
+  
+  // Citations (REQUIRED)
+  citations: json("citations").$type<{
+    sourceId: number;
+    sourceType: string;
+    url: string;
+    accessDate: string;
+    quote?: string;
+  }[]>().notNull(),
+  
+  // Related data
+  relatedIndicators: json("relatedIndicators").$type<number[]>(),
+  relatedDocuments: json("relatedDocuments").$type<number[]>(),
+  
+  // Verification
+  verificationStatus: mysqlEnum("verificationStatus", ["unverified", "verified", "disputed"]).default("unverified"),
+  verifiedBy: int("verifiedBy").references(() => users.id),
+  verifiedAt: timestamp("verifiedAt"),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  codeIdx: index("event_code_idx").on(table.eventCode),
+  dateIdx: index("event_date_idx").on(table.eventDate),
+  typeIdx: index("event_type_idx").on(table.eventType),
+}));
+
+export type PolicyEventSpine = typeof policyEventSpine.$inferSelect;
+export type InsertPolicyEventSpine = typeof policyEventSpine.$inferInsert;
+
+// PublicationSpine: All system-generated briefs/reports + their evidence appendices
+export const publicationSpine = mysqlTable("publication_spine", {
+  id: int("id").autoincrement().primaryKey(),
+  publicationCode: varchar("publicationCode", { length: 100 }).notNull().unique(),
+  
+  // Publication details
+  titleEn: varchar("titleEn", { length: 500 }).notNull(),
+  titleAr: varchar("titleAr", { length: 500 }),
+  abstractEn: text("abstractEn"),
+  abstractAr: text("abstractAr"),
+  
+  // Type and status
+  publicationType: mysqlEnum("publicationType", [
+    "daily_brief",
+    "weekly_digest",
+    "monthly_report",
+    "quarterly_outlook",
+    "annual_review",
+    "sector_analysis",
+    "special_report",
+    "data_release",
+    "methodology_note",
+    "correction_notice"
+  ]).notNull(),
+  status: mysqlEnum("status", ["draft", "review", "approved", "published", "archived"]).default("draft"),
+  
+  // Content files
+  contentEnUrl: text("contentEnUrl"),
+  contentArUrl: text("contentArUrl"),
+  contentEnFileKey: varchar("contentEnFileKey", { length: 255 }),
+  contentArFileKey: varchar("contentArFileKey", { length: 255 }),
+  
+  // Evidence appendix (REQUIRED for published)
+  evidencePackId: int("evidencePackId").references(() => evidencePacks.id),
+  evidenceAppendixUrl: text("evidenceAppendixUrl"),
+  citationCount: int("citationCount").default(0),
+  
+  // Coverage
+  coveragePeriodStart: date("coveragePeriodStart"),
+  coveragePeriodEnd: date("coveragePeriodEnd"),
+  sectors: json("sectors").$type<string[]>(),
+  regimes: json("regimes").$type<("aden" | "sanaa" | "national")[]>(),
+  
+  // Quality
+  confidenceGrade: mysqlEnum("confidenceGrade", ["A", "B", "C", "D"]),
+  tribunalApproved: boolean("tribunalApproved").default(false),
+  tribunalApprovedAt: timestamp("tribunalApprovedAt"),
+  tribunalNotes: text("tribunalNotes"),
+  
+  // Publishing
+  publishedAt: timestamp("publishedAt"),
+  publishedBy: int("publishedBy").references(() => users.id),
+  version: int("version").default(1).notNull(),
+  
+  // Engagement
+  viewCount: int("viewCount").default(0),
+  downloadCount: int("downloadCount").default(0),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  codeIdx: index("pub_code_idx").on(table.publicationCode),
+  typeIdx: index("pub_type_idx").on(table.publicationType),
+  statusIdx: index("pub_status_idx").on(table.status),
+  publishedIdx: index("pub_published_idx").on(table.publishedAt),
+}));
+
+export type PublicationSpine = typeof publicationSpine.$inferSelect;
+export type InsertPublicationSpine = typeof publicationSpine.$inferInsert;
+
+// ============================================================================
+// CONTINUOUS LEARNING & EVAL HARNESS (PROMPT 4/∞)
+// ============================================================================
+
+// Context Packs: Nightly build artifacts for agent context
+export const contextPacks = mysqlTable("context_packs", {
+  id: int("id").autoincrement().primaryKey(),
+  packCode: varchar("packCode", { length: 100 }).notNull(),
+  packDate: date("packDate").notNull(),
+  
+  // Pack type
+  packType: mysqlEnum("packType", ["global", "sector", "role", "entity"]).notNull(),
+  targetCode: varchar("targetCode", { length: 100 }), // sector code, role code, or entity code
+  
+  // Content hash for verification
+  contentHash: varchar("contentHash", { length: 64 }).notNull(),
+  
+  // Storage
+  s3Key: varchar("s3Key", { length: 255 }).notNull(),
+  s3Url: text("s3Url"),
+  fileSizeBytes: int("fileSizeBytes"),
+  
+  // Content summary
+  topIndicatorsCount: int("topIndicatorsCount"),
+  eventsCount: int("eventsCount"),
+  contradictionsCount: int("contradictionsCount"),
+  gapsCount: int("gapsCount"),
+  glossaryDeltasCount: int("glossaryDeltasCount"),
+  
+  // Metadata
+  generatedAt: timestamp("generatedAt").notNull(),
+  generationDurationMs: int("generationDurationMs"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  packCodeIdx: index("pack_code_idx").on(table.packCode),
+  packDateIdx: index("pack_date_idx").on(table.packDate),
+  packTypeIdx: index("pack_type_idx").on(table.packType),
+}));
+
+export type ContextPack = typeof contextPacks.$inferSelect;
+export type InsertContextPack = typeof contextPacks.$inferInsert;
+
+// Eval Runs: Track evaluation suite executions
+export const evalRuns = mysqlTable("eval_runs", {
+  id: int("id").autoincrement().primaryKey(),
+  runId: varchar("runId", { length: 100 }).notNull().unique(),
+  
+  // Run type
+  evalType: mysqlEnum("evalType", ["retrieval", "generation", "citation", "skills", "regression"]).notNull(),
+  targetScope: varchar("targetScope", { length: 100 }), // role, sector, or global
+  
+  // Results
+  totalTests: int("totalTests").notNull(),
+  passedTests: int("passedTests").notNull(),
+  failedTests: int("failedTests").notNull(),
+  skippedTests: int("skippedTests").default(0),
+  
+  // Metrics
+  recallAtK: decimal("recallAtK", { precision: 5, scale: 4 }),
+  precisionAtK: decimal("precisionAtK", { precision: 5, scale: 4 }),
+  ndcg: decimal("ndcg", { precision: 5, scale: 4 }),
+  citationCoverage: decimal("citationCoverage", { precision: 5, scale: 4 }),
+  
+  // Baseline comparison
+  baselineRunId: varchar("baselineRunId", { length: 100 }),
+  isRegression: boolean("isRegression").default(false),
+  regressionDetails: json("regressionDetails").$type<{
+    metric: string;
+    baseline: number;
+    current: number;
+    delta: number;
+  }[]>(),
+  
+  // Report
+  reportS3Key: varchar("reportS3Key", { length: 255 }),
+  reportUrl: text("reportUrl"),
+  
+  // Timing
+  startedAt: timestamp("startedAt").notNull(),
+  completedAt: timestamp("completedAt"),
+  durationMs: int("durationMs"),
+  
+  // Metadata
+  triggeredBy: varchar("triggeredBy", { length: 100 }), // nightly, ci, manual
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  runIdIdx: index("eval_run_id_idx").on(table.runId),
+  evalTypeIdx: index("eval_type_idx").on(table.evalType),
+  createdAtIdx: index("eval_created_idx").on(table.createdAt),
+}));
+
+export type EvalRun = typeof evalRuns.$inferSelect;
+export type InsertEvalRun = typeof evalRuns.$inferInsert;
+
+// Drift Metrics: Track quality drift over time
+export const driftMetrics = mysqlTable("drift_metrics", {
+  id: int("id").autoincrement().primaryKey(),
+  metricDate: date("metricDate").notNull(),
+  
+  // Drift type
+  driftType: mysqlEnum("driftType", [
+    "retrieval",
+    "evidence",
+    "translation",
+    "dashboard",
+    "model"
+  ]).notNull(),
+  
+  // Metric values
+  metricName: varchar("metricName", { length: 100 }).notNull(),
+  metricValue: decimal("metricValue", { precision: 10, scale: 4 }).notNull(),
+  previousValue: decimal("previousValue", { precision: 10, scale: 4 }),
+  baselineValue: decimal("baselineValue", { precision: 10, scale: 4 }),
+  
+  // Threshold breach
+  thresholdValue: decimal("thresholdValue", { precision: 10, scale: 4 }),
+  isBreached: boolean("isBreached").default(false),
+  breachSeverity: mysqlEnum("breachSeverity", ["warning", "critical"]),
+  
+  // Auto-generated ticket
+  ticketId: int("ticketId"),
+  
+  // Details
+  details: json("details").$type<Record<string, unknown>>(),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  dateIdx: index("drift_date_idx").on(table.metricDate),
+  typeIdx: index("drift_type_idx").on(table.driftType),
+  breachedIdx: index("drift_breached_idx").on(table.isBreached),
+}));
+
+export type DriftMetric = typeof driftMetrics.$inferSelect;
+export type InsertDriftMetric = typeof driftMetrics.$inferInsert;
+
+// ============================================================================
+// TEAMWORK ENGINE (PROMPT 4/∞)
+// ============================================================================
+
+// Agent Tasks: Track agent task assignments and handoffs
+export const agentTasks = mysqlTable("agent_tasks", {
+  id: int("id").autoincrement().primaryKey(),
+  taskId: varchar("taskId", { length: 100 }).notNull().unique(),
+  
+  // Task details
+  taskType: varchar("taskType", { length: 100 }).notNull(),
+  description: text("description"),
+  inputData: json("inputData").$type<Record<string, unknown>>(),
+  
+  // Orchestration
+  orchestrationPattern: mysqlEnum("orchestrationPattern", [
+    "planner_specialists_verifier",
+    "parallel_merge_tribunal",
+    "sequential_handoff",
+    "peer_review"
+  ]).notNull(),
+  
+  // Assignment
+  assignedAgents: json("assignedAgents").$type<{
+    agentCode: string;
+    role: string;
+    order: number;
+    status: "pending" | "in_progress" | "completed" | "failed";
+    startedAt?: string;
+    completedAt?: string;
+    output?: Record<string, unknown>;
+  }[]>(),
+  
+  // Status
+  status: mysqlEnum("status", ["pending", "in_progress", "review", "tribunal", "completed", "failed"]).default("pending"),
+  currentAgentCode: varchar("currentAgentCode", { length: 50 }),
+  
+  // Tribunal gate
+  requiresTribunal: boolean("requiresTribunal").default(true),
+  tribunalStatus: mysqlEnum("tribunalStatus", ["pending", "passed", "failed", "appealed"]),
+  tribunalVotes: json("tribunalVotes").$type<{
+    agentCode: string;
+    vote: "pass" | "fail" | "abstain";
+    reason: string;
+    timestamp: string;
+  }[]>(),
+  
+  // Output
+  finalOutput: json("finalOutput").$type<Record<string, unknown>>(),
+  outputQuality: decimal("outputQuality", { precision: 5, scale: 4 }),
+  citationCoverage: decimal("citationCoverage", { precision: 5, scale: 4 }),
+  
+  // Timing
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  startedAt: timestamp("startedAt"),
+  completedAt: timestamp("completedAt"),
+  durationMs: int("durationMs"),
+}, (table) => ({
+  taskIdIdx: index("task_id_idx").on(table.taskId),
+  statusIdx: index("task_status_idx").on(table.status),
+  tribunalIdx: index("task_tribunal_idx").on(table.tribunalStatus),
+}));
+
+export type AgentTask = typeof agentTasks.$inferSelect;
+export type InsertAgentTask = typeof agentTasks.$inferInsert;
+
+// Nightly Job Runs: Track nightly job executions
+export const nightlyJobRuns = mysqlTable("nightly_job_runs", {
+  id: int("id").autoincrement().primaryKey(),
+  runId: varchar("runId", { length: 100 }).notNull().unique(),
+  runDate: date("runDate").notNull(),
+  
+  // Job steps status
+  connectorsStatus: mysqlEnum("connectorsStatus", ["pending", "running", "completed", "failed"]).default("pending"),
+  connectorsDetails: json("connectorsDetails").$type<{
+    connector: string;
+    status: string;
+    recordsProcessed: number;
+    errors: string[];
+  }[]>(),
+  
+  indexingStatus: mysqlEnum("indexingStatus", ["pending", "running", "completed", "failed"]).default("pending"),
+  indexingDetails: json("indexingDetails").$type<{
+    indexType: string;
+    documentsIndexed: number;
+    durationMs: number;
+  }[]>(),
+  
+  contextPacksStatus: mysqlEnum("contextPacksStatus", ["pending", "running", "completed", "failed"]).default("pending"),
+  contextPacksGenerated: int("contextPacksGenerated").default(0),
+  
+  evalsStatus: mysqlEnum("evalsStatus", ["pending", "running", "completed", "failed"]).default("pending"),
+  evalRunId: varchar("evalRunId", { length: 100 }),
+  
+  driftStatus: mysqlEnum("driftStatus", ["pending", "running", "completed", "failed"]).default("pending"),
+  driftBreaches: int("driftBreaches").default(0),
+  
+  // Overall status
+  overallStatus: mysqlEnum("overallStatus", ["pending", "running", "completed", "partial", "failed"]).default("pending"),
+  
+  // Admin digest
+  digestEnUrl: text("digestEnUrl"),
+  digestArUrl: text("digestArUrl"),
+  digestSentAt: timestamp("digestSentAt"),
+  
+  // Summary metrics
+  evidenceCoveragePercent: decimal("evidenceCoveragePercent", { precision: 5, scale: 2 }),
+  newContradictions: int("newContradictions").default(0),
+  alertsGenerated: int("alertsGenerated").default(0),
+  ticketsCreated: int("ticketsCreated").default(0),
+  
+  // Timing
+  startedAt: timestamp("startedAt").notNull(),
+  completedAt: timestamp("completedAt"),
+  durationMs: int("durationMs"),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  runIdIdx: index("nightly_run_id_idx").on(table.runId),
+  runDateIdx: index("nightly_run_date_idx").on(table.runDate),
+  statusIdx: index("nightly_status_idx").on(table.overallStatus),
+}));
+
+export type NightlyJobRun = typeof nightlyJobRuns.$inferSelect;
+export type InsertNightlyJobRun = typeof nightlyJobRuns.$inferInsert;
+
+// Prompt Versions: Track prompt versioning for regression tests
+export const promptVersions = mysqlTable("prompt_versions", {
+  id: int("id").autoincrement().primaryKey(),
+  promptCode: varchar("promptCode", { length: 100 }).notNull(),
+  version: varchar("version", { length: 20 }).notNull(), // Semantic version
+  
+  // Content
+  promptContent: text("promptContent").notNull(),
+  contentHash: varchar("contentHash", { length: 64 }).notNull(),
+  
+  // Target
+  agentCode: varchar("agentCode", { length: 50 }),
+  roleCode: varchar("roleCode", { length: 50 }),
+  sectorCode: varchar("sectorCode", { length: 50 }),
+  
+  // Status
+  status: mysqlEnum("status", ["draft", "testing", "baseline", "active", "deprecated"]).default("draft"),
+  
+  // Eval results
+  lastEvalRunId: varchar("lastEvalRunId", { length: 100 }),
+  evalScore: decimal("evalScore", { precision: 5, scale: 4 }),
+  isRegressing: boolean("isRegressing").default(false),
+  
+  // Promotion
+  promotedAt: timestamp("promotedAt"),
+  promotedBy: int("promotedBy").references(() => users.id),
+  promotionNotes: text("promotionNotes"),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  promptCodeIdx: index("prompt_code_idx").on(table.promptCode),
+  versionIdx: index("prompt_version_idx").on(table.version),
+  statusIdx: index("prompt_status_idx").on(table.status),
+}));
+
+export type PromptVersion = typeof promptVersions.$inferSelect;
+export type InsertPromptVersion = typeof promptVersions.$inferInsert;
