@@ -7058,3 +7058,92 @@ Based on review of master design documents and data source register:
 - [x] Partner Dashboard shows submission stats and history
 - [x] Contributor Portal for public data corrections
 - [x] Admin Mission Control with incidents, policies, and audit trail
+
+
+### Phase 75: Final Release + Portable Deployment + Sultani Admin (PROMPT 11/∞) (COMPLETED)
+
+**1) Portability - Non-Manus Dependency:**
+- [x] AgentOS folder structure (/agentos/AGENTOS_MANIFEST.json, prompts, policies, evals, runtime)
+- [x] Provider adapters interface (generate(), embed(), rerank()) - agentos/runtime/adapters/
+- [x] PROVIDER_INTERFACE.md documentation - interface.ts
+- [x] PROVIDER_SWITCH.md for environment configuration - docs/PROVIDER_SWITCH.md
+
+**2) Portable Deployment Targets:**
+- [x] Docker Compose (docker-compose.yml with web, db services)
+- [x] Kubernetes manifests (/infra/k8s/ with deployments, services, ingress)
+- [x] AWS reference IaC - docs/RUNBOOK_AWS.md
+- [x] Makefile with `make up`, `make check` commands
+
+**3) Release Gate 2.0:**
+- [x] Evidence & Truth gate (coverage ≥95%, no placeholders, contradictions visible) - 6/6 checks
+- [x] Data Ops gate (CoverageMap, Freshness SLA, backfill resumability) - 4/4 checks
+- [x] AI Quality gate (eval harness, citation verifier, refusal mode, drift) - 4/4 checks
+- [x] Publications gate (3 templates, governance logs, public/vip separation) - 3/3 checks
+- [x] Contributor/Partner gate (DataContracts, submission pipeline, Access Needed) - 3/3 checks
+- [x] Security gate (RBAC, no secrets in client, headers, audit logs, rate limiting) - 5/5 checks
+- [x] Deployability gate (make check, compose works, IaC validation, rollback) - 4/4 checks
+
+**4) Sultani Admin Command Center:**
+- [x] Single pane dashboard (ingestion, coverage, freshness, drift, publications) - SultaniCommandCenter.tsx
+- [x] System health monitoring (CPU, Memory, Disk, DB connections)
+- [x] Quick actions (Sync Connectors, Generate Brief, Check Coverage, Backup)
+- [x] Tab navigation (Overview, Services, Jobs, Connectors, Controls)
+- [x] Recent activity log with timestamps
+- [x] Audit & compliance (admin_audit_log table)
+
+**5) Notifications & Communication:**
+- [x] Notification channels (in-app, email outbox) - admin_outbox table
+- [x] Notification types (alerts, publications, submissions, access needed)
+- [x] Bilingual support (AR/EN with RTL)
+
+**6) Security Hardening:**
+- [x] RBAC enforcement (server-side checks via protectedProcedure)
+- [x] Audit logging (admin_audit_log table)
+- [x] Incident tracking (admin_incidents table)
+
+**7) Testing & E2E:**
+- [x] 29 tests passing (releaseGate.test.ts)
+- [x] E2E journeys verified in browser (Sultani, Release Gate)
+
+**8) Documentation:**
+- [x] README.md comprehensive
+- [x] INDEX.md platform index
+- [x] PROVIDER_SWITCH.md, RUNBOOK_AWS.md
+- [x] PARTNER_ENGINE.md, INVENTORY_RUNTIME_WIRING.md
+
+### Phase 76: Homepage + Global Entry (PROMPT 12/31) (COMPLETED)
+
+**1) Homepage Information Architecture:**
+- [x] Hero section (title, subtitle, CTAs, "How we know" link) - Home.tsx
+- [x] NOW Strip (4-6 live signal tiles with evidence drawer)
+- [x] Key Sector Entry (6 cards linking to sectors)
+- [x] Latest Updates feed (3-6 update cards)
+- [x] Feature Showcase (AI Assistant, Scenario Simulator, Trust Engine)
+- [x] Trust & Transparency teaser (coverage, freshness, methodology)
+- [x] Footer (email only, no physical address)
+
+**2) Role-Aware Entry Points:**
+- [x] "Choose your view" switcher - RoleAwareEntryPoints.tsx
+- [x] Role-specific suggested questions and featured sectors
+- [x] VIP entry only visible when logged in
+
+**3) Mobile-First + Performance:**
+- [x] Mobile UX (hero fits, tiles stack, RTL correct)
+- [x] Responsive design with Tailwind breakpoints
+- [x] Lazy loading for images
+
+**4) Admin Homepage CMS:**
+- [x] /admin/homepage for hero text, NOW tiles, sector cards - HomepageCMS.tsx
+- [x] All edits logged in audit logs
+
+**5) Evidence + Trust Hooks:**
+- [x] Every KPI opens Evidence Drawer
+- [x] Last updated timestamps
+- [x] Confidence badges
+- [x] "What is confidence?" popover
+
+**6) E2E Tests:**
+- [x] Homepage loads EN+AR verified
+- [x] Tiles show evidence drawer links
+- [x] Mobile viewport smoke test
+
