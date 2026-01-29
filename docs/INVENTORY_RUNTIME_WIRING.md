@@ -1,7 +1,8 @@
 # YETO Runtime Wiring Inventory
 
-**Generated:** January 28, 2026
+**Generated:** January 29, 2025 (Updated)
 **Purpose:** Classify each subsystem as WIRED ✅, PRESENT BUT NOT WIRED ⚠️, or MISSING ❌
+**Prompt 5 Audit:** Ingestion Supermax + Backfill Spine
 
 ---
 
@@ -313,3 +314,86 @@
 ### P2 (Nice to Have)
 1. Enhance S3 signed URL generation for all document types
 2. Add more comprehensive E2E test coverage
+
+---
+
+## Prompt 5 Additions: Ingestion Supermax
+
+### Connector SDK Interface
+
+```typescript
+interface ConnectorSDK {
+  discover(): Promise<SourceMetadata>;     // List available datasets
+  fetch_raw(params: FetchParams): Promise<RawPayload>;  // Get raw data
+  normalize(raw: RawPayload): Promise<NormalizedSeries[]>;  // Transform
+  validate(series: NormalizedSeries[]): Promise<QAReport>;  // Quality check
+  load(series: NormalizedSeries[]): Promise<LoadResult>;    // Store to DB
+  index(series: NormalizedSeries[]): Promise<void>;         // Update search
+  emit_evidence(series: NormalizedSeries[]): Promise<EvidencePack>;  // Create evidence
+}
+```
+
+### Backfill Runner Configuration
+
+```typescript
+interface BackfillConfig {
+  startDate: '2010-01-01';  // Historical start
+  endDate: 'today';         // Current date
+  chunkSize: 'monthly' | 'yearly';
+  checkpointInterval: 1000; // Records between checkpoints
+  idempotent: true;         // Prevent duplicates
+  resumeOnFailure: true;    // Continue from checkpoint
+}
+```
+
+### Staleness SLA Thresholds
+
+| Connector | Warning | Critical | Auto-Ticket |
+|-----------|---------|----------|-------------|
+| cby | 1 day | 3 days | ✅ |
+| world_bank | 7 days | 14 days | ✅ |
+| unhcr | 7 days | 14 days | ✅ |
+| who | 7 days | 14 days | ✅ |
+| wfp | 7 days | 14 days | ✅ |
+| ocha_fts | 7 days | 14 days | ✅ |
+| unicef | 7 days | 14 days | ✅ |
+| undp | 14 days | 30 days | ✅ |
+
+### Document Ingestion Pipeline
+
+```
+PDF/DOCX → Text Extraction → Citation Anchors → Translation (EN↔AR) → Embeddings → Search Index
+```
+
+**Citation Anchor Types:**
+- Page number: `[doc:123:p5]`
+- Section: `[doc:123:s2.3]`
+- Table: `[doc:123:t4]`
+- Figure: `[doc:123:f7]`
+
+### Manual Ingestion Queue
+
+| Status | Action |
+|--------|--------|
+| PENDING | Awaiting admin review |
+| VALIDATED | Schema checks passed |
+| LOADED | Data stored |
+| REJECTED | Failed validation |
+
+### Partnership Outbox
+
+Draft email templates for data access requests:
+- Initial outreach
+- Follow-up reminder
+- Data sharing agreement
+- Thank you + citation promise
+
+---
+
+## Prompt 5 Stop Conditions
+
+- [ ] `/admin/coverage-map` with ≥10 flagship datasets
+- [ ] `/admin/data-freshness` showing SLA status
+- [ ] 2 backfills executed with checkpoints
+- [ ] 2 documents ingested and searchable
+- [ ] 1 manual ingestion successful
