@@ -6236,3 +6236,11 @@ Based on review of master design documents and data source register:
 - Route added to App.tsx: /company/hsa-group
 - Entities page updated with link to HSA profile
 - All TypeScript compilation errors fixed
+
+
+## Phase 67: Fix Broken Pages (Jan 29, 2026)
+
+**Tasks:**
+- [x] Fix /subscriptions redirect to /pricing (already working)
+- [x] Create comprehensive /data-policy page with bilingual support (already exists with 6 sections)
+- [x] Verify all routes are working correctly
