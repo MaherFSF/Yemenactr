@@ -101,6 +101,9 @@ import { ReviewModeBanner } from "./components/ReviewModeBanner";
 import GovernorDashboard from "./pages/GovernorDashboard";
 import DeputyGovernorDashboard from "./pages/DeputyGovernorDashboard";
 import FXDashboard from "./pages/dashboards/FXDashboard";
+import RoleLensCockpit from "./pages/RoleLensCockpit";
+import DecisionJournal from "./pages/DecisionJournal";
+import AutoBriefs from "./pages/AutoBriefs";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -192,8 +195,12 @@ function Router() {
           <Route path="/admin/visualizations" component={VisualizationBuilder} />
           <Route path="/admin/insights" component={InsightMiner} />
           <Route path="/admin/export" component={ExportBundle} />
-      <Route path={"/executive/governor"} component={GovernorDashboard} />
-      <Route path={"/executive/deputy-governor"} component={DeputyGovernorDashboard} />
+      <Route path="/executive/governor" component={GovernorDashboard} />
+      <Route path="/executive/deputy-governor" component={DeputyGovernorDashboard} />
+      {/* VIP Cockpit Routes */}
+      <Route path="/vip/cockpit" component={RoleLensCockpit} />
+      <Route path="/vip/decisions" component={DecisionJournal} />
+      <Route path="/vip/briefs" component={AutoBriefs} />
       <Route path={"/partner"} component={PartnerPortal} />
       <Route path={"/ai-assistant"} component={AIAssistant} />
       <Route path={"/scenario-simulator"} component={ScenarioSimulator} />

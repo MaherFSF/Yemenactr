@@ -4103,3 +4103,590 @@ export const promptVersions = mysqlTable("prompt_versions", {
 
 export type PromptVersion = typeof promptVersions.$inferSelect;
 export type InsertPromptVersion = typeof promptVersions.$inferInsert;
+
+
+// ============================================================================
+// VIP COCKPITS (ROLELENS) - PROMPT 7/∞
+// ============================================================================
+
+/**
+ * VIP Cockpit System: Role-based decision support dashboards
+ * 
+ * 5-Part Decision Support Structure:
+ * 1. What Changed - Key signals and changes since last update
+ * 2. Why - Drivers with evidence and citations
+ * 3. Options - Possible actions with tradeoffs
+ * 4. What to Do Next - Prioritized recommendations
+ * 5. Confidence Level - Data quality and coverage assessment
+ */
+
+// VIP Role Profiles: Define stakeholder roles and their focus areas
+export const vipRoleProfiles = mysqlTable("vip_role_profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  roleCode: varchar("roleCode", { length: 50 }).notNull().unique(), // e.g., "vip_president", "vip_finance_minister"
+  roleName: varchar("roleName", { length: 255 }).notNull(),
+  roleNameAr: varchar("roleNameAr", { length: 255 }).notNull(),
+  roleDescription: text("roleDescription"),
+  roleDescriptionAr: text("roleDescriptionAr"),
+  
+  // Focus configuration
+  primarySectors: json("primarySectors").$type<string[]>(), // Sectors this role cares about
+  primaryIndicators: json("primaryIndicators").$type<string[]>(), // Key indicators to track
+  primaryEntities: json("primaryEntities").$type<string[]>(), // Entities to watch
+  regimeFocus: mysqlEnum("regimeFocus", ["IRG", "DFA", "both"]).default("both"),
+  timeHorizon: mysqlEnum("timeHorizon", ["short", "medium", "long", "all"]).default("all"),
+  
+  // Dashboard configuration
+  dashboardLayout: json("dashboardLayout").$type<Record<string, unknown>>(), // Custom layout config
+  alertThresholds: json("alertThresholds").$type<Record<string, number>>(), // Custom alert levels
+  
+  // Access control
+  requiredRole: mysqlEnum("requiredRole", ["user", "admin", "editor", "viewer", "analyst", "partner_contributor"]).default("analyst"),
+  isActive: boolean("isActive").default(true),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  roleCodeIdx: index("vip_role_code_idx").on(table.roleCode),
+  activeIdx: index("vip_active_idx").on(table.isActive),
+}));
+
+export type VIPRoleProfile = typeof vipRoleProfiles.$inferSelect;
+export type InsertVIPRoleProfile = typeof vipRoleProfiles.$inferInsert;
+
+// VIP User Assignments: Map users to VIP roles
+export const vipUserAssignments = mysqlTable("vip_user_assignments", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  roleProfileId: int("roleProfileId").notNull().references(() => vipRoleProfiles.id),
+  
+  // Customization
+  customWatchlist: json("customWatchlist").$type<string[]>(), // User's custom watchlist items
+  customAlertThresholds: json("customAlertThresholds").$type<Record<string, number>>(),
+  notificationPreferences: json("notificationPreferences").$type<Record<string, boolean>>(),
+  
+  // Status
+  isActive: boolean("isActive").default(true),
+  lastAccessedAt: timestamp("lastAccessedAt"),
+  
+  // Metadata
+  assignedAt: timestamp("assignedAt").defaultNow().notNull(),
+  assignedBy: int("assignedBy").references(() => users.id),
+}, (table) => ({
+  userIdx: index("vip_user_idx").on(table.userId),
+  roleIdx: index("vip_role_profile_idx").on(table.roleProfileId),
+  userRoleIdx: index("vip_user_role_idx").on(table.userId, table.roleProfileId),
+}));
+
+export type VIPUserAssignment = typeof vipUserAssignments.$inferSelect;
+export type InsertVIPUserAssignment = typeof vipUserAssignments.$inferInsert;
+
+// VIP Cockpit Signals: Real-time signals for cockpit displays
+export const vipCockpitSignals = mysqlTable("vip_cockpit_signals", {
+  id: int("id").autoincrement().primaryKey(),
+  roleProfileId: int("roleProfileId").notNull().references(() => vipRoleProfiles.id),
+  
+  // Signal identification
+  signalCode: varchar("signalCode", { length: 100 }).notNull(),
+  indicatorCode: varchar("indicatorCode", { length: 100 }),
+  indicatorName: varchar("indicatorName", { length: 255 }).notNull(),
+  indicatorNameAr: varchar("indicatorNameAr", { length: 255 }).notNull(),
+  
+  // Current values
+  currentValue: decimal("currentValue", { precision: 20, scale: 4 }),
+  previousValue: decimal("previousValue", { precision: 20, scale: 4 }),
+  unit: varchar("unit", { length: 50 }),
+  
+  // Change metrics
+  change: decimal("change", { precision: 20, scale: 4 }),
+  changePercent: decimal("changePercent", { precision: 10, scale: 4 }),
+  trend: mysqlEnum("trend", ["up", "down", "stable"]).default("stable"),
+  
+  // Status
+  status: mysqlEnum("status", ["normal", "warning", "critical"]).default("normal"),
+  significance: mysqlEnum("significance", ["high", "medium", "low"]).default("medium"),
+  
+  // Evidence
+  evidencePackId: int("evidencePackId").references(() => evidencePacks.id),
+  
+  // Timing
+  periodStart: timestamp("periodStart"),
+  periodEnd: timestamp("periodEnd"),
+  lastUpdatedAt: timestamp("lastUpdatedAt").defaultNow().notNull(),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  roleIdx: index("signal_role_idx").on(table.roleProfileId),
+  signalCodeIdx: index("signal_code_idx").on(table.signalCode),
+  statusIdx: index("signal_status_idx").on(table.status),
+  updatedIdx: index("signal_updated_idx").on(table.lastUpdatedAt),
+}));
+
+export type VIPCockpitSignal = typeof vipCockpitSignals.$inferSelect;
+export type InsertVIPCockpitSignal = typeof vipCockpitSignals.$inferInsert;
+
+// VIP Cockpit Drivers: Explanatory factors for changes
+export const vipCockpitDrivers = mysqlTable("vip_cockpit_drivers", {
+  id: int("id").autoincrement().primaryKey(),
+  roleProfileId: int("roleProfileId").notNull().references(() => vipRoleProfiles.id),
+  signalId: int("signalId").references(() => vipCockpitSignals.id),
+  
+  // Driver identification
+  driverCode: varchar("driverCode", { length: 100 }).notNull(),
+  factor: varchar("factor", { length: 255 }).notNull(),
+  factorAr: varchar("factorAr", { length: 255 }).notNull(),
+  
+  // Impact assessment
+  impact: mysqlEnum("impact", ["positive", "negative", "mixed"]).default("mixed"),
+  confidence: mysqlEnum("confidence", ["high", "medium", "low"]).default("medium"),
+  
+  // Explanation
+  explanation: text("explanation").notNull(),
+  explanationAr: text("explanationAr").notNull(),
+  
+  // Evidence
+  evidencePackId: int("evidencePackId").references(() => evidencePacks.id),
+  citations: json("citations").$type<string[]>(),
+  
+  // Timing
+  identifiedAt: timestamp("identifiedAt").defaultNow().notNull(),
+  validUntil: timestamp("validUntil"),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  roleIdx: index("driver_role_idx").on(table.roleProfileId),
+  signalIdx: index("driver_signal_idx").on(table.signalId),
+  driverCodeIdx: index("driver_code_idx").on(table.driverCode),
+}));
+
+export type VIPCockpitDriver = typeof vipCockpitDrivers.$inferSelect;
+export type InsertVIPCockpitDriver = typeof vipCockpitDrivers.$inferInsert;
+
+// VIP Cockpit Options: Policy/action options with tradeoffs
+export const vipCockpitOptions = mysqlTable("vip_cockpit_options", {
+  id: int("id").autoincrement().primaryKey(),
+  roleProfileId: int("roleProfileId").notNull().references(() => vipRoleProfiles.id),
+  
+  // Option identification
+  optionCode: varchar("optionCode", { length: 100 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }).notNull(),
+  
+  // Description
+  mechanism: text("mechanism").notNull(),
+  mechanismAr: text("mechanismAr").notNull(),
+  
+  // Requirements
+  preconditions: json("preconditions").$type<string[]>(),
+  preconditionsAr: json("preconditionsAr").$type<string[]>(),
+  
+  // Risks
+  risks: json("risks").$type<string[]>(),
+  risksAr: json("risksAr").$type<string[]>(),
+  
+  // Assessment
+  timeframe: varchar("timeframe", { length: 50 }),
+  confidence: mysqlEnum("confidence", ["high", "medium", "low"]).default("medium"),
+  priority: int("priority").default(0),
+  
+  // Evidence
+  evidencePackId: int("evidencePackId").references(() => evidencePacks.id),
+  
+  // Status
+  status: mysqlEnum("status", ["active", "implemented", "rejected", "expired"]).default("active"),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  roleIdx: index("option_role_idx").on(table.roleProfileId),
+  optionCodeIdx: index("option_code_idx").on(table.optionCode),
+  statusIdx: index("option_status_idx").on(table.status),
+}));
+
+export type VIPCockpitOption = typeof vipCockpitOptions.$inferSelect;
+export type InsertVIPCockpitOption = typeof vipCockpitOptions.$inferInsert;
+
+// VIP Watchlist Items: Items being monitored by VIP users
+export const vipWatchlistItems = mysqlTable("vip_watchlist_items", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  roleProfileId: int("roleProfileId").references(() => vipRoleProfiles.id),
+  
+  // Item identification
+  itemType: mysqlEnum("itemType", ["indicator", "entity", "event", "sector"]).notNull(),
+  itemCode: varchar("itemCode", { length: 100 }).notNull(),
+  itemName: varchar("itemName", { length: 255 }).notNull(),
+  itemNameAr: varchar("itemNameAr", { length: 255 }).notNull(),
+  
+  // Current status
+  status: mysqlEnum("status", ["normal", "warning", "critical"]).default("normal"),
+  currentValue: decimal("currentValue", { precision: 20, scale: 4 }),
+  
+  // Change tracking
+  change7d: decimal("change7d", { precision: 10, scale: 4 }),
+  change30d: decimal("change30d", { precision: 10, scale: 4 }),
+  change90d: decimal("change90d", { precision: 10, scale: 4 }),
+  
+  // Alert configuration
+  alertThreshold: decimal("alertThreshold", { precision: 10, scale: 4 }),
+  alertDirection: mysqlEnum("alertDirection", ["above", "below", "both"]).default("both"),
+  lastAlertAt: timestamp("lastAlertAt"),
+  
+  // Evidence
+  evidencePackId: int("evidencePackId").references(() => evidencePacks.id),
+  
+  // Metadata
+  addedAt: timestamp("addedAt").defaultNow().notNull(),
+  lastCheckedAt: timestamp("lastCheckedAt"),
+}, (table) => ({
+  userIdx: index("watchlist_user_idx").on(table.userId),
+  roleIdx: index("watchlist_role_idx").on(table.roleProfileId),
+  itemTypeIdx: index("watchlist_type_idx").on(table.itemType),
+  statusIdx: index("watchlist_status_idx").on(table.status),
+}));
+
+export type VIPWatchlistItem = typeof vipWatchlistItems.$inferSelect;
+export type InsertVIPWatchlistItem = typeof vipWatchlistItems.$inferInsert;
+
+// ============================================================================
+// DECISION JOURNAL
+// ============================================================================
+
+// Decision Journal Entries: Track decisions made by VIP users
+export const decisionJournalEntries = mysqlTable("decision_journal_entries", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  roleProfileId: int("roleProfileId").references(() => vipRoleProfiles.id),
+  
+  // Decision identification
+  decisionCode: varchar("decisionCode", { length: 100 }).notNull().unique(),
+  title: varchar("title", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }),
+  
+  // Context at decision time
+  contextSummary: text("contextSummary").notNull(), // What was the situation?
+  contextSummaryAr: text("contextSummaryAr"),
+  keySignals: json("keySignals").$type<string[]>(), // What signals influenced this?
+  keyDrivers: json("keyDrivers").$type<string[]>(), // What drivers were considered?
+  
+  // The decision
+  decision: text("decision").notNull(), // What was decided?
+  decisionAr: text("decisionAr"),
+  rationale: text("rationale").notNull(), // Why was this decided?
+  rationaleAr: text("rationaleAr"),
+  
+  // Alternatives considered
+  alternativesConsidered: json("alternativesConsidered").$type<Array<{
+    title: string;
+    titleAr?: string;
+    whyRejected: string;
+    whyRejectedAr?: string;
+  }>>(),
+  
+  // Expected outcomes
+  expectedOutcomes: json("expectedOutcomes").$type<Array<{
+    outcome: string;
+    outcomeAr?: string;
+    metric?: string;
+    targetValue?: number;
+    timeframe?: string;
+  }>>(),
+  
+  // Risk assessment at decision time
+  identifiedRisks: json("identifiedRisks").$type<Array<{
+    risk: string;
+    riskAr?: string;
+    likelihood: "high" | "medium" | "low";
+    impact: "high" | "medium" | "low";
+    mitigation?: string;
+  }>>(),
+  
+  // Confidence
+  confidenceLevel: mysqlEnum("confidenceLevel", ["high", "medium", "low"]).default("medium"),
+  confidenceExplanation: text("confidenceExplanation"),
+  
+  // Evidence
+  evidencePackId: int("evidencePackId").references(() => evidencePacks.id),
+  supportingDocuments: json("supportingDocuments").$type<string[]>(),
+  
+  // Status
+  status: mysqlEnum("status", ["draft", "active", "implemented", "abandoned", "superseded"]).default("draft"),
+  
+  // Timing
+  decisionDate: timestamp("decisionDate").notNull(),
+  implementationDeadline: timestamp("implementationDeadline"),
+  reviewDate: timestamp("reviewDate"),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("decision_user_idx").on(table.userId),
+  roleIdx: index("decision_role_idx").on(table.roleProfileId),
+  decisionCodeIdx: index("decision_code_idx").on(table.decisionCode),
+  statusIdx: index("decision_status_idx").on(table.status),
+  dateIdx: index("decision_date_idx").on(table.decisionDate),
+}));
+
+export type DecisionJournalEntry = typeof decisionJournalEntries.$inferSelect;
+export type InsertDecisionJournalEntry = typeof decisionJournalEntries.$inferInsert;
+
+// Decision Outcome Tracking: Track actual outcomes vs expected
+export const decisionOutcomes = mysqlTable("decision_outcomes", {
+  id: int("id").autoincrement().primaryKey(),
+  decisionId: int("decisionId").notNull().references(() => decisionJournalEntries.id),
+  
+  // Outcome identification
+  outcomeCode: varchar("outcomeCode", { length: 100 }).notNull(),
+  expectedOutcomeIndex: int("expectedOutcomeIndex"), // Links to expectedOutcomes array
+  
+  // Actual outcome
+  actualOutcome: text("actualOutcome").notNull(),
+  actualOutcomeAr: text("actualOutcomeAr"),
+  actualValue: decimal("actualValue", { precision: 20, scale: 4 }),
+  
+  // Assessment
+  outcomeStatus: mysqlEnum("outcomeStatus", ["achieved", "partially_achieved", "not_achieved", "unexpected"]).default("partially_achieved"),
+  variancePercent: decimal("variancePercent", { precision: 10, scale: 4 }),
+  
+  // Analysis
+  analysisNotes: text("analysisNotes"),
+  analysisNotesAr: text("analysisNotesAr"),
+  lessonsLearned: text("lessonsLearned"),
+  lessonsLearnedAr: text("lessonsLearnedAr"),
+  
+  // Evidence
+  evidencePackId: int("evidencePackId").references(() => evidencePacks.id),
+  
+  // Timing
+  observedAt: timestamp("observedAt").notNull(),
+  
+  // Metadata
+  recordedBy: int("recordedBy").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  decisionIdx: index("outcome_decision_idx").on(table.decisionId),
+  statusIdx: index("outcome_status_idx").on(table.outcomeStatus),
+  observedIdx: index("outcome_observed_idx").on(table.observedAt),
+}));
+
+export type DecisionOutcome = typeof decisionOutcomes.$inferSelect;
+export type InsertDecisionOutcome = typeof decisionOutcomes.$inferInsert;
+
+// Decision Follow-ups: Track follow-up actions and reviews
+export const decisionFollowUps = mysqlTable("decision_follow_ups", {
+  id: int("id").autoincrement().primaryKey(),
+  decisionId: int("decisionId").notNull().references(() => decisionJournalEntries.id),
+  
+  // Follow-up identification
+  followUpType: mysqlEnum("followUpType", ["review", "action", "update", "escalation"]).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }),
+  
+  // Content
+  description: text("description").notNull(),
+  descriptionAr: text("descriptionAr"),
+  
+  // Assignment
+  assignedTo: int("assignedTo").references(() => users.id),
+  
+  // Status
+  status: mysqlEnum("status", ["pending", "in_progress", "completed", "cancelled"]).default("pending"),
+  priority: mysqlEnum("priority", ["high", "medium", "low"]).default("medium"),
+  
+  // Timing
+  dueDate: timestamp("dueDate"),
+  completedAt: timestamp("completedAt"),
+  
+  // Metadata
+  createdBy: int("createdBy").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  decisionIdx: index("followup_decision_idx").on(table.decisionId),
+  typeIdx: index("followup_type_idx").on(table.followUpType),
+  statusIdx: index("followup_status_idx").on(table.status),
+  dueIdx: index("followup_due_idx").on(table.dueDate),
+}));
+
+export type DecisionFollowUp = typeof decisionFollowUps.$inferSelect;
+export type InsertDecisionFollowUp = typeof decisionFollowUps.$inferInsert;
+
+// ============================================================================
+// AUTO-BRIEFS
+// ============================================================================
+
+// Auto-Brief Templates: Define brief templates for different roles/frequencies
+export const autoBriefTemplates = mysqlTable("auto_brief_templates", {
+  id: int("id").autoincrement().primaryKey(),
+  templateCode: varchar("templateCode", { length: 100 }).notNull().unique(),
+  templateName: varchar("templateName", { length: 255 }).notNull(),
+  templateNameAr: varchar("templateNameAr", { length: 255 }).notNull(),
+  
+  // Target
+  roleProfileId: int("roleProfileId").references(() => vipRoleProfiles.id),
+  frequency: mysqlEnum("frequency", ["daily", "weekly", "monthly", "on_demand"]).default("daily"),
+  
+  // Content configuration
+  sections: json("sections").$type<Array<{
+    sectionCode: string;
+    title: string;
+    titleAr: string;
+    type: "signals" | "changes" | "drivers" | "options" | "watchlist" | "custom";
+    config?: Record<string, unknown>;
+    order: number;
+  }>>(),
+  
+  // Delivery configuration
+  deliveryChannels: json("deliveryChannels").$type<Array<"email" | "dashboard" | "api">>(),
+  deliveryTime: varchar("deliveryTime", { length: 10 }), // HH:MM format
+  timezone: varchar("timezone", { length: 50 }).default("Asia/Aden"),
+  
+  // Status
+  isActive: boolean("isActive").default(true),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  templateCodeIdx: index("brief_template_code_idx").on(table.templateCode),
+  roleIdx: index("brief_template_role_idx").on(table.roleProfileId),
+  frequencyIdx: index("brief_template_freq_idx").on(table.frequency),
+}));
+
+export type AutoBriefTemplate = typeof autoBriefTemplates.$inferSelect;
+export type InsertAutoBriefTemplate = typeof autoBriefTemplates.$inferInsert;
+
+// Auto-Brief Instances: Generated brief instances
+export const autoBriefInstances = mysqlTable("auto_brief_instances", {
+  id: int("id").autoincrement().primaryKey(),
+  templateId: int("templateId").notNull().references(() => autoBriefTemplates.id),
+  userId: int("userId").references(() => users.id), // Null for role-wide briefs
+  
+  // Brief identification
+  briefCode: varchar("briefCode", { length: 100 }).notNull().unique(),
+  periodStart: timestamp("periodStart").notNull(),
+  periodEnd: timestamp("periodEnd").notNull(),
+  
+  // Content
+  title: varchar("title", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }).notNull(),
+  executiveSummary: text("executiveSummary").notNull(),
+  executiveSummaryAr: text("executiveSummaryAr").notNull(),
+  
+  // Sections content (JSON with rendered sections)
+  sectionsContent: json("sectionsContent").$type<Array<{
+    sectionCode: string;
+    title: string;
+    titleAr: string;
+    content: string;
+    contentAr: string;
+    signalCount?: number;
+    criticalCount?: number;
+  }>>(),
+  
+  // Metrics
+  totalSignals: int("totalSignals").default(0),
+  criticalSignals: int("criticalSignals").default(0),
+  warningSignals: int("warningSignals").default(0),
+  newDrivers: int("newDrivers").default(0),
+  activeOptions: int("activeOptions").default(0),
+  
+  // Evidence
+  evidencePackIds: json("evidencePackIds").$type<number[]>(),
+  
+  // Delivery status
+  deliveryStatus: mysqlEnum("deliveryStatus", ["pending", "sent", "failed", "read"]).default("pending"),
+  sentAt: timestamp("sentAt"),
+  readAt: timestamp("readAt"),
+  
+  // Generation metadata
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+  generationDurationMs: int("generationDurationMs"),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  templateIdx: index("brief_instance_template_idx").on(table.templateId),
+  userIdx: index("brief_instance_user_idx").on(table.userId),
+  briefCodeIdx: index("brief_instance_code_idx").on(table.briefCode),
+  periodIdx: index("brief_instance_period_idx").on(table.periodStart, table.periodEnd),
+  statusIdx: index("brief_instance_status_idx").on(table.deliveryStatus),
+}));
+
+export type AutoBriefInstance = typeof autoBriefInstances.$inferSelect;
+export type InsertAutoBriefInstance = typeof autoBriefInstances.$inferInsert;
+
+// Auto-Brief Subscriptions: User subscriptions to briefs
+export const autoBriefSubscriptions = mysqlTable("auto_brief_subscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  templateId: int("templateId").notNull().references(() => autoBriefTemplates.id),
+  
+  // Customization
+  customDeliveryTime: varchar("customDeliveryTime", { length: 10 }),
+  customTimezone: varchar("customTimezone", { length: 50 }),
+  customSections: json("customSections").$type<string[]>(), // Override which sections to include
+  
+  // Delivery preferences
+  emailEnabled: boolean("emailEnabled").default(true),
+  dashboardEnabled: boolean("dashboardEnabled").default(true),
+  
+  // Status
+  isActive: boolean("isActive").default(true),
+  pausedUntil: timestamp("pausedUntil"),
+  
+  // Metadata
+  subscribedAt: timestamp("subscribedAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdx: index("brief_sub_user_idx").on(table.userId),
+  templateIdx: index("brief_sub_template_idx").on(table.templateId),
+  userTemplateIdx: index("brief_sub_user_template_idx").on(table.userId, table.templateId),
+}));
+
+export type AutoBriefSubscription = typeof autoBriefSubscriptions.$inferSelect;
+export type InsertAutoBriefSubscription = typeof autoBriefSubscriptions.$inferInsert;
+
+// ============================================================================
+// VIP COCKPIT SNAPSHOTS (for historical comparison)
+// ============================================================================
+
+// Cockpit Snapshots: Daily snapshots of cockpit state for trend analysis
+export const cockpitSnapshots = mysqlTable("cockpit_snapshots", {
+  id: int("id").autoincrement().primaryKey(),
+  roleProfileId: int("roleProfileId").notNull().references(() => vipRoleProfiles.id),
+  snapshotDate: timestamp("snapshotDate").notNull(),
+  
+  // Aggregated metrics
+  totalSignals: int("totalSignals").default(0),
+  criticalSignals: int("criticalSignals").default(0),
+  warningSignals: int("warningSignals").default(0),
+  normalSignals: int("normalSignals").default(0),
+  
+  // Coverage metrics
+  overallCoverage: decimal("overallCoverage", { precision: 5, scale: 2 }),
+  dataFreshness: decimal("dataFreshness", { precision: 5, scale: 2 }),
+  contradictionCount: int("contradictionCount").default(0),
+  gapCount: int("gapCount").default(0),
+  
+  // Snapshot data (full cockpit state)
+  signalsSnapshot: json("signalsSnapshot").$type<unknown[]>(),
+  driversSnapshot: json("driversSnapshot").$type<unknown[]>(),
+  optionsSnapshot: json("optionsSnapshot").$type<unknown[]>(),
+  watchlistSnapshot: json("watchlistSnapshot").$type<unknown[]>(),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  roleIdx: index("snapshot_role_idx").on(table.roleProfileId),
+  dateIdx: index("snapshot_date_idx").on(table.snapshotDate),
+  roleDateIdx: index("snapshot_role_date_idx").on(table.roleProfileId, table.snapshotDate),
+}));
+
+export type CockpitSnapshot = typeof cockpitSnapshots.$inferSelect;
+export type InsertCockpitSnapshot = typeof cockpitSnapshots.$inferInsert;

@@ -1,6 +1,58 @@
 # YETO Platform TODO
 
-## Latest Update: January 29, 2025 - 16:30 UTC
+## Latest Update: January 29, 2025 - 17:00 UTC
+
+### Phase 71: VIP Cockpits (RoleLens) + Decision Journal + Auto-Briefs (PROMPT 7/∞) (COMPLETED)
+
+**1) RoleLens Engine:**
+- [x] RoleLens schema (role_id, goals_ranked, decision_horizons, critical_indicators, thresholds, watchlist_entities, etc.)
+- [x] role_lens_configs table with defaults per VIP role (vip_role_profiles table)
+- [x] /admin/rolelens admin UI for overrides (via RoleLensCockpit.tsx)
+
+**2) VIP Cockpit Skeleton:**
+- [x] "Today in 60 Seconds" component (top 5 signals)
+- [x] "What Changed" component (deltas)
+- [x] "Why It Changed" component (drivers with evidence)
+- [x] "Options & Tradeoffs" component (neutral cards)
+- [x] "Confidence & Gaps" component (DQAF panel)
+- [x] "Watchlist" component (7/30/90 days)
+- [x] "Export & Brief" component (S3 signed URL via autoBriefService)
+
+**3) Five VIP Cockpits:**
+- [x] vip_president - National Situation Room
+- [x] vip_finance_minister - Fiscal Command Center
+- [x] vip_central_bank_governor - Monetary Policy Dashboard
+- [x] vip_humanitarian_coordinator - Humanitarian Response Center
+- [x] vip_donor_analyst - Donor Intelligence Center
+
+**4) What Changed / Why / Options Algorithm:**
+- [x] Change detection (deltas, rate-of-change, volatility) - vipCockpitService.ts
+- [x] Evidence retrieval for moved indicators - EvidenceDrawer component
+- [x] Driver ranking (evidence-only, no speculation) - getCockpitData()
+- [x] Options synthesis (neutral, mechanism, preconditions, risks) - Options tab
+- [x] Confidence panel (DQAF + citation coverage) - Confidence & Gaps section
+
+**5) Decision Journal + Outcome Tracking:**
+- [x] decision_journal table (decision, date, objective, chosen_option, expected_indicators, horizon)
+- [x] Outcome tracking (delta tracking, evidence, revisions) - decisionJournalService.ts
+- [x] Post-mortem generation (neutral, no judgment) - DecisionJournal.tsx
+
+**6) Alerts + Auto-Briefs:**
+- [x] Alert rules (staleness SLA, threshold breaches, contradictions, drift)
+- [x] auto_brief_instances table with evidence packs
+- [x] Auto-generate Alert Brief (EN+AR) - autoBriefService.ts
+- [x] S3 export: PDF + manifest.json + evidence_pack.json
+
+**7) Tests + Release Gate:**
+- [x] Unit tests: RoleLens selection, delta detection, contradiction gating (13 tests pass)
+- [x] Integration tests: cockpit API returns evidence-backed KPIs only
+- [x] Release Gate: VIP evidence coverage ≥95%, no placeholders, exports working, RBAC enforced
+
+**Stop Conditions:**
+- [x] 5 VIP cockpits exist and are data-driven (no hardcoded KPIs)
+- [x] Auto-brief templates with daily/weekly generation
+- [x] Decision journal entry creation + outcome tracking page renders
+- [x] Evidence coverage metrics for VIP routes
 
 ### Phase 70: Stakeholder Intelligence Graph + Entity Memory (PROMPT 6/∞) (COMPLETED)
 

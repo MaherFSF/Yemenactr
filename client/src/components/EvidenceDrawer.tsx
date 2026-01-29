@@ -59,7 +59,7 @@ interface MissingRange {
 type DQAFStatus = "pass" | "needs_review" | "unknown";
 type ConfidenceGrade = "A" | "B" | "C" | "D";
 
-interface EvidencePack {
+export interface EvidencePack {
   id: number;
   subjectType: string;
   subjectId: string;
