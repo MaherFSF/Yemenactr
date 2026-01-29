@@ -1,26 +1,29 @@
 # YETO Platform - Build Status
 
-**Version**: v1.5.0  
-**Last Updated**: January 29, 2025 - 15:30 UTC  
-**Status**: OPERATIONAL - PROMPT 5/∞ COMPLETE
-**Control Pack Tag**: v0.5-ingestion-supermax
+**Version**: v1.6.0  
+**Last Updated**: January 29, 2025 - 16:30 UTC  
+**Status**: OPERATIONAL - PROMPT 6/∞ COMPLETE
+**Control Pack Tag**: v0.6-entity-intelligence
 
 ---
 
 ## Current Phase
 
-**Phase 69: Ingestion Supermax + Backfill Spine (Prompt 5/∞)** - Completed
+**Phase 70: Stakeholder Intelligence Graph + Entity Memory (Prompt 6/∞)** - Completed
 
-### Phase 69 Deliverables
-- Source Registry Admin UI with 20+ data sources
-- Connector SDK with 7 standardized methods
-- Backfill Runner with checkpoints (2010→today)
-- Coverage Map showing flagship datasets
-- Data Freshness/Staleness SLA dashboard
-- Document Ingestion pipeline with citation anchors
-- Manual Ingestion Queue with validation
-- Partnership Outbox with draft emails
-- QA Dashboard with 6 quality gates
+### Phase 70 Deliverables
+- Canonical Entity Model with 7 new database tables
+- Entity Ingestion Service with auto-create and evidence-link
+- Entity Directory page with search and filters
+- Entity Profile page with timeline, relationships, evidence
+- Role-aware RoleLens hooks for 5 stakeholder profiles
+- Stakeholder Engagement Engine with Access Needed Outbox
+- Entity Dossier Export (JSON + Markdown bundle)
+- 13 seeded entities (10 international + 3 Yemen national)
+- Regime split enforcement (CBY Aden vs CBY Sana'a)
+- 16 entity services tests passing
+
+**Phase 69: Ingestion Supermax + Backfill Spine (Prompt 5/∞)** - Completed
 
 **Phase 68: Living Knowledge Spine + Evals + Drift + Teamwork (Prompt 4/∞)** - Completed
 

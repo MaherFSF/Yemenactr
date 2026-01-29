@@ -80,6 +80,7 @@ import { historicalRouter } from "./routers/historicalRouter";
 import { reportsRouter } from "./routers/reportsRouter";
 import { evidenceRouter } from "./routers/evidence";
 import { bulkExportRouter } from "./routers/bulkExport";
+import { entitiesRouter } from "./routers/entities";
 import { sql, desc, eq, like, or, and, inArray } from "drizzle-orm";
 
 export const appRouter = router({
@@ -97,6 +98,7 @@ export const appRouter = router({
   reports: reportsRouter,
   evidence: router(evidenceRouter),
   bulkExport: bulkExportRouter,
+  entities: entitiesRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

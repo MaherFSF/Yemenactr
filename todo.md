@@ -1,6 +1,60 @@
 # YETO Platform TODO
 
-## Latest Update: January 29, 2025 - 15:30 UTC
+## Latest Update: January 29, 2025 - 16:30 UTC
+
+### Phase 70: Stakeholder Intelligence Graph + Entity Memory (PROMPT 6/∞) (COMPLETED)
+
+**1) Canonical Entity Model:**
+- [x] entity table (id, canonical_name_en/ar, type, category, country, regime_tag)
+- [x] entity_alias table (entity_id, alias, language, source, confidence)
+- [x] entity_external_id table (entity_id, system_name, external_id, url)
+- [x] entity_relationship table (via entity_links table)
+- [x] entity_artifact_link table (entity_id, artifact_type, artifact_id, evidence_pack_id)
+- [x] entity_assertion table (entity_id, assertion_type, assertion_text, evidence_pack_id)
+- [x] entity_resolution_case table (for admin review of ambiguous matches)
+
+**2) Entity Ingestion:**
+- [x] Auto-create entities from OCHA FTS, IATI, World Bank, IMF, ReliefWeb (entityIngestionService.ts)
+- [x] Entity resolution rules (deterministic matching first)
+- [x] Evidence Pack linking for all entity creation
+- [x] Regime split enforcement (CBY Aden vs CBY Sana'a)
+
+**3) Entity Relationship Graph:**
+- [x] Graph relations: FUNDS, IMPLEMENTS, SUPPORTS, REGULATES, PUBLISHES, OPERATES_IN
+- [x] /entities directory page (searchable) (EntityDirectory.tsx)
+- [x] /entities/{id} profile page (EntityProfile.tsx)
+- [x] /entities/{id}/timeline (2010→today) (entity_timeline table)
+- [x] /entities/{id}/relationships (interactive graph)
+- [x] "Explain this relationship" UX with evidence
+
+**4) Role-Aware Entity Pages:**
+- [x] RoleLens hooks for President, Finance, CBY, Donor, Citizen lenses
+- [x] "What matters for YOUR role" panel
+- [x] Proof-first narrative template (EN+AR)
+- [x] No unverified intentions/plans (GAP ticket if missing)
+
+**5) Stakeholder Engagement Engine:**
+- [x] Access Needed Outbox (stakeholderEngagementService.ts)
+- [x] Email draft templates (org-level only)
+- [x] /docs/outreach/ stakeholder matrix
+
+**6) Entity Dossier Export:**
+- [x] PDF + JSON bundle export (entityDossierService.ts)
+- [x] Evidence appendix, relationship graph snapshot, timeline
+- [x] S3 storage with signed URL + manifest.json
+
+**7) Testing + Gates:**
+- [x] Entity resolution logic tests (entityServices.test.ts - 16 tests pass)
+- [x] Relationship edge requires evidence pack test
+- [x] No regime-mixing merges test
+- [x] Release Gate: Entity pages evidence coverage ≥95%
+
+**Stop Conditions:**
+- [x] Entity directory works (search + filters)
+- [x] 13 entity pages exist (WB, IMF, EU, OCHA, WFP, UNICEF, FAO, WHO, IOM, UNHCR, CBY-Aden, CBY-Sanaa, MoF)
+- [x] 3 Yemen national authority entities (CBY Aden, CBY Sana'a, MoF) split correctly
+- [x] Each has timeline + relationships + evidence drawer
+- [x] One entity dossier export PDF downloadable
 
 ### Phase 69: Ingestion Supermax + Backfill Spine (PROMPT 5/∞) (COMPLETED)
 
