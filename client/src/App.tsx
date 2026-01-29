@@ -92,7 +92,9 @@ import CoverageMap from "./pages/admin/CoverageMap";
 import BackfillDashboard from "./pages/admin/BackfillDashboardPage";
 import ApiKeysPage from "./pages/admin/ApiKeysPage";
 import ReleaseGate from "./pages/admin/ReleaseGate";
+import ReportsDashboard from "./pages/admin/ReportsDashboard";
 import Sitemap from "./pages/Sitemap";
+import Reports from "./pages/Reports";
 import AllPages from "./pages/review/AllPages";
 import { ReviewModeBanner } from "./components/ReviewModeBanner";
 import GovernorDashboard from "./pages/GovernorDashboard";
@@ -150,6 +152,7 @@ function Router() {
       <Route path={"/entities/bank/:id"} component={BankDetail} />
       <Route path={"/corrections"} component={Corrections} />
       <Route path={"/publications"} component={Publications} />
+      <Route path={"/reports"} component={Reports} />
       <Route path={"/coverage"} component={CoverageScorecard} />
       <Route path={"/compliance"} component={Compliance} />
       <Route path={"/my-dashboard"} component={UserDashboard} />
@@ -183,6 +186,7 @@ function Router() {
         <Route path="/admin/api-keys" component={ApiKeysPage} />
         <Route path="/admin/release-gate" component={ReleaseGate} />
           <Route path="/admin/reports" component={ReportWorkflow} />
+          <Route path="/admin/reports-dashboard" component={ReportsDashboard} />
           <Route path="/admin/visualizations" component={VisualizationBuilder} />
           <Route path="/admin/insights" component={InsightMiner} />
           <Route path="/admin/export" component={ExportBundle} />

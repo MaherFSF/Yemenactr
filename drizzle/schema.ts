@@ -3016,3 +3016,193 @@ export const historicalSnapshots = mysqlTable("historical_snapshots", {
 
 export type HistoricalSnapshot = typeof historicalSnapshots.$inferSelect;
 export type InsertHistoricalSnapshot = typeof historicalSnapshots.$inferInsert;
+
+
+// ============================================================================
+// STEP 6: SELF-PRODUCTION REPORT ENGINE
+// ============================================================================
+
+/**
+ * Report Templates - Stores metadata about each report type
+ * Supports quarterly, annual, and on-demand report generation
+ */
+export const reportTemplates = mysqlTable("report_templates", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 100 }).notNull().unique(),
+  nameEn: varchar("nameEn", { length: 255 }).notNull(),
+  nameAr: varchar("nameAr", { length: 255 }).notNull(),
+  descriptionEn: text("descriptionEn"),
+  descriptionAr: text("descriptionAr"),
+  frequency: mysqlEnum("frequency", ["quarterly", "annual", "monthly", "on_demand"]).notNull(),
+  templateComponentPath: varchar("templateComponentPath", { length: 255 }).notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  
+  // Report configuration
+  config: json("config").$type<{
+    sections: string[];
+    indicators: string[];
+    includeCharts: boolean;
+    includeDataTables: boolean;
+    pageSize: "A4" | "Letter";
+    orientation: "portrait" | "landscape";
+  }>(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  slugIdx: index("report_template_slug_idx").on(table.slug),
+  frequencyIdx: index("report_template_frequency_idx").on(table.frequency),
+}));
+
+export type ReportTemplate = typeof reportTemplates.$inferSelect;
+export type InsertReportTemplate = typeof reportTemplates.$inferInsert;
+
+/**
+ * Report Subscribers - Users who subscribe to receive reports
+ * Supports tiered access (public, premium, vip)
+ */
+export const reportSubscribers = mysqlTable("report_subscribers", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  nameEn: varchar("nameEn", { length: 255 }),
+  nameAr: varchar("nameAr", { length: 255 }),
+  organization: varchar("organization", { length: 255 }),
+  tier: mysqlEnum("tier", ["public", "premium", "vip"]).default("public").notNull(),
+  preferredLanguage: mysqlEnum("preferredLanguage", ["en", "ar"]).default("en").notNull(),
+  
+  // Subscription preferences
+  subscribedTemplates: json("subscribedTemplates").$type<string[]>(), // Template slugs
+  
+  isActive: boolean("isActive").default(true).notNull(),
+  subscribedAt: timestamp("subscribedAt").defaultNow().notNull(),
+  unsubscribedAt: timestamp("unsubscribedAt"),
+  
+  // Verification
+  verificationToken: varchar("verificationToken", { length: 100 }),
+  isVerified: boolean("isVerified").default(false).notNull(),
+  verifiedAt: timestamp("verifiedAt"),
+}, (table) => ({
+  emailIdx: index("subscriber_email_idx").on(table.email),
+  tierIdx: index("subscriber_tier_idx").on(table.tier),
+}));
+
+export type ReportSubscriber = typeof reportSubscribers.$inferSelect;
+export type InsertReportSubscriber = typeof reportSubscribers.$inferInsert;
+
+/**
+ * Generated Reports - Stores metadata about each generated report instance
+ * Tracks generation status, S3 storage, and distribution
+ */
+export const generatedReports = mysqlTable("generated_reports", {
+  id: int("id").autoincrement().primaryKey(),
+  templateId: int("templateId").notNull().references(() => reportTemplates.id),
+  
+  // Report period
+  periodStart: timestamp("periodStart").notNull(),
+  periodEnd: timestamp("periodEnd").notNull(),
+  periodLabel: varchar("periodLabel", { length: 50 }).notNull(), // e.g., "Q1 2026", "2025 Annual"
+  
+  // Generation status
+  status: mysqlEnum("status", ["pending", "generating", "success", "failed"]).default("pending").notNull(),
+  
+  // S3 storage
+  s3KeyEn: varchar("s3KeyEn", { length: 512 }),
+  s3KeyAr: varchar("s3KeyAr", { length: 512 }),
+  s3UrlEn: varchar("s3UrlEn", { length: 1024 }),
+  s3UrlAr: varchar("s3UrlAr", { length: 1024 }),
+  
+  // File metadata
+  fileSizeBytesEn: int("fileSizeBytesEn"),
+  fileSizeBytesAr: int("fileSizeBytesAr"),
+  pageCountEn: int("pageCountEn"),
+  pageCountAr: int("pageCountAr"),
+  
+  // Generation metrics
+  generationDurationMs: int("generationDurationMs"),
+  errorMessage: text("errorMessage"),
+  
+  // Content summary
+  summary: json("summary").$type<{
+    keyFindings: string[];
+    keyFindingsAr: string[];
+    dataPointsIncluded: number;
+    chartsIncluded: number;
+    sourcesCount: number;
+  }>(),
+  
+  generatedAt: timestamp("generatedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  
+  // Who triggered it
+  triggeredBy: mysqlEnum("triggeredBy", ["scheduled", "admin", "api"]).default("scheduled").notNull(),
+  triggeredByUserId: int("triggeredByUserId").references(() => users.id),
+}, (table) => ({
+  templateIdx: index("generated_report_template_idx").on(table.templateId),
+  statusIdx: index("generated_report_status_idx").on(table.status),
+  periodIdx: index("generated_report_period_idx").on(table.periodStart, table.periodEnd),
+  createdIdx: index("generated_report_created_idx").on(table.createdAt),
+}));
+
+export type GeneratedReport = typeof generatedReports.$inferSelect;
+export type InsertGeneratedReport = typeof generatedReports.$inferInsert;
+
+/**
+ * Report Distribution Log - Audit trail for every report email sent
+ * Tracks delivery status and errors
+ */
+export const reportDistributionLog = mysqlTable("report_distribution_log", {
+  id: int("id").autoincrement().primaryKey(),
+  reportId: int("reportId").notNull().references(() => generatedReports.id, { onDelete: "cascade" }),
+  subscriberId: int("subscriberId").notNull().references(() => reportSubscribers.id, { onDelete: "cascade" }),
+  
+  // Delivery details
+  emailAddress: varchar("emailAddress", { length: 255 }).notNull(),
+  language: mysqlEnum("language", ["en", "ar"]).notNull(),
+  
+  // Status tracking
+  sentAt: timestamp("sentAt").defaultNow().notNull(),
+  emailStatus: mysqlEnum("emailStatus", ["queued", "sent", "delivered", "bounced", "failed"]).default("queued").notNull(),
+  
+  // External tracking
+  sesMessageId: varchar("sesMessageId", { length: 255 }),
+  
+  // Error handling
+  errorMessage: text("errorMessage"),
+  retryCount: int("retryCount").default(0).notNull(),
+  lastRetryAt: timestamp("lastRetryAt"),
+}, (table) => ({
+  reportIdx: index("distribution_report_idx").on(table.reportId),
+  subscriberIdx: index("distribution_subscriber_idx").on(table.subscriberId),
+  statusIdx: index("distribution_status_idx").on(table.emailStatus),
+  sentIdx: index("distribution_sent_idx").on(table.sentAt),
+}));
+
+export type ReportDistributionLog = typeof reportDistributionLog.$inferSelect;
+export type InsertReportDistributionLog = typeof reportDistributionLog.$inferInsert;
+
+/**
+ * Report Generation Schedule - Tracks scheduled report generation jobs
+ */
+export const reportSchedule = mysqlTable("report_schedule", {
+  id: int("id").autoincrement().primaryKey(),
+  templateId: int("templateId").notNull().references(() => reportTemplates.id),
+  
+  // Schedule configuration
+  cronExpression: varchar("cronExpression", { length: 100 }).notNull(), // e.g., "0 0 1 1,4,7,10 *" for quarterly
+  timezone: varchar("timezone", { length: 50 }).default("UTC").notNull(),
+  
+  // Next run
+  nextRunAt: timestamp("nextRunAt").notNull(),
+  lastRunAt: timestamp("lastRunAt"),
+  lastRunStatus: mysqlEnum("lastRunStatus", ["success", "failed", "skipped"]),
+  
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  templateIdx: index("schedule_template_idx").on(table.templateId),
+  nextRunIdx: index("schedule_next_run_idx").on(table.nextRunAt),
+}));
+
+export type ReportSchedule = typeof reportSchedule.$inferSelect;
+export type InsertReportSchedule = typeof reportSchedule.$inferInsert;

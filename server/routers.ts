@@ -77,6 +77,7 @@ import { backfillRouter } from "./routers/backfillRouter";
 import { apiKeysRouter } from "./routers/apiKeysRouter";
 import { storageRouter } from "./routers/storageRouter";
 import { historicalRouter } from "./routers/historicalRouter";
+import { reportsRouter } from "./routers/reportsRouter";
 import { sql, desc, eq, like, or, and, inArray } from "drizzle-orm";
 
 export const appRouter = router({
@@ -91,6 +92,7 @@ export const appRouter = router({
   apiKeys: apiKeysRouter,
   storage: storageRouter,
   historical: historicalRouter,
+  reports: reportsRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
@@ -658,73 +660,7 @@ export const appRouter = router({
       }),
   }),
 
-  reports: router({
-    // Get available report templates
-    getTemplates: publicProcedure
-      .query(async () => {
-        const { REPORT_TEMPLATES } = await import('./services/reportGenerator');
-        return Object.entries(REPORT_TEMPLATES).map(([key, template]) => ({
-          id: key,
-          titleEn: template.titleEn,
-          titleAr: template.titleAr,
-          sections: template.sections,
-          defaultIndicators: template.defaultIndicators,
-        }));
-      }),
-
-    // Generate a custom report
-    generate: publicProcedure
-      .input(z.object({
-        type: z.enum(["monthly", "quarterly", "yearly", "custom"]),
-        title: z.string().optional(),
-        titleAr: z.string().optional(),
-        dateStart: z.date(),
-        dateEnd: z.date(),
-        sectors: z.array(z.string()).default([]),
-        indicators: z.array(z.string()).default([]),
-        regimeTag: z.enum(["aden_irg", "sanaa_defacto", "both"]).default("both"),
-        includeCharts: z.boolean().default(true),
-        includeComparison: z.boolean().default(true),
-        includeSources: z.boolean().default(true),
-        language: z.enum(["en", "ar", "both"]).default("en"),
-      }))
-      .mutation(async ({ input }) => {
-        const { reportGeneratorService, REPORT_TEMPLATES } = await import('./services/reportGenerator');
-        const template = input.type !== "custom" ? REPORT_TEMPLATES[input.type] : null;
-        
-        const config = {
-          type: input.type,
-          title: input.title || template?.titleEn || "Custom Report",
-          titleAr: input.titleAr || template?.titleAr || "تقرير مخصص",
-          dateStart: input.dateStart,
-          dateEnd: input.dateEnd,
-          sectors: input.sectors,
-          indicators: input.indicators.length > 0 ? input.indicators : (template?.defaultIndicators || []),
-          regimeTag: input.regimeTag,
-          includeCharts: input.includeCharts,
-          includeComparison: input.includeComparison,
-          includeSources: input.includeSources,
-          language: input.language,
-        };
-
-        return await reportGeneratorService.generateReport(config);
-      }),
-
-    // Get available indicators for report building
-    getAvailableIndicators: publicProcedure
-      .input(z.object({
-        sector: z.string().optional(),
-      }))
-      .query(async () => {
-        const db = await getDb();
-        if (!db) return [];
-
-        const [rows] = await db.execute(
-          sql`SELECT code, nameEn, nameAr, unit, sector, frequency FROM indicators WHERE isActive = 1 ORDER BY sector, nameEn`
-        );
-        return rows as unknown as any[];
-      }),
-  }),
+  // Reports router moved to ./routers/reportsRouter.ts
 
   // ============================================================================
   // AUTO-PUBLICATION ENGINE

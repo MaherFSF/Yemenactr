@@ -405,3 +405,449 @@ export class ReportGeneratorService {
 }
 
 export const reportGeneratorService = new ReportGeneratorService();
+
+
+// ============================================================================
+// STEP 6: AUTONOMOUS REPORT GENERATION WITH PDF & S3
+// ============================================================================
+
+import { storagePut } from "../storage";
+
+export interface ReportGenerationInput {
+  templateSlug: string;
+  periodStart: Date;
+  periodEnd: Date;
+  language: "en" | "ar";
+  triggeredBy: "scheduled" | "admin" | "api";
+  triggeredByUserId?: number;
+}
+
+export interface ReportGenerationResult {
+  success: boolean;
+  reportId?: string;
+  s3Key?: string;
+  s3Url?: string;
+  fileSizeBytes?: number;
+  pageCount?: number;
+  generationDurationMs?: number;
+  error?: string;
+}
+
+/**
+ * Generate HTML content for PDF conversion
+ */
+function generateReportHTML(report: GeneratedReport, language: "en" | "ar"): string {
+  const isRTL = language === "ar";
+  const dir = isRTL ? "rtl" : "ltr";
+  const fontFamily = isRTL ? "'Noto Sans Arabic', Arial, sans-serif" : "'Inter', Arial, sans-serif";
+  
+  const title = language === "ar" ? report.config.titleAr : report.config.title;
+  
+  const sectionsHTML = report.sections.map(section => {
+    const sectionTitle = language === "ar" ? section.titleAr : section.titleEn;
+    return `
+      <div class="section">
+        <h2>${sectionTitle}</h2>
+        <div class="section-content">
+          ${renderSectionContent(section, language)}
+        </div>
+      </div>
+    `;
+  }).join("");
+  
+  return `
+<!DOCTYPE html>
+<html lang="${language}" dir="${dir}">
+<head>
+  <meta charset="UTF-8">
+  <title>${title}</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: ${fontFamily};
+      font-size: 11pt;
+      line-height: 1.6;
+      color: #1a1a1a;
+      direction: ${dir};
+      padding: 40px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid #1e3a5f;
+    }
+    .header h1 {
+      font-size: 24pt;
+      color: #1e3a5f;
+      margin-bottom: 8px;
+    }
+    .header .subtitle {
+      font-size: 14pt;
+      color: #666;
+    }
+    .header .period {
+      font-size: 16pt;
+      color: #1e3a5f;
+      font-weight: bold;
+      margin-top: 12px;
+    }
+    .header .generated {
+      font-size: 10pt;
+      color: #888;
+      margin-top: 8px;
+    }
+    .section {
+      margin-bottom: 30px;
+      page-break-inside: avoid;
+    }
+    .section h2 {
+      font-size: 16pt;
+      color: #1e3a5f;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #ddd;
+    }
+    .section-content {
+      text-align: justify;
+    }
+    .key-finding {
+      background: #f5f7fa;
+      border-${isRTL ? "right" : "left"}: 4px solid #1e3a5f;
+      padding: 12px 16px;
+      margin: 8px 0;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+    .data-table th, .data-table td {
+      border: 1px solid #ddd;
+      padding: 8px 12px;
+      text-align: ${isRTL ? "right" : "left"};
+    }
+    .data-table th {
+      background: #f5f7fa;
+      font-weight: bold;
+    }
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin: 20px 0;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 24pt;
+      font-weight: bold;
+      color: #1e3a5f;
+    }
+    .stat-label {
+      font-size: 10pt;
+      color: #666;
+    }
+    .footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+      font-size: 9pt;
+      color: #666;
+      text-align: center;
+    }
+    .source-citation {
+      font-size: 9pt;
+      color: #666;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>${title}</h1>
+    <div class="subtitle">${isRTL ? "مرصد اليمن للشفافية الاقتصادية" : "Yemen Economic Transparency Observatory"}</div>
+    <div class="period">${report.metadata.dateRange.start} - ${report.metadata.dateRange.end}</div>
+    <div class="generated">${isRTL ? "تم الإنشاء:" : "Generated:"} ${report.generatedAt.toLocaleDateString(isRTL ? "ar-SA" : "en-US")}</div>
+  </div>
+  
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">${report.metadata.totalDataPoints}</div>
+      <div class="stat-label">${isRTL ? "نقاط البيانات" : "Data Points"}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">${report.metadata.sources.length}</div>
+      <div class="stat-label">${isRTL ? "المصادر" : "Sources"}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">${report.metadata.totalIndicators}</div>
+      <div class="stat-label">${isRTL ? "المؤشرات" : "Indicators"}</div>
+    </div>
+  </div>
+  
+  ${sectionsHTML}
+  
+  <div class="footer">
+    <p>${isRTL 
+      ? "© 2026 مرصد اليمن للشفافية الاقتصادية (YETO). جميع الحقوق محفوظة."
+      : "© 2026 Yemen Economic Transparency Observatory (YETO). All rights reserved."
+    }</p>
+    <p>${isRTL
+      ? "هذا التقرير تم إنشاؤه تلقائياً من بيانات موثقة من مصادر متعددة."
+      : "This report was automatically generated from verified data from multiple sources."
+    }</p>
+  </div>
+</body>
+</html>
+  `;
+}
+
+/**
+ * Render section content based on type
+ */
+function renderSectionContent(section: ReportSection, language: "en" | "ar"): string {
+  const isArabic = language === "ar";
+  
+  switch (section.type) {
+    case "summary":
+      return renderSummarySection(section.data, isArabic);
+    case "chart":
+      return renderChartSection(section.data, isArabic);
+    case "comparison":
+      return renderComparisonSection(section.data, isArabic);
+    case "events":
+      return renderEventsSection(section.data, isArabic);
+    case "sources":
+      return renderSourcesSection(section.data, isArabic);
+    default:
+      return "<p>Section content not available</p>";
+  }
+}
+
+function renderSummarySection(data: any, isArabic: boolean): string {
+  if (!data.keyFindings || data.keyFindings.length === 0) {
+    return `<p>${isArabic ? "لا توجد بيانات متاحة" : "No data available"}</p>`;
+  }
+  
+  return data.keyFindings.map((finding: any) => `
+    <div class="key-finding">
+      <strong>${isArabic ? finding.nameAr : finding.nameEn}</strong>: 
+      ${finding.value} ${finding.unit}
+      <span class="source-citation">(${finding.regime}, ${finding.source})</span>
+    </div>
+  `).join("");
+}
+
+function renderChartSection(data: any, isArabic: boolean): string {
+  if (!data.charts || data.charts.length === 0) {
+    return `<p>${isArabic ? "لا توجد رسوم بيانية متاحة" : "No charts available"}</p>`;
+  }
+  
+  return data.charts.map((chart: any) => `
+    <div style="margin: 20px 0; padding: 16px; background: #f9f9f9; border-radius: 8px;">
+      <h3>${isArabic ? chart.nameAr : chart.nameEn}</h3>
+      <table class="data-table">
+        <tr>
+          <th>${isArabic ? "السنة" : "Year"}</th>
+          <th>${isArabic ? "عدن" : "Aden"}</th>
+          <th>${isArabic ? "صنعاء" : "Sana'a"}</th>
+        </tr>
+        ${chart.data.map((row: any) => `
+          <tr>
+            <td>${row.year}</td>
+            <td>${row.aden ?? "-"}</td>
+            <td>${row.sanaa ?? "-"}</td>
+          </tr>
+        `).join("")}
+      </table>
+    </div>
+  `).join("");
+}
+
+function renderComparisonSection(data: any, isArabic: boolean): string {
+  if (!data.comparisons || data.comparisons.length === 0) {
+    return `<p>${isArabic ? "لا توجد مقارنات متاحة" : "No comparisons available"}</p>`;
+  }
+  
+  return `
+    <table class="data-table">
+      <tr>
+        <th>${isArabic ? "المؤشر" : "Indicator"}</th>
+        <th>${isArabic ? "عدن" : "Aden"}</th>
+        <th>${isArabic ? "صنعاء" : "Sana'a"}</th>
+        <th>${isArabic ? "الفجوة" : "Gap"}</th>
+      </tr>
+      ${data.comparisons.map((comp: any) => `
+        <tr>
+          <td>${isArabic ? comp.nameAr : comp.nameEn}</td>
+          <td>${comp.aden.value ?? "-"} ${comp.unit}</td>
+          <td>${comp.sanaa.value ?? "-"} ${comp.unit}</td>
+          <td>${comp.gapPercent ? comp.gapPercent.toFixed(1) + "%" : "-"}</td>
+        </tr>
+      `).join("")}
+    </table>
+  `;
+}
+
+function renderEventsSection(data: any, isArabic: boolean): string {
+  if (!data.events || data.events.length === 0) {
+    return `<p>${isArabic ? "لم يتم تسجيل أحداث خلال هذه الفترة" : "No events recorded during this period"}</p>`;
+  }
+  
+  return data.events.map((event: any) => `
+    <div style="margin: 12px 0; padding: 12px; border-left: 3px solid #1e3a5f;">
+      <strong>${new Date(event.date).toLocaleDateString(isArabic ? "ar-SA" : "en-US")}</strong>: 
+      ${isArabic ? event.titleAr : event.titleEn}
+      <p style="margin-top: 4px; font-size: 10pt; color: #666;">
+        ${isArabic ? event.descriptionAr : event.descriptionEn}
+      </p>
+    </div>
+  `).join("");
+}
+
+function renderSourcesSection(data: any, isArabic: boolean): string {
+  const methodologyText = isArabic ? data.methodology?.ar : data.methodology?.en;
+  
+  return `
+    <p style="margin-bottom: 16px;">${methodologyText || ""}</p>
+    <h3>${isArabic ? "المصادر المستخدمة" : "Sources Used"}</h3>
+    <ul>
+      ${(data.sources || []).map((source: any) => `
+        <li>${source.publisher}${source.url ? ` - <a href="${source.url}">${source.url}</a>` : ""}</li>
+      `).join("")}
+    </ul>
+  `;
+}
+
+/**
+ * Generate report and upload to S3
+ */
+export async function generateAndUploadReport(
+  input: ReportGenerationInput
+): Promise<ReportGenerationResult> {
+  const startTime = Date.now();
+  
+  try {
+    // Get template configuration
+    const template = input.templateSlug === "quarterly-economic-outlook" 
+      ? REPORT_TEMPLATES.quarterly
+      : input.templateSlug === "annual-economic-review"
+        ? REPORT_TEMPLATES.yearly
+        : REPORT_TEMPLATES.monthly;
+    
+    // Build report config
+    const config: ReportConfig = {
+      type: input.templateSlug.includes("annual") ? "yearly" 
+        : input.templateSlug.includes("quarterly") ? "quarterly" 
+        : "monthly",
+      title: template.titleEn,
+      titleAr: template.titleAr,
+      dateStart: input.periodStart,
+      dateEnd: input.periodEnd,
+      sectors: [],
+      indicators: template.defaultIndicators,
+      regimeTag: "both",
+      includeCharts: true,
+      includeComparison: true,
+      includeSources: true,
+      language: input.language === "ar" ? "ar" : "en",
+    };
+    
+    // Generate report using existing service
+    const report = await reportGeneratorService.generateReport(config);
+    
+    // Generate HTML
+    const html = generateReportHTML(report, input.language);
+    
+    // Convert to PDF buffer (HTML for now, can integrate puppeteer later)
+    const pdfBuffer = Buffer.from(html, "utf-8");
+    
+    // Generate S3 key
+    const year = input.periodStart.getFullYear();
+    const periodLabel = getPeriodLabel(input.periodStart, input.periodEnd, config.type);
+    const s3Key = `reports/${year}/${input.templateSlug}/${periodLabel}-${input.language}.html`;
+    
+    // Upload to S3
+    const { url } = await storagePut(s3Key, pdfBuffer, "text/html");
+    
+    const generationDurationMs = Date.now() - startTime;
+    
+    return {
+      success: true,
+      reportId: report.id,
+      s3Key,
+      s3Url: url,
+      fileSizeBytes: pdfBuffer.length,
+      pageCount: report.sections.length + 2,
+      generationDurationMs,
+    };
+  } catch (error) {
+    console.error("[ReportGenerator] Error generating report:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+      generationDurationMs: Date.now() - startTime,
+    };
+  }
+}
+
+/**
+ * Get period label based on dates
+ */
+function getPeriodLabel(start: Date, end: Date, type: string): string {
+  const year = start.getFullYear();
+  const month = start.getMonth();
+  
+  if (type === "quarterly") {
+    const quarter = Math.floor(month / 3) + 1;
+    return `Q${quarter}-${year}`;
+  } else if (type === "yearly") {
+    return `${year}-annual`;
+  } else {
+    const monthNames = ["jan", "feb", "mar", "apr", "may", "jun",
+      "jul", "aug", "sep", "oct", "nov", "dec"];
+    return `${monthNames[month]}-${year}`;
+  }
+}
+
+/**
+ * Generate quarterly report with S3 upload
+ */
+export async function generateQuarterlyReportWithUpload(
+  year: number,
+  quarter: 1 | 2 | 3 | 4,
+  language: "en" | "ar" = "en"
+): Promise<ReportGenerationResult> {
+  const quarterStartMonth = (quarter - 1) * 3;
+  const periodStart = new Date(year, quarterStartMonth, 1);
+  const periodEnd = new Date(year, quarterStartMonth + 3, 0);
+  
+  return generateAndUploadReport({
+    templateSlug: "quarterly-economic-outlook",
+    periodStart,
+    periodEnd,
+    language,
+    triggeredBy: "scheduled",
+  });
+}
+
+/**
+ * Generate annual report with S3 upload
+ */
+export async function generateAnnualReportWithUpload(
+  year: number,
+  language: "en" | "ar" = "en"
+): Promise<ReportGenerationResult> {
+  const periodStart = new Date(year, 0, 1);
+  const periodEnd = new Date(year, 11, 31);
+  
+  return generateAndUploadReport({
+    templateSlug: "annual-economic-review",
+    periodStart,
+    periodEnd,
+    language,
+    triggeredBy: "scheduled",
+  });
+}
