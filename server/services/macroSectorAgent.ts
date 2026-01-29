@@ -14,7 +14,7 @@ import {
   sectorContextPacks,
   sectorBriefs,
   sectorAlerts,
-  indicatorSeries,
+  timeSeries,
   dataUpdates,
   libraryDocuments,
   evidencePacks,
@@ -225,12 +225,12 @@ async function fetchMacroKpis(asOfDate: Date): Promise<MacroKpi[]> {
   
   for (const indicator of MACRO_INDICATORS) {
     try {
-      // Fetch latest value from indicator_series
+      // Fetch latest value from time_series
       const series = await db
         .select()
-        .from(indicatorSeries)
-        .where(eq(indicatorSeries.indicatorCode, indicator.code))
-        .orderBy(desc(indicatorSeries.periodEnd))
+        .from(timeSeries)
+        .where(eq(timeSeries.indicatorCode, indicator.code))
+        .orderBy(desc(timeSeries.date))
         .limit(2);
       
       const latest = series[0];
@@ -246,8 +246,8 @@ async function fetchMacroKpis(asOfDate: Date): Promise<MacroKpi[]> {
           delta: previous?.value && latest.value 
             ? ((parseFloat(String(latest.value)) - parseFloat(String(previous.value))) / parseFloat(String(previous.value))) * 100
             : undefined,
-          deltaPeriod: previous?.periodEnd?.toString(),
-          lastUpdated: latest.periodEnd?.toString() || new Date().toISOString(),
+          deltaPeriod: previous?.date?.toString(),
+          lastUpdated: latest.date?.toString() || new Date().toISOString(),
           confidence: indicator.isProxy ? 'proxy' : 'medium',
           isProxy: indicator.isProxy,
           proxyLabel: indicator.isProxy ? `Based on ${indicator.titleEn} methodology` : undefined,
@@ -289,12 +289,12 @@ async function fetchMacroCharts(startYear: number, endYear: number): Promise<Mac
     try {
       const series = await db
         .select()
-        .from(indicatorSeries)
-        .where(eq(indicatorSeries.indicatorCode, config.code))
-        .orderBy(indicatorSeries.periodEnd);
+        .from(timeSeries)
+        .where(eq(timeSeries.indicatorCode, config.code))
+        .orderBy(timeSeries.date);
       
       const data = series.map(s => ({
-        year: new Date(s.periodEnd || '').getFullYear(),
+        year: new Date(s.date || '').getFullYear(),
         value: s.value ? parseFloat(String(s.value)) : null,
         source: s.sourceId?.toString()
       }));
@@ -765,13 +765,13 @@ async function checkFreshnessSLA(): Promise<void> {
     try {
       const latest = await db
         .select()
-        .from(indicatorSeries)
-        .where(eq(indicatorSeries.indicatorCode, code))
-        .orderBy(desc(indicatorSeries.periodEnd))
+        .from(timeSeries)
+        .where(eq(timeSeries.indicatorCode, code))
+        .orderBy(desc(timeSeries.date))
         .limit(1);
       
       if (latest.length > 0) {
-        const lastUpdate = new Date(latest[0].periodEnd || '');
+        const lastUpdate = new Date(latest[0].date || '');
         const daysSince = Math.floor((Date.now() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24));
         
         if (daysSince > maxDays) {

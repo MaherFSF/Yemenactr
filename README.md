@@ -17,9 +17,9 @@
 <p align="center">
   <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript" alt="TypeScript">
   <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react" alt="React">
-  <img src="https://img.shields.io/badge/Tests-380%2B_Passing-brightgreen?style=flat-square" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-432%2B_Passing-brightgreen?style=flat-square" alt="Tests">
   <img src="https://img.shields.io/badge/Data_Points-3%2C000%2B-blue?style=flat-square" alt="Data Points">
-  <img src="https://img.shields.io/badge/Sources-47%2B-orange?style=flat-square" alt="Sources">
+  <img src="https://img.shields.io/badge/Sources-225%2B-orange?style=flat-square" alt="Sources">
   <img src="https://img.shields.io/badge/License-Proprietary-C0A030?style=flat-square" alt="License">
 </p>
 
@@ -169,9 +169,7 @@ YETO's AI assistant operates under strict governance rules:
 </tr>
 </table>
 
-### Data Sources (47+ Integrated)
-
-| Category | Sources | Update Frequency |
+| **Data Sources (225+ Integrated)**| Category | Sources | Update Frequency |
 |----------|---------|------------------|
 | **International Financial** | World Bank WDI, IMF WEO, IFS | Monthly/Quarterly |
 | **UN Agencies** | OCHA FTS, UNHCR, WFP, UNICEF, WHO | Weekly/Monthly |
@@ -279,7 +277,7 @@ pnpm dev
 ```bash
 pnpm dev          # Start development server
 pnpm build        # Build for production
-pnpm test         # Run unit tests (380+ tests)
+pnpm test         # Run unit tests (432+ tests)
 pnpm test:e2e     # Run E2E tests
 pnpm typecheck    # TypeScript type checking
 pnpm lint         # ESLint code linting

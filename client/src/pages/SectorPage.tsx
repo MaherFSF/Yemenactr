@@ -11,6 +11,9 @@ import PricesIntelligenceWall from "@/components/sectors/PricesIntelligenceWall"
 import BankingIntelligenceWall from "@/components/sectors/BankingIntelligenceWall";
 import TradeIntelligenceWall from "@/components/sectors/TradeIntelligenceWall";
 import HumanitarianIntelligenceWall from "@/components/sectors/HumanitarianIntelligenceWall";
+import EnergyIntelligenceWall from "@/components/sectors/EnergyIntelligenceWall";
+import FoodSecurityIntelligenceWall from "@/components/sectors/FoodSecurityIntelligenceWall";
+import LaborMarketIntelligenceWall from "@/components/sectors/LaborMarketIntelligenceWall";
 
 // Sectors that use specialized intelligence wall components
 const SPECIALIZED_SECTORS: Record<string, React.ComponentType<any>> = {
@@ -30,6 +33,17 @@ const SPECIALIZED_SECTORS: Record<string, React.ComponentType<any>> = {
   'humanitarian': HumanitarianIntelligenceWall,
   'aid': HumanitarianIntelligenceWall,
   'relief': HumanitarianIntelligenceWall,
+  'energy': EnergyIntelligenceWall,
+  'fuel': EnergyIntelligenceWall,
+  'electricity': EnergyIntelligenceWall,
+  'power': EnergyIntelligenceWall,
+  'food-security': FoodSecurityIntelligenceWall,
+  'food': FoodSecurityIntelligenceWall,
+  'agriculture': FoodSecurityIntelligenceWall,
+  'labor': LaborMarketIntelligenceWall,
+  'employment': LaborMarketIntelligenceWall,
+  'jobs': LaborMarketIntelligenceWall,
+  'workforce': LaborMarketIntelligenceWall,
 };
 
 export default function SectorPage() {
