@@ -147,7 +147,7 @@ export default function Reports() {
               {isArabic ? "مركز التقارير" : "Reports Center"}
             </Badge>
             
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
               {isArabic ? "التقارير الاقتصادية" : "Economic Reports"}
             </h1>
             
@@ -265,21 +265,21 @@ export default function Reports() {
           </div>
           
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/10">
-              <div className="text-3xl font-bold">{reports?.length || 0}</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mt-8 sm:mt-12">
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-white/10">
+              <div className="text-2xl sm:text-3xl font-bold">{reports?.length || 0}</div>
               <div className="text-sm text-emerald-200">{isArabic ? "تقرير متاح" : "Reports Available"}</div>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/10">
-              <div className="text-3xl font-bold">{templates?.length || 0}</div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-white/10">
+              <div className="text-2xl sm:text-3xl font-bold">{templates?.length || 0}</div>
               <div className="text-sm text-emerald-200">{isArabic ? "نوع تقرير" : "Report Types"}</div>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/10">
-              <div className="text-3xl font-bold">2</div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-white/10">
+              <div className="text-2xl sm:text-3xl font-bold">2</div>
               <div className="text-sm text-emerald-200">{isArabic ? "لغات متاحة" : "Languages"}</div>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/10">
-              <div className="text-3xl font-bold">2010</div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-white/10">
+              <div className="text-2xl sm:text-3xl font-bold">2010</div>
               <div className="text-sm text-emerald-200">{isArabic ? "بداية التغطية" : "Coverage Start"}</div>
             </div>
           </div>

@@ -170,10 +170,10 @@ export default function Dashboard() {
       {/* Filters Bar - Matching mockup */}
       <div className="bg-white dark:bg-gray-900 border-b py-4">
         <div className="container">
-          <div className={`flex flex-wrap items-center gap-4 ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
+          <div className={`flex flex-wrap items-center gap-2 sm:gap-4 ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
             {/* Indicator Selector */}
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 hidden sm:inline">
                 {language === "ar" ? "اختر المؤشر" : "Select Indicator"}
               </span>
               <Select value={selectedIndicator} onValueChange={setSelectedIndicator}>
@@ -191,7 +191,7 @@ export default function Dashboard() {
 
             {/* Time Period */}
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 hidden sm:inline">
                 {language === "ar" ? "الفترة الزمنية" : "Time Period"}
               </span>
               <Button variant="outline" size="sm" className="gap-2">
@@ -203,7 +203,7 @@ export default function Dashboard() {
 
             {/* Regime Toggle - Matching mockup exactly */}
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 hidden sm:inline">
                 {language === "ar" ? "النظام" : "Regime"}
               </span>
               <div className="flex rounded-lg border overflow-hidden">
@@ -242,7 +242,7 @@ export default function Dashboard() {
 
             {/* Granularity */}
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 hidden sm:inline">
                 {language === "ar" ? "التفصيل" : "Granularity"}
               </span>
               <div className="flex rounded-lg border overflow-hidden">
@@ -298,7 +298,7 @@ export default function Dashboard() {
 
       {/* Main Content - 3 Column Layout matching mockup */}
       <div className="container py-6">
-        <div className="grid lg:grid-cols-[280px_1fr_280px] gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[280px_1fr_280px] gap-4 md:gap-6">
           
           {/* Left Sidebar */}
           <div className={`space-y-6 ${language === 'ar' ? 'lg:order-3' : ''}`}>

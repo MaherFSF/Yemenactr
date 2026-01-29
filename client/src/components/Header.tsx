@@ -102,6 +102,7 @@ export default function Header() {
   ];
 
   const resources = [
+    { nameEn: "Economic Reports", nameAr: "التقارير الاقتصادية", href: "/reports", icon: FileText },
     { nameEn: "Research Portal", nameAr: "بوابة الأبحاث", href: "/research-portal", icon: BookOpen },
     { nameEn: "Research Explorer", nameAr: "مستكشف الأبحاث", href: "/research-explorer", icon: Search },
     { nameEn: "Research Analytics", nameAr: "تحليلات الأبحاث", href: "/research-analytics", icon: LineChart },
