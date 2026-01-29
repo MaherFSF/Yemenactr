@@ -397,3 +397,62 @@ Draft email templates for data access requests:
 - [ ] 2 backfills executed with checkpoints
 - [ ] 2 documents ingested and searchable
 - [ ] 1 manual ingestion successful
+
+
+---
+
+## Prompt 9 Additions: Auto-Publication Factory + Editorial Governance
+
+### Publication Components Audit
+
+| Component | File Path | Wired to Scheduler | Evidence Packs | Bilingual Export | Status |
+|-----------|-----------|-------------------|----------------|------------------|--------|
+| Report Builder UI | `client/src/pages/ReportBuilder.tsx` | ⚠️ NOT WIRED | ❌ MISSING | ⚠️ PARTIAL | Needs governance layer |
+| Publications Hub | `client/src/pages/Publications.tsx` | ⚠️ NOT WIRED | ❌ MISSING | ✅ WIRED | Uses static demo data |
+| Auto-Brief Service | `server/services/autoBriefService.ts` | ✅ WIRED | ✅ WIRED | ✅ WIRED | Operational |
+| VIP Cockpit Service | `server/services/vipCockpitService.ts` | ✅ WIRED | ✅ WIRED | ✅ WIRED | Operational |
+| Sector Agent Service | `server/services/sectorAgentService.ts` | ✅ WIRED | ✅ WIRED | ✅ WIRED | Operational |
+
+### What Needs to Be Added (Prompt 9)
+
+| Component | Purpose | Priority |
+|-----------|---------|----------|
+| publication_templates | Template definitions with 8-stage governance | HIGH |
+| publication_runs | Run history with stage-by-stage logs | HIGH |
+| publication_evidence_bundles | Evidence packaging for each publication | HIGH |
+| publication_changelog | Corrections/revisions/retractions | MEDIUM |
+| Editorial Pipeline Service | 8-stage governance pipeline | HIGH |
+| Admin Publishing Command Center | `/admin/publications` management UI | HIGH |
+| Public Publications Hub | Real data with evidence appendix | HIGH |
+| PDF Export with Evidence | AR/EN with citations and evidence bundle | HIGH |
+
+### 8-Stage Editorial Governance Pipeline
+
+| Stage | Name | Purpose | Auto-Fail Condition |
+|-------|------|---------|---------------------|
+| 1 | Assemble | Resolve required data | Missing required indicators |
+| 2 | Evidence Retrieval | Build evidence packs | No evidence available |
+| 3 | Citation Verifier | Verify citation support | Coverage < 95% |
+| 4 | Contradiction Gate | Detect disagreements | Unresolved critical contradictions |
+| 5 | Quality Gate | DQAF assessment | Critical quality issues |
+| 6 | Safety Gate | Do-no-harm check | Sensitive content without approval |
+| 7 | Language Gate | AR/EN parity | RTL/typography errors |
+| 8 | Publish Gate | Final approval | Policy requires admin approval |
+
+### Publication Streams Required
+
+| Stream | Frequency | Audience | Status |
+|--------|-----------|----------|--------|
+| Daily Brief | Daily | VIP | ❌ MISSING |
+| Weekly Market Update | Weekly | Public + VIP | ❌ MISSING |
+| Monthly Macro Snapshot | Monthly | Public + VIP | ❌ MISSING |
+| Monthly Markets Bulletin | Monthly | Public + VIP | ❌ MISSING |
+| Monthly Aid Update | Monthly | Public + VIP | ❌ MISSING |
+| Quarterly Outlook | Quarterly | VIP | ❌ MISSING |
+| Quarterly Sector Briefs | Quarterly | Public + VIP | ❌ MISSING |
+| Annual Review | Annual | Public + VIP | ❌ MISSING |
+| Shock Note | Triggered | Public + VIP | ❌ MISSING |
+
+---
+
+*Updated: January 29, 2026 - Prompt 9/∞*

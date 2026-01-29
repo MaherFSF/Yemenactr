@@ -108,6 +108,8 @@ import SectorsHub from "./pages/SectorsHub";
 import SectorPage from "./pages/SectorPage";
 import SectorsManagement from "./pages/admin/SectorsManagement";
 import MethodologyManagement from "./pages/admin/MethodologyManagement";
+import PublishingCommandCenter from "./pages/admin/PublishingCommandCenter";
+import PublicationsHub from "./pages/PublicationsHub";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -203,6 +205,8 @@ function Router() {
           <Route path="/admin/export" component={ExportBundle} />
           <Route path="/admin/sectors" component={SectorsManagement} />
           <Route path="/admin/methodology" component={MethodologyManagement} />
+          <Route path="/admin/publishing" component={PublishingCommandCenter} />
+      <Route path="/publications-hub" component={PublicationsHub} />
       <Route path="/executive/governor" component={GovernorDashboard} />
       <Route path="/executive/deputy-governor" component={DeputyGovernorDashboard} />
       {/* VIP Cockpit Routes */}

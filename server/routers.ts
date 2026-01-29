@@ -83,6 +83,7 @@ import { bulkExportRouter } from "./routers/bulkExport";
 import { entitiesRouter } from "./routers/entities";
 import { vipCockpitRouter } from "./routers/vipCockpit";
 import { sectorPagesRouter } from "./routers/sectorPages";
+import { publicationsRouter } from "./routers/publications";
 import { sql, desc, eq, like, or, and, inArray } from "drizzle-orm";
 
 export const appRouter = router({
@@ -103,6 +104,7 @@ export const appRouter = router({
   entities: entitiesRouter,
   vipCockpit: vipCockpitRouter,
   sectorPages: sectorPagesRouter,
+  publications: publicationsRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
@@ -673,10 +675,10 @@ export const appRouter = router({
   // Reports router moved to ./routers/reportsRouter.ts
 
   // ============================================================================
-  // AUTO-PUBLICATION ENGINE
+  // LEGACY AUTO-PUBLICATION ENGINE (kept for backward compatibility)
   // ============================================================================
 
-  publications: router({
+  legacyPublications: router({
     // Get publication schedule
     getSchedule: publicProcedure
       .query(() => {

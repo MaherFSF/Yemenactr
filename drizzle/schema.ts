@@ -5230,3 +5230,319 @@ export const credibilityMetrics = mysqlTable("credibility_metrics", {
 
 export type CredibilityMetric = typeof credibilityMetrics.$inferSelect;
 export type InsertCredibilityMetric = typeof credibilityMetrics.$inferInsert;
+
+
+// ============================================================================
+// PUBLICATION FACTORY (Prompt 9/∞)
+// ============================================================================
+
+// Publication Templates: Define publication types and their requirements
+export const publicationTemplates = mysqlTable("publication_templates", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Identity
+  templateCode: varchar("templateCode", { length: 50 }).notNull().unique(),
+  nameEn: varchar("nameEn", { length: 200 }).notNull(),
+  nameAr: varchar("nameAr", { length: 200 }).notNull(),
+  descriptionEn: text("descriptionEn"),
+  descriptionAr: text("descriptionAr"),
+  
+  // Type and audience
+  publicationType: mysqlEnum("publicationType", [
+    "daily", "weekly", "monthly", "quarterly", "annual", "shock_note"
+  ]).notNull(),
+  audience: mysqlEnum("audience", ["public", "vip", "both"]).notNull().default("both"),
+  languages: json("languages").$type<string[]>().default(["en", "ar"]),
+  
+  // Content structure
+  sections: json("sections").$type<Array<{
+    sectionCode: string;
+    titleEn: string;
+    titleAr: string;
+    type: "executive_summary" | "kpis" | "charts" | "analysis" | "watchlist" | "methodology" | "evidence_appendix";
+    order: number;
+    isRequired: boolean;
+    config?: Record<string, unknown>;
+  }>>(),
+  
+  // Requirements for generation
+  requiredIndicators: json("requiredIndicators").$type<string[]>().default([]),
+  requiredDatasets: json("requiredDatasets").$type<string[]>().default([]),
+  requiredEntities: json("requiredEntities").$type<string[]>().default([]),
+  requiredSourcesMin: int("requiredSourcesMin").default(3),
+  
+  // Quality thresholds
+  evidenceThreshold: decimal("evidenceThreshold", { precision: 5, scale: 2 }).default("95.00"),
+  contradictionPolicy: mysqlEnum("contradictionPolicy", ["show_always", "show_resolved_only", "hide"]).default("show_always"),
+  uncertaintyPolicy: mysqlEnum("uncertaintyPolicy", ["show_if_published", "disclose_not_published", "hide"]).default("show_if_published"),
+  
+  // Layout
+  layoutTheme: json("layoutTheme").$type<{
+    primaryColor: string;
+    secondaryColor: string;
+    fontFamily: string;
+    logoUrl?: string;
+    headerStyle?: string;
+  }>(),
+  
+  // Approval and scheduling
+  approvalPolicy: mysqlEnum("approvalPolicy", ["auto", "admin_required", "risk_based"]).default("risk_based"),
+  schedule: varchar("schedule", { length: 100 }), // cron expression
+  
+  // Status
+  isActive: boolean("isActive").default(true),
+  lastGeneratedAt: timestamp("lastGeneratedAt"),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  typeIdx: index("pub_template_type_idx").on(table.publicationType),
+  audienceIdx: index("pub_template_audience_idx").on(table.audience),
+  activeIdx: index("pub_template_active_idx").on(table.isActive),
+}));
+export type PublicationTemplate = typeof publicationTemplates.$inferSelect;
+export type InsertPublicationTemplate = typeof publicationTemplates.$inferInsert;
+
+// Publication Runs: Track each generation attempt with 8-stage pipeline
+export const publicationRuns = mysqlTable("publication_runs", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Template reference
+  templateId: int("templateId").notNull(),
+  templateCode: varchar("templateCode", { length: 50 }).notNull(),
+  
+  // Run window
+  runWindowStart: timestamp("runWindowStart").notNull(),
+  runWindowEnd: timestamp("runWindowEnd").notNull(),
+  generatedAt: timestamp("generatedAt"),
+  
+  // Input snapshots
+  inputsSnapshotRefs: json("inputsSnapshotRefs").$type<{
+    datasetVersionIds: number[];
+    documentIds: number[];
+    indicatorCodes: string[];
+    entityIds: number[];
+  }>(),
+  
+  // Output artifacts
+  outputArtifacts: json("outputArtifacts").$type<{
+    pdfEnUrl?: string;
+    pdfArUrl?: string;
+    htmlUrl?: string;
+    jsonUrl?: string;
+    manifestUrl?: string;
+    evidenceBundleUrl?: string;
+  }>(),
+  
+  // Evidence bundle
+  evidencePackBundleId: int("evidencePackBundleId"),
+  
+  // Quality summaries
+  contradictionsSummary: json("contradictionsSummary").$type<{
+    total: number;
+    resolved: number;
+    unresolved: number;
+    critical: number;
+    items: Array<{
+      indicatorCode: string;
+      sources: string[];
+      status: string;
+    }>;
+  }>(),
+  dqafQualitySummary: json("dqafQualitySummary").$type<{
+    integrity: "pass" | "warning" | "fail";
+    methodology: "pass" | "warning" | "fail";
+    accuracy: "pass" | "warning" | "fail";
+    serviceability: "pass" | "warning" | "fail";
+    accessibility: "pass" | "warning" | "fail";
+  }>(),
+  confidenceSummary: json("confidenceSummary").$type<{
+    overallConfidence: "high" | "medium" | "low";
+    citationCoverage: number;
+    sourceCount: number;
+    freshestDataDate: string;
+    oldestDataDate: string;
+  }>(),
+  
+  // 8-Stage Pipeline Status
+  pipelineStages: json("pipelineStages").$type<Array<{
+    stage: number;
+    stageName: string;
+    status: "pending" | "running" | "passed" | "failed" | "skipped";
+    startedAt?: string;
+    completedAt?: string;
+    durationMs?: number;
+    details?: Record<string, unknown>;
+    errors?: string[];
+  }>>(),
+  
+  // Approval state
+  approvalState: mysqlEnum("approvalState", [
+    "draft", "in_review", "approved", "published", "rejected", "archived"
+  ]).default("draft"),
+  approvalsLog: json("approvalsLog").$type<Array<{
+    action: "submit" | "approve" | "reject" | "publish" | "archive";
+    actorType: "system" | "admin" | "ai_tribunal";
+    actorId?: number;
+    actorName?: string;
+    timestamp: string;
+    notes?: string;
+    notesAr?: string;
+  }>>(),
+  
+  // Public URL (if published)
+  publicUrl: varchar("publicUrl", { length: 500 }),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  templateIdx: index("pub_run_template_idx").on(table.templateId),
+  stateIdx: index("pub_run_state_idx").on(table.approvalState),
+  windowIdx: index("pub_run_window_idx").on(table.runWindowStart, table.runWindowEnd),
+}));
+export type PublicationRun = typeof publicationRuns.$inferSelect;
+export type InsertPublicationRun = typeof publicationRuns.$inferInsert;
+
+// Publication Evidence Bundles: Package all evidence for a publication
+export const publicationEvidenceBundles = mysqlTable("publication_evidence_bundles", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Publication reference
+  publicationRunId: int("publicationRunId").notNull(),
+  
+  // Evidence pack IDs used
+  evidencePackIds: json("evidencePackIds").$type<number[]>().default([]),
+  
+  // Per-section citation coverage
+  sectionCoverage: json("sectionCoverage").$type<Array<{
+    sectionCode: string;
+    citationCount: number;
+    coveragePercent: number;
+    uncitedClaims: string[];
+  }>>(),
+  
+  // Top contradictions
+  topContradictions: json("topContradictions").$type<Array<{
+    indicatorCode: string;
+    sources: string[];
+    descriptionEn: string;
+    descriptionAr: string;
+    impact: "high" | "medium" | "low";
+  }>>(),
+  
+  // What would change conclusions
+  sensitivityAnalysis: json("sensitivityAnalysis").$type<Array<{
+    assumption: string;
+    assumptionAr: string;
+    impact: string;
+    impactAr: string;
+    likelihood: "high" | "medium" | "low";
+  }>>(),
+  
+  // License summary
+  licenseSummary: json("licenseSummary").$type<{
+    openLicense: number;
+    restrictedLicense: number;
+    unknownLicense: number;
+    attributionRequired: string[];
+  }>(),
+  
+  // S3 URLs
+  bundleUrl: varchar("bundleUrl", { length: 500 }),
+  manifestUrl: varchar("manifestUrl", { length: 500 }),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  runIdx: index("pub_evidence_run_idx").on(table.publicationRunId),
+}));
+export type PublicationEvidenceBundle = typeof publicationEvidenceBundles.$inferSelect;
+export type InsertPublicationEvidenceBundle = typeof publicationEvidenceBundles.$inferInsert;
+
+// Publication Changelog: Track corrections, revisions, retractions
+export const publicationChangelog = mysqlTable("publication_changelog", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Publication reference
+  publicationRunId: int("publicationRunId").notNull(),
+  
+  // Change type
+  changeType: mysqlEnum("changeType", [
+    "correction", "revision", "retraction", "update", "clarification"
+  ]).notNull(),
+  
+  // Change details
+  titleEn: varchar("titleEn", { length: 200 }).notNull(),
+  titleAr: varchar("titleAr", { length: 200 }).notNull(),
+  descriptionEn: text("descriptionEn").notNull(),
+  descriptionAr: text("descriptionAr").notNull(),
+  
+  // What changed
+  affectedSections: json("affectedSections").$type<string[]>().default([]),
+  previousValue: text("previousValue"),
+  newValue: text("newValue"),
+  
+  // Reason
+  reasonEn: text("reasonEn"),
+  reasonAr: text("reasonAr"),
+  
+  // Evidence for change
+  evidencePackId: int("evidencePackId"),
+  
+  // Visibility
+  isPublic: boolean("isPublic").default(true),
+  
+  // Actor
+  changedBy: int("changedBy"),
+  changedByName: varchar("changedByName", { length: 100 }),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  runIdx: index("pub_changelog_run_idx").on(table.publicationRunId),
+  typeIdx: index("pub_changelog_type_idx").on(table.changeType),
+}));
+export type PublicationChangelogEntry = typeof publicationChangelog.$inferSelect;
+export type InsertPublicationChangelogEntry = typeof publicationChangelog.$inferInsert;
+
+// Publication Metrics: Track publication performance
+export const publicationMetrics = mysqlTable("publication_metrics", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Scope
+  templateId: int("templateId"),
+  metricDate: timestamp("metricDate").notNull(),
+  
+  // Generation metrics
+  runsAttempted: int("runsAttempted").default(0),
+  runsSucceeded: int("runsSucceeded").default(0),
+  runsFailed: int("runsFailed").default(0),
+  
+  // Quality metrics
+  avgCitationCoverage: decimal("avgCitationCoverage", { precision: 5, scale: 2 }),
+  avgContradictionRate: decimal("avgContradictionRate", { precision: 5, scale: 2 }),
+  avgFreshnessLagDays: decimal("avgFreshnessLagDays", { precision: 5, scale: 2 }),
+  
+  // Approval metrics
+  autoApproved: int("autoApproved").default(0),
+  adminApproved: int("adminApproved").default(0),
+  rejected: int("rejected").default(0),
+  
+  // Delivery metrics
+  onTimeRate: decimal("onTimeRate", { precision: 5, scale: 2 }),
+  avgGenerationTimeMs: int("avgGenerationTimeMs"),
+  
+  // Engagement metrics
+  totalViews: int("totalViews").default(0),
+  totalDownloads: int("totalDownloads").default(0),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  templateIdx: index("pub_metrics_template_idx").on(table.templateId),
+  dateIdx: index("pub_metrics_date_idx").on(table.metricDate),
+}));
+export type PublicationMetric = typeof publicationMetrics.$inferSelect;
+export type InsertPublicationMetric = typeof publicationMetrics.$inferInsert;

@@ -6960,3 +6960,57 @@ Based on review of master design documents and data source register:
 - [x] Admin pages: /admin/sectors, /admin/methodology
 - [x] Release Gate shows sector gates (Release Gates tab)
 - [x] No demo/static data - all real DB-driven from sector_definitions table
+
+
+### Phase 73: Auto-Publication Factory + Editorial Governance (PROMPT 9/∞) (COMPLETED)
+
+**1) Publication Object Model:**
+- [x] PublicationTemplate table (publication_templates) - 9 templates seeded
+- [x] PublicationRun table (publication_runs) - with 8-stage pipeline tracking
+- [x] PublicationEvidenceBundle table (publication_evidence_bundles) - per-section coverage
+- [x] PublicationChangelogEntry table (publication_changelog) - corrections & revisions
+
+**2) 8-Stage Editorial Governance Pipeline:**
+- [x] Stage 1: Assemble (data & scope resolution) - editorialPipelineService.ts
+- [x] Stage 2: Evidence Retrieval (build evidence packs)
+- [x] Stage 3: Citation Verifier (>=95% coverage)
+- [x] Stage 4: Contradiction & Vintage Gate
+- [x] Stage 5: Quality & Methodology Gate (DQAF)
+- [x] Stage 6: Safety/Do-No-Harm Gate
+- [x] Stage 7: Language & Typography Gate (AR/EN parity)
+- [x] Stage 8: Publish Gate (auto/risk-based/admin_required)
+
+**3) Publication Streams (9 Required):**
+- [x] Daily Brief (daily_signal) - auto approval
+- [x] Weekly Market & Economy Update (weekly_monitor) - risk_based
+- [x] Monthly Macro Snapshot (monthly_macro) - risk_based
+- [x] Monthly Markets Bulletin (monthly_markets) - risk_based
+- [x] Monthly Aid & Funding Update (monthly_aid) - risk_based
+- [x] Quarterly Outlook (quarterly_outlook) - admin_required
+- [x] Quarterly Sector Briefs (sector_deep_dive) - risk_based
+- [x] Annual Review (annual_review) - admin_required
+- [x] Shock Note (shock_note) - admin_required, 90% threshold
+
+**4) Admin Publishing Command Center:**
+- [x] /admin/publishing - Template Library with 9 templates
+- [x] Run Monitor with 8-stage status (Runs tab)
+- [x] Approval Queue with evidence summary (Approvals tab)
+- [x] Publication Archive with signed URLs
+- [x] Metrics Dashboard (Drafts, In Review, Approved, Published, Rejected)
+
+**5) Public Publications Hub:**
+- [x] Filters: type selector (All, Daily, Weekly, Monthly, etc.)
+- [x] Publication cards with confidence summary
+- [x] Evidence Appendix links (PDF EN, PDF AR, JSON, Evidence)
+- [x] "Publication Methodology" section with 4-step process
+
+**6) Testing:**
+- [x] Unit tests: 21 tests passing (publications.test.ts)
+- [x] Integration tests: end-to-end generation with evidence bundle
+- [x] E2E tests: admin approval workflow verified in browser
+
+**Stop Conditions:**
+- [x] 9 templates configured with editorial pipeline
+- [x] AR PDF + EN PDF + evidence bundle + S3 signed URLs configured
+- [x] Admin Publishing Command Center shows templates and stage logs
+- [x] Public Publications Hub shows publications with evidence appendix
