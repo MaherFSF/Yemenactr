@@ -217,3 +217,131 @@
 - Test coverage targets: >80% for backend, >60% for frontend
 - Data integrity failures create admin tickets automatically
 - Bilingual QA requires native Arabic speakers
+
+
+---
+
+## ADR-011: AgentOS Multi-Agent Architecture
+
+**Date:** 2025-01-29
+
+**Context:** Complex economic analysis requires specialized AI capabilities that a single model cannot provide optimally.
+
+**Decision:** Implement AgentOS with 50+ specialized agents:
+- One Brain orchestrator for routing and coordination
+- Sector-specific analysts (macro, banking, trade, food security, etc.)
+- Quality agents (confidence scorer, contradiction detector, tribunal judge)
+- Ingestion agents (data connectors for WB, IMF, WFP, etc.)
+- Support agents (translators, citation builder, gap ticket creator)
+
+**Rationale:** Specialized agents can be optimized for specific tasks, evaluated independently, and updated without affecting the entire system.
+
+**Consequences:**
+- Complex orchestration logic required
+- Each agent has versioned prompts in repository
+- Evaluation suites per agent
+- Clear separation of concerns
+
+---
+
+## ADR-012: Evidence Laws R0-R12
+
+**Date:** 2025-01-29
+
+**Context:** AI systems can fabricate information; YETO requires strict controls to maintain trust.
+
+**Decision:** Implement 13 Evidence Laws enforced by all agents:
+- R0: Zero Fabrication (never invent data)
+- R1: Source Attribution (cite all sources)
+- R2: Confidence Scoring (rate all data)
+- R3: Contradiction Surfacing (show disagreements)
+- R4: Temporal Precision (date all data)
+- R5: Geographic Precision (specify scope)
+- R6: Methodology Transparency (explain methods)
+- R7: Gap Acknowledgment (admit unknowns)
+- R8: Version Control (track changes)
+- R9: Provenance Chain (full lineage)
+- R10: Licensing Compliance (respect terms)
+- R11: Numeric Integrity (preserve numbers)
+- R12: Correction Protocol (fix errors publicly)
+
+**Rationale:** Trust is YETO's core value proposition. Evidence Laws ensure every output is verifiable.
+
+**Consequences:**
+- All agents must enforce these laws
+- Tribunal Judge validates before delivery
+- Some queries may be refused
+- Higher trust in outputs
+
+---
+
+## ADR-013: Provider-Agnostic AI Architecture
+
+**Date:** 2025-01-29
+
+**Context:** AI providers change rapidly; avoid vendor lock-in.
+
+**Decision:** Implement provider abstraction layer:
+- All prompts stored in `/agentos/agents/` directory
+- Configuration-based provider switching via environment variables
+- Unified interface for all providers (Manus, OpenAI, Anthropic, Azure)
+- Fallback chain for reliability
+
+**Rationale:** Prompts are intellectual property; storing them in repository enables version control, review, and provider independence.
+
+**Consequences:**
+- Additional abstraction layer complexity
+- Can switch providers without code changes
+- Prompts are version-controlled and auditable
+- No vendor lock-in
+
+---
+
+## ADR-014: Control Pack Documentation Standard
+
+**Date:** 2025-01-29
+
+**Context:** Complex project requires comprehensive documentation for operations and maintenance.
+
+**Decision:** Implement Control Pack with standardized documents:
+- `/docs/0_START_HERE.md` - Entry point for operators
+- `/docs/WORKPLAN.md` - Phase-by-phase execution plan
+- `/docs/REQ_INDEX.md` - All requirements with stable IDs
+- `/STATUS.md` - Current project status
+- `/docs/DECISIONS.md` - This document
+
+**Rationale:** Standardized documentation ensures knowledge transfer and operational continuity.
+
+**Consequences:**
+- Documentation overhead
+- Clear onboarding path
+- Traceable requirements
+- Maintainable project
+
+---
+
+## ADR-015: Golden Questions Evaluation Framework
+
+**Date:** 2025-01-29
+
+**Context:** AI agents need systematic evaluation to ensure quality.
+
+**Decision:** Implement golden questions evaluation:
+- Each agent has evaluation suite in `/agentos/evals/`
+- Golden questions test specific capabilities
+- Assertions verify evidence law compliance
+- Scoring rules weight different criteria
+- Pass threshold of 95% required
+
+**Rationale:** Automated evaluation enables continuous quality monitoring and regression detection.
+
+**Consequences:**
+- Evaluation suites must be maintained
+- Nightly evaluation runs
+- Clear quality metrics
+- Regression detection
+
+---
+
+*Control Pack Version: v0.0-control-pack*
+*Last Updated: January 29, 2025*

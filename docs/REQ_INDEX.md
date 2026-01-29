@@ -400,5 +400,11 @@ This document contains all atomic requirements parsed from the Master Build Prom
 
 ---
 
-*Total Requirements: 50+*
-*Last updated: December 2024*
+*Total Requirements: 132*
+*Last updated: January 29, 2025*
+
+---
+
+## Control Pack Version
+
+**Tag:** v0.0-control-pack

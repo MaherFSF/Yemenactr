@@ -221,4 +221,12 @@ For technical issues or questions:
 
 ---
 
-*Last updated: December 2024*
+*Last updated: January 29, 2025*
+
+---
+
+## Control Pack Version
+
+**Tag:** v0.0-control-pack
+
+This document is part of the YETO Control Pack, ensuring no requirement is ever missed and all operations are documented and traceable.

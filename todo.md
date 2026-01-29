@@ -1,8 +1,31 @@
 # YETO Platform TODO
 
-## Latest Update: January 13, 2026 - 16:15 UTC
+## Latest Update: January 29, 2025 - 11:30 UTC
 
-### Phase 64: Production-Quality Upgrade (IN PROGRESS)
+### Phase 65: Control Pack + AgentOS Implementation (IN PROGRESS)
+
+**Completed:**
+- [x] Created /docs/0_START_HERE.md - Operator guide
+- [x] Updated /docs/WORKPLAN.md - Phase-by-phase plan
+- [x] Updated /docs/REQ_INDEX.md - Requirements registry
+- [x] Updated /STATUS.md - Current status
+- [x] Updated /docs/DECISIONS.md - ADRs 011-015
+- [x] Created /agentos/AGENTOS_MANIFEST.json - 50 agents
+- [x] Created /agentos/PROVIDER_INTERFACE.md - AI abstraction
+- [x] Created /agentos/policies/EVIDENCE_LAWS.md - R0-R12
+- [x] Created /agentos/agents/one-brain.md - Orchestrator prompt
+- [x] Created /agentos/evals/one-brain-golden.json - Evaluation suite
+- [x] Created /agentos/runtime/MESSAGE_SCHEMA.md - Message format
+
+**Pending:**
+- [ ] Create remaining agent prompts (49 more)
+- [ ] Create remaining evaluation suites
+- [ ] Generate real PDF reports with economic data
+- [ ] Add more commercial actor profiles
+- [ ] Configure SMTP for email delivery
+- [ ] Save checkpoint with v0.0-control-pack tag
+
+### Phase 64: Production-Quality Upgrade (COMPLETED)
 
 **Completed:**
 - [x] Banking Sector Dashboard with real database data (17 banks)
@@ -6531,3 +6554,42 @@ Based on review of master design documents and data source register:
 - [ ] Show data freshness by source
 - [ ] Display coverage gaps and missing data
 - [ ] Add source health status monitoring
+
+
+## Phase 74: Control Pack + AgentOS Bootstrap (PROMPT 1/3)
+**Date:** 2025-01-29
+**Status:** In Progress
+
+**Control Pack Documentation (11 files):**
+- [ ] /docs/0_START_HERE.md - Operator guide with 10-command cheat sheet
+- [ ] /docs/WORKPLAN.md - Phase-by-phase plan with gates
+- [ ] /docs/REQ_INDEX.md - All requirements with stable IDs (REQ-0001...)
+- [ ] /docs/REQ_TRACEABILITY.csv - REQ → implementation → test → docs mapping
+- [ ] /docs/MOCKUP_MAP.md - Mockup to route/component mapping
+- [ ] /docs/DATA_SOURCE_REGISTER.md - Full source registry with 20+ sources
+- [ ] /docs/BLOCKERS_AND_INPUTS.md - Required inputs and fallbacks
+- [ ] /docs/DEMO_SCRIPT.md - Donor (10-15 min) and technical (5 min) demo paths
+- [ ] /STATUS.md - Phase status and next commands
+- [ ] /docs/DECISIONS.md - Default choices with rationale
+- [ ] /docs/ATTACHMENTS_INDEX.md - All attachments indexed
+
+**AgentOS Scaffolding:**
+- [ ] /agentos/AGENTOS_MANIFEST.json - All 50+ agents by ID
+- [ ] /agentos/PROVIDER_INTERFACE.md - AI provider abstraction (generate, embed, rerank)
+- [ ] /agentos/policies/evidence_laws.md - R0-R12 condensed
+- [ ] /agentos/policies/licensing_policy.md
+- [ ] /agentos/policies/safety_policy.md
+- [ ] /agentos/policies/bilingual_policy.md
+- [ ] /agentos/policies/quality_policy.md - DQAF dimensions
+- [ ] /agentos/evals/eval_manifest.json - Eval suites per agent
+- [ ] /agentos/evals/golden_questions_ar.json
+- [ ] /agentos/evals/golden_questions_en.json
+- [ ] /agentos/evals/regression_assertions.md
+- [ ] /agentos/runtime/message_schema.json
+- [ ] /agentos/runtime/blackboard_schema.json
+- [ ] /agentos/runtime/orchestration_notes.md
+
+**Git Operations:**
+- [ ] Commit Control Pack + AgentOS as first commit on feature branch
+- [ ] Tag v0.0-control-pack
+- [ ] Output created files list and REQ count

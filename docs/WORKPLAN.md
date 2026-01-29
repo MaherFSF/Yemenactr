@@ -318,4 +318,37 @@ This document outlines the phase-by-phase implementation plan for the YETO (Yeme
 
 ---
 
-*Last updated: December 2024*
+*Last updated: January 29, 2025*
+
+---
+
+## Phase 11: AgentOS Full Implementation 📋
+
+### Deliverables
+- [ ] `/agentos/AGENTOS_MANIFEST.json` - All 50+ agents
+- [ ] `/agentos/PROVIDER_INTERFACE.md` - AI provider abstraction
+- [ ] `/agentos/policies/` - Evidence, licensing, safety, bilingual, quality policies
+- [ ] `/agentos/evals/` - Evaluation suites and golden questions
+- [ ] `/agentos/runtime/` - Message schema, blackboard, orchestration
+
+### Gates/Tests
+- All agents have versioned prompts
+- Evaluation suites pass thresholds
+- Provider abstraction allows swapping without code changes
+
+### Definition of Done
+- AgentOS is hosting-agnostic
+- All prompts stored in repository
+- Nightly evals running
+
+### Risks
+- Provider API changes
+
+### Rollback
+- Revert to previous agent versions
+
+---
+
+## Control Pack Version
+
+**Tag:** v0.0-control-pack
