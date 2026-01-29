@@ -3206,3 +3206,305 @@ export const reportSchedule = mysqlTable("report_schedule", {
 
 export type ReportSchedule = typeof reportSchedule.$inferSelect;
 export type InsertReportSchedule = typeof reportSchedule.$inferInsert;
+
+
+// ============================================================================
+// EVIDENCE TRIBUNAL - EVIDENCE PACKS (PROMPT 2/3)
+// ============================================================================
+
+/**
+ * Evidence Packs - Canonical schema for all evidence in the system
+ * Every KPI, chart, table cell, report paragraph, and AI claim must have an evidence pack
+ */
+export const evidencePacks = mysqlTable("evidence_packs", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Subject reference - what this evidence pack is for
+  subjectType: mysqlEnum("subjectType", [
+    "metric", "series", "document", "claim", "alert", "report", "chart", "kpi", "table_cell"
+  ]).notNull(),
+  subjectId: varchar("subjectId", { length: 255 }).notNull(), // ID of the subject
+  subjectLabel: varchar("subjectLabel", { length: 500 }), // Human-readable label
+  
+  // Citations array (JSON)
+  citations: json("citations").$type<{
+    sourceId: number;
+    title: string;
+    publisher: string;
+    url?: string;
+    retrievalDate: string;
+    licenseFlag: string;
+    anchor?: string; // page/section/table reference
+    rawObjectRef?: string; // S3 key or internal URI
+  }[]>().notNull(),
+  
+  // Transforms array (JSON)
+  transforms: json("transforms").$type<{
+    formula?: string;
+    parameters?: Record<string, unknown>;
+    codeRef?: string;
+    assumptions?: string[];
+    description?: string;
+  }[]>(),
+  
+  // Geographic and temporal scope
+  regimeTags: json("regimeTags").$type<string[]>().notNull(), // ["aden_irg", "sanaa_defacto", etc.]
+  geoScope: varchar("geoScope", { length: 255 }).notNull(), // "National", "Aden", "Sana'a", etc.
+  timeCoverageStart: timestamp("timeCoverageStart"),
+  timeCoverageEnd: timestamp("timeCoverageEnd"),
+  missingRanges: json("missingRanges").$type<{ start: string; end: string; reason?: string }[]>(),
+  
+  // Contradictions (if any)
+  contradictions: json("contradictions").$type<{
+    altSourceId: number;
+    altSourceName: string;
+    altValue: string;
+    ourValue: string;
+    methodNotes?: string;
+    whyDifferent?: string;
+  }[]>(),
+  hasContradictions: boolean("hasContradictions").default(false).notNull(),
+  
+  // DQAF Quality Panel (5 dimensions)
+  dqafIntegrity: mysqlEnum("dqafIntegrity", ["pass", "needs_review", "unknown"]).default("unknown").notNull(),
+  dqafMethodology: mysqlEnum("dqafMethodology", ["pass", "needs_review", "unknown"]).default("unknown").notNull(),
+  dqafAccuracyReliability: mysqlEnum("dqafAccuracyReliability", ["pass", "needs_review", "unknown"]).default("unknown").notNull(),
+  dqafServiceability: mysqlEnum("dqafServiceability", ["pass", "needs_review", "unknown"]).default("unknown").notNull(),
+  dqafAccessibility: mysqlEnum("dqafAccessibility", ["pass", "needs_review", "unknown"]).default("unknown").notNull(),
+  
+  // Uncertainty
+  uncertaintyInterval: varchar("uncertaintyInterval", { length: 100 }), // e.g., "±5%"
+  uncertaintyNote: text("uncertaintyNote"), // "not published by source" if unknown
+  
+  // Confidence grade
+  confidenceGrade: mysqlEnum("confidenceGrade", ["A", "B", "C", "D"]).notNull(),
+  confidenceExplanation: text("confidenceExplanation").notNull(),
+  
+  // What would change this assessment
+  whatWouldChange: json("whatWouldChange").$type<string[]>(),
+  
+  // Metadata
+  promptVersion: varchar("promptVersion", { length: 50 }),
+  modelVersion: varchar("modelVersion", { length: 50 }),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  subjectIdx: index("evidence_subject_idx").on(table.subjectType, table.subjectId),
+  confidenceIdx: index("evidence_confidence_idx").on(table.confidenceGrade),
+  contradictionsIdx: index("evidence_contradictions_idx").on(table.hasContradictions),
+  createdAtIdx: index("evidence_created_idx").on(table.createdAt),
+}));
+
+export type EvidencePack = typeof evidencePacks.$inferSelect;
+export type InsertEvidencePack = typeof evidencePacks.$inferInsert;
+
+// ============================================================================
+// EVIDENCE TRIBUNAL - DATASET VERSIONS (VINTAGES)
+// ============================================================================
+
+/**
+ * Dataset Versions - Track every version/vintage of a dataset
+ * Corrections append, never overwrite
+ */
+export const datasetVersions = mysqlTable("dataset_versions", {
+  id: int("id").autoincrement().primaryKey(),
+  datasetId: int("datasetId").notNull().references(() => datasets.id),
+  
+  // Version info
+  versionNumber: int("versionNumber").notNull(),
+  vintageDate: timestamp("vintageDate").notNull(), // "As of" date
+  
+  // Change tracking
+  changeType: mysqlEnum("changeType", ["initial", "revision", "correction", "restatement", "methodology_change"]).notNull(),
+  changeDescription: text("changeDescription"),
+  changeSummary: json("changeSummary").$type<{
+    recordsAdded: number;
+    recordsModified: number;
+    recordsDeleted: number;
+    affectedIndicators: string[];
+    affectedDateRange?: { start: string; end: string };
+  }>(),
+  
+  // Diff storage (S3)
+  diffFileKey: varchar("diffFileKey", { length: 512 }),
+  diffFileUrl: text("diffFileUrl"),
+  
+  // Snapshot storage (S3)
+  snapshotFileKey: varchar("snapshotFileKey", { length: 512 }),
+  snapshotFileUrl: text("snapshotFileUrl"),
+  
+  // Metadata
+  sourceId: int("sourceId").references(() => sources.id),
+  confidenceRating: mysqlEnum("confidenceRating", ["A", "B", "C", "D"]),
+  
+  // Audit
+  createdBy: int("createdBy").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  datasetIdx: index("version_dataset_idx").on(table.datasetId),
+  vintageDateIdx: index("version_vintage_idx").on(table.vintageDate),
+  versionNumberIdx: index("version_number_idx").on(table.datasetId, table.versionNumber),
+}));
+
+export type DatasetVersion = typeof datasetVersions.$inferSelect;
+export type InsertDatasetVersion = typeof datasetVersions.$inferInsert;
+
+// Note: ingestionRuns table already exists above - using existing definition
+// Extended fields for provenance chain tracking are handled via the existing table
+
+// ============================================================================
+// EVIDENCE TRIBUNAL - EXPORT MANIFESTS
+// ============================================================================
+
+/**
+ * Export Manifests - Track every export with full evidence
+ * Every export writes: manifest.json, evidence_pack.json, license_summary.json
+ */
+export const exportManifests = mysqlTable("export_manifests", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Export info
+  exportType: mysqlEnum("exportType", ["csv", "json", "xlsx", "pdf", "png", "svg", "markdown"]).notNull(),
+  exportName: varchar("exportName", { length: 255 }).notNull(),
+  
+  // User and context
+  userId: int("userId").references(() => users.id),
+  userRole: varchar("userRole", { length: 50 }),
+  sessionId: varchar("sessionId", { length: 255 }),
+  
+  // Filters applied
+  filters: json("filters").$type<{
+    indicators?: string[];
+    regimeTags?: string[];
+    dateRange?: { start: string; end: string };
+    geoScope?: string[];
+    confidenceMin?: string;
+    [key: string]: unknown;
+  }>(),
+  
+  // S3 storage - main export file
+  exportFileKey: varchar("exportFileKey", { length: 512 }).notNull(),
+  exportFileUrl: text("exportFileUrl").notNull(),
+  exportFileSize: int("exportFileSize"),
+  
+  // S3 storage - manifest.json
+  manifestFileKey: varchar("manifestFileKey", { length: 512 }).notNull(),
+  manifestFileUrl: text("manifestFileUrl").notNull(),
+  
+  // S3 storage - evidence_pack.json
+  evidencePackFileKey: varchar("evidencePackFileKey", { length: 512 }).notNull(),
+  evidencePackFileUrl: text("evidencePackFileUrl").notNull(),
+  
+  // S3 storage - license_summary.json
+  licenseSummaryFileKey: varchar("licenseSummaryFileKey", { length: 512 }).notNull(),
+  licenseSummaryFileUrl: text("licenseSummaryFileUrl").notNull(),
+  
+  // Content summary
+  dataCoverageWindow: json("dataCoverageWindow").$type<{ start: string; end: string }>(),
+  recordCount: int("recordCount").notNull(),
+  sourceCount: int("sourceCount").notNull(),
+  evidencePackIds: json("evidencePackIds").$type<number[]>(),
+  
+  // Confidence and limitations
+  overallConfidence: mysqlEnum("overallConfidence", ["A", "B", "C", "D"]),
+  limitations: json("limitations").$type<string[]>(),
+  
+  // Signed URL expiry
+  signedUrlExpiresAt: timestamp("signedUrlExpiresAt"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("export_user_idx").on(table.userId),
+  exportTypeIdx: index("export_type_idx").on(table.exportType),
+  createdAtIdx: index("export_created_idx").on(table.createdAt),
+}));
+
+export type ExportManifest = typeof exportManifests.$inferSelect;
+export type InsertExportManifest = typeof exportManifests.$inferInsert;
+
+// ============================================================================
+// EVIDENCE TRIBUNAL - RELEASE GATE CHECKS
+// ============================================================================
+
+/**
+ * Release Gate Checks - Track admin release gate validations
+ * Block publish if any check fails
+ */
+export const releaseGateChecks = mysqlTable("release_gate_checks", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Check info
+  checkName: varchar("checkName", { length: 100 }).notNull(),
+  checkCategory: mysqlEnum("checkCategory", [
+    "evidence_coverage", "placeholder_scan", "contradiction_ui", "vintages", 
+    "exports", "bilingual_parity", "security"
+  ]).notNull(),
+  
+  // Result
+  status: mysqlEnum("status", ["pass", "fail", "warning", "skipped"]).notNull(),
+  score: int("score"), // 0-100 where applicable
+  threshold: int("threshold"), // Required score to pass
+  
+  // Details
+  details: json("details").$type<{
+    itemsChecked: number;
+    itemsPassed: number;
+    itemsFailed: number;
+    failures?: { item: string; reason: string }[];
+    warnings?: { item: string; reason: string }[];
+  }>(),
+  
+  // Messages
+  message: text("message"),
+  recommendation: text("recommendation"),
+  
+  // Run context
+  runId: varchar("runId", { length: 64 }).notNull(), // UUID for the gate check run
+  runAt: timestamp("runAt").defaultNow().notNull(),
+  runBy: int("runBy").references(() => users.id),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  runIdIdx: index("gate_run_idx").on(table.runId),
+  checkNameIdx: index("gate_check_name_idx").on(table.checkName),
+  statusIdx: index("gate_status_idx").on(table.status),
+  runAtIdx: index("gate_run_at_idx").on(table.runAt),
+}));
+
+export type ReleaseGateCheck = typeof releaseGateChecks.$inferSelect;
+export type InsertReleaseGateCheck = typeof releaseGateChecks.$inferInsert;
+
+/**
+ * Release Gate Runs - Summary of each release gate validation run
+ */
+export const releaseGateRuns = mysqlTable("release_gate_runs", {
+  id: int("id").autoincrement().primaryKey(),
+  runId: varchar("runId", { length: 64 }).notNull().unique(), // UUID
+  
+  // Overall result
+  overallStatus: mysqlEnum("overallStatus", ["pass", "fail"]).notNull(),
+  checksTotal: int("checksTotal").notNull(),
+  checksPassed: int("checksPassed").notNull(),
+  checksFailed: int("checksFailed").notNull(),
+  checksWarning: int("checksWarning").notNull(),
+  
+  // Blocking issues
+  blockingIssues: json("blockingIssues").$type<string[]>(),
+  
+  // Timing
+  startedAt: timestamp("startedAt").notNull(),
+  completedAt: timestamp("completedAt"),
+  durationMs: int("durationMs"),
+  
+  // Audit
+  runBy: int("runBy").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  runIdIdx: index("gate_runs_run_idx").on(table.runId),
+  statusIdx: index("gate_runs_status_idx").on(table.overallStatus),
+  createdAtIdx: index("gate_runs_created_idx").on(table.createdAt),
+}));
+
+export type ReleaseGateRun = typeof releaseGateRuns.$inferSelect;
+export type InsertReleaseGateRun = typeof releaseGateRuns.$inferInsert;

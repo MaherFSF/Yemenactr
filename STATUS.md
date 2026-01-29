@@ -1,15 +1,15 @@
 # YETO Platform - Build Status
 
-**Version**: v1.1.0  
-**Last Updated**: January 29, 2025  
+**Version**: v1.2.0  
+**Last Updated**: January 29, 2025 - 12:15 UTC  
 **Status**: OPERATIONAL
-**Control Pack Tag**: v0.0-control-pack
+**Control Pack Tag**: v0.1-evidence-tribunal
 
 ---
 
 ## Current Phase
 
-**Phase 37: Control Pack + AgentOS Implementation** - In Progress
+**Phase 66: Evidence Tribunal + Trust Engine (Prompt 2/3)** - Completed
 
 ---
 
@@ -165,6 +165,45 @@
 
 ---
 
+## Evidence Tribunal Components (Phase 66)
+
+### A) Evidence Pack Schema ✅
+- Database table `evidence_packs` with full JSON schema
+- Arrays: `citations[]`, `transforms[]`, `contradictions[]`
+- DQAF quality dimensions, confidence grades A-D
+- API: `evidence.getById`, `evidence.getBySubject`, `evidence.list`
+
+### B) Evidence Drawer UI ✅
+- Component: `EvidenceDrawer.tsx` (AR RTL + EN LTR)
+- Bilingual rendering with identical content
+
+### C) Provenance Chain ✅
+- Chain: observation → series → dataset_version → ingestion_run → raw_object → source_id
+- API: `evidence.getProvenance`
+
+### D) Contradictions + Disagreement Mode ✅
+- Component: `ContradictionBadge.tsx`
+- Side-by-side values with "why they differ" notes
+
+### E) Vintages / Time-Travel ✅
+- Table: `dataset_versions`
+- Component: `VintageSelector.tsx`
+- Corrections append, never overwrite
+
+### F) DQAF Quality Panel ✅
+- Component: `DQAFPanel.tsx`
+- 5 dimensions (never combined into single score)
+
+### G) S3 Exports with Manifests ✅
+- Service: `exportService.ts`
+- Outputs: manifest.json, evidence_pack.json, license_summary.json
+
+### H) Admin Release Gate ✅
+- Page: `/admin/release-gate`
+- All checks implemented
+
+---
+
 ## Pending Enhancements
 
 ### High Priority
@@ -198,6 +237,7 @@
 
 | Version | Date | Changes |
 |---------|------|---------|
+| v1.2.0 | Jan 29, 2025 | Evidence Tribunal + Trust Engine (Prompt 2/3) |
 | v1.0.0 | Dec 28, 2024 | Production release, all features complete |
 | v0.9.0 | Dec 28, 2024 | User dashboard, export buttons, documentation |
 | v0.8.0 | Dec 28, 2024 | Entity profiles, Evidence Pack, Corrections |

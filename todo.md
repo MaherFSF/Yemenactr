@@ -1,8 +1,71 @@
 # YETO Platform TODO
 
-## Latest Update: January 29, 2025 - 11:30 UTC
+## Latest Update: January 29, 2025 - 12:00 UTC
 
-### Phase 65: Control Pack + AgentOS Implementation (IN PROGRESS)
+### Phase 66: Evidence Tribunal + Trust Engine (PROMPT 2/3) (IN PROGRESS)
+
+**A) Evidence Pack Schema:**
+- [x] Create evidence_packs table with full JSON schema
+- [x] Implement citations[], transforms[], contradictions[] arrays
+- [x] Add regime_tags, geo_scope, time_coverage, missing_ranges
+- [x] Implement DQAF quality panel fields
+- [x] Add confidence_grade A-D with explanation
+- [x] Create API endpoint GET /evidence/{evidence_pack_id}
+
+**B) Evidence Drawer UI:**
+- [x] Create EvidenceDrawer component (AR RTL + EN LTR)
+- [ ] Add "Show evidence" button to every KPI/chart/table cell
+- [x] Implement bilingual rendering with identical content
+
+**C) Provenance Chain:**
+- [x] Verify observation → series → dataset_version → ingestion_run → raw_object → source_id
+- [ ] Add DB constraints for provenance pointers
+- [x] Implement provenance API endpoint
+
+**D) Contradictions + Disagreement Mode:**
+- [ ] Implement contradiction detection on ingest
+- [x] Create contradiction records in database
+- [x] Add "Multiple sources disagree" badge UI (ContradictionBadge component)
+- [x] Show values side-by-side with "why they differ" notes
+- [ ] Never average silently - label composites explicitly
+
+**E) Vintages / Time-Travel:**
+- [x] Create dataset_version (vintage) on every update
+- [x] Add "as-of date" selector UI (VintageSelector component)
+- [x] Implement "compare vintages" view
+- [x] Show diffs and revision notes
+- [x] Corrections append, never overwrite
+
+**F) DQAF Quality Panel:**
+- [x] Implement 5 dimensions: Integrity, Methodology, Accuracy, Serviceability, Accessibility
+- [x] Show dimension-by-dimension statuses (pass/needs review/unknown)
+- [x] Never reduce to single ranking or overall score (DQAFPanel component)
+
+**G) S3 Exports with Manifests:**
+- [x] Verify StorageAdapter usage everywhere
+- [x] Generate manifest.json with export metadata
+- [x] Generate evidence_pack.json for all evidence used
+- [x] Generate license_summary.json
+- [x] Support CSV, JSON, XLSX, PDF, PNG/SVG exports
+- [ ] Embed citations, coverage window, confidence box in exports
+
+**H) Admin Release Gate:**
+- [x] Create /admin/release-gate page (already exists with comprehensive checks)
+- [x] Check evidence coverage >= 95%
+- [x] Scan for placeholder/fake numbers
+- [x] Verify contradiction UI present
+- [x] Verify vintages working
+- [x] Verify exports produce real files + signed URLs
+- [x] Run bilingual parity tests
+- [x] Run security checks
+
+**Stop Condition Demos:**
+- [ ] 3 pages with KPIs where every KPI opens Evidence Drawer
+- [ ] 1 contradiction shown in UI
+- [ ] 1 vintage comparison shown
+- [ ] 1 export downloaded from S3 with manifest + evidence pack
+
+### Phase 65: Control Pack + AgentOS Implementation (COMPLETED)
 
 **Completed:**
 - [x] Created /docs/0_START_HERE.md - Operator guide
