@@ -60,21 +60,21 @@ const hsaData = {
   founded: 1938,
   headquarters: "Aden, Yemen",
   headquartersAr: "عدن، اليمن",
-  employees: "20,000+",
-  yearsOperating: 87,
-  logoUrl: "/assets/companies/hsa-logo.jpg",
-  heroImageUrl: "/assets/companies/hsa-hero-bg.jpg",
+  employees: "35,000+",
+  yearsOperating: 88,
+  logoUrl: "/images/entities/hsa-group-logo.jpg",
+  heroImageUrl: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1920&q=80",
   
   // Key Statistics
   stats: {
-    employeesYemen: "20,000+",
+    employeesYemen: "35,000+",
     subsidiaries: 9,
     sectors: 6,
     governorates: 22,
     ifcFinancing: "$75M",
     foodCompanies: 6,
     covidEquipment: "43+ tons",
-    yearsInOperation: 87
+    yearsInOperation: 88
   },
   
   // Business Sectors
@@ -93,50 +93,63 @@ const hsaData = {
       id: "ycic",
       nameEn: "Yemen Company for Industry and Commerce (YCIC)",
       nameAr: "الشركة اليمنية للصناعة والتجارة",
-      sector: "Strategic Goods",
-      sectorAr: "السلع الاستراتيجية",
-      descEn: "Industrial and commercial operations across Yemen",
-      descAr: "العمليات الصناعية والتجارية في جميع أنحاء اليمن",
+      sector: "Consumer Goods",
+      sectorAr: "السلع الاستهلاكية",
+      descEn: "Founded 1970. Middle East's foremost producer of biscuits, wafers, cakes, baby food, and sweets. 5 factories, 35 production lines, 120,000+ tons annual capacity, 2,600+ employees.",
+      descAr: "تأسست 1970. الشركة الرائدة في الشرق الأوسط لإنتاج البسكويت والويفر والكيك وأغذية الأطفال والحلويات. 5 مصانع، 35 خط إنتاج، طاقة إنتاجية 120,000+ طن سنوياً، 2,600+ موظف.",
       icon: Factory,
       color: "bg-amber-100 text-amber-700",
-      logoCode: "YCIC"
+      logoCode: "YCIC",
+      founded: 1970,
+      employees: 2600,
+      capacity: "120,000 tons/year",
+      website: "https://ycic.com"
     },
     {
       id: "ncc",
       nameEn: "National Cement Company (NCC)",
-      nameAr: "شركة الأسمنت الوطنية",
-      sector: "Strategic Goods",
-      sectorAr: "السلع الاستراتيجية",
-      descEn: "Yemen's leading cement manufacturer",
-      descAr: "الشركة الرائدة في تصنيع الأسمنت في اليمن",
+      nameAr: "الشركة الوطنية للأسمنت",
+      sector: "Cement Manufacturing",
+      sectorAr: "تصنيع الأسمنت",
+      descEn: "Founded 2008. First privately owned cement company in Yemen. 1.6 million tons/year capacity. Received $35M IFC loan for greenfield cement plant construction.",
+      descAr: "تأسست 2008. أول شركة أسمنت خاصة في اليمن. طاقة إنتاجية 1.6 مليون طن/سنة. حصلت على قرض IFC بقيمة 35 مليون دولار لبناء مصنع أسمنت جديد.",
       icon: Building2,
       color: "bg-gray-100 text-gray-700",
-      logoCode: "NCC"
+      logoCode: "NCC",
+      founded: 2008,
+      capacity: "1.6M tons/year",
+      ifcLoan: "$35M",
+      website: "https://nccyemen.com"
     },
     {
       id: "nadfood",
       nameEn: "National Dairy and Food Company (Nadfood)",
-      nameAr: "الشركة الوطنية للألبان والأغذية (نادفود)",
+      nameAr: "شركة الألبان والأغذية الوطنية",
       sector: "FMCG",
       sectorAr: "السلع الاستهلاكية",
-      descEn: "Dairy products and food manufacturing",
-      descAr: "منتجات الألبان وتصنيع الأغذية",
+      descEn: "Founded 1983. First company in Yemen specialized in producing milk, food products, juice and evaporated milk. Part of IFC $75M financing for food security.",
+      descAr: "تأسست 1983. أول شركة في اليمن متخصصة في إنتاج الحليب والمنتجات الغذائية والعصائر والحليب المبخر. جزء من تمويل IFC بقيمة 75 مليون دولار للأمن الغذائي.",
       icon: Milk,
       color: "bg-blue-100 text-blue-700",
-      logoCode: "Nadfood"
+      logoCode: "Nadfood",
+      founded: 1983,
+      website: "https://nadfood.com"
     },
     {
       id: "ycsr",
       nameEn: "Yemen Company for Sugar Refining (YCSR)",
       nameAr: "الشركة اليمنية لتكرير السكر",
-      sector: "Strategic Goods",
-      sectorAr: "السلع الاستراتيجية",
-      descEn: "Sugar refining operations in Hodeidah",
-      descAr: "عمليات تكرير السكر في الحديدة",
+      sector: "Sugar Refining",
+      sectorAr: "تكرير السكر",
+      descEn: "Founded 2013. First sugar refinery in Yemen. 2,000 tons/day capacity. Located in Ras Isa industrial area, Al Hudaydah. Uses modern PCS7 technology (first in Middle East). 99% purity.",
+      descAr: "تأسست 2013. أول مصفاة سكر في اليمن. طاقة 2,000 طن/يوم. تقع في المنطقة الصناعية رأس عيسى، الحديدة. تستخدم تقنية PCS7 الحديثة (الأولى في الشرق الأوسط). نقاوة 99%.",
       icon: Factory,
       color: "bg-pink-100 text-pink-700",
       logoCode: "YCSR",
-      location: "Hodeidah"
+      location: "Hodeidah",
+      founded: 2013,
+      capacity: "2,000 tons/day",
+      website: "http://ycsryemen.com"
     },
     {
       id: "ycfms-aden",
@@ -182,11 +195,13 @@ const hsaData = {
       nameAr: "الشركة اليمنية لصناعة السمن والصابون",
       sector: "FMCG",
       sectorAr: "السلع الاستهلاكية",
-      descEn: "Ghee and soap manufacturing",
-      descAr: "تصنيع السمن والصابون",
+      descEn: "Founded 1975. First company in Yemen for ghee, vegetable oils, margarine, butter, detergent powder, and toilet soap. Edible oil plant (1975), toilet soap plant (1982), detergent powder plant (1984).",
+      descAr: "تأسست 1975. أول شركة في اليمن للسمن والزيوت النباتية والمارجرين والزبدة ومسحوق الغسيل والصابون. مصنع الزيوت (1975)، مصنع الصابون (1982)، مصنع المنظفات (1984).",
       icon: Factory,
       color: "bg-teal-100 text-teal-700",
-      logoCode: "YCGSI"
+      logoCode: "YCGSI",
+      founded: 1975,
+      website: "https://ycgsi.com"
     },
     {
       id: "one-cash",
@@ -194,11 +209,16 @@ const hsaData = {
       nameAr: "ون كاش",
       sector: "Financial Services",
       sectorAr: "الخدمات المالية",
-      descEn: "Digital financial services and mobile payments",
-      descAr: "الخدمات المالية الرقمية والمدفوعات المتنقلة",
+      descEn: "Launched 2022. 700,000+ active customers. 14.7M transactions worth $2.5B in 2024. 1.4M+ app downloads. 15,000+ agent network. Forbes Middle East Fintech 50 2025.",
+      descAr: "أطلقت 2022. 700,000+ عميل نشط. 14.7 مليون معاملة بقيمة 2.5 مليار دولار في 2024. 1.4+ مليون تحميل للتطبيق. شبكة 15,000+ وكيل. فوربس الشرق الأوسط Fintech 50 2025.",
       icon: Banknote,
       color: "bg-red-100 text-red-700",
-      logoCode: "ONE"
+      logoCode: "ONE",
+      founded: 2022,
+      customers: "700,000+",
+      transactions: "14.7M ($2.5B)",
+      website: "https://onecashye.com",
+      recognition: "Forbes Middle East Fintech 50 2025"
     }
   ],
   

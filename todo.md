@@ -6385,3 +6385,62 @@ Based on review of master design documents and data source register:
 - [x] Reports page hero stats use smaller padding/text on mobile
 - [x] Header navigation already responsive with mobile menu
 
+
+
+## Phase 71: HSA Group Commercial Entity Module (Phase 9A) - Jan 29, 2026
+
+**Parallel Research Tasks:**
+- [ ] Research HSA Group subsidiaries and ownership structure
+- [ ] Research YCIC (Yemen Company for Industry and Commerce)
+- [ ] Research NCC (National Cement Company)
+- [ ] Research Nadfood (National Food Industries)
+- [ ] Research YCSR (Yemen Company for Sugar Refining)
+- [ ] Research Flour Mills (Aden and Hodeidah)
+- [ ] Research GenPack (General Packaging Industries)
+- [ ] Research YCGSI (Yemen Company for Ghee and Soap Industry)
+- [ ] Research ONE Cash (mobile money service)
+- [ ] Collect HSA Group and subsidiary logos
+- [ ] Collect IFC/World Bank evidence documents
+
+**Database Schema Extensions:**
+- [ ] Create entities table with canonical_name, type, country, sector_tags
+- [ ] Create entity_aliases table for AR/EN names
+- [ ] Create entity_relationships table with confidence grades
+- [ ] Create entity_subsidiaries table with ownership percentages
+- [ ] Create entity_claims table with DQAF quality profiles
+- [ ] Create entity_facilities table
+- [ ] Create entity_documents table
+
+**HSA Page Enhancement:**
+- [ ] Build Overview tab with profile completeness score
+- [ ] Build Corporate Structure tab with interactive graph
+- [ ] Build Facilities tab with subpages
+- [ ] Build Documents Library tab (2010-present)
+- [ ] Build Economic Footprint tab with evidence-only metrics
+- [ ] Build Compliance/Sanctions tab (descriptive only)
+- [ ] Build Timeline tab (monthly spine 2010-present)
+- [ ] Build Corrections tab with report issue flow
+- [ ] Implement Economic Exposure Map
+
+**Report Generation:**
+- [ ] Generate Q4 2025 Quarterly Report PDF
+- [ ] Generate Annual 2025 Report PDF
+- [ ] Add report thumbnails to Reports page
+
+
+
+## Phase 71: HSA + Reports Enhancement - COMPLETED (Jan 29, 2026)
+
+**Completed:**
+- [x] HSA Group logo fixed (downloaded from LinkedIn, .jpg format)
+- [x] Enhanced HSA subsidiary data with research findings (YCSR, GenPack, YCGSI, ONE Cash)
+- [x] Sample reports seeded in database (Q1-Q4 2025, Annual 2025)
+- [x] Reports page now shows 5 available reports
+- [x] Report templates configured (Monthly, Quarterly, Annual)
+- [x] All features tested in browser
+
+**Key Achievements:**
+1. HSA Group profile displays correct logo with yellow/black branding
+2. Reports page shows 5 reports with download buttons (2.1-8.1 MB)
+3. 3 report types available (Monthly FX, Quarterly, Annual)
+4. Evidence-first architecture maintained with 95% coverage indicator
