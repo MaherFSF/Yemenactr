@@ -8410,3 +8410,48 @@ Based on review of master design documents and data source register:
 - [x] Footer updated to dark green (#0D2818)
 - [x] SectorHero gradient updated to green
 - [x] Methodology page redesigned with professional download section
+
+
+### Phase 77: Comprehensive Platform Overhaul (YETO Premium Design)
+
+**1) Quick Tour Redesign:**
+- [x] Generate Yemeni male character (حضرمي attire) illustration
+- [x] Generate Yemeni female character (professional hijab) illustration
+- [x] Redesign Quick Tour as narrative journey with character guides
+- [x] Add step-by-step explanations with light, professional UI
+- [x] Create smooth transitions between tour steps
+
+**2) UI/UX Premium Design Review:**
+- [ ] Apply premium color palette from mockups (green/gold/white)
+- [ ] Update all banners with better contextualized images
+- [ ] Reduce image fading across all pages
+- [ ] Ensure consistent typography and spacing
+- [ ] Add micro-interactions and hover effects
+
+**3) Data Visualization Enhancements:**
+- [ ] Update chart color codes for consistency
+- [ ] Ensure all figures are visible in visualizations
+- [ ] Add infographics for sector storytelling
+- [ ] Create timeline journey for each sector (2010-present)
+
+**4) System Architecture Diagram:**
+- [x] Create accurate YETO data pipeline diagram
+- [x] Show all data sources and connectors (World Bank, IMF, UN OCHA, WFP, CBY, ReliefWeb, IATI)
+- [x] Display processing layers and storage (Ingestion, Transformation, QA, Data Lake)
+- [x] Include frontend/backend architecture (API Gateway, AI Assistant, Analytics, User Interfaces)
+
+**5) Night Mode Implementation:**
+- [x] Create advanced dark theme CSS variables (green-tinted dark background, gold accents)
+- [x] Ensure all components support dark mode (card, popover, sidebar, charts)
+- [x] Add smooth theme transition animations (via CSS transitions)
+- [x] Test contrast and readability (WCAG compliant colors)
+
+**6) Letterhead Branding:**
+- [x] Apply letterhead design to downloadable PDFs (letterhead-en.png, letterhead-ar.png)
+- [x] Use consistent branding across all exports
+- [x] Add YETO logo and CauseWay branding (yeto-logo.png)
+
+**7) Navigation & Organization:**
+- [ ] Review and improve site navigation
+- [ ] Ensure formal yet beautiful design
+- [ ] Add visual touches for professionalism

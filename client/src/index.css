@@ -112,39 +112,59 @@
 }
 
 .dark {
-  /* Dark mode using green theme instead of blue */
-  --primary: var(--yeto-secondary-green);
+  /* Advanced YETO Dark Mode - Premium Green/Gold Night Theme */
+  --primary: #4A7C59;  /* Lighter green for dark mode visibility */
   --primary-foreground: #FFFFFF;
-  --sidebar-primary: var(--yeto-secondary-green);
+  --sidebar-primary: #4A7C59;
   --sidebar-primary-foreground: #FFFFFF;
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.85 0.005 65);
-  --card: oklch(0.21 0.006 285.885);
-  --card-foreground: oklch(0.85 0.005 65);
-  --popover: oklch(0.21 0.006 285.885);
-  --popover-foreground: oklch(0.85 0.005 65);
-  --secondary: oklch(0.24 0.006 286.033);
-  --secondary-foreground: oklch(0.7 0.005 65);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground:  oklch(0.92 0.005 65);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.488 0.243 264.376);
-  --chart-1: var(--yeto-light-green);
-  --chart-2: var(--yeto-secondary-green);
-  --chart-3: var(--yeto-primary-green);
-  --chart-4: var(--yeto-gold);
-  --chart-5: var(--yeto-dark);
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-foreground: oklch(0.85 0.005 65);
-  --sidebar-accent: oklch(0.274 0.006 286.033);
-  --sidebar-accent-foreground:  oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.488 0.243 264.376);
+  
+  /* Deep forest background with subtle green undertone */
+  --background: oklch(0.12 0.015 145);  /* Very dark green-tinted black */
+  --foreground: oklch(0.92 0.01 90);    /* Warm off-white for readability */
+  
+  /* Card surfaces with depth */
+  --card: oklch(0.16 0.012 145);        /* Slightly lighter than background */
+  --card-foreground: oklch(0.92 0.01 90);
+  --popover: oklch(0.18 0.015 145);
+  --popover-foreground: oklch(0.92 0.01 90);
+  
+  /* Secondary elements */
+  --secondary: oklch(0.20 0.018 145);
+  --secondary-foreground: oklch(0.85 0.01 90);
+  --muted: oklch(0.22 0.015 145);
+  --muted-foreground: oklch(0.65 0.01 90);
+  
+  /* Accent with gold highlight */
+  --accent: oklch(0.75 0.12 85);        /* Gold accent for dark mode */
+  --accent-foreground: oklch(0.15 0.02 145);
+  
+  /* Destructive and utility */
+  --destructive: oklch(0.65 0.2 25);
+  --destructive-foreground: oklch(0.98 0 0);
+  
+  /* Borders with subtle glow */
+  --border: oklch(0.30 0.02 145);       /* Visible but subtle green border */
+  --input: oklch(0.25 0.015 145);
+  --ring: oklch(0.55 0.15 145);         /* Green focus ring */
+  
+  /* Chart colors optimized for dark mode */
+  --chart-1: oklch(0.65 0.15 145);      /* Bright green */
+  --chart-2: oklch(0.75 0.12 85);       /* Gold */
+  --chart-3: oklch(0.55 0.12 145);      /* Medium green */
+  --chart-4: oklch(0.70 0.08 90);       /* Light gold */
+  --chart-5: oklch(0.45 0.10 145);      /* Dark green */
+  
+  /* Sidebar with premium feel */
+  --sidebar: oklch(0.10 0.015 145);     /* Darker than main background */
+  --sidebar-foreground: oklch(0.88 0.01 90);
+  --sidebar-accent: oklch(0.18 0.02 145);
+  --sidebar-accent-foreground: oklch(0.95 0.01 90);
+  --sidebar-border: oklch(0.25 0.02 145);
+  --sidebar-ring: oklch(0.55 0.15 145);
+  
+  /* Gold accent preserved for highlights */
+  --gold-accent: oklch(0.75 0.12 85);
+  --gold-accent-foreground: oklch(0.15 0.02 145);
 }
 
 @layer base {
