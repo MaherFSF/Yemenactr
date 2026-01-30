@@ -89,6 +89,7 @@ import { updatesRouter } from "./routers/updates";
 import { libraryRouter } from "./routes/library";
 import { graphRouter } from "./routers/graphRouter";
 import { sectorKpiRouter } from "./routers/sectorKpiRouter";
+import { ingestionRouter } from "./routers/ingestionRouter";
 import { sql, desc, eq, like, or, and, inArray } from "drizzle-orm";
 
 export const appRouter = router({
@@ -115,6 +116,7 @@ export const appRouter = router({
   library: libraryRouter,
   graph: graphRouter,
   sectorKpi: sectorKpiRouter,
+  ingestion: ingestionRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
