@@ -8357,3 +8357,13 @@ Based on review of master design documents and data source register:
 - [ ] Full smoke test all pages
 - [ ] Save checkpoint for publishing
 - [ ] Enable publish button
+
+
+### Phase 75: Methodology Page Redesign
+- [x] Redesign download section with professional card-based layout (4 color-coded cards)
+- [x] Add icons and file size indicators to download buttons
+- [x] Improve source tables with mobile-responsive design (collapsible categories)
+- [x] Add collapsible sections for source categories on mobile
+- [x] Enhance visual hierarchy with better typography and spacing
+- [x] Fix corrections policy section layout (numbered steps with circular badges)
+- [x] Test mobile responsiveness across all breakpoints
