@@ -43,13 +43,25 @@
 }
 
 :root {
-  /* YETO Brand Colors */
-  --yeto-navy: #103050;
-  --yeto-dark-navy: #0B1F33;
-  --yeto-green: #107040;
+  /* YETO Brand Colors - Forest Green Palette */
+  --yeto-moss: #2C3424;
+  --yeto-cypress: #4C583E;
+  --yeto-cedar: #959581;
+  --yeto-olive: #768064;
+  --yeto-aloe: #DADED8;
+  --yeto-forest-1: #406D61;
+  --yeto-forest-2: #224B40;
+  --yeto-forest-3: #133129;
+  --yeto-forest-4: #081F1C;
+  --yeto-forest-5: #021010;
   --yeto-gold: #C0A030;
-  --yeto-light-bg: #F6F8FB;
-  --yeto-border: #E6EAF0;
+  --yeto-light-bg: #F8FAF8;
+  --yeto-border: #E6EAE6;
+  
+  /* Legacy aliases */
+  --yeto-navy: var(--yeto-moss);
+  --yeto-dark-navy: var(--yeto-forest-5);
+  --yeto-green: var(--yeto-forest-2);
   
   /* Design Tokens */
   --primary: var(--yeto-navy);
