@@ -189,9 +189,9 @@ export const sectorPagesRouter = router({
         let query;
         if (input.indicatorCode) {
           query = sql`
-            SELECT ts.*, i.nameEn, i.nameAr, s.nameEn as sourceName
+            SELECT ts.*, i.nameEn, i.nameAr, s.publisher as sourceName
             FROM time_series ts
-            LEFT JOIN indicators i ON ts.indicatorCode = i.indicatorCode
+            LEFT JOIN indicators i ON ts.indicatorCode = i.code
             LEFT JOIN sources s ON ts.sourceId = s.id
             WHERE ts.indicatorCode = ${input.indicatorCode}
             AND YEAR(ts.date) >= ${input.startYear}
@@ -200,9 +200,9 @@ export const sectorPagesRouter = router({
           `;
         } else {
           query = sql`
-            SELECT ts.*, i.nameEn, i.nameAr, s.nameEn as sourceName
+            SELECT ts.*, i.nameEn, i.nameAr, s.publisher as sourceName
             FROM time_series ts
-            LEFT JOIN indicators i ON ts.indicatorCode = i.indicatorCode
+            LEFT JOIN indicators i ON ts.indicatorCode = i.code
             LEFT JOIN sources s ON ts.sourceId = s.id
             WHERE i.sector = ${input.sectorCode}
             AND YEAR(ts.date) >= ${input.startYear}
@@ -671,6 +671,58 @@ export const sectorPagesRouter = router({
       } catch (error) {
         console.error('[SectorPages] Failed to add methodology note:', error);
         return { success: false, error: 'Failed to add methodology note' };
+      }
+    }),
+
+  // Get sources used for a sector page
+  getSectorSources: publicProcedure
+    .input(z.object({
+      sectorCode: z.string(),
+      limit: z.number().optional().default(50)
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return { success: false, sources: [], error: 'Database unavailable' };
+
+      try {
+        // Get all sources used in time series for this sector's indicators
+        const result = await db.execute(sql`
+          SELECT DISTINCT
+            s.id,
+            s.publisher,
+            s.url,
+            s.license,
+            COUNT(ts.id) as dataPointCount,
+            MAX(ts.date) as lastDataDate,
+            CASE 
+              WHEN s.publisher LIKE '%Central Bank%' OR s.publisher LIKE '%Ministry%' THEN 'T0'
+              WHEN s.publisher LIKE '%World Bank%' OR s.publisher LIKE '%IMF%' OR s.publisher LIKE '%UN%' THEN 'T1'
+              WHEN s.publisher LIKE '%Center%' OR s.publisher LIKE '%Institute%' THEN 'T2'
+              ELSE 'T3'
+            END as tier
+          FROM sources s
+          INNER JOIN time_series ts ON s.id = ts.sourceId
+          INNER JOIN indicators i ON ts.indicatorCode = i.code
+          WHERE i.sector = ${input.sectorCode}
+          GROUP BY s.id, s.publisher, s.url, s.license
+          ORDER BY dataPointCount DESC
+          LIMIT ${input.limit}
+        `);
+
+        const sources = ((result as any)[0] || []).map((row: any) => ({
+          id: row.id,
+          publisher: row.publisher,
+          url: row.url,
+          license: row.license,
+          dataPointCount: row.dataPointCount,
+          lastDataDate: row.lastDataDate,
+          tier: row.tier
+        }));
+
+        return { success: true, sources };
+      } catch (error) {
+        console.error(`[SectorPages] Failed to get sources for ${input.sectorCode}:`, error);
+        return { success: false, sources: [], error: 'Failed to load sector sources' };
       }
     }),
 

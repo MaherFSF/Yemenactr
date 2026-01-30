@@ -19,9 +19,18 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { Sparkline, RegimeHeatmap, InsightsTicker, CorrelationMatrix } from "@/components/charts/EnhancedVisualizations";
 import EvidencePackButton from "@/components/EvidencePackButton";
 import ContradictionBadge from "@/components/ContradictionBadge";
+import { SourcesUsedPanel } from "@/components/SourcesUsedPanel";
+import { trpc } from "@/lib/trpc";
 
 export default function Currency() {
   const { language } = useLanguage();
+  const sectorCode = "currency";
+
+  // Fetch sources used on this page
+  const { data: sourcesData, isLoading: isSourcesLoading } = trpc.sectorPages.getSectorSources.useQuery({
+    sectorCode,
+    limit: 20
+  });
 
   // Exchange rate data - Updated January 2026 (CBY Aden Annual Reports)
   const fxData = [
@@ -443,6 +452,15 @@ export default function Currency() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Sources Used Panel */}
+        <div className="mt-8">
+          <SourcesUsedPanel 
+            sources={sourcesData?.sources || []}
+            isLoading={isSourcesLoading}
+            sectorName={language === "ar" ? "العملة والصرف" : "Currency & FX"}
+          />
+        </div>
 
         {/* Related Research */}
         <Card className="mt-8">

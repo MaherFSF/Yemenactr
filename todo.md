@@ -8217,3 +8217,119 @@ Based on review of master design documents and data source register:
 - [x] Tests passing (696 tests)
 - [x] Server running and responsive
 
+
+
+### Phase 86: Comprehensive Deep Dive Audit - Data Completeness & Admin Dashboard (IN PROGRESS)
+
+**Database Audit:**
+- [ ] Count records in all major tables
+- [ ] Check time series coverage (2010-2026)
+- [ ] Identify missing years/months in data
+- [ ] Verify indicator coverage per sector
+- [ ] Check source registry completeness
+
+**Sector Page Audit:**
+- [ ] Trade sector - data gaps
+- [ ] Macro sector - data gaps
+- [ ] Banking sector - data gaps
+- [ ] Labor sector - data gaps
+- [ ] Currency sector - data gaps
+- [ ] Food Security sector - data gaps
+- [ ] Poverty sector - data gaps
+- [ ] Energy sector - data gaps
+- [ ] Aid Flows sector - data gaps
+- [ ] Rural Development sector - data gaps
+
+**Admin Dashboard Audit:**
+- [ ] Test all admin pages functionality
+- [ ] Check data management interfaces
+- [ ] Verify connector status
+- [ ] Test ingestion workflows
+- [ ] Check scheduler configuration
+
+**Backend Services Audit:**
+- [ ] Review all connectors
+- [ ] Check API integrations
+- [ ] Verify data pipelines
+- [ ] Test automated jobs
+
+
+
+### Phase 87: Database Population & Global Sector Agent Patch (IN PROGRESS)
+
+**Database Population (2010-2026):**
+- [ ] Create comprehensive seeding script
+- [ ] Populate sources table (225+ sources)
+- [ ] Populate indicators table (150+ indicators)
+- [ ] Populate time_series table (10,000+ records)
+- [ ] Populate documents table (500+ documents)
+- [ ] Populate economic_events table (300+ events)
+- [ ] Populate entities table (100+ entities)
+- [ ] Populate sector_definitions table (15 sectors)
+
+**Global Sector Agent Patch:**
+- [ ] Update all sector agents to query full evidence base
+- [ ] Implement relevance filter with tier policy
+- [ ] Add source mix explanation to each page
+- [ ] Log fix in DECISIONS document
+
+**Sources Used Panel:**
+- [ ] Add SourcesUsedPanel to Trade sector
+- [ ] Add SourcesUsedPanel to Macro sector
+- [ ] Add SourcesUsedPanel to Banking sector
+- [ ] Add SourcesUsedPanel to all remaining sectors
+
+**Frontend-Database Connection:**
+- [ ] Replace hardcoded KPIs with tRPC queries
+- [ ] Replace hardcoded charts with database data
+- [ ] Connect evidence panels to real sources
+- [ ] Update admin dashboard with real metrics
+
+
+### Phase 72: Database-Connected Sector Pages + Sources Panel (January 30, 2026)
+
+**Global Fix Applied:**
+- [x] No sector agent may query only "sector sources"; must query full evidence base with relevance filter and tier policy
+- [x] All sectors must show "Sources used on this page" panel
+
+**1) Backend Endpoints:**
+- [x] getSectorSources endpoint in sectorPages router - queries sources with tier classification
+- [x] Tier classification logic (T0=Official Government, T1=International Org, T2=Research, T3=Other)
+
+**2) SourcesUsedPanel Component:**
+- [x] Created client/src/components/SourcesUsedPanel.tsx
+- [x] Displays sources grouped by tier with data point counts
+- [x] Shows license information and external links
+- [x] Expandable list with "Show More" functionality
+- [x] Link to full data methodology
+
+**3) Sector Pages Updated:**
+- [x] Macroeconomy.tsx - Connected to database via tRPC, added SourcesUsedPanel
+- [x] Currency.tsx - Added SourcesUsedPanel with sources query
+
+**4) Remaining Sector Pages (Placeholder - to be completed):**
+- [ ] Agriculture.tsx - Add SourcesUsedPanel
+- [ ] AidFlows.tsx - Add SourcesUsedPanel
+- [ ] Banking.tsx - Add SourcesUsedPanel
+- [ ] ConflictEconomy.tsx - Add SourcesUsedPanel
+- [ ] Energy.tsx - Add SourcesUsedPanel
+- [ ] FoodSecurity.tsx - Add SourcesUsedPanel
+- [ ] Infrastructure.tsx - Add SourcesUsedPanel
+- [ ] Investment.tsx - Add SourcesUsedPanel
+- [ ] LaborMarket.tsx - Add SourcesUsedPanel
+- [ ] Microfinance.tsx - Add SourcesUsedPanel
+- [ ] Poverty.tsx - Add SourcesUsedPanel
+- [ ] Prices.tsx - Add SourcesUsedPanel
+- [ ] PublicFinance.tsx - Add SourcesUsedPanel
+- [ ] Trade.tsx - Add SourcesUsedPanel
+
+**Database Status (Verified):**
+- Sources: 178 records
+- Indicators: 122 records
+- Time Series: 5,513 records
+- Economic Events: 237 records
+- Sector Definitions: 16 records
+- Datasets: 100 records
+- Documents: 55 records
+- Entities: 79 records
+
