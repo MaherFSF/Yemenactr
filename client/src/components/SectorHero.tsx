@@ -46,12 +46,12 @@ export default function SectorHero({
         />
       )}
       
-      {/* Gradient Overlay - reduced opacity to show background image better */}
+      {/* Gradient Overlay - minimal opacity to preserve original image */}
       <div 
         className="absolute inset-0"
         style={{
           background: backgroundImage 
-            ? `linear-gradient(to right, ${gradientFrom}d0, ${gradientTo}a0)`
+            ? `linear-gradient(to right, ${gradientFrom}80, ${gradientTo}50, transparent)`
             : `linear-gradient(to right, ${gradientFrom}, ${gradientTo})`,
         }}
       />

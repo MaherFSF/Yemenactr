@@ -362,8 +362,8 @@ export default function Home() {
             className="w-full h-full object-cover"
           />
         </div>
-        {/* Green overlay for text readability - YETO brand colors */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0D2818]/85 via-[#1B5E20]/70 to-[#1B5E20]/50" />
+        {/* Green overlay for text readability - YETO brand colors - reduced opacity for better image visibility */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0D2818]/60 via-[#1B5E20]/40 to-transparent" />
 
         {/* Content overlay */}
         <div className="relative z-10 container py-16 md:py-24">

@@ -8455,3 +8455,13 @@ Based on review of master design documents and data source register:
 - [ ] Review and improve site navigation
 - [ ] Ensure formal yet beautiful design
 - [ ] Add visual touches for professionalism
+
+
+### Phase 78: Quick Tour & Branding Improvements
+- [ ] Remove character guides (Ahmed/Fatima) from Quick Tour
+- [ ] Simplify Quick Tour to clean, professional design
+- [ ] Improve color selection and branding consistency
+- [ ] Ensure images remain original without color overlays
+- [ ] Remove excessive fading/overlay effects from hero sections
+- [ ] Comprehensive quality check of all pages
+- [ ] Test front page and all major sections
