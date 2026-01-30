@@ -139,7 +139,7 @@ export async function getSectorIndicators(sectorCode: string): Promise<SectorInd
         ts.value as currentValue,
         ts.date as lastUpdated,
         ts.sourceId,
-        s.nameEn as sourceName,
+        s.publisher as sourceName,
         ts.regimeTag as regime
       FROM indicators i
       LEFT JOIN time_series ts ON i.code = ts.indicatorCode
@@ -185,10 +185,10 @@ export async function getSectorEvents(sectorCode: string, limit: number = 10): P
   
   try {
     const result = await db.execute(sql`
-      SELECT id, titleEn, titleAr, date, category
+      SELECT id, title as titleEn, titleAr, eventDate as date, category
       FROM economic_events
       WHERE category LIKE ${`%${sectorCode}%`} OR category LIKE '%economic%'
-      ORDER BY date DESC
+      ORDER BY eventDate DESC
       LIMIT ${limit}
     `);
     
@@ -215,11 +215,11 @@ export async function getSectorDocuments(sectorCode: string, limit: number = 10)
   
   try {
     const result = await db.execute(sql`
-      SELECT d.id, d.titleEn, d.titleAr, d.sourceId, d.publishDate, d.documentType, s.nameEn as sourceName
+      SELECT d.id, d.title as titleEn, d.titleAr, d.sourceId, d.publicationDate as publishDate, d.category as documentType, s.publisher as sourceName
       FROM documents d
       LEFT JOIN sources s ON d.sourceId = s.id
-      WHERE d.sector = ${sectorCode} OR d.titleEn LIKE ${`%${sectorCode}%`}
-      ORDER BY d.publishDate DESC
+      WHERE d.category LIKE ${`%${sectorCode}%`} OR d.title LIKE ${`%${sectorCode}%`}
+      ORDER BY d.publicationDate DESC
       LIMIT ${limit}
     `);
     
@@ -248,10 +248,14 @@ export async function getSectorContradictions(sectorCode: string): Promise<Secto
   
   try {
     const result = await db.execute(sql`
-      SELECT indicatorCode, source1Name, source2Name, descriptionEn, descriptionAr, status
-      FROM data_contradictions
-      WHERE sectorCode = ${sectorCode} OR indicatorCode LIKE ${`%${sectorCode}%`}
-      ORDER BY detectedAt DESC
+      SELECT dc.indicatorCode, s1.publisher as source1Name, s2.publisher as source2Name, 
+             dc.discrepancyType as status, dc.plausibleReasons, dc.resolutionNotes
+      FROM data_contradictions dc
+      LEFT JOIN sources s1 ON dc.source1Id = s1.id
+      LEFT JOIN sources s2 ON dc.source2Id = s2.id
+      LEFT JOIN indicators i ON dc.indicatorCode = i.code
+      WHERE i.sector = ${sectorCode} OR dc.indicatorCode LIKE ${`%${sectorCode}%`}
+      ORDER BY dc.date DESC
       LIMIT 20
     `);
     
@@ -278,18 +282,18 @@ export async function getSectorGaps(sectorCode: string): Promise<SectorGap[]> {
   
   try {
     const result = await db.execute(sql`
-      SELECT id, gapType, descriptionEn, descriptionAr, priority
+      SELECT id, missingItem, whyItMatters, priority, status
       FROM data_gap_tickets
-      WHERE sectorCode = ${sectorCode} AND status = 'open'
+      WHERE missingItem LIKE ${`%${sectorCode}%`} AND status = 'open'
       ORDER BY priority DESC, createdAt DESC
       LIMIT 20
     `);
     
     const rows = (result as any)[0] || [];
     return rows.map((row: any) => ({
-      gapType: row.gapType || 'missing_data',
-      descriptionEn: row.descriptionEn || 'Data gap identified',
-      descriptionAr: row.descriptionAr || 'تم تحديد فجوة في البيانات',
+      gapType: 'missing_data',
+      descriptionEn: row.missingItem || 'Data gap identified',
+      descriptionAr: row.whyItMatters || 'تم تحديد فجوة في البيانات',
       ticketId: row.id,
       priority: row.priority || 'medium'
     }));

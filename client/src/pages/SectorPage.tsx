@@ -44,6 +44,7 @@ const SPECIALIZED_SECTORS: Record<string, React.ComponentType<any>> = {
   'employment': LaborMarketIntelligenceWall,
   'jobs': LaborMarketIntelligenceWall,
   'workforce': LaborMarketIntelligenceWall,
+  // Currency uses the standalone Currency page component
 };
 
 export default function SectorPage() {
