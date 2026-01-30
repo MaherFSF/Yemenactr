@@ -611,5 +611,119 @@ export const partnerEngineRouter = router({
         .limit(1);
 
       return validation;
-    })
+    }),
+
+  // ============================================================================
+  // PARTNERSHIP OUTBOX - Email Configuration
+  // ============================================================================
+
+  /**
+   * Get email configuration defaults
+   */
+  getEmailDefaults: protectedProcedure.query(() => {
+    return {
+      fromEmail: "yeto@causewaygrp.com",
+      fromName: "YETO Platform",
+      replyTo: "yeto@causewaygrp.com",
+      templates: {
+        partnerInvitation: {
+          subject: "Invitation to Join YETO Data Partnership",
+          subjectAr: "دعوة للانضمام إلى شراكة بيانات يتو",
+        },
+        submissionReceived: {
+          subject: "Data Submission Received - YETO",
+          subjectAr: "تم استلام البيانات - يتو",
+        },
+        submissionApproved: {
+          subject: "Data Submission Approved - YETO",
+          subjectAr: "تمت الموافقة على البيانات - يتو",
+        },
+        submissionRejected: {
+          subject: "Data Submission Requires Revision - YETO",
+          subjectAr: "البيانات تحتاج إلى مراجعة - يتو",
+        },
+        weeklyDigest: {
+          subject: "YETO Weekly Partnership Digest",
+          subjectAr: "الموجز الأسبوعي لشراكة يتو",
+        },
+      },
+    };
+  }),
+
+  /**
+   * Update email configuration
+   */
+  updateEmailDefaults: protectedProcedure
+    .input(z.object({
+      fromEmail: z.string().email().optional(),
+      fromName: z.string().optional(),
+      replyTo: z.string().email().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      // In production, this would update database or config
+      return {
+        success: true,
+        updated: input,
+      };
+    }),
+
+  /**
+   * Get outbox queue (pending emails)
+   */
+  getOutboxQueue: protectedProcedure
+    .input(z.object({
+      status: z.enum(["pending", "sent", "failed"]).optional(),
+      limit: z.number().default(50),
+    }))
+    .query(async ({ input }) => {
+      // Return mock data - in production would query email queue table
+      return {
+        items: [
+          {
+            id: 1,
+            recipientEmail: "partner@example.org",
+            recipientName: "Partner Organization",
+            template: "submissionReceived",
+            status: "pending",
+            scheduledAt: new Date().toISOString(),
+            subject: "Data Submission Received - YETO",
+          },
+        ],
+        total: 1,
+        pending: 1,
+        sent: 0,
+        failed: 0,
+      };
+    }),
+
+  /**
+   * Send test email
+   */
+  sendTestEmail: protectedProcedure
+    .input(z.object({
+      template: z.string(),
+      recipientEmail: z.string().email(),
+    }))
+    .mutation(async ({ input }) => {
+      // In production, would send actual email
+      return {
+        success: true,
+        message: `Test email (${input.template}) would be sent to ${input.recipientEmail}`,
+      };
+    }),
+
+  /**
+   * Get partner communication history
+   */
+  getCommunicationHistory: protectedProcedure
+    .input(z.object({
+      partnerId: z.number().optional(),
+      limit: z.number().default(50),
+    }))
+    .query(async ({ input }) => {
+      return {
+        items: [],
+        total: 0,
+      };
+    }),
 });

@@ -149,7 +149,6 @@ function Router() {
       <Route path="/research-hub" component={ResearchHub} />
       <Route path="/research/:docId" component={DocumentDetail} />
       <Route path="/sectors" component={SectorsHub} />
-      <Route path="/sectors/:sectorCode" component={SectorPage} />
       <Route path={"/sectors/banking"} component={Banking} />
       <Route path={"/sectors/trade"} component={Trade} />
       <Route path={"/sectors/poverty"} component={Poverty} />
@@ -166,6 +165,7 @@ function Router() {
       <Route path={"/sectors/agriculture"} component={Agriculture} />
       <Route path={"/sectors/investment"} component={Investment} />
       <Route path={"/sectors/microfinance"} component={Microfinance} />
+      <Route path="/sectors/:sectorCode" component={SectorPage} />
       <Route path={"/data-repository"} component={DataRepository} />
       <Route path={"/data/repository"} component={DataRepository} />
       <Route path={"/timeline"} component={Timeline} />

@@ -91,6 +91,8 @@ import { graphRouter } from "./routers/graphRouter";
 import { sectorKpiRouter } from "./routers/sectorKpiRouter";
 import { ingestionRouter } from "./routers/ingestionRouter";
 import { laborAlertsRouter } from "./routers/laborAlerts";
+import { povertyHumandevRouter } from "./routers/povertyHumandev";
+import { methodologyDownloadsRouter } from "./routers/methodologyDownloads";
 import { sql, desc, eq, like, or, and, inArray } from "drizzle-orm";
 
 export const appRouter = router({
@@ -118,6 +120,8 @@ export const appRouter = router({
   graph: graphRouter,
   sectorKpi: sectorKpiRouter,
   ingestion: ingestionRouter,
+  povertyHumandev: povertyHumandevRouter,
+  methodologyDownloads: methodologyDownloadsRouter,
   laborAlerts: laborAlertsRouter,
   
   auth: router({
