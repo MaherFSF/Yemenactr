@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { SourcesUsedPanel } from "@/components/SourcesUsedPanel";
 import { Link } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -752,6 +753,9 @@ export default function Microfinance() {
           </div>
         </div>
       </div>
+
+      {/* Sources Used Panel */}
+      <SourcesUsedPanel sectorCode="microfinance" />
     </div>
   );
 }

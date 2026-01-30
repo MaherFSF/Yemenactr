@@ -1,14 +1,16 @@
 /**
  * Sources Used Panel Component
  * Displays the sources used on a sector page with tier information
+ * Fetches data from the database based on sectorCode
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Database, Shield, FileText, ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { trpc } from "@/lib/trpc";
 
 interface Source {
   id: number;
@@ -21,7 +23,8 @@ interface Source {
 }
 
 interface SourcesUsedPanelProps {
-  sources: Source[];
+  sectorCode: string;
+  sources?: Source[];
   isLoading?: boolean;
   sectorName?: string;
 }
@@ -40,17 +43,30 @@ const tierLabels: Record<string, { en: string; ar: string }> = {
   T3: { en: "Other Source", ar: "مصدر آخر" },
 };
 
-export function SourcesUsedPanel({ sources, isLoading, sectorName }: SourcesUsedPanelProps) {
+export function SourcesUsedPanel({ sectorCode, sources: propSources, isLoading: propIsLoading, sectorName }: SourcesUsedPanelProps) {
   const { language } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
   
+  // Fetch sources from database if not provided as props
+  const { data: sourcesData, isLoading: isQueryLoading } = trpc.sectorPages.getSectorSources.useQuery(
+    { sectorCode, limit: 50 },
+    { enabled: !propSources }
+  );
+
+  // Use provided sources or fetched sources
+  const sources = propSources || (sourcesData?.success ? sourcesData.sources : []) || [];
+  const isLoading = propIsLoading || isQueryLoading;
+  
   // Group sources by tier
-  const sourcesByTier = sources.reduce((acc, source) => {
-    const tier = source.tier || "T3";
-    if (!acc[tier]) acc[tier] = [];
-    acc[tier].push(source);
-    return acc;
-  }, {} as Record<string, Source[]>);
+  const sourcesByTier = useMemo(() => {
+    if (!sources || sources.length === 0) return {};
+    return sources.reduce((acc, source) => {
+      const tier = source.tier || "T3";
+      if (!acc[tier]) acc[tier] = [];
+      acc[tier].push(source);
+      return acc;
+    }, {} as Record<string, Source[]>);
+  }, [sources]);
 
   const tierOrder = ["T0", "T1", "T2", "T3"];
   const displayedSources = isExpanded ? sources : sources.slice(0, 5);
@@ -76,7 +92,7 @@ export function SourcesUsedPanel({ sources, isLoading, sectorName }: SourcesUsed
     );
   }
 
-  if (sources.length === 0) {
+  if (!sources || sources.length === 0) {
     return (
       <Card className="border-[#4C583E]/20 bg-[#DADED8]/10">
         <CardHeader className="pb-3">

@@ -1,4 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SourcesUsedPanel } from "@/components/SourcesUsedPanel";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -385,6 +386,9 @@ export default function PublicFinance() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Sources Used Panel */}
+      <SourcesUsedPanel sectorCode="public_finance" />
     </div>
   );
 }

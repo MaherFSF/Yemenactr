@@ -5,7 +5,8 @@
 
 import { useState, useMemo } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { trpc } from '@/lib/trpc';
+import { trpc } from "@/lib/trpc";
+import { SourcesUsedPanel } from "@/components/SourcesUsedPanel";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -1016,6 +1017,9 @@ export default function LaborMarket() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Sources Used Panel */}
+      <SourcesUsedPanel sectorCode="labor" />
     </div>
   );
 }

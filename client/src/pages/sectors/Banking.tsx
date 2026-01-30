@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
+import { SourcesUsedPanel } from "@/components/SourcesUsedPanel";
 import { getBankLogo, getBankWebsite } from "@/lib/bankLogos";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, AreaChart, Area } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -1113,6 +1114,9 @@ export default function BankingSector() {
           </div>
         </div>
       </div>
+
+      {/* Sources Used Panel */}
+      <SourcesUsedPanel sectorCode="banking" />
     </div>
   );
 }

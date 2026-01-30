@@ -29,6 +29,7 @@ import {
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, ComposedChart } from 'recharts';
 import { Sparkline, RegimeHeatmap, InsightsTicker } from "@/components/charts/EnhancedVisualizations";
 import { useState } from "react";
+import { SourcesUsedPanel } from "@/components/SourcesUsedPanel";
 import { Link } from "wouter";
 
 export default function Trade() {
@@ -1037,6 +1038,9 @@ export default function Trade() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Sources Used Panel */}
+      <SourcesUsedPanel sectorCode="trade" />
     </div>
   );
 }

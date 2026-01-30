@@ -455,11 +455,7 @@ export default function Currency() {
 
         {/* Sources Used Panel */}
         <div className="mt-8">
-          <SourcesUsedPanel 
-            sources={sourcesData?.sources || []}
-            isLoading={isSourcesLoading}
-            sectorName={language === "ar" ? "العملة والصرف" : "Currency & FX"}
-          />
+          <SourcesUsedPanel sectorCode="currency" />
         </div>
 
         {/* Related Research */}
@@ -636,6 +632,9 @@ export default function Currency() {
           </div>
         </div>
       </div>
+
+      {/* Sources Used Panel */}
+      <SourcesUsedPanel sectorCode="currency" />
     </div>
   );
 }

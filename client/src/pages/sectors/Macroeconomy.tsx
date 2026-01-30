@@ -176,7 +176,7 @@ export default function Macroeconomy() {
 
         {/* KPI Cards */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
-          {kpis.map((kpi, index) => (
+          {kpis.map((kpi: { titleEn: string; titleAr: string; value: string; change: number; year: string; source: string; confidence: string }, index: number) => (
             <Card key={index}>
               <CardHeader className="pb-3">
                 <CardDescription className="flex items-center justify-between">
@@ -366,11 +366,7 @@ export default function Macroeconomy() {
 
           {/* Sidebar - Sources Panel */}
           <div className="space-y-6">
-            <SourcesUsedPanel 
-              sources={sourcesData?.sources || []}
-              isLoading={isSourcesLoading}
-              sectorName={language === "ar" ? "الاقتصاد الكلي" : "Macroeconomy"}
-            />
+            <SourcesUsedPanel sectorCode="macro" />
 
             {/* Related Research */}
             <Card>
@@ -398,6 +394,9 @@ export default function Macroeconomy() {
           </div>
         </div>
       </div>
+
+      {/* Sources Used Panel */}
+      <SourcesUsedPanel sectorCode="macro" />
     </div>
   );
 }
