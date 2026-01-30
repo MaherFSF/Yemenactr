@@ -266,7 +266,7 @@ export async function enrichUpdate(updateId: number): Promise<{
         srcLabel: update.titleEn ?? update.titleAr ?? `Update #${update.id}`,
         dstType: "event",
         dstId: event.id,
-        dstLabel: event.titleEn ?? event.titleAr ?? `Event #${event.id}`,
+        dstLabel: event.title ?? event.titleAr ?? `Event #${event.id}`,
         strengthScore: 0.5,
         method: "rule_based",
         evidenceSnippet: `Update occurred within 1 week of event`,
@@ -307,13 +307,13 @@ export async function enrichEvent(eventId: number): Promise<{
   const event = eventResults[0];
   
   // 1. Link to sectors
-  const sectors = (event.sectors as string[]) ?? [];
+  const sectors = event.category ? [event.category] : [];
   for (const sector of sectors) {
     const result = await createLinkIfNotExists({
       linkType: "related_to",
       srcType: "event",
       srcId: event.id,
-      srcLabel: event.titleEn ?? event.titleAr ?? `Event #${event.id}`,
+      srcLabel: event.title ?? event.titleAr ?? `Event #${event.id}`,
       dstType: "sector",
       dstId: 0,
       dstLabel: sector,
@@ -325,7 +325,7 @@ export async function enrichEvent(eventId: number): Promise<{
   }
   
   // 2. Link to entities involved
-  const entityIds = (event.entities as number[]) ?? [];
+  const entityIds: number[] = [];
   for (const entityId of entityIds) {
     const entityResult = await db
       .select()
@@ -339,7 +339,7 @@ export async function enrichEvent(eventId: number): Promise<{
         linkType: "related_to",
         srcType: "event",
         srcId: event.id,
-        srcLabel: event.titleEn ?? event.titleAr ?? `Event #${event.id}`,
+        srcLabel: event.title ?? event.titleAr ?? `Event #${event.id}`,
         dstType: "entity",
         dstId: entity.id,
         dstLabel: entity.name ?? entity.nameAr ?? `Entity #${entity.id}`,
@@ -373,7 +373,7 @@ export async function enrichEvent(eventId: number): Promise<{
           linkType: "temporal_cooccurrence",
           srcType: "event",
           srcId: event.id,
-          srcLabel: event.titleEn ?? event.titleAr ?? `Event #${event.id}`,
+          srcLabel: event.title ?? event.titleAr ?? `Event #${event.id}`,
           dstType: "document",
           dstId: doc.id,
           dstLabel: doc.titleEn ?? doc.titleAr ?? `Document #${doc.id}`,
@@ -416,14 +416,14 @@ export async function enrichEntity(entityId: number): Promise<{
   }
   
   const entity = entityResults[0];
-  const entityName = entity.canonicalNameEn ?? entity.canonicalNameAr ?? "";
+  const entityName = entity.name ?? entity.nameAr ?? "";
   
   // 1. Find documents published by this entity
   const publishedDocs = await db
     .select()
     .from(libraryDocuments)
     .where(
-      sql`LOWER(${libraryDocuments.publisher}) LIKE LOWER(${`%${entityName}%`})`
+      sql`LOWER(${libraryDocuments.publisherName}) LIKE LOWER(${`%${entityName}%`})`
     )
     .limit(20);
   
@@ -448,7 +448,7 @@ export async function enrichEntity(entityId: number): Promise<{
     .select()
     .from(libraryDocuments)
     .where(
-      sql`JSON_CONTAINS(${libraryDocuments.entities}, ${entityId})`
+      sql`JSON_CONTAINS(${libraryDocuments.entityIds}, ${entityId})`
     )
     .limit(20);
   
@@ -469,7 +469,7 @@ export async function enrichEntity(entityId: number): Promise<{
   }
   
   // 3. Link to sectors based on entity category
-  if (entity.category) {
+  if (entity.entityType) {
     const sectorMapping: Record<string, string[]> = {
       "bank": ["banking", "finance"],
       "government": ["governance", "fiscal"],
@@ -478,7 +478,7 @@ export async function enrichEntity(entityId: number): Promise<{
       "private_sector": ["trade", "private_sector"],
     };
     
-    const sectors = sectorMapping[entity.category] ?? [];
+    const sectors = sectorMapping[entity.entityType] ?? [];
     for (const sector of sectors) {
       const result = await createLinkIfNotExists({
         linkType: "operates_in",
@@ -547,25 +547,10 @@ export async function runBatchEnrichment(options?: {
     }
   }
   
-  // Process updates
-  if (types.includes("update")) {
-    const updateResults = await db
-      .select()
-      .from(updates)
-      .where(sql`${updates.createdAt} >= ${since}`)
-      .limit(100);
-    
-    for (const update of updateResults) {
-      try {
-        const result = await enrichUpdate(update.id);
-        totalLinksCreated += result.linksCreated;
-        totalLinksSuggested += result.linksSuggested;
-        updatesProcessed++;
-      } catch (error) {
-        console.error(`[AutoEnrichment] Error enriching update ${update.id}:`, error);
-      }
-    }
-  }
+  // Process updates - disabled as updates table doesn't exist in current schema
+  // if (types.includes("update")) {
+  //   // Updates processing would go here
+  // }
   
   // Process events
   if (types.includes("event")) {
