@@ -15,7 +15,6 @@ import {
   sectorBriefs,
   sectorAlerts,
   timeSeries,
-  dataUpdates,
   libraryDocuments,
   evidencePacks,
   economicEvents,
@@ -415,15 +414,15 @@ async function fetchLinkedDocuments(): Promise<LinkedDocument[]> {
       .select()
       .from(libraryDocuments)
       .where(sql`JSON_CONTAINS(${libraryDocuments.sectors}, '"macro"')`)
-      .orderBy(desc(libraryDocuments.publishedDate))
+      .orderBy(desc(libraryDocuments.publishedAt))
       .limit(10);
     
     return docs.map(d => ({
       id: d.id,
-      title: d.title,
-      titleAr: d.titleAr || d.title,
-      publisher: d.publisher || 'Unknown',
-      date: d.publishedDate?.toISOString() || '',
+      title: d.titleEn,
+      titleAr: d.titleAr || d.titleEn,
+      publisher: d.publisherName || 'Unknown',
+      date: d.publishedAt?.toISOString() || '',
       relevance: 'Macro-relevant publication'
     }));
   } catch (error) {
@@ -575,10 +574,10 @@ async function fetchActiveAlerts(): Promise<Array<{
     
     return alerts.map(a => ({
       severity: (a.severity as 'critical' | 'warning' | 'info') || 'info',
-      titleEn: a.title || '',
-      titleAr: a.titleAr || a.title || '',
-      descriptionEn: a.description || '',
-      descriptionAr: a.descriptionAr || a.description || ''
+      titleEn: a.titleEn || '',
+      titleAr: a.titleAr || a.titleEn || '',
+      descriptionEn: a.descriptionEn || '',
+      descriptionAr: a.descriptionAr || a.descriptionEn || ''
     }));
   } catch (error) {
     console.error('Error fetching active alerts:', error);
@@ -847,12 +846,13 @@ export async function runMacroAgent(runType: 'nightly' | 'daily' | 'weekly'): Pr
   
   try {
     // Log run start
-    const [run] = await db.insert(sectorAgentRuns).values({
+    const insertResult = await db.insert(sectorAgentRuns).values({
       sectorCode: 'macro',
       runType,
       startedAt: startTime,
       status: 'running'
-    }).returning();
+    }).$returningId();
+    const runId = insertResult[0]?.id ?? 0;
     
     if (runType === 'nightly' || runType === 'daily') {
       // Build context pack
@@ -884,9 +884,9 @@ export async function runMacroAgent(runType: 'nightly' | 'daily' | 'weekly'): Pr
         completedAt: new Date(),
         outputFiles: outputs
       })
-      .where(eq(sectorAgentRuns.id, run.id));
+      .where(eq(sectorAgentRuns.id, runId));
     
-    return { success: true, runId: run.id, outputs };
+    return { success: true, runId, outputs };
   } catch (error) {
     console.error('Macro agent run failed:', error);
     return { success: false, runId: 0, outputs };

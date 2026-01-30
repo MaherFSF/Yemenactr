@@ -252,29 +252,29 @@ async function getLaborDocuments(year: number): Promise<LaborDocument[]> {
       .from(documents)
       .where(and(
         or(
-          like(documents.titleEn, '%labor%'),
-          like(documents.titleEn, '%wage%'),
-          like(documents.titleEn, '%employment%'),
-          like(documents.titleEn, '%livelihood%'),
-          like(documents.titleEn, '%income%'),
-          like(documents.titleEn, '%workforce%'),
-          like(documents.titleEn, '%salary%'),
-          like(documents.titleEn, '%remittance%')
+          like(documents.title, '%labor%'),
+          like(documents.title, '%wage%'),
+          like(documents.title, '%employment%'),
+          like(documents.title, '%livelihood%'),
+          like(documents.title, '%income%'),
+          like(documents.title, '%workforce%'),
+          like(documents.title, '%salary%'),
+          like(documents.title, '%remittance%')
         ),
-        gte(documents.publishDate, `${year - 2}-01-01`),
-        lte(documents.publishDate, `${year}-12-31`)
+        gte(documents.publicationDate, new Date(`${year - 2}-01-01`)),
+        lte(documents.publicationDate, new Date(`${year}-12-31`))
       ))
-      .orderBy(desc(documents.publishDate))
+      .orderBy(desc(documents.publicationDate))
       .limit(50);
     
     return docs.map(d => ({
       id: d.id.toString(),
-      titleEn: d.titleEn || '',
-      titleAr: d.titleAr || '',
-      publisher: d.publisher || '',
-      publishDate: d.publishDate || '',
-      documentType: d.documentType || 'report',
-      url: d.url || undefined,
+      titleEn: d.title || '',
+      titleAr: d.titleAr || d.title || '',
+      publisher: 'Unknown',
+      publishDate: d.publicationDate?.toISOString() || '',
+      documentType: d.category || 'report',
+      url: d.fileUrl || undefined,
       relevanceScore: 0.8
     }));
   } catch (error) {
@@ -292,27 +292,27 @@ async function getLaborEvents(year: number): Promise<LaborEvent[]> {
       .from(economicEvents)
       .where(and(
         or(
-          like(economicEvents.titleEn, '%labor%'),
-          like(economicEvents.titleEn, '%wage%'),
-          like(economicEvents.titleEn, '%salary%'),
-          like(economicEvents.titleEn, '%employment%'),
-          like(economicEvents.titleEn, '%strike%'),
-          like(economicEvents.titleEn, '%payment%')
+          like(economicEvents.title, '%labor%'),
+          like(economicEvents.title, '%wage%'),
+          like(economicEvents.title, '%salary%'),
+          like(economicEvents.title, '%employment%'),
+          like(economicEvents.title, '%strike%'),
+          like(economicEvents.title, '%payment%')
         ),
-        gte(economicEvents.eventDate, `${year - 2}-01-01`),
-        lte(economicEvents.eventDate, `${year}-12-31`)
+        gte(economicEvents.eventDate, new Date(`${year - 2}-01-01`)),
+        lte(economicEvents.eventDate, new Date(`${year}-12-31`))
       ))
       .orderBy(desc(economicEvents.eventDate))
       .limit(30);
     
     return events.map(e => ({
       id: e.id.toString(),
-      titleEn: e.titleEn || '',
+      titleEn: e.title || '',
       titleAr: e.titleAr || '',
-      eventDate: e.eventDate || '',
+      eventDate: e.eventDate?.toISOString() || '',
       eventType: e.category || 'economic',
-      impactLevel: (e.significance as 'high' | 'medium' | 'low') || 'medium',
-      description: e.descriptionEn || ''
+      impactLevel: (e.impactLevel as 'high' | 'medium' | 'low') || 'medium',
+      description: e.description || ''
     }));
   } catch (error) {
     console.error('Error fetching labor events:', error);

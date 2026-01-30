@@ -17,9 +17,9 @@ import {
   libraryDocuments,
   entities,
   economicEvents,
-  dataUpdates,
   citationAnchors,
   evidencePacks,
+  timeSeries,
 } from "../../drizzle/schema";
 import { eq, and, sql, desc, inArray } from "drizzle-orm";
 import * as knowledgeGraphService from "./knowledgeGraphService";
@@ -71,13 +71,13 @@ export async function enrichDocument(documentId: number): Promise<{
   }
   
   // 2. Link to publisher entity
-  if (doc.publisher) {
+  if (doc.publisherName) {
     // Find matching entity
     const matchingEntities = await db
       .select()
       .from(entities)
       .where(
-        sql`LOWER(${entities.canonicalNameEn}) LIKE LOWER(${`%${doc.publisher}%`})`
+        sql`LOWER(${entities.name}) LIKE LOWER(${`%${doc.publisherName}%`})`
       )
       .limit(1);
     
@@ -87,7 +87,7 @@ export async function enrichDocument(documentId: number): Promise<{
         linkType: "publishes",
         srcType: "entity",
         srcId: entity.id,
-        srcLabel: entity.canonicalNameEn ?? entity.canonicalNameAr ?? `Entity #${entity.id}`,
+        srcLabel: entity.name ?? entity.nameAr ?? `Entity #${entity.id}`,
         dstType: "document",
         dstId: doc.id,
         dstLabel: doc.titleEn ?? doc.titleAr ?? `Document #${doc.id}`,
@@ -103,18 +103,18 @@ export async function enrichDocument(documentId: number): Promise<{
   const anchors = await db
     .select()
     .from(citationAnchors)
-    .where(eq(citationAnchors.documentId, documentId));
+    .where(eq(citationAnchors.versionId, documentId));
   
   for (const anchor of anchors) {
     // Check if anchor mentions an entity
-    const anchorText = anchor.snippetEn ?? anchor.snippetAr ?? "";
+    const anchorText = anchor.snippetText ?? anchor.snippetTextAr ?? "";
     
     // Find entities mentioned in the anchor
     const mentionedEntities = await db
       .select()
       .from(entities)
       .where(
-        sql`${anchorText} LIKE CONCAT('%', ${entities.canonicalNameEn}, '%')`
+        sql`${anchorText} LIKE CONCAT('%', ${entities.name}, '%')`
       )
       .limit(5);
     
@@ -126,7 +126,7 @@ export async function enrichDocument(documentId: number): Promise<{
         srcLabel: doc.titleEn ?? doc.titleAr ?? `Document #${doc.id}`,
         dstType: "entity",
         dstId: entity.id,
-        dstLabel: entity.canonicalNameEn ?? entity.canonicalNameAr ?? `Entity #${entity.id}`,
+        dstLabel: entity.name ?? entity.nameAr ?? `Entity #${entity.id}`,
         strengthScore: 0.7,
         method: "extracted_from_anchor",
         anchorId: anchor.id,
@@ -137,8 +137,8 @@ export async function enrichDocument(documentId: number): Promise<{
     }
   }
   
-  // 4. Link to related entities from entities[] field
-  const entityIds = (doc.entities as number[]) ?? [];
+  // 4. Link to related entities from entityIds[] field
+  const entityIds = (doc.entityIds as number[]) ?? [];
   for (const entityId of entityIds) {
     const entityResult = await db
       .select()
@@ -155,7 +155,7 @@ export async function enrichDocument(documentId: number): Promise<{
         srcLabel: doc.titleEn ?? doc.titleAr ?? `Document #${doc.id}`,
         dstType: "entity",
         dstId: entity.id,
-        dstLabel: entity.canonicalNameEn ?? entity.canonicalNameAr ?? `Entity #${entity.id}`,
+        dstLabel: entity.name ?? entity.nameAr ?? `Entity #${entity.id}`,
         strengthScore: 0.85,
         method: "structured_data",
         status: "active",
@@ -181,11 +181,11 @@ export async function enrichUpdate(updateId: number): Promise<{
   let linksCreated = 0;
   let linksSuggested = 0;
   
-  // Get the update
+  // Get the update (using timeSeries as proxy)
   const updateResults = await db
     .select()
-    .from(updates)
-    .where(eq(updates.id, updateId))
+    .from(timeSeries)
+    .where(eq(timeSeries.id, updateId))
     .limit(1);
   
   if (updateResults.length === 0) {
@@ -230,7 +230,7 @@ export async function enrichUpdate(updateId: number): Promise<{
         srcLabel: update.titleEn ?? update.titleAr ?? `Update #${update.id}`,
         dstType: "entity",
         dstId: entity.id,
-        dstLabel: entity.canonicalNameEn ?? entity.canonicalNameAr ?? `Entity #${entity.id}`,
+        dstLabel: entity.name ?? entity.nameAr ?? `Entity #${entity.id}`,
         strengthScore: 0.8,
         method: "structured_data",
         status: "active",
@@ -342,7 +342,7 @@ export async function enrichEvent(eventId: number): Promise<{
         srcLabel: event.titleEn ?? event.titleAr ?? `Event #${event.id}`,
         dstType: "entity",
         dstId: entity.id,
-        dstLabel: entity.canonicalNameEn ?? entity.canonicalNameAr ?? `Entity #${entity.id}`,
+        dstLabel: entity.name ?? entity.nameAr ?? `Entity #${entity.id}`,
         strengthScore: 0.85,
         method: "structured_data",
         status: "active",
