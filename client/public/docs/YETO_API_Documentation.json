@@ -1,0 +1,163 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "YETO API",
+    "description": "Yemen Economic Transparency Observatory API Documentation",
+    "version": "1.0.0",
+    "contact": {
+      "email": "yeto@causewaygrp.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://yeto.causewaygrp.com/api",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/indicators": {
+      "get": {
+        "summary": "List all indicators",
+        "description": "Returns a list of all economic indicators with metadata",
+        "parameters": [
+          {
+            "name": "sector",
+            "in": "query",
+            "description": "Filter by sector code",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "frequency",
+            "in": "query",
+            "description": "Filter by update frequency",
+            "schema": { "type": "string", "enum": ["daily", "weekly", "monthly", "quarterly", "annual"] }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Indicator"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/indicators/{code}/timeseries": {
+      "get": {
+        "summary": "Get indicator time series",
+        "description": "Returns historical data for a specific indicator",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "description": "Indicator code",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "description": "Start date (YYYY-MM-DD)",
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "description": "End date (YYYY-MM-DD)",
+            "schema": { "type": "string", "format": "date" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSeries"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sectors": {
+      "get": {
+        "summary": "List all sectors",
+        "description": "Returns a list of all economic sectors",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/exchange-rates": {
+      "get": {
+        "summary": "Get exchange rates",
+        "description": "Returns current and historical exchange rates",
+        "parameters": [
+          {
+            "name": "region",
+            "in": "query",
+            "description": "Region (aden or sanaa)",
+            "schema": { "type": "string", "enum": ["aden", "sanaa"] }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Indicator": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string" },
+          "name_en": { "type": "string" },
+          "name_ar": { "type": "string" },
+          "unit": { "type": "string" },
+          "frequency": { "type": "string" },
+          "source": { "type": "string" },
+          "sector": { "type": "string" }
+        }
+      },
+      "TimeSeries": {
+        "type": "object",
+        "properties": {
+          "indicator_code": { "type": "string" },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": { "type": "string", "format": "date" },
+                "value": { "type": "number" },
+                "quality_flag": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}

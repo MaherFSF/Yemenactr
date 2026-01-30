@@ -199,7 +199,7 @@ export default function Methodology() {
       size: "1.1 MB",
       icon: Database,
       color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900 hover:bg-blue-100 dark:hover:bg-blue-950/50",
-      url: "/docs/YETO_Data_Dictionary_v1.0.pdf"
+      url: "/docs/YETO_Data_Dictionary.pdf"
     },
     {
       titleEn: "API Documentation",
@@ -210,7 +210,7 @@ export default function Methodology() {
       size: "450 KB",
       icon: FileJson,
       color: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900 hover:bg-amber-100 dark:hover:bg-amber-950/50",
-      url: "/api/docs"
+      url: "/docs/YETO_API_Documentation.json"
     },
     {
       titleEn: "Indicator Catalog",
@@ -221,7 +221,7 @@ export default function Methodology() {
       size: "890 KB",
       icon: FileSpreadsheet,
       color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900 hover:bg-emerald-100 dark:hover:bg-emerald-950/50",
-      url: "/docs/YETO_Indicator_Catalog_v1.0.xlsx"
+      url: "/docs/YETO_Indicator_Catalog.xlsx"
     },
   ];
 

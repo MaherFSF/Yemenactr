@@ -542,7 +542,7 @@ export default function Home() {
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-[#103050]">{kpi.value}</span>
+                  <span className="text-2xl font-bold text-[#1B5E20]">{kpi.value}</span>
                   <div className="flex items-center gap-1">
                     {kpi.trend === "up" && <TrendingUp className="w-4 h-4 text-green-500" />}
                     {kpi.trend === "down" && <TrendingDown className="w-4 h-4 text-red-500" />}
@@ -638,49 +638,23 @@ export default function Home() {
       </section>
 
       {/* Trusted Data Sources Section */}
-      <section className="py-12 bg-white dark:bg-gray-950 border-y border-gray-100 dark:border-gray-800">
+      <section className="py-4 bg-[#1B5E20] dark:bg-[#0D3311]">
         <div className="container">
-          <AnimatedSection animation="fadeInUp" className="text-center mb-8">
-            <h2 className="text-lg font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              {language === "ar" ? "مصادر البيانات الموثوقة" : "Trusted Data Sources"}
-            </h2>
-          </AnimatedSection>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 opacity-70 hover:opacity-100 transition-opacity">
-            <div className="flex flex-col items-center gap-2">
-              <div className="h-12 w-24 flex items-center justify-center">
-                <span className="text-xl font-bold text-[#003366]">World Bank</span>
-              </div>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="h-12 w-24 flex items-center justify-center">
-                <span className="text-xl font-bold text-[#003366]">IMF</span>
-              </div>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="h-12 w-24 flex items-center justify-center">
-                <span className="text-xl font-bold text-[#0072BC]">OCHA</span>
-              </div>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="h-12 w-24 flex items-center justify-center">
-                <span className="text-xl font-bold text-[#CF4A00]">WFP</span>
-              </div>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="h-12 w-24 flex items-center justify-center">
-                <span className="text-lg font-bold text-[#103050]">CBY Aden</span>
-              </div>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="h-12 w-24 flex items-center justify-center">
-                <span className="text-xl font-bold text-[#00AEEF]">UNHCR</span>
-              </div>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="h-12 w-24 flex items-center justify-center">
-                <span className="text-lg font-bold text-[#E31837]">Sana'a Center</span>
-              </div>
-            </div>
+          <div className="flex flex-wrap justify-center items-center gap-3 md:gap-6">
+            <span className="text-white/80 text-sm font-medium uppercase tracking-wider">
+              {language === "ar" ? "مصادر البيانات:" : "Data Sources:"}
+            </span>
+            <span className="text-white font-medium">World Bank</span>
+            <span className="text-white/40">|</span>
+            <span className="text-white font-medium">IMF</span>
+            <span className="text-white/40">|</span>
+            <span className="text-white font-medium">UN OCHA</span>
+            <span className="text-white/40">|</span>
+            <span className="text-white font-medium">WFP</span>
+            <span className="text-white/40">|</span>
+            <span className="text-white font-medium">CBY</span>
+            <span className="text-white/40">|</span>
+            <span className="text-[#C5A028] font-semibold">+170 {language === "ar" ? "مصدر" : "sources"}</span>
           </div>
         </div>
       </section>
@@ -698,7 +672,7 @@ export default function Home() {
       <section id="updates" className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="container">
           <AnimatedSection animation="fadeInUp">
-            <h2 className="text-3xl font-bold text-center text-[#103050] dark:text-white mb-12">
+            <h2 className="text-3xl font-bold text-center text-[#1B5E20] dark:text-white mb-12">
               {language === "ar" ? "آخر التحديثات" : "Latest Updates"}
             </h2>
           </AnimatedSection>
@@ -715,7 +689,7 @@ export default function Home() {
                     />
                   </div>
                   <CardContent className="p-4">
-                    <h3 className="font-semibold text-[#103050] dark:text-white mb-2 line-clamp-2">
+                    <h3 className="font-semibold text-[#1B5E20] dark:text-white mb-2 line-clamp-2">
                       {language === "ar" ? update.titleAr : update.titleEn}
                     </h3>
                     <p className="text-sm text-gray-500">{update.date}</p>
@@ -735,7 +709,7 @@ export default function Home() {
       <section id="features" className="py-16 bg-white dark:bg-gray-950">
         <div className="container">
           <AnimatedSection animation="fadeInUp" className={`text-center mb-12 ${language === 'ar' ? 'text-right' : ''}`}>
-            <h2 className="text-3xl font-bold text-[#103050] dark:text-white mb-4">
+            <h2 className="text-3xl font-bold text-[#1B5E20] dark:text-white mb-4">
               {language === "ar" ? "أدوات وميزات المنصة" : "Platform Tools & Features"}
             </h2>
             <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
@@ -761,7 +735,7 @@ export default function Home() {
                     </div>
                     {/* Content */}
                     <div className="p-5">
-                      <h3 className="font-bold text-lg text-[#103050] dark:text-white mb-2 group-hover:text-[#107040] transition-colors">
+                      <h3 className="font-bold text-lg text-[#1B5E20] dark:text-white mb-2 group-hover:text-[#107040] transition-colors">
                         {language === "ar" ? feature.titleAr : feature.titleEn}
                       </h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
