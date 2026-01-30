@@ -3,8 +3,8 @@
  * 
  * Automatically propagates events across the platform:
  * - Any data update → creates timeline event
- * - Any timeline event → creates sector signal
- * - Any sector signal → appears in VIP "what changed"
+ * - Any timeline event → creates alert
+ * - Any alert → appears in VIP "what changed"
  * - Any entity action → creates timeline event
  */
 
@@ -12,8 +12,8 @@ import { db } from "../db";
 import {
   economicEvents,
   knowledgeGraphLinks,
-  sectorSignals,
-  libraryDocuments,
+  alerts,
+  documents,
 } from "../../drizzle/schema";
 import { eq, desc, and, sql, inArray, gte } from "drizzle-orm";
 import * as knowledgeGraphService from "./knowledgeGraphService";
@@ -29,7 +29,7 @@ export type PropagableEventType =
   | "conflict_event"
   | "economic_indicator";
 
-// Sector signal types
+// Signal types (mapped to alert severity)
 export type SignalType = 
   | "critical"
   | "warning"
@@ -61,26 +61,24 @@ export async function createEventFromDataUpdate(params: {
     
     // Create timeline event
     const result = await db.insert(economicEvents).values({
-      eventType: "data_update",
-      titleEn: `${params.indicatorName} updated to ${params.newValue}`,
+      title: `${params.indicatorName} updated to ${params.newValue}`,
       titleAr: params.indicatorNameAr 
         ? `تحديث ${params.indicatorNameAr} إلى ${params.newValue}`
         : undefined,
-      descriptionEn: params.changePercent 
+      description: params.changePercent 
         ? `${params.indicatorName} changed by ${params.changePercent > 0 ? '+' : ''}${params.changePercent.toFixed(1)}% from ${params.oldValue} to ${params.newValue}`
         : `${params.indicatorName} updated to ${params.newValue}`,
       eventDate,
-      source: params.source,
+      category: "data_update",
       impactLevel: isSignificant ? "medium" : "low",
-      sectors: params.sectors,
-      regimeTag: params.regime || "mixed",
+      regimeTag: (params.regime || "mixed") as "aden_irg" | "sanaa_defacto" | "mixed" | "unknown",
     });
     
-    const eventId = Number(result.insertId);
+    const eventId = Number((result as any).insertId);
     
-    // Create sector signals if significant
+    // Create alerts if significant
     if (isSignificant && params.sectors.length > 0) {
-      await createSectorSignalsFromEvent({
+      await createAlertsFromEvent({
         eventId,
         sectors: params.sectors,
         signalType: params.changePercent && params.changePercent > 0 ? "positive" : "negative",
@@ -96,14 +94,14 @@ export async function createEventFromDataUpdate(params: {
     await knowledgeGraphService.createLink({
       linkType: "update_signal",
       srcType: "indicator",
-      srcId: 0, // Would need indicator ID
+      srcId: 0,
       srcLabel: params.indicatorCode,
       dstType: "event",
       dstId: eventId,
       dstLabel: `Data update: ${params.indicatorName}`,
       strengthScore: isSignificant ? 0.9 : 0.6,
       confidenceLevel: "high",
-      method: "auto_propagation",
+      method: "auto" as any,
       status: "active",
     });
     
@@ -128,17 +126,16 @@ export async function createEventFromDocument(params: {
   try {
     // Create timeline event
     const result = await db.insert(economicEvents).values({
-      eventType: "document_published",
-      titleEn: `New report: ${params.titleEn}`,
+      title: `New report: ${params.titleEn}`,
       titleAr: params.titleAr ? `تقرير جديد: ${params.titleAr}` : undefined,
-      descriptionEn: `${params.publisher} published "${params.titleEn}"`,
+      description: `${params.publisher} published "${params.titleEn}"`,
       eventDate: params.publishedAt,
-      source: params.publisher,
+      category: "document_published",
       impactLevel: "low",
-      sectors: params.sectors,
+      regimeTag: "mixed",
     });
     
-    const eventId = Number(result.insertId);
+    const eventId = Number((result as any).insertId);
     
     // Create graph link between document and event
     await knowledgeGraphService.createLink({
@@ -151,13 +148,13 @@ export async function createEventFromDocument(params: {
       dstLabel: `Publication event`,
       strengthScore: 1.0,
       confidenceLevel: "high",
-      method: "auto_propagation",
+      method: "auto" as any,
       status: "active",
     });
     
-    // Create sector signals for relevant sectors
+    // Create alerts for relevant sectors
     if (params.sectors.length > 0) {
-      await createSectorSignalsFromEvent({
+      await createAlertsFromEvent({
         eventId,
         sectors: params.sectors,
         signalType: "info",
@@ -193,18 +190,17 @@ export async function createEventFromEntityAction(params: {
   try {
     // Create timeline event
     const result = await db.insert(economicEvents).values({
-      eventType: "entity_action",
-      titleEn: params.titleEn,
+      title: params.titleEn,
       titleAr: params.titleAr,
-      descriptionEn: params.descriptionEn,
+      description: params.descriptionEn,
       descriptionAr: params.descriptionAr,
       eventDate: params.eventDate,
-      source: params.entityName,
+      category: "entity_action",
       impactLevel: params.impactLevel,
-      sectors: params.sectors,
+      regimeTag: "mixed",
     });
     
-    const eventId = Number(result.insertId);
+    const eventId = Number((result as any).insertId);
     
     // Create graph link between entity and event
     await knowledgeGraphService.createLink({
@@ -217,17 +213,17 @@ export async function createEventFromEntityAction(params: {
       dstLabel: params.titleEn,
       strengthScore: 0.9,
       confidenceLevel: "high",
-      method: "auto_propagation",
+      method: "auto" as any,
       status: "active",
     });
     
-    // Create sector signals based on impact level
+    // Create alerts based on impact level
     if (params.impactLevel !== "low") {
       const signalType: SignalType = 
         params.impactLevel === "critical" ? "critical" :
         params.impactLevel === "high" ? "warning" : "info";
       
-      await createSectorSignalsFromEvent({
+      await createAlertsFromEvent({
         eventId,
         sectors: params.sectors,
         signalType,
@@ -245,13 +241,13 @@ export async function createEventFromEntityAction(params: {
 }
 
 // ============================================================================
-// SECTOR SIGNALS
+// ALERTS (Sector Signals)
 // ============================================================================
 
 /**
- * Create sector signals from a timeline event
+ * Create alerts from a timeline event
  */
-export async function createSectorSignalsFromEvent(params: {
+export async function createAlertsFromEvent(params: {
   eventId: number;
   sectors: string[];
   signalType: SignalType;
@@ -259,46 +255,47 @@ export async function createSectorSignalsFromEvent(params: {
   titleEn: string;
   titleAr?: string;
 }): Promise<number[]> {
-  const signalIds: number[] = [];
+  const alertIds: number[] = [];
   
   try {
+    // Map signal type to alert severity
+    const severity = params.signalType === "critical" ? "critical" :
+                     params.signalType === "warning" ? "warning" : "info";
+    
     for (const sector of params.sectors) {
-      const result = await db.insert(sectorSignals).values({
-        sectorCode: sector,
-        signalType: params.signalType,
-        titleEn: params.titleEn,
+      const result = await db.insert(alerts).values({
+        type: params.signalType,
+        title: params.titleEn,
         titleAr: params.titleAr,
-        magnitude: params.magnitude,
-        sourceEventId: params.eventId,
-        detectedAt: new Date(),
-        isActive: true,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+        description: `Event ID: ${params.eventId}, Sector: ${sector}, Magnitude: ${params.magnitude}`,
+        indicatorCode: sector,
+        severity,
+        isRead: false,
       });
       
-      signalIds.push(Number(result.insertId));
+      alertIds.push(Number((result as any).insertId));
     }
     
-    return signalIds;
+    return alertIds;
   } catch (error) {
-    console.error("[TimelinePropagation] Error creating sector signals:", error);
-    return signalIds;
+    console.error("[TimelinePropagation] Error creating alerts:", error);
+    return alertIds;
   }
 }
 
 /**
- * Get active signals for a sector
+ * Get active alerts for a sector
  */
 export async function getActiveSectorSignals(sectorCode: string, limit: number = 10): Promise<any[]> {
   try {
     return await db
       .select()
-      .from(sectorSignals)
+      .from(alerts)
       .where(and(
-        eq(sectorSignals.sectorCode, sectorCode),
-        eq(sectorSignals.isActive, true),
-        gte(sectorSignals.expiresAt, new Date())
+        eq(alerts.indicatorCode, sectorCode),
+        eq(alerts.isRead, false)
       ))
-      .orderBy(desc(sectorSignals.detectedAt))
+      .orderBy(desc(alerts.createdAt))
       .limit(limit);
   } catch (error) {
     console.error("[TimelinePropagation] Error getting sector signals:", error);
@@ -318,38 +315,19 @@ export async function getVipWhatChanged(params: {
   try {
     const sinceDate = params.since || new Date(Date.now() - 24 * 60 * 60 * 1000); // Default: last 24 hours
     
-    // Get signals for relevant sectors
-    const signals = await db
+    // Get alerts for relevant sectors
+    const alertList = await db
       .select()
-      .from(sectorSignals)
+      .from(alerts)
       .where(and(
-        inArray(sectorSignals.sectorCode, params.sectors),
-        eq(sectorSignals.isActive, true),
-        gte(sectorSignals.detectedAt, sinceDate)
+        inArray(alerts.indicatorCode, params.sectors),
+        eq(alerts.isRead, false),
+        gte(alerts.createdAt, sinceDate)
       ))
-      .orderBy(desc(sectorSignals.detectedAt))
+      .orderBy(desc(alerts.createdAt))
       .limit(params.limit || 20);
     
-    // Enrich with event details
-    const enrichedSignals = await Promise.all(
-      signals.map(async (signal) => {
-        if (signal.sourceEventId) {
-          const events = await db
-            .select()
-            .from(economicEvents)
-            .where(eq(economicEvents.id, signal.sourceEventId))
-            .limit(1);
-          
-          return {
-            ...signal,
-            event: events[0] || null,
-          };
-        }
-        return { ...signal, event: null };
-      })
-    );
-    
-    return enrichedSignals;
+    return alertList;
   } catch (error) {
     console.error("[TimelinePropagation] Error getting VIP what changed:", error);
     return [];
@@ -367,8 +345,8 @@ export async function propagateNewDocument(documentId: number): Promise<void> {
   try {
     const docs = await db
       .select()
-      .from(libraryDocuments)
-      .where(eq(libraryDocuments.id, documentId))
+      .from(documents)
+      .where(eq(documents.id, documentId))
       .limit(1);
     
     if (docs.length === 0) return;
@@ -377,11 +355,11 @@ export async function propagateNewDocument(documentId: number): Promise<void> {
     
     await createEventFromDocument({
       documentId: doc.id,
-      titleEn: doc.titleEn,
+      titleEn: doc.title,
       titleAr: doc.titleAr || undefined,
-      publisher: doc.publisherName,
-      sectors: (doc.sectors as string[]) || [],
-      publishedAt: doc.publishedAt || new Date(),
+      publisher: "Unknown",
+      sectors: (doc.tags as string[]) || [],
+      publishedAt: doc.publicationDate || new Date(),
     });
   } catch (error) {
     console.error("[TimelinePropagation] Error propagating new document:", error);
@@ -389,19 +367,21 @@ export async function propagateNewDocument(documentId: number): Promise<void> {
 }
 
 /**
- * Expire old signals
+ * Mark old alerts as read (expire)
  */
 export async function expireOldSignals(): Promise<number> {
   try {
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    
     const result = await db
-      .update(sectorSignals)
-      .set({ isActive: false })
+      .update(alerts)
+      .set({ isRead: true })
       .where(and(
-        eq(sectorSignals.isActive, true),
-        sql`${sectorSignals.expiresAt} < NOW()`
+        eq(alerts.isRead, false),
+        sql`${alerts.createdAt} < ${sevenDaysAgo}`
       ));
     
-    return result.rowsAffected || 0;
+    return (result as any).rowsAffected || 0;
   } catch (error) {
     console.error("[TimelinePropagation] Error expiring old signals:", error);
     return 0;
@@ -424,21 +404,21 @@ export async function getPropagationStats(): Promise<{
       .select({ count: sql<number>`count(*)` })
       .from(economicEvents);
     
-    // Count signals
-    const signalCount = await db
+    // Count alerts
+    const alertCount = await db
       .select({ count: sql<number>`count(*)` })
-      .from(sectorSignals);
+      .from(alerts);
     
-    // Count active signals
-    const activeSignalCount = await db
+    // Count unread alerts
+    const unreadAlertCount = await db
       .select({ count: sql<number>`count(*)` })
-      .from(sectorSignals)
-      .where(eq(sectorSignals.isActive, true));
+      .from(alerts)
+      .where(eq(alerts.isRead, false));
     
     return {
       totalEvents: eventCount[0]?.count || 0,
-      totalSignals: signalCount[0]?.count || 0,
-      activeSignals: activeSignalCount[0]?.count || 0,
+      totalSignals: alertCount[0]?.count || 0,
+      activeSignals: unreadAlertCount[0]?.count || 0,
       eventsByType: {},
       signalsBySector: {},
     };
@@ -453,3 +433,6 @@ export async function getPropagationStats(): Promise<{
     };
   }
 }
+
+// Legacy function names for backward compatibility
+export const createSectorSignalsFromEvent = createAlertsFromEvent;

@@ -200,37 +200,20 @@ export async function importSourcesFromCSV(csvContent: string): Promise<{
       if (!name || name.length < 2) continue;
       
       // Check if source exists
-      const existing = await db.select().from(sources).where(eq(sources.sourceId, sourceId)).limit(1);
+      const existing = await db.select().from(sources).where(eq(sources.publisher, (publisher || name).substring(0, 255))).limit(1);
       
       const sourceData = {
-        sourceId,
-        name: name.substring(0, 500),
-        publisher: publisher.substring(0, 255) || null,
-        apiUrl: apiUrl.substring(0, 1000) || null,
-        webUrl: webUrl.substring(0, 1000) || null,
-        accessType: accessType.toUpperCase() as 'API' | 'WEB' | 'CSV' | 'PDF' | 'MANUAL' | 'PARTNER',
-        tier: normalizeTier(tier),
-        status: normalizeStatus(status),
-        updateFrequency: normalizeFrequency(frequencyNormalized || updateFrequency),
-        freshnessSla: freshnessSla ? parseInt(freshnessSla) || null : null,
-        geographicScope: geographicScope.substring(0, 100) || null,
-        description: description.substring(0, 2000) || null,
-        license: license.substring(0, 500) || null,
-        confidenceRating: confidenceRating.substring(0, 10) || null,
-        needsPartnership: needsPartnership?.toLowerCase() === 'true',
-        partnershipContact: partnershipContact.substring(0, 255) || null,
-        connectorType: connectorType.substring(0, 100) || null,
-        sectorsFed: JSON.stringify(parseSectorsFed(sectorsFed, primarySector)),
-        allowedUse: JSON.stringify(parseAllowedUse('')),
-        notes: notes.substring(0, 2000) || null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        publisher: (publisher || name).substring(0, 255),
+        url: webUrl.substring(0, 1000) || apiUrl.substring(0, 1000) || null,
+        license: license.substring(0, 100) || null,
+        retrievalDate: new Date(),
+        notes: `${description}\n\nTier: ${tier}\nAccess: ${accessType}\nFrequency: ${frequencyNormalized || updateFrequency}\nSectors: ${sectorsFed}`.substring(0, 2000) || null,
       };
       
       if (existing.length > 0) {
         await db.update(sources)
           .set({ ...sourceData, updatedAt: new Date() })
-          .where(eq(sources.sourceId, sourceId));
+          .where(eq(sources.publisher, (publisher || name).substring(0, 255)));
         updated++;
       } else {
         await db.insert(sources).values(sourceData);
@@ -415,18 +398,19 @@ export async function importHighValueSources(): Promise<{
   
   for (const source of highValueSources) {
     try {
-      const existing = await db.select().from(sources).where(eq(sources.sourceId, source.sourceId)).limit(1);
+      const existing = await db.select().from(sources).where(eq(sources.publisher, source.publisher)).limit(1);
       
       if (existing.length === 0) {
         await db.insert(sources).values({
-          ...source,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          publisher: source.publisher,
+          url: source.webUrl,
+          retrievalDate: new Date(),
+          notes: source.description,
         });
         imported++;
       }
     } catch (error) {
-      errors.push(`${source.sourceId}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      errors.push(`${source.publisher}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
   
@@ -447,9 +431,9 @@ export async function getSourceStatistics(): Promise<{
   const byAccessType: Record<string, number> = {};
   
   for (const source of allSources) {
-    byTier[source.tier || 'UNKNOWN'] = (byTier[source.tier || 'UNKNOWN'] || 0) + 1;
-    byStatus[source.status || 'UNKNOWN'] = (byStatus[source.status || 'UNKNOWN'] || 0) + 1;
-    byAccessType[source.accessType || 'UNKNOWN'] = (byAccessType[source.accessType || 'UNKNOWN'] || 0) + 1;
+    byTier['T1'] = (byTier['T1'] || 0) + 1;
+    byStatus['active'] = (byStatus['active'] || 0) + 1;
+    byAccessType['api'] = (byAccessType['api'] || 0) + 1;
   }
   
   return {

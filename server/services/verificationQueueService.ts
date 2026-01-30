@@ -117,7 +117,7 @@ export function extractEntities(text: string): string[] {
     }
   }
   
-  return [...new Set(entities)];
+  return Array.from(new Set(entities));
 }
 
 /**
@@ -146,7 +146,7 @@ export function extractLocations(text: string): string[] {
     }
   }
   
-  return [...new Set(locations)];
+  return Array.from(new Set(locations));
 }
 
 /**
@@ -171,7 +171,7 @@ export function extractDates(text: string): string[] {
     }
   }
   
-  return [...new Set(dates)];
+  return Array.from(new Set(dates));
 }
 
 /**
