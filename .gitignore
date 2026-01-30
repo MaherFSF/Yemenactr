@@ -129,3 +129,10 @@ test-results/
 # Uploaded files (use S3)
 uploads/
 *.pdf.bak
+
+# Large mockup assets (reference only)
+assets/mockups/
+
+# Large letterhead files (use optimized versions)
+client/public/images/letterhead-ar.png
+client/public/images/letterhead-en.png
