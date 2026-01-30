@@ -43,36 +43,44 @@
 }
 
 :root {
-  /* YETO Brand Colors - Forest Green Palette */
-  --yeto-moss: #2C3424;
-  --yeto-cypress: #4C583E;
-  --yeto-cedar: #959581;
-  --yeto-olive: #768064;
-  --yeto-aloe: #DADED8;
-  --yeto-forest-1: #406D61;
-  --yeto-forest-2: #224B40;
-  --yeto-forest-3: #133129;
-  --yeto-forest-4: #081F1C;
-  --yeto-forest-5: #021010;
-  --yeto-gold: #C0A030;
-  --yeto-light-bg: #F8FAF8;
-  --yeto-border: #E6EAE6;
+  /* YETO Brand Colors - Official Green/Gold Palette from Logo */
+  --yeto-primary-green: #1B5E20;    /* Dark forest green - main brand color */
+  --yeto-secondary-green: #4A7C59;  /* Medium green - secondary elements */
+  --yeto-light-green: #6B8E6B;      /* Light green - accents */
+  --yeto-gold: #C5A028;             /* Gold/Old gold - highlights and accents */
+  --yeto-gold-light: #D4B84A;       /* Light gold - hover states */
+  --yeto-dark: #0D2818;             /* Very dark green - text and headers */
+  --yeto-light-bg: #F5F7F5;         /* Light background with green tint */
+  --yeto-border: #D4DDD4;           /* Border color with green tint */
+  --yeto-white: #FFFFFF;
+  
+  /* Legacy aliases for backward compatibility */
+  --yeto-moss: var(--yeto-dark);
+  --yeto-cypress: var(--yeto-secondary-green);
+  --yeto-cedar: #8A9A8A;
+  --yeto-olive: var(--yeto-light-green);
+  --yeto-aloe: #E8EDE8;
+  --yeto-forest-1: var(--yeto-secondary-green);
+  --yeto-forest-2: var(--yeto-primary-green);
+  --yeto-forest-3: #0F3D1A;
+  --yeto-forest-4: #0A2912;
+  --yeto-forest-5: var(--yeto-dark);
   
   /* Legacy aliases */
-  --yeto-navy: var(--yeto-moss);
-  --yeto-dark-navy: var(--yeto-forest-5);
-  --yeto-green: var(--yeto-forest-2);
+  --yeto-navy: var(--yeto-primary-green);
+  --yeto-dark-navy: var(--yeto-dark);
+  --yeto-green: var(--yeto-primary-green);
   
-  /* Design Tokens */
-  --primary: var(--yeto-navy);
+  /* Design Tokens - Using Green/Gold Theme */
+  --primary: var(--yeto-primary-green);
   --primary-foreground: #FFFFFF;
-  --sidebar-primary: var(--yeto-navy);
+  --sidebar-primary: var(--yeto-primary-green);
   --sidebar-primary-foreground: #FFFFFF;
-  --chart-1: var(--yeto-green);
+  --chart-1: var(--yeto-primary-green);
   --chart-2: var(--yeto-gold);
-  --chart-3: var(--yeto-navy);
-  --chart-4: #2A5080;
-  --chart-5: #1A4060;
+  --chart-3: var(--yeto-secondary-green);
+  --chart-4: var(--yeto-light-green);
+  --chart-5: var(--yeto-dark);
   --radius: 0.5rem;
   --background: #FFFFFF;
   --foreground: var(--yeto-dark-navy);
@@ -90,20 +98,25 @@
   --destructive-foreground: #FFFFFF;
   --border: var(--yeto-border);
   --input: var(--yeto-border);
-  --ring: var(--yeto-navy);
+  --ring: var(--yeto-primary-green);
   --sidebar: #FFFFFF;
-  --sidebar-foreground: var(--yeto-dark-navy);
+  --sidebar-foreground: var(--yeto-dark);
   --sidebar-accent: var(--yeto-light-bg);
-  --sidebar-accent-foreground: var(--yeto-navy);
+  --sidebar-accent-foreground: var(--yeto-primary-green);
   --sidebar-border: var(--yeto-border);
-  --sidebar-ring: var(--yeto-navy);
+  --sidebar-ring: var(--yeto-primary-green);
+  
+  /* Gold accent for special highlights */
+  --gold-accent: var(--yeto-gold);
+  --gold-accent-foreground: var(--yeto-dark);
 }
 
 .dark {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-500);
-  --sidebar-primary-foreground: var(--color-blue-50);
+  /* Dark mode using green theme instead of blue */
+  --primary: var(--yeto-secondary-green);
+  --primary-foreground: #FFFFFF;
+  --sidebar-primary: var(--yeto-secondary-green);
+  --sidebar-primary-foreground: #FFFFFF;
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.85 0.005 65);
   --card: oklch(0.21 0.006 285.885);
@@ -121,11 +134,11 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.488 0.243 264.376);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
+  --chart-1: var(--yeto-light-green);
+  --chart-2: var(--yeto-secondary-green);
+  --chart-3: var(--yeto-primary-green);
+  --chart-4: var(--yeto-gold);
+  --chart-5: var(--yeto-dark);
   --sidebar: oklch(0.21 0.006 285.885);
   --sidebar-foreground: oklch(0.85 0.005 65);
   --sidebar-accent: oklch(0.274 0.006 286.033);

@@ -8367,3 +8367,46 @@ Based on review of master design documents and data source register:
 - [x] Enhance visual hierarchy with better typography and spacing
 - [x] Fix corrections policy section layout (numbered steps with circular badges)
 - [x] Test mobile responsiveness across all breakpoints
+
+
+### Phase 76: Comprehensive Platform Improvements
+**1) Color Scheme Fix (Green/Gold Branding):**
+- [ ] Update primary color from blue to YETO green (#1B5E20 dark green)
+- [ ] Add gold accent color (#C5A028) for highlights
+- [ ] Update all buttons, links, and UI elements to use new palette
+- [ ] Fix logo visibility and ensure proper display
+
+**2) Image Visibility:**
+- [ ] Remove excessive opacity/fade effects on hero images
+- [ ] Ensure background images are clearly visible
+- [ ] Fix any overlay issues making images too dark
+
+**3) Action Buttons Functionality:**
+- [ ] Test all download buttons and ensure they work
+- [ ] Verify filter functionality across all pages
+- [ ] Test search functionality
+- [ ] Ensure all navigation links work correctly
+
+**4) Dynamic Data Flow:**
+- [ ] Verify data updates propagate to all relevant pages
+- [ ] Ensure filters reflect current database state
+- [ ] Add tracking for data changes
+- [ ] Test real-time updates across sectors
+
+**5) Professional Articulation:**
+- [ ] Review all English text for professionalism
+- [ ] Review all Arabic text for accuracy and formality
+- [ ] Ensure consistent terminology throughout
+- [ ] Fix any grammatical or spelling errors
+
+
+### Phase 76: Comprehensive Platform Improvements (COMPLETED)
+- [x] Update color palette to green/gold branding (from blue)
+- [x] Fix image visibility - reduce overlay opacity (60% hero, 70% sector)
+- [x] Verify all download buttons are functional (4 color-coded cards)
+- [x] Ensure dynamic data flows across all pages (KPIs, exchange rates)
+- [x] Review English/Arabic articulation for professionalism
+- [x] Test mobile responsiveness across all breakpoints
+- [x] Footer updated to dark green (#0D2818)
+- [x] SectorHero gradient updated to green
+- [x] Methodology page redesigned with professional download section

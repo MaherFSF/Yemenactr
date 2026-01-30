@@ -31,8 +31,8 @@ export default function SectorHero({
   backgroundImage,
   exportData,
   exportFilename,
-  gradientFrom = "#103050",
-  gradientTo = "#1a4a70",
+  gradientFrom = "#1B5E20",
+  gradientTo = "#2E7D32",
 }: SectorHeroProps) {
   const { language } = useLanguage();
 
@@ -46,12 +46,12 @@ export default function SectorHero({
         />
       )}
       
-      {/* Gradient Overlay */}
+      {/* Gradient Overlay - reduced opacity to show background image better */}
       <div 
         className="absolute inset-0"
         style={{
           background: backgroundImage 
-            ? `linear-gradient(to right, ${gradientFrom}ee, ${gradientTo}cc)`
+            ? `linear-gradient(to right, ${gradientFrom}d0, ${gradientTo}a0)`
             : `linear-gradient(to right, ${gradientFrom}, ${gradientTo})`,
         }}
       />
@@ -70,7 +70,7 @@ export default function SectorHero({
             <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
               <Icon className="h-8 w-8 text-white" />
             </div>
-            <Badge className="bg-[#107040] text-white border-0">
+            <Badge className="bg-[#C5A028] text-[#0D2818] border-0 font-semibold">
               {language === "ar" ? badgeAr : badgeEn}
             </Badge>
           </div>

@@ -187,7 +187,8 @@ export default function Methodology() {
       format: "PDF",
       size: "2.4 MB",
       icon: FileText,
-      color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900 hover:bg-red-100 dark:hover:bg-red-950/50"
+      color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900 hover:bg-red-100 dark:hover:bg-red-950/50",
+      url: "/docs/YETO_Methodology_Guide_v1.0.pdf"
     },
     {
       titleEn: "Data Dictionary",
@@ -197,7 +198,8 @@ export default function Methodology() {
       format: "PDF",
       size: "1.1 MB",
       icon: Database,
-      color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900 hover:bg-blue-100 dark:hover:bg-blue-950/50"
+      color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900 hover:bg-blue-100 dark:hover:bg-blue-950/50",
+      url: "/docs/YETO_Data_Dictionary_v1.0.pdf"
     },
     {
       titleEn: "API Documentation",
@@ -207,7 +209,8 @@ export default function Methodology() {
       format: "JSON",
       size: "450 KB",
       icon: FileJson,
-      color: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900 hover:bg-amber-100 dark:hover:bg-amber-950/50"
+      color: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900 hover:bg-amber-100 dark:hover:bg-amber-950/50",
+      url: "/api/docs"
     },
     {
       titleEn: "Indicator Catalog",
@@ -217,7 +220,8 @@ export default function Methodology() {
       format: "XLSX",
       size: "890 KB",
       icon: FileSpreadsheet,
-      color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900 hover:bg-emerald-100 dark:hover:bg-emerald-950/50"
+      color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900 hover:bg-emerald-100 dark:hover:bg-emerald-950/50",
+      url: "/docs/YETO_Indicator_Catalog_v1.0.xlsx"
     },
   ];
 
@@ -589,17 +593,27 @@ export default function Methodology() {
               {downloadDocuments.map((doc, index) => {
                 const Icon = doc.icon;
                 return (
-                  <button
+                  <a
                     key={index}
-                    className={`group p-4 md:p-5 rounded-xl border-2 transition-all duration-200 text-start ${doc.color}`}
+                    href={doc.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`group p-4 md:p-5 rounded-xl border-2 transition-all duration-200 text-start block ${doc.color}`}
+                    onClick={(e) => {
+                      if (!doc.url || doc.url === '#') {
+                        e.preventDefault();
+                        alert(language === 'ar' ? 'سيتوفر هذا المستند قريباً' : 'This document will be available soon');
+                      }
+                    }}
                   >
                     <div className="flex items-start gap-4">
                       <div className="w-12 h-12 rounded-xl bg-white dark:bg-gray-900 shadow-sm flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                         <Icon className="h-6 w-6 text-primary" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-sm md:text-base mb-1">
+                        <div className="font-semibold text-sm md:text-base mb-1 flex items-center gap-2">
                           {language === "ar" ? doc.titleAr : doc.titleEn}
+                          <Download className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                         <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
                           {language === "ar" ? doc.descriptionAr : doc.descriptionEn}
@@ -613,7 +627,7 @@ export default function Methodology() {
                         </div>
                       </div>
                     </div>
-                  </button>
+                  </a>
                 );
               })}
             </div>

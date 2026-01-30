@@ -362,8 +362,8 @@ export default function Home() {
             className="w-full h-full object-cover"
           />
         </div>
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#103050]/95 via-[#103050]/80 to-[#103050]/60" />
+        {/* Green overlay for text readability - YETO brand colors */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0D2818]/85 via-[#1B5E20]/70 to-[#1B5E20]/50" />
 
         {/* Content overlay */}
         <div className="relative z-10 container py-16 md:py-24">
@@ -523,7 +523,7 @@ export default function Home() {
       </section>
 
       {/* KPI Cards Row - Unique indicators not shown in hero (Foreign Reserves, IDPs) */}
-      <section id="kpi-stats" className="py-8 bg-[#103050]">
+      <section id="kpi-stats" className="py-8 bg-[#1B5E20]">
         <div className="container">
           <StaggeredContainer staggerDelay={100} className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
@@ -812,7 +812,7 @@ export default function Home() {
       </section>
 
       {/* Footer Attribution */}
-      <section className="py-6 bg-[#0B1F33] text-white/60 text-center text-sm">
+      <section className="py-6 bg-[#0D2818] text-white/60 text-center text-sm">
         <div className="container">
           <div className="flex items-center justify-center gap-2">
             <span>{language === "ar" ? "مدعوم من" : "Powered by"}</span>
