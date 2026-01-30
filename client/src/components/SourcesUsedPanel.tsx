@@ -60,7 +60,7 @@ export function SourcesUsedPanel({ sectorCode, sources: propSources, isLoading: 
   // Group sources by tier
   const sourcesByTier = useMemo(() => {
     if (!sources || sources.length === 0) return {};
-    return sources.reduce((acc, source) => {
+    return sources.reduce((acc: Record<string, Source[]>, source: Source) => {
       const tier = source.tier || "T3";
       if (!acc[tier]) acc[tier] = [];
       acc[tier].push(source);
@@ -146,7 +146,7 @@ export function SourcesUsedPanel({ sectorCode, sources: propSources, isLoading: 
 
         {/* Source List */}
         <div className="space-y-2">
-          {displayedSources.map((source) => (
+          {displayedSources.map((source: Source) => (
             <div
               key={source.id}
               className="flex items-center justify-between p-2 rounded-lg bg-white/50 dark:bg-white/5 border border-[#4C583E]/10 hover:border-[#4C583E]/30 transition-colors"

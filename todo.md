@@ -8333,3 +8333,27 @@ Based on review of master design documents and data source register:
 - Documents: 55 records
 - Entities: 79 records
 
+
+
+### Phase 74: Fix Publishing Issues & Platform Finalization
+**1) Fix Publishing Blockers:**
+- [ ] Diagnose TypeScript errors (133 errors reported)
+- [ ] Fix sector_alerts schema type mismatch
+- [ ] Resolve all build-blocking errors
+- [ ] Verify production build succeeds
+
+**2) Database Wiring Verification:**
+- [ ] Verify all tRPC endpoints connect to database
+- [ ] Test KPI data flow from time_series
+- [ ] Verify SourcesUsedPanel fetches real data
+- [ ] Check all sector pages load correctly
+
+**3) CauseWay Branding Integration:**
+- [ ] Add CauseWay logo to platform
+- [ ] Update footer with CauseWay attribution
+- [ ] Integrate causewaygrp.com reference
+
+**4) Final Verification:**
+- [ ] Full smoke test all pages
+- [ ] Save checkpoint for publishing
+- [ ] Enable publish button

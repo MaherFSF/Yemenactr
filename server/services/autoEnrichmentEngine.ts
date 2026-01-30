@@ -249,11 +249,11 @@ export async function enrichUpdate(updateId: number): Promise<{
     
     const nearbyEvents = await db
       .select()
-      .from(timelineEvents)
+      .from(economicEvents)
       .where(
         and(
-          sql`${timelineEvents.eventDate} >= ${startDate}`,
-          sql`${timelineEvents.eventDate} <= ${endDate}`
+          sql`${economicEvents.eventDate} >= ${startDate}`,
+          sql`${economicEvents.eventDate} <= ${endDate}`
         )
       )
       .limit(5);
@@ -296,8 +296,8 @@ export async function enrichEvent(eventId: number): Promise<{
   // Get the event
   const eventResults = await db
     .select()
-    .from(timelineEvents)
-    .where(eq(timelineEvents.id, eventId))
+    .from(economicEvents)
+    .where(eq(economicEvents.id, eventId))
     .limit(1);
   
   if (eventResults.length === 0) {
@@ -571,8 +571,8 @@ export async function runBatchEnrichment(options?: {
   if (types.includes("event")) {
     const eventResults = await db
       .select()
-      .from(timelineEvents)
-      .where(sql`${timelineEvents.createdAt} >= ${since}`)
+      .from(economicEvents)
+      .where(sql`${economicEvents.createdAt} >= ${since}`)
       .limit(100);
     
     for (const event of eventResults) {

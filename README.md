@@ -18,8 +18,8 @@
   <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript" alt="TypeScript">
   <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react" alt="React">
   <img src="https://img.shields.io/badge/Tests-432%2B_Passing-brightgreen?style=flat-square" alt="Tests">
-  <img src="https://img.shields.io/badge/Data_Points-3%2C000%2B-blue?style=flat-square" alt="Data Points">
-  <img src="https://img.shields.io/badge/Sources-225%2B-orange?style=flat-square" alt="Sources">
+  <img src="https://img.shields.io/badge/Data_Points-5%2C500%2B-blue?style=flat-square" alt="Data Points">
+  <img src="https://img.shields.io/badge/Sources-178-orange?style=flat-square" alt="Sources">
   <img src="https://img.shields.io/badge/License-Proprietary-C0A030?style=flat-square" alt="License">
 </p>
 
@@ -182,10 +182,11 @@ YETO's AI assistant operates under strict governance rules:
 
 | Metric | Coverage |
 |--------|----------|
-| **Time Series** | 2010 → Present (15+ years) |
+| **Time Series** | 2010 → Present (15+ years, 5,513 data points) |
 | **Exchange Rates** | Daily granularity since 2016 split |
 | **Economic Events** | 83+ documented with indicator linkages |
 | **Research Library** | 370+ publications from 38 organizations |
+| **Sector Pages** | 16 sectors with Sources Used panels |
 | **Commercial Banks** | 31 banks with $18.7B total assets |
 
 ---
