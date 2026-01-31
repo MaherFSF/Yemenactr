@@ -9083,3 +9083,17 @@ Based on review of master design documents and data source register:
 - [x] Update response parser to handle correct data structure
 - [x] Test connector and verify data ingestion (9 records, 0 errors)
 
+
+
+### Phase 80: UNDP HDI Alternative Data Sources
+
+**Goal:** Reach 12/12 active connectors by adding HDI data from alternative sources
+**Tasks:**
+- [x] Research HDI data from World Bank Human Capital Index
+- [x] Research HDI data from UNDP Human Development Reports
+- [x] Research education indicators (literacy, enrollment rates)
+- [x] Research health indicators (life expectancy, mortality)
+- [x] Research income/poverty indicators (GNI per capita)
+- [x] Research gender development indicators
+- [x] Ingest HDI data into database (507 records)
+- [x] Update UNDP HDI connector status to active (10/12 connectors)

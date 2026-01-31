@@ -1243,7 +1243,7 @@ Answer the user's question based on this research. Be specific and cite sources 
           { id: "reliefweb", name: "ReliefWeb", nameAr: "ريليف ويب", apiUrl: "https://api.reliefweb.int", status: "auth_required" as const },
           { id: "imf", name: "IMF WEO", nameAr: "صندوق النقد الدولي", apiUrl: "https://www.imf.org", status: "unavailable" as const },
           { id: "cby", name: "Central Bank Yemen", nameAr: "البنك المركزي اليمني", apiUrl: "https://cby-ye.com", status: "unavailable" as const },
-          { id: "undp", name: "UNDP HDI", nameAr: "برنامج الأمم المتحدة الإنمائي", apiUrl: "https://hdr.undp.org", status: "unavailable" as const },
+          { id: "undp", name: "UNDP HDI", nameAr: "برنامج الأمم المتحدة الإنمائي", apiUrl: "https://hdr.undp.org", status: "active" as const },
         ];
 
         // Get record counts from database
@@ -1268,6 +1268,7 @@ Answer the user's question based on this research. Be specific and cite sources 
               WHEN indicatorCode LIKE 'WFP_%' THEN 'wfp-vam'
               WHEN indicatorCode LIKE 'inflation_%' OR indicatorCode LIKE 'fx_%' OR indicatorCode LIKE 'FX_%' THEN 'cby'
               WHEN indicatorCode LIKE 'IMF_%' OR indicatorCode LIKE 'gdp_%' THEN 'imf'
+              WHEN indicatorCode LIKE 'UNDP_%' THEN 'undp'
               ELSE 'other'
             END as connector_id,
             COUNT(*) as record_count,
