@@ -272,24 +272,21 @@ function MainRouter() {
 function Router() {
   const [location, setLocation] = useLocation();
   
-  // Check splash state synchronously from localStorage
-  const splashSeen = typeof window !== 'undefined' ? localStorage.getItem("yeto-splash-seen") : null;
-  
-  // Handle root path routing
-  useEffect(() => {
-    if (location === "/" && splashSeen) {
-      // Redirect to /home if splash was already seen
-      setLocation("/home");
-    }
-  }, [location, splashSeen, setLocation]);
-  
-  // Show splash page on root if not seen before OR on /splash route
-  if (location === "/splash" || (location === "/" && !splashSeen)) {
+  // Always show splash on /splash route
+  if (location === "/splash") {
     return <Splash />;
   }
   
-  // Show loading while redirecting
-  if (location === "/" && splashSeen) {
+  // Handle root path - check if splash was seen
+  if (location === "/") {
+    const splashSeen = localStorage.getItem("yeto-splash-seen");
+    if (!splashSeen) {
+      // First time visitor - show splash
+      return <Splash />;
+    }
+    // Returning visitor - redirect to home
+    // Use setTimeout to avoid render-time navigation
+    setTimeout(() => setLocation("/home"), 0);
     return null;
   }
   
