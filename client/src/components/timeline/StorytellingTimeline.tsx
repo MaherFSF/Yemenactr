@@ -106,7 +106,7 @@ const storyChapters: StoryChapter[] = [
 
 // Theme colors
 const themeColors: Record<string, string> = {
-  stability: '#4C583E',
+  stability: '#107040',
   crisis: '#dc2626',
   fragmentation: '#f59e0b',
   pandemic: '#7c3aed',

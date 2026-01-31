@@ -53,9 +53,9 @@ const dataCategories = [
 // Color schemes
 const colorSchemes = [
   { id: 'default', name: 'Default Green/Navy/Gold', colors: [YETO_COLORS.navy, YETO_COLORS.green, YETO_COLORS.gold] },
-  { id: 'green', name: 'Green Palette', colors: ['#4C583E', '#15a060', '#2dd4bf'] },
-  { id: 'navy', name: 'Navy Palette', colors: ['#768064', '#1a4a6e', '#3b82f6'] },
-  { id: 'warm', name: 'Warm Palette', colors: ['#C9A227', '#f59e0b', '#ef4444'] },
+  { id: 'green', name: 'Green Palette', colors: ['#107040', '#15a060', '#2dd4bf'] },
+  { id: 'navy', name: 'Navy Palette', colors: ['#103050', '#1a4a6e', '#3b82f6'] },
+  { id: 'warm', name: 'Warm Palette', colors: ['#C0A030', '#f59e0b', '#ef4444'] },
 ];
 
 export default function ReportBuilder() {
@@ -145,9 +145,9 @@ export default function ReportBuilder() {
                     className={cn(
                       "flex items-center gap-2 px-4 py-2 rounded-full transition-all",
                       currentStep === step.id 
-                        ? "bg-[#4C583E] text-white" 
+                        ? "bg-[#107040] text-white" 
                         : currentStep > step.id 
-                          ? "bg-[#4C583E]/20 text-[#4C583E]"
+                          ? "bg-[#107040]/20 text-[#107040]"
                           : "bg-gray-200 text-gray-500"
                     )}
                   >
@@ -163,7 +163,7 @@ export default function ReportBuilder() {
                   {index < steps.length - 1 && (
                     <div className={cn(
                       "w-12 h-0.5 mx-2",
-                      currentStep > step.id ? "bg-[#4C583E]" : "bg-gray-200"
+                      currentStep > step.id ? "bg-[#107040]" : "bg-gray-200"
                     )} />
                   )}
                 </div>
@@ -186,12 +186,12 @@ export default function ReportBuilder() {
                         className={cn(
                           "p-4 rounded-lg border-2 cursor-pointer transition-all text-center",
                           selectedData.includes(cat.id)
-                            ? "border-[#4C583E] bg-[#4C583E]/10"
+                            ? "border-[#107040] bg-[#107040]/10"
                             : "border-gray-200 hover:border-gray-300"
                         )}
                       >
                         {selectedData.includes(cat.id) && (
-                          <Check className="h-5 w-5 text-[#4C583E] mx-auto mb-2" />
+                          <Check className="h-5 w-5 text-[#107040] mx-auto mb-2" />
                         )}
                         <span className="font-medium">
                           {language === 'ar' ? cat.labelAr : cat.labelEn}
@@ -221,22 +221,22 @@ export default function ReportBuilder() {
                             className={cn(
                               "p-4 rounded-lg border-2 cursor-pointer transition-all flex flex-col items-center gap-2",
                               isSelected
-                                ? "border-[#4C583E] bg-[#4C583E]/10"
+                                ? "border-[#107040] bg-[#107040]/10"
                                 : "border-gray-200 hover:border-gray-300"
                             )}
                           >
                             {isSelected && (
                               <div className="absolute top-2 left-2">
-                                <Check className="h-4 w-4 text-[#4C583E]" />
+                                <Check className="h-4 w-4 text-[#107040]" />
                               </div>
                             )}
                             <div className={cn(
                               "w-16 h-16 rounded-lg flex items-center justify-center",
-                              isSelected ? "bg-[#4C583E]/20" : "bg-gray-100"
+                              isSelected ? "bg-[#107040]/20" : "bg-gray-100"
                             )}>
                               <Icon className={cn(
                                 "h-8 w-8",
-                                isSelected ? "text-[#4C583E]" : "text-gray-500"
+                                isSelected ? "text-[#107040]" : "text-gray-500"
                               )} />
                             </div>
                             <span className="text-sm font-medium text-center">
@@ -331,7 +331,7 @@ export default function ReportBuilder() {
                           variant={reportSettings.language === 'en' ? 'default' : 'outline'}
                           size="sm"
                           onClick={() => setReportSettings({ ...reportSettings, language: 'en' })}
-                          className={reportSettings.language === 'en' ? 'bg-[#4C583E]' : ''}
+                          className={reportSettings.language === 'en' ? 'bg-[#107040]' : ''}
                         >
                           English
                         </Button>
@@ -339,7 +339,7 @@ export default function ReportBuilder() {
                           variant={reportSettings.language === 'ar' ? 'default' : 'outline'}
                           size="sm"
                           onClick={() => setReportSettings({ ...reportSettings, language: 'ar' })}
-                          className={reportSettings.language === 'ar' ? 'bg-[#4C583E]' : ''}
+                          className={reportSettings.language === 'ar' ? 'bg-[#107040]' : ''}
                         >
                           العربية
                         </Button>
@@ -409,7 +409,7 @@ export default function ReportBuilder() {
               {/* Step 4: Export */}
               {currentStep === 4 && (
                 <div className="text-center py-8">
-                  <FileText className="h-16 w-16 mx-auto mb-4 text-[#4C583E]" />
+                  <FileText className="h-16 w-16 mx-auto mb-4 text-[#107040]" />
                   <h2 className="text-2xl font-semibold mb-2">
                     {language === 'ar' ? 'تقريرك جاهز!' : 'Your Report is Ready!'}
                   </h2>
@@ -421,7 +421,7 @@ export default function ReportBuilder() {
                   <div className="flex justify-center gap-4">
                     <Button 
                       onClick={() => handleExport('PDF')}
-                      className="gap-2 bg-[#768064] hover:bg-[#768064]/90"
+                      className="gap-2 bg-[#103050] hover:bg-[#103050]/90"
                     >
                       <Download className="h-4 w-4" />
                       PDF
@@ -454,7 +454,7 @@ export default function ReportBuilder() {
                   <>
                     <Button 
                       onClick={addToReport}
-                      className="gap-2 bg-[#4C583E] hover:bg-[#4C583E]/90"
+                      className="gap-2 bg-[#107040] hover:bg-[#107040]/90"
                     >
                       {language === 'ar' ? 'إضافة إلى التقرير' : 'Add to Report'}
                     </Button>
@@ -477,7 +477,7 @@ export default function ReportBuilder() {
                 {currentStep < 4 && (
                   <Button
                     onClick={handleNext}
-                    className="gap-2 bg-[#4C583E] hover:bg-[#4C583E]/90"
+                    className="gap-2 bg-[#107040] hover:bg-[#107040]/90"
                   >
                     {language === 'ar' ? 'التالي' : 'Next'}
                     {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}

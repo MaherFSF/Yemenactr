@@ -103,7 +103,7 @@ export default function Currency() {
           style={{ backgroundImage: `url(/sectors/currency.jpg)` }}
         />
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#C9A227]/90 to-[#8B7500]/80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#C0A030]/90 to-[#8B7500]/80" />
         {/* Pattern Overlay */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0" style={{
@@ -122,7 +122,7 @@ export default function Currency() {
               <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
                 <Banknote className="h-8 w-8 text-white" />
               </div>
-              <Badge className="bg-[#4C583E] text-white border-0">
+              <Badge className="bg-[#107040] text-white border-0">
                 {language === "ar" ? "القطاع المالي" : "Financial Sector"}
               </Badge>
             </div>
@@ -177,17 +177,17 @@ export default function Currency() {
                 <div className="grid md:grid-cols-3 gap-4 mb-4">
                   <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
                     <div className="text-xs text-gray-500 mb-1">{language === "ar" ? "البنك المركزي - عدن" : "CBY Aden"}</div>
-                    <div className="text-lg font-bold text-[#4C583E]">1,650 YER/$</div>
+                    <div className="text-lg font-bold text-[#107040]">1,650 YER/$</div>
                     <div className="text-xs text-gray-400">{language === "ar" ? "مكاتب الصرافة المرخصة" : "Licensed bureaus"}</div>
                   </div>
                   <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
                     <div className="text-xs text-gray-500 mb-1">{language === "ar" ? "مسح سوق يتو" : "YETO Survey"}</div>
-                    <div className="text-lg font-bold text-[#768064]">1,680 YER/$</div>
+                    <div className="text-lg font-bold text-[#103050]">1,680 YER/$</div>
                     <div className="text-xs text-gray-400">{language === "ar" ? "15 نقطة صرف" : "15 exchange points"}</div>
                   </div>
                   <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border">
                     <div className="text-xs text-gray-500 mb-1">{language === "ar" ? "رويترز" : "Reuters"}</div>
-                    <div className="text-lg font-bold text-[#C9A227]">1,665 YER/$</div>
+                    <div className="text-lg font-bold text-[#C0A030]">1,665 YER/$</div>
                     <div className="text-xs text-gray-400">{language === "ar" ? "سعر مركب" : "Composite rate"}</div>
                   </div>
                 </div>
@@ -313,7 +313,7 @@ export default function Currency() {
                       yAxisId="left"
                       type="monotone" 
                       dataKey="adenOfficial" 
-                      stroke="#4C583E" 
+                      stroke="#107040" 
                       strokeWidth={2}
                       name={language === "ar" ? "عدن - رسمي" : "Aden - Official"}
                     />
@@ -321,7 +321,7 @@ export default function Currency() {
                       yAxisId="left"
                       type="monotone" 
                       dataKey="adenParallel" 
-                      stroke="#768064" 
+                      stroke="#103050" 
                       strokeWidth={2}
                       strokeDasharray="5 5"
                       name={language === "ar" ? "عدن - موازي" : "Aden - Parallel"}
@@ -330,7 +330,7 @@ export default function Currency() {
                       yAxisId="right"
                       type="monotone" 
                       dataKey="sanaaParallel" 
-                      stroke="#C9A227" 
+                      stroke="#C0A030" 
                       strokeWidth={2}
                       name={language === "ar" ? "صنعاء - موازي" : "Sana'a - Parallel"}
                     />
@@ -380,16 +380,16 @@ export default function Currency() {
                     <Area 
                       type="monotone" 
                       dataKey="adenSpread" 
-                      stroke="#768064" 
-                      fill="#768064"
+                      stroke="#103050" 
+                      fill="#103050"
                       fillOpacity={0.3}
                       name={language === "ar" ? "فجوة عدن (%)" : "Aden Spread (%)"}
                     />
                     <Area 
                       type="monotone" 
                       dataKey="northSouthSpread" 
-                      stroke="#C9A227" 
-                      fill="#C9A227"
+                      stroke="#C0A030" 
+                      fill="#C0A030"
                       fillOpacity={0.3}
                       name={language === "ar" ? "فجوة شمال-جنوب (%)" : "North-South Spread (%)"}
                     />
@@ -484,7 +484,7 @@ export default function Currency() {
 
         {/* Enhanced Visualizations Section */}
         <div className="mt-8">
-          <h2 className="text-2xl font-bold text-[#768064] mb-6">
+          <h2 className="text-2xl font-bold text-[#103050] mb-6">
             {language === "ar" ? "التحليلات المتقدمة" : "Advanced Analytics"}
           </h2>
           
@@ -492,7 +492,7 @@ export default function Currency() {
           <Card className="mb-6 overflow-hidden">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-[#4C583E]" />
+                <TrendingUp className="h-5 w-5 text-[#107040]" />
                 {language === "ar" ? "رؤى العملة" : "Currency Insights"}
               </CardTitle>
             </CardHeader>
@@ -539,7 +539,7 @@ export default function Currency() {
           <Card className="mb-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <ArrowUpDown className="h-5 w-5 text-[#C9A227]" />
+                <ArrowUpDown className="h-5 w-5 text-[#C0A030]" />
                 {language === "ar" ? "مقارنة أسعار الصرف" : "Exchange Rate Comparison"}
               </CardTitle>
             </CardHeader>
@@ -585,7 +585,7 @@ export default function Currency() {
                   <p className="text-sm text-muted-foreground">
                     {language === "ar" ? "عدن - موازي" : "Aden Parallel"}
                   </p>
-                  <p className="text-2xl font-bold text-[#768064]">2,320</p>
+                  <p className="text-2xl font-bold text-[#103050]">2,320</p>
                 </div>
                 <Sparkline 
                   data={[1620, 1720, 1850, 1980, 2050, 2120, 2180, 2250, 2320]} 
@@ -602,7 +602,7 @@ export default function Currency() {
                   <p className="text-sm text-muted-foreground">
                     {language === "ar" ? "صنعاء - موازي" : "Sana'a Parallel"}
                   </p>
-                  <p className="text-2xl font-bold text-[#768064]">562</p>
+                  <p className="text-2xl font-bold text-[#103050]">562</p>
                 </div>
                 <Sparkline 
                   data={[535, 538, 540, 545, 548, 550, 555, 558, 562]} 

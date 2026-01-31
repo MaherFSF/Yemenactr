@@ -200,17 +200,17 @@ export default function ScenarioSimulator() {
       {
         driver: language === "ar" ? "إنتاج النفط" : "Oil Production",
         contribution: Math.round(ECONOMIC_MODEL.gdpFromOil * (oilProduction[0] / BASELINE.oilProduction - 1) * 100 * 10) / 10,
-        color: "#4C583E"
+        color: "#107040"
       },
       {
         driver: language === "ar" ? "المساعدات الدولية" : "International Aid",
         contribution: Math.round(ECONOMIC_MODEL.gdpFromAid * (aidLevel[0] / BASELINE.aidFlows - 1) * 100 * 10) / 10,
-        color: "#C9A227"
+        color: "#C0A030"
       },
       {
         driver: language === "ar" ? "التحويلات" : "Remittances",
         contribution: Math.round(ECONOMIC_MODEL.gdpFromRemittances * (remittances[0] / BASELINE.remittances - 1) * 100 * 10) / 10,
-        color: "#768064"
+        color: "#103050"
       },
       {
         driver: language === "ar" ? "تأثير الصراع" : "Conflict Impact",
@@ -817,7 +817,7 @@ export default function ScenarioSimulator() {
                         <Area 
                           type="monotone" 
                           dataKey="gdpUpper" 
-                          fill="#4C583E20" 
+                          fill="#10704020" 
                           stroke="none"
                           name={language === "ar" ? "الحد الأعلى" : "Upper Bound"}
                         />
@@ -831,7 +831,7 @@ export default function ScenarioSimulator() {
                         <Line 
                           type="monotone" 
                           dataKey="gdp" 
-                          stroke="#4C583E" 
+                          stroke="#107040" 
                           strokeWidth={2}
                           name={language === "ar" ? "الناتج المحلي" : "GDP Index"}
                         />
@@ -863,7 +863,7 @@ export default function ScenarioSimulator() {
                               className="h-full rounded-full transition-all"
                               style={{ 
                                 width: `${Math.min(100, Math.abs(driver.contribution) * 5)}%`,
-                                backgroundColor: driver.contribution >= 0 ? '#4C583E' : '#DC2626',
+                                backgroundColor: driver.contribution >= 0 ? '#107040' : '#DC2626',
                                 marginLeft: driver.contribution < 0 ? 'auto' : 0
                               }}
                             />
@@ -920,8 +920,8 @@ export default function ScenarioSimulator() {
                           <Area 
                             type="monotone" 
                             dataKey="inflation" 
-                            fill="#C9A22720" 
-                            stroke="#C9A227"
+                            fill="#C0A03020" 
+                            stroke="#C0A030"
                             name={language === "ar" ? "التضخم" : "Inflation"}
                           />
                         </AreaChart>

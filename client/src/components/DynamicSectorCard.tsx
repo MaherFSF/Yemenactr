@@ -199,7 +199,7 @@ export function DynamicComparisonCard({
                 {adenConfidence}
               </Badge>
             </div>
-            <div className="text-xl font-bold text-[#4C583E]">
+            <div className="text-xl font-bold text-[#107040]">
               {formatIndicatorValue(adenValue, unit)}
             </div>
             <div className="text-xs text-muted-foreground truncate" title={adenSource}>
@@ -217,7 +217,7 @@ export function DynamicComparisonCard({
                 {sanaaConfidence}
               </Badge>
             </div>
-            <div className="text-xl font-bold text-[#768064]">
+            <div className="text-xl font-bold text-[#103050]">
               {formatIndicatorValue(sanaaValue, unit)}
             </div>
             <div className="text-xs text-muted-foreground truncate" title={sanaaSource}>

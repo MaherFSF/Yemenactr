@@ -43,112 +43,87 @@
 }
 
 :root {
-  /* ============================================
-   * CauseWay Official Brand Colors
-   * From Design System Overview V1.0
-   * ============================================ */
-  
-  /* Primary Brand Colors */
-  --causeway-moss-green: #2C3424;      /* Moss Green - Primary dark */
-  --causeway-cypress: #4C583E;          /* Cypress - Secondary green */
-  --causeway-olive: #768064;            /* Olive - Accent green */
-  --causeway-cedar: #959581;            /* Cedar - Muted accent */
-  --causeway-aloe: #DADED8;             /* Aloe - Light background */
-  --causeway-old-gold: #C9A227;         /* Old Gold - CTA/Accent color */
-  
-  /* Extended Palette */
-  --causeway-white: #FFFFFF;
-  --causeway-off-white: #F8F9F7;        /* Slightly warm white */
-  --causeway-light-gray: #E8EDE8;       /* Light gray with green tint */
-  --causeway-dark-text: #1A1F16;        /* Near-black for text */
-  
-  /* Legacy YETO aliases for backward compatibility */
-  --yeto-primary-green: var(--causeway-cypress);
-  --yeto-secondary-green: var(--causeway-olive);
-  --yeto-light-green: var(--causeway-cedar);
-  --yeto-gold: var(--causeway-old-gold);
-  --yeto-gold-light: #D4B84A;
-  --yeto-dark: var(--causeway-moss-green);
-  --yeto-light-bg: var(--causeway-off-white);
-  --yeto-border: #D4DDD4;
+  /* YETO Brand Colors - Official Green/Gold Palette from Logo */
+  --yeto-primary-green: #1B5E20;    /* Dark forest green - main brand color */
+  --yeto-secondary-green: #4A7C59;  /* Medium green - secondary elements */
+  --yeto-light-green: #6B8E6B;      /* Light green - accents */
+  --yeto-gold: #C5A028;             /* Gold/Old gold - highlights and accents */
+  --yeto-gold-light: #D4B84A;       /* Light gold - hover states */
+  --yeto-dark: #0D2818;             /* Very dark green - text and headers */
+  --yeto-light-bg: #F5F7F5;         /* Light background with green tint */
+  --yeto-border: #D4DDD4;           /* Border color with green tint */
   --yeto-white: #FFFFFF;
-  --yeto-moss: var(--causeway-moss-green);
-  --yeto-cypress: var(--causeway-cypress);
-  --yeto-cedar: var(--causeway-cedar);
-  --yeto-olive: var(--causeway-olive);
-  --yeto-aloe: var(--causeway-aloe);
-  --yeto-navy: var(--causeway-cypress);
-  --yeto-dark-navy: var(--causeway-moss-green);
-  --yeto-green: var(--causeway-cypress);
   
-  /* Forest gradient for backgrounds */
-  --yeto-forest-1: var(--causeway-olive);
-  --yeto-forest-2: var(--causeway-cypress);
-  --yeto-forest-3: #3A4530;
-  --yeto-forest-4: var(--causeway-moss-green);
-  --yeto-forest-5: #1A1F16;
+  /* Legacy aliases for backward compatibility */
+  --yeto-moss: var(--yeto-dark);
+  --yeto-cypress: var(--yeto-secondary-green);
+  --yeto-cedar: #8A9A8A;
+  --yeto-olive: var(--yeto-light-green);
+  --yeto-aloe: #E8EDE8;
+  --yeto-forest-1: var(--yeto-secondary-green);
+  --yeto-forest-2: var(--yeto-primary-green);
+  --yeto-forest-3: #0F3D1A;
+  --yeto-forest-4: #0A2912;
+  --yeto-forest-5: var(--yeto-dark);
   
-  /* ============================================
-   * Design Tokens - Light Mode
-   * ============================================ */
-  --primary: var(--causeway-cypress);
+  /* Legacy aliases */
+  --yeto-navy: var(--yeto-primary-green);
+  --yeto-dark-navy: var(--yeto-dark);
+  --yeto-green: var(--yeto-primary-green);
+  
+  /* Design Tokens - Using Green/Gold Theme */
+  --primary: var(--yeto-primary-green);
   --primary-foreground: #FFFFFF;
-  --sidebar-primary: var(--causeway-cypress);
+  --sidebar-primary: var(--yeto-primary-green);
   --sidebar-primary-foreground: #FFFFFF;
-  
-  /* Chart colors using brand palette */
-  --chart-1: var(--causeway-cypress);
-  --chart-2: var(--causeway-old-gold);
-  --chart-3: var(--causeway-olive);
-  --chart-4: var(--causeway-cedar);
-  --chart-5: var(--causeway-moss-green);
-  
+  --chart-1: var(--yeto-primary-green);
+  --chart-2: var(--yeto-gold);
+  --chart-3: var(--yeto-secondary-green);
+  --chart-4: var(--yeto-light-green);
+  --chart-5: var(--yeto-dark);
   --radius: 0.5rem;
-  --background: var(--causeway-white);
-  --foreground: var(--causeway-dark-text);
-  --card: var(--causeway-white);
-  --card-foreground: var(--causeway-dark-text);
-  --popover: var(--causeway-white);
-  --popover-foreground: var(--causeway-dark-text);
-  --secondary: var(--causeway-off-white);
-  --secondary-foreground: var(--causeway-moss-green);
-  --muted: var(--causeway-aloe);
+  --background: #FFFFFF;
+  --foreground: var(--yeto-dark-navy);
+  --card: #FFFFFF;
+  --card-foreground: var(--yeto-dark-navy);
+  --popover: #FFFFFF;
+  --popover-foreground: var(--yeto-dark-navy);
+  --secondary: var(--yeto-light-bg);
+  --secondary-foreground: var(--yeto-navy);
+  --muted: var(--yeto-light-bg);
   --muted-foreground: #6B7280;
-  --accent: var(--causeway-cypress);
+  --accent: var(--yeto-green);
   --accent-foreground: #FFFFFF;
   --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
-  --border: #D4DDD4;
-  --input: #D4DDD4;
-  --ring: var(--causeway-cypress);
-  --sidebar: var(--causeway-white);
-  --sidebar-foreground: var(--causeway-moss-green);
-  --sidebar-accent: var(--causeway-off-white);
-  --sidebar-accent-foreground: var(--causeway-cypress);
-  --sidebar-border: #D4DDD4;
-  --sidebar-ring: var(--causeway-cypress);
+  --border: var(--yeto-border);
+  --input: var(--yeto-border);
+  --ring: var(--yeto-primary-green);
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: var(--yeto-dark);
+  --sidebar-accent: var(--yeto-light-bg);
+  --sidebar-accent-foreground: var(--yeto-primary-green);
+  --sidebar-border: var(--yeto-border);
+  --sidebar-ring: var(--yeto-primary-green);
   
-  /* Gold accent for special highlights and CTAs */
-  --gold-accent: var(--causeway-old-gold);
-  --gold-accent-foreground: var(--causeway-moss-green);
+  /* Gold accent for special highlights */
+  --gold-accent: var(--yeto-gold);
+  --gold-accent-foreground: var(--yeto-dark);
 }
 
 .dark {
-  /* ============================================
-   * CauseWay Dark Mode - Premium Night Theme
-   * Deep forest greens with gold accents
-   * ============================================ */
-  --primary: var(--causeway-olive);
+  /* Advanced YETO Dark Mode - Premium Green/Gold Night Theme */
+  --primary: #4A7C59;  /* Lighter green for dark mode visibility */
   --primary-foreground: #FFFFFF;
-  --sidebar-primary: var(--causeway-olive);
+  --sidebar-primary: #4A7C59;
   --sidebar-primary-foreground: #FFFFFF;
   
-  /* Deep forest background */
-  --background: oklch(0.12 0.015 145);
-  --foreground: oklch(0.92 0.01 90);
+  /* Deep forest background with subtle green undertone */
+  --background: oklch(0.12 0.015 145);  /* Very dark green-tinted black */
+  --foreground: oklch(0.92 0.01 90);    /* Warm off-white for readability */
   
   /* Card surfaces with depth */
-  --card: oklch(0.16 0.012 145);
+  --card: oklch(0.16 0.012 145);        /* Slightly lighter than background */
   --card-foreground: oklch(0.92 0.01 90);
   --popover: oklch(0.18 0.015 145);
   --popover-foreground: oklch(0.92 0.01 90);
@@ -159,8 +134,8 @@
   --muted: oklch(0.22 0.015 145);
   --muted-foreground: oklch(0.65 0.01 90);
   
-  /* Gold accent for dark mode */
-  --accent: oklch(0.75 0.12 85);
+  /* Accent with gold highlight */
+  --accent: oklch(0.75 0.12 85);        /* Gold accent for dark mode */
   --accent-foreground: oklch(0.15 0.02 145);
   
   /* Destructive and utility */
@@ -168,19 +143,19 @@
   --destructive-foreground: oklch(0.98 0 0);
   
   /* Borders with subtle glow */
-  --border: oklch(0.30 0.02 145);
+  --border: oklch(0.30 0.02 145);       /* Visible but subtle green border */
   --input: oklch(0.25 0.015 145);
-  --ring: oklch(0.55 0.15 145);
+  --ring: oklch(0.55 0.15 145);         /* Green focus ring */
   
   /* Chart colors optimized for dark mode */
-  --chart-1: oklch(0.65 0.15 145);
-  --chart-2: oklch(0.75 0.12 85);
-  --chart-3: oklch(0.55 0.12 145);
-  --chart-4: oklch(0.70 0.08 90);
-  --chart-5: oklch(0.45 0.10 145);
+  --chart-1: oklch(0.65 0.15 145);      /* Bright green */
+  --chart-2: oklch(0.75 0.12 85);       /* Gold */
+  --chart-3: oklch(0.55 0.12 145);      /* Medium green */
+  --chart-4: oklch(0.70 0.08 90);       /* Light gold */
+  --chart-5: oklch(0.45 0.10 145);      /* Dark green */
   
   /* Sidebar with premium feel */
-  --sidebar: oklch(0.10 0.015 145);
+  --sidebar: oklch(0.10 0.015 145);     /* Darker than main background */
   --sidebar-foreground: oklch(0.88 0.01 90);
   --sidebar-accent: oklch(0.18 0.02 145);
   --sidebar-accent-foreground: oklch(0.95 0.01 90);
@@ -214,20 +189,27 @@
   input[type="radio"]:not(:disabled) {
     @apply cursor-pointer;
   }
-  
-  /* CauseWay Typography - Serif headlines, modern body */
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', 'Georgia', serif;
-    font-weight: 700;
-  }
 }
 
 @layer components {
+  /**
+   * Custom container utility that centers content and adds responsive padding.
+   *
+   * This overrides Tailwind's default container behavior to:
+   * - Auto-center content (mx-auto)
+   * - Add responsive horizontal padding
+   * - Set max-width for large screens
+   *
+   * Usage: <div className="container">...</div>
+   *
+   * For custom widths, use max-w-* utilities directly:
+   * <div className="max-w-6xl mx-auto px-4">...</div>
+   */
   .container {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 1rem;
+    padding-left: 1rem; /* 16px - mobile padding */
     padding-right: 1rem;
   }
 
@@ -238,62 +220,17 @@
 
   @media (min-width: 640px) {
     .container {
-      padding-left: 1.5rem;
+      padding-left: 1.5rem; /* 24px - tablet padding */
       padding-right: 1.5rem;
     }
   }
 
   @media (min-width: 1024px) {
     .container {
-      padding-left: 2rem;
+      padding-left: 2rem; /* 32px - desktop padding */
       padding-right: 2rem;
-      max-width: 1280px;
+      max-width: 1280px; /* Standard content width */
     }
-  }
-  
-  /* CauseWay Button Styles */
-  .btn-gold {
-    background-color: var(--causeway-old-gold);
-    color: var(--causeway-moss-green);
-    font-weight: 600;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.375rem;
-    transition: all 0.2s ease;
-  }
-  
-  .btn-gold:hover {
-    background-color: #B8931F;
-    transform: translateY(-1px);
-  }
-  
-  .btn-outline-gold {
-    border: 2px solid var(--causeway-old-gold);
-    color: var(--causeway-old-gold);
-    background: transparent;
-    font-weight: 600;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.375rem;
-    transition: all 0.2s ease;
-  }
-  
-  .btn-outline-gold:hover {
-    background-color: var(--causeway-old-gold);
-    color: var(--causeway-moss-green);
-  }
-  
-  /* CauseWay Card Styles */
-  .card-causeway {
-    background: var(--causeway-white);
-    border: 1px solid var(--causeway-aloe);
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(44, 52, 36, 0.1);
-  }
-  
-  /* Gold accent line */
-  .gold-accent-line {
-    height: 4px;
-    background: linear-gradient(90deg, var(--causeway-old-gold), transparent);
-    border-radius: 2px;
   }
 }
 

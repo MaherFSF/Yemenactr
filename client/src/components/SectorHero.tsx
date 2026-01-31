@@ -31,7 +31,7 @@ export default function SectorHero({
   backgroundImage,
   exportData,
   exportFilename,
-  gradientFrom = "#4C583E",
+  gradientFrom = "#1B5E20",
   gradientTo = "#2E7D32",
 }: SectorHeroProps) {
   const { language } = useLanguage();
@@ -70,7 +70,7 @@ export default function SectorHero({
             <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
               <Icon className="h-8 w-8 text-white" />
             </div>
-            <Badge className="bg-[#C9A227] text-[#2C3424] border-0 font-semibold">
+            <Badge className="bg-[#C5A028] text-[#0D2818] border-0 font-semibold">
               {language === "ar" ? badgeAr : badgeEn}
             </Badge>
           </div>

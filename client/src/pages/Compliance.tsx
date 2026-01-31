@@ -209,7 +209,7 @@ export default function Compliance() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#768064] to-[#1a4a70] text-white">
+      <div className="bg-gradient-to-r from-[#103050] to-[#1a4a70] text-white">
         <div className="container py-8">
           <div className={language === "ar" ? "text-right" : ""}>
             <div className="flex items-center gap-3 mb-2">

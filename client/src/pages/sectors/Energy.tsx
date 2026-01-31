@@ -129,7 +129,7 @@ export default function Energy() {
           style={{ backgroundImage: `url(/sectors/energy.jpg)` }}
         />
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#768064]/90 to-[#1a4a70]/80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#103050]/90 to-[#1a4a70]/80" />
         {/* Pattern Overlay */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0" style={{
@@ -148,7 +148,7 @@ export default function Energy() {
               <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
                 <Fuel className="h-8 w-8 text-white" />
               </div>
-              <Badge className="bg-[#4C583E] text-white border-0">
+              <Badge className="bg-[#107040] text-white border-0">
                 {language === "ar" ? "قطاع الطاقة" : "Energy Sector"}
               </Badge>
             </div>
@@ -269,14 +269,14 @@ export default function Energy() {
                     <Line 
                       type="monotone" 
                       dataKey="dieselAden" 
-                      stroke="#768064" 
+                      stroke="#103050" 
                       strokeWidth={2}
                       name={language === "ar" ? "ديزل - عدن" : "Diesel - Aden"}
                     />
                     <Line 
                       type="monotone" 
                       dataKey="dieselSanaa" 
-                      stroke="#768064" 
+                      stroke="#103050" 
                       strokeWidth={2}
                       strokeDasharray="5 5"
                       name={language === "ar" ? "ديزل - صنعاء" : "Diesel - Sana'a"}
@@ -284,14 +284,14 @@ export default function Energy() {
                     <Line 
                       type="monotone" 
                       dataKey="petrolAden" 
-                      stroke="#C9A227" 
+                      stroke="#C0A030" 
                       strokeWidth={2}
                       name={language === "ar" ? "بنزين - عدن" : "Petrol - Aden"}
                     />
                     <Line 
                       type="monotone" 
                       dataKey="petrolSanaa" 
-                      stroke="#C9A227" 
+                      stroke="#C0A030" 
                       strokeWidth={2}
                       strokeDasharray="5 5"
                       name={language === "ar" ? "بنزين - صنعاء" : "Petrol - Sana'a"}
@@ -329,9 +329,9 @@ export default function Energy() {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="diesel" fill="#768064" name={language === "ar" ? "ديزل" : "Diesel"} />
-                    <Bar dataKey="petrol" fill="#4C583E" name={language === "ar" ? "بنزين" : "Petrol"} />
-                    <Bar dataKey="lpg" fill="#C9A227" name={language === "ar" ? "غاز مسال" : "LPG"} />
+                    <Bar dataKey="diesel" fill="#103050" name={language === "ar" ? "ديزل" : "Diesel"} />
+                    <Bar dataKey="petrol" fill="#107040" name={language === "ar" ? "بنزين" : "Petrol"} />
+                    <Bar dataKey="lpg" fill="#C0A030" name={language === "ar" ? "غاز مسال" : "LPG"} />
                   </BarChart>
                 </ResponsiveContainer>
                 <div className="mt-4 p-3 bg-muted/50 rounded-lg text-sm">

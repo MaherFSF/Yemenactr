@@ -27,16 +27,16 @@ export function OneBrainAvatar({ size = 64, className = '', animated = true }: O
         {/* Background circle with gradient */}
         <defs>
           <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#768064" />
+            <stop offset="0%" stopColor="#103050" />
             <stop offset="50%" stopColor="#1a4a6e" />
-            <stop offset="100%" stopColor="#768064" />
+            <stop offset="100%" stopColor="#103050" />
           </linearGradient>
           <linearGradient id="brainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#4C583E" />
+            <stop offset="0%" stopColor="#107040" />
             <stop offset="100%" stopColor="#15a060" />
           </linearGradient>
           <linearGradient id="circuitGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#C9A227" />
+            <stop offset="0%" stopColor="#C0A030" />
             <stop offset="100%" stopColor="#e0c050" />
           </linearGradient>
           <filter id="glow">
@@ -49,7 +49,7 @@ export function OneBrainAvatar({ size = 64, className = '', animated = true }: O
         </defs>
         
         {/* Main circle background */}
-        <circle cx="50" cy="50" r="48" fill="url(#bgGradient)" stroke="#C9A227" strokeWidth="2"/>
+        <circle cx="50" cy="50" r="48" fill="url(#bgGradient)" stroke="#C0A030" strokeWidth="2"/>
         
         {/* Brain outline - stylized */}
         <g transform="translate(20, 22) scale(0.6)" filter="url(#glow)">
@@ -126,7 +126,7 @@ export function OneBrainAvatar({ size = 64, className = '', animated = true }: O
           y="56"
           textAnchor="middle"
           dominantBaseline="middle"
-          fill="#C9A227"
+          fill="#C0A030"
           fontSize="24"
           fontWeight="bold"
           fontFamily="Inter, sans-serif"
@@ -138,7 +138,7 @@ export function OneBrainAvatar({ size = 64, className = '', animated = true }: O
       {/* Pulsing ring effect */}
       {animated && (
         <div 
-          className="absolute inset-0 rounded-full border-2 border-[#4C583E] animate-ping opacity-20"
+          className="absolute inset-0 rounded-full border-2 border-[#107040] animate-ping opacity-20"
           style={{ animationDuration: '2s' }}
         />
       )}

@@ -358,7 +358,7 @@ export default function Timeline() {
             {/* Vertical line */}
             <div 
               className={cn(
-                "absolute top-0 bottom-0 w-1 bg-gradient-to-b from-[#dc2626] via-[#C9A227] to-[#4C583E]",
+                "absolute top-0 bottom-0 w-1 bg-gradient-to-b from-[#dc2626] via-[#C0A030] to-[#107040]",
                 isRTL ? "right-8 md:right-1/4" : "left-8 md:left-1/4"
               )}
             />

@@ -205,7 +205,7 @@ export function RoleAwareEntryPoints() {
       <div className="container">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-[#768064] dark:text-white mb-4">
+          <h2 className="text-3xl font-bold text-[#103050] dark:text-white mb-4">
             {isArabic ? "ابدأ رحلتك" : "Start Your Journey"}
           </h2>
           <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
@@ -222,7 +222,7 @@ export function RoleAwareEntryPoints() {
               onClick={() => setActiveTab("public")}
               className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
                 activeTab === "public"
-                  ? "bg-white dark:bg-gray-700 text-[#768064] dark:text-white shadow-sm"
+                  ? "bg-white dark:bg-gray-700 text-[#103050] dark:text-white shadow-sm"
                   : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
               }`}
             >
@@ -233,7 +233,7 @@ export function RoleAwareEntryPoints() {
               onClick={() => setActiveTab("vip")}
               className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
                 activeTab === "vip"
-                  ? "bg-white dark:bg-gray-700 text-[#768064] dark:text-white shadow-sm"
+                  ? "bg-white dark:bg-gray-700 text-[#103050] dark:text-white shadow-sm"
                   : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
               }`}
             >
@@ -248,12 +248,12 @@ export function RoleAwareEntryPoints() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {publicEntries.map((entry) => (
               <Link key={entry.id} href={entry.href}>
-                <Card className="h-full hover:shadow-lg transition-all duration-300 cursor-pointer group border-2 border-transparent hover:border-[#4C583E]/30">
+                <Card className="h-full hover:shadow-lg transition-all duration-300 cursor-pointer group border-2 border-transparent hover:border-[#107040]/30">
                   <CardHeader className="pb-2">
                     <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${entry.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
                       <entry.icon className="w-6 h-6 text-white" />
                     </div>
-                    <CardTitle className="text-lg group-hover:text-[#4C583E] transition-colors">
+                    <CardTitle className="text-lg group-hover:text-[#107040] transition-colors">
                       {isArabic ? entry.titleAr : entry.titleEn}
                     </CardTitle>
                     <CardDescription className="text-sm">
@@ -264,7 +264,7 @@ export function RoleAwareEntryPoints() {
                     <ul className="space-y-2">
                       {entry.features.map((feature, i) => (
                         <li key={i} className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                          <ArrowRight className={`w-3 h-3 text-[#4C583E] ${isArabic ? "ml-2" : "mr-2"}`} />
+                          <ArrowRight className={`w-3 h-3 text-[#107040] ${isArabic ? "ml-2" : "mr-2"}`} />
                           {isArabic ? feature.ar : feature.en}
                         </li>
                       ))}
@@ -298,19 +298,19 @@ export function RoleAwareEntryPoints() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {roleEntries.map((entry) => (
                 <Link key={entry.id} href={user ? entry.href : "/login"}>
-                  <Card className={`h-full transition-all duration-300 cursor-pointer group border-2 border-transparent hover:border-[#C9A227]/50 ${!user ? "opacity-75" : "hover:shadow-lg"}`}>
+                  <Card className={`h-full transition-all duration-300 cursor-pointer group border-2 border-transparent hover:border-[#C0A030]/50 ${!user ? "opacity-75" : "hover:shadow-lg"}`}>
                     <CardHeader className="pb-2">
                       <div className="flex items-start justify-between">
                         <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${entry.color} flex items-center justify-center group-hover:scale-110 transition-transform`}>
                           <entry.icon className="w-6 h-6 text-white" />
                         </div>
                         {entry.badge && (
-                          <Badge className="bg-[#C9A227] text-white">
+                          <Badge className="bg-[#C0A030] text-white">
                             {isArabic ? entry.badge.ar : entry.badge.en}
                           </Badge>
                         )}
                       </div>
-                      <CardTitle className="text-lg mt-3 group-hover:text-[#C9A227] transition-colors">
+                      <CardTitle className="text-lg mt-3 group-hover:text-[#C0A030] transition-colors">
                         {isArabic ? entry.titleAr : entry.titleEn}
                       </CardTitle>
                       <CardDescription className="text-sm">
@@ -321,7 +321,7 @@ export function RoleAwareEntryPoints() {
                       <ul className="space-y-2">
                         {entry.features.map((feature, i) => (
                           <li key={i} className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                            <ArrowRight className={`w-3 h-3 text-[#C9A227] ${isArabic ? "ml-2" : "mr-2"}`} />
+                            <ArrowRight className={`w-3 h-3 text-[#C0A030] ${isArabic ? "ml-2" : "mr-2"}`} />
                             {isArabic ? feature.ar : feature.en}
                           </li>
                         ))}

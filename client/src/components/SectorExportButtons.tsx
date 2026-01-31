@@ -148,7 +148,7 @@ export function SectorExportButtons({ sectorName, datasets, className = '' }: Se
             <Button 
               variant="default" 
               size="sm"
-              className="gap-2 bg-[#4C583E] hover:bg-[#0d5a34]"
+              className="gap-2 bg-[#107040] hover:bg-[#0d5a34]"
               disabled={exporting !== null}
             >
               <Download className="h-4 w-4" />

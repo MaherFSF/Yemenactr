@@ -36,9 +36,9 @@ const confidenceColors = {
 };
 
 const regimeColors = {
-  aden: "#4C583E",
-  sanaa: "#768064",
-  mixed: "#C9A227",
+  aden: "#107040",
+  sanaa: "#103050",
+  mixed: "#C0A030",
 };
 
 const regimeLabels = {

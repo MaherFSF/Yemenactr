@@ -44,7 +44,7 @@ const CHANGE_TYPE_CONFIG: Record<string, {
   dataset_added: {
     label: { en: 'New Dataset', ar: 'مجموعة بيانات جديدة' },
     icon: '📊',
-    color: '#4C583E',
+    color: '#107040',
     bgColor: '#e6f4ec',
   },
   dataset_updated: {
@@ -88,7 +88,7 @@ const CHANGE_TYPE_CONFIG: Record<string, {
 const IMPACT_CONFIG = {
   low: {
     label: { en: 'Minor', ar: 'طفيف' },
-    color: '#4C583E',
+    color: '#107040',
     bgColor: '#e6f4ec',
   },
   medium: {
@@ -349,7 +349,7 @@ export function ChangelogStats({
           <StatCard
             label={language === 'ar' ? 'آخر 7 أيام' : 'Last 7 Days'}
             value={stats.recentCount}
-            color="#4C583E"
+            color="#107040"
           />
           <StatCard
             label={language === 'ar' ? 'تغييرات كبيرة' : 'High Impact'}

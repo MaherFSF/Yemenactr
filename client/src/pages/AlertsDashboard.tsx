@@ -80,7 +80,7 @@ export default function AlertsDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-[#768064] text-white py-8">
+      <div className="bg-[#103050] text-white py-8">
         <div className="container">
           <Link href="/admin">
             <Button variant="ghost" className="text-white/70 hover:text-white mb-4">
@@ -170,7 +170,7 @@ export default function AlertsDashboard() {
             <Button
               onClick={() => runDetectionMutation.mutate()}
               disabled={runDetectionMutation.isPending}
-              className="bg-[#4C583E] hover:bg-[#0d5a34]"
+              className="bg-[#107040] hover:bg-[#0d5a34]"
             >
               {runDetectionMutation.isPending ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />

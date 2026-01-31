@@ -279,7 +279,7 @@ export default function Agriculture() {
           style={{ backgroundImage: `url(/sectors/agriculture.jpg)` }}
         />
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#768064]/90 to-[#1a4a70]/80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#103050]/90 to-[#1a4a70]/80" />
         {/* Pattern Overlay */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0" style={{
@@ -292,7 +292,7 @@ export default function Agriculture() {
               <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
                 <Wheat className="h-8 w-8 text-white" />
               </div>
-              <Badge className="bg-[#4C583E] text-white border-0">
+              <Badge className="bg-[#107040] text-white border-0">
                 {language === "ar" ? "قطاع" : "Sector"}
               </Badge>
             </div>
@@ -314,7 +314,7 @@ export default function Agriculture() {
         {/* Key Indicators */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {keyIndicators.map((indicator, index) => (
-            <Card key={index} className="border-l-4 border-l-[#4C583E]">
+            <Card key={index} className="border-l-4 border-l-[#107040]">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -371,7 +371,7 @@ export default function Agriculture() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Wheat className="h-5 w-5 text-[#4C583E]" />
+                    <Wheat className="h-5 w-5 text-[#107040]" />
                     {language === "ar" ? "القطاع الزراعي" : "Agricultural Sector"}
                   </CardTitle>
                 </CardHeader>
@@ -387,7 +387,7 @@ export default function Agriculture() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-[#768064]" />
+                    <MapPin className="h-5 w-5 text-[#103050]" />
                     {language === "ar" ? "التوزيع الإقليمي" : "Regional Distribution"}
                   </CardTitle>
                 </CardHeader>
@@ -446,7 +446,7 @@ export default function Agriculture() {
                           <td className="p-3 font-medium">
                             {language === "ar" ? crop.cropAr : crop.cropEn}
                           </td>
-                          <td className="p-3 font-semibold text-[#4C583E]">
+                          <td className="p-3 font-semibold text-[#107040]">
                             {crop.shareEn}
                           </td>
                           <td className="p-3">
@@ -476,7 +476,7 @@ export default function Agriculture() {
                 <Card key={index}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg">
-                      <challenge.icon className="h-5 w-5 text-[#C9A227]" />
+                      <challenge.icon className="h-5 w-5 text-[#C0A030]" />
                       {language === "ar" ? challenge.titleAr : challenge.titleEn}
                     </CardTitle>
                   </CardHeader>
@@ -502,7 +502,7 @@ export default function Agriculture() {
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                   {fisheriesSector.indicators.map((ind, index) => (
                     <div key={index} className="text-center p-4 bg-muted/50 rounded-lg">
-                      <div className="text-2xl font-bold text-[#768064]">{ind.value}</div>
+                      <div className="text-2xl font-bold text-[#103050]">{ind.value}</div>
                       <div className="text-sm text-muted-foreground">
                         {language === "ar" ? ind.labelAr : ind.labelEn}
                       </div>

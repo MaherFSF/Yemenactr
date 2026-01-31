@@ -21,9 +21,9 @@ const RATING_CONFIG = {
       en: 'Official/audited data with consistent methodology',
       ar: 'بيانات رسمية/مدققة بمنهجية متسقة'
     },
-    color: '#4C583E',
+    color: '#107040',
     bgColor: '#e6f4ec',
-    borderColor: '#4C583E',
+    borderColor: '#107040',
   },
   B: {
     label: { en: 'Reliable', ar: 'موثوق' },
@@ -41,9 +41,9 @@ const RATING_CONFIG = {
       en: 'Proxy/modelled data with some uncertainty',
       ar: 'بيانات تقريبية/نموذجية مع بعض عدم اليقين'
     },
-    color: '#C9A227',
+    color: '#C0A030',
     bgColor: '#faf6e6',
-    borderColor: '#C9A227',
+    borderColor: '#C0A030',
   },
   D: {
     label: { en: 'Low Reliability', ar: 'موثوقية منخفضة' },
@@ -231,9 +231,9 @@ export function ScoreBreakdown({ scores, language = 'en', className }: ScoreBrea
   };
   
   const getBarColor = (score: number) => {
-    if (score >= 85) return '#4C583E';
+    if (score >= 85) return '#107040';
     if (score >= 70) return '#1a6b9c';
-    if (score >= 50) return '#C9A227';
+    if (score >= 50) return '#C0A030';
     return '#c53030';
   };
   

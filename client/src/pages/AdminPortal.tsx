@@ -56,7 +56,7 @@ export default function AdminPortal() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#4C583E]"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#107040]"></div>
       </div>
     );
   }
@@ -293,7 +293,7 @@ export default function AdminPortal() {
 
 
       {/* Header */}
-      <div className="bg-[#768064] text-white py-6">
+      <div className="bg-[#103050] text-white py-6">
         <div className="container">
           <div className="flex items-center justify-between">
             <div>

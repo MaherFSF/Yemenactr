@@ -257,10 +257,10 @@ export default function PolicyImpact() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-[#768064] to-[#1a4a70] text-white py-16">
+      <section className="bg-gradient-to-br from-[#103050] to-[#1a4a70] text-white py-16">
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-4 bg-[#C9A227] text-[#768064]">
+            <Badge className="mb-4 bg-[#C0A030] text-[#103050]">
               {language === "ar" ? "أدوات التحليل" : "Analysis Tools"}
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -284,7 +284,7 @@ export default function PolicyImpact() {
               <Card className="sticky top-4">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Target className="w-5 h-5 text-[#C9A227]" />
+                    <Target className="w-5 h-5 text-[#C0A030]" />
                     {language === "ar" ? "اختر السيناريو" : "Select Scenario"}
                   </CardTitle>
                   <CardDescription>
@@ -300,14 +300,14 @@ export default function PolicyImpact() {
                       onClick={() => handleScenarioSelect(scenario.id)}
                       className={`w-full text-left p-4 rounded-lg border transition-all ${
                         selectedScenario?.id === scenario.id
-                          ? "border-[#C9A227] bg-[#C9A227]/10"
-                          : "border-gray-200 dark:border-gray-700 hover:border-[#C9A227]/50"
+                          ? "border-[#C0A030] bg-[#C0A030]/10"
+                          : "border-gray-200 dark:border-gray-700 hover:border-[#C0A030]/50"
                       }`}
                     >
                       <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                           selectedScenario?.id === scenario.id
-                            ? "bg-[#C9A227] text-white"
+                            ? "bg-[#C0A030] text-white"
                             : "bg-gray-100 dark:bg-gray-800 text-gray-600"
                         }`}>
                           <scenario.icon className="w-5 h-5" />
@@ -336,8 +336,8 @@ export default function PolicyImpact() {
                     <CardHeader>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-[#C9A227]/20 rounded-lg flex items-center justify-center">
-                            <selectedScenario.icon className="w-6 h-6 text-[#C9A227]" />
+                          <div className="w-12 h-12 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
+                            <selectedScenario.icon className="w-6 h-6 text-[#C0A030]" />
                           </div>
                           <div>
                             <CardTitle>
@@ -357,7 +357,7 @@ export default function PolicyImpact() {
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <Calculator className="w-5 h-5 text-[#C9A227]" />
+                        <Calculator className="w-5 h-5 text-[#C0A030]" />
                         {language === "ar" ? "معلمات السيناريو" : "Scenario Parameters"}
                       </CardTitle>
                     </CardHeader>
@@ -401,7 +401,7 @@ export default function PolicyImpact() {
                             {language === "ar" ? "مقارنة مع خط الأساس" : "Compare with baseline"}
                           </Label>
                         </div>
-                        <Button onClick={runSimulation} className="bg-[#C9A227] hover:bg-[#a08020] text-[#768064]">
+                        <Button onClick={runSimulation} className="bg-[#C0A030] hover:bg-[#a08020] text-[#103050]">
                           <Play className="w-4 h-4 mr-2" />
                           {language === "ar" ? "تشغيل المحاكاة" : "Run Simulation"}
                         </Button>
@@ -415,7 +415,7 @@ export default function PolicyImpact() {
                       <CardHeader>
                         <div className="flex items-center justify-between">
                           <CardTitle className="flex items-center gap-2">
-                            <BarChart3 className="w-5 h-5 text-[#C9A227]" />
+                            <BarChart3 className="w-5 h-5 text-[#C0A030]" />
                             {language === "ar" ? "نتائج التحليل" : "Analysis Results"}
                           </CardTitle>
                           <div className="flex gap-2">
@@ -468,7 +468,7 @@ export default function PolicyImpact() {
                                 </div>
                                 <div className="flex items-end justify-between">
                                   <div>
-                                    <div className="text-2xl font-bold text-[#768064] dark:text-white">
+                                    <div className="text-2xl font-bold text-[#103050] dark:text-white">
                                       {impact.value.toLocaleString()}
                                     </div>
                                     <div className="text-xs text-gray-500">{indicator.unit}</div>
@@ -545,7 +545,7 @@ export default function PolicyImpact() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Info className="w-5 h-5 text-[#C9A227]" />
+                    <Info className="w-5 h-5 text-[#C0A030]" />
                     {language === "ar" ? "المنهجية" : "Methodology"}
                   </CardTitle>
                 </CardHeader>
@@ -563,14 +563,14 @@ export default function PolicyImpact() {
                       language === "ar" ? "ديناميكيات تدفقات المساعدات والتحويلات" : "Dynamics of aid flows and remittances",
                     ].map((item, index) => (
                       <li key={index} className="flex items-center gap-2">
-                        <ChevronRight className="w-4 h-4 text-[#C9A227]" />
+                        <ChevronRight className="w-4 h-4 text-[#C0A030]" />
                         {item}
                       </li>
                     ))}
                   </ul>
                   <div className="mt-4">
                     <Link href="/methodology">
-                      <Button variant="link" className="p-0 h-auto text-[#C9A227]">
+                      <Button variant="link" className="p-0 h-auto text-[#C0A030]">
                         {language === "ar" ? "اقرأ المزيد عن منهجيتنا" : "Read more about our methodology"}
                         <ChevronRight className="w-4 h-4 ml-1" />
                       </Button>

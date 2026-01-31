@@ -1,12 +1,15 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { 
   Mail, 
   MapPin, 
   Phone, 
   Send,
+  Building2,
   Globe
 } from "lucide-react";
 import { useState } from "react";
@@ -16,8 +19,8 @@ export default function Contact() {
   const { language } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
-    organization: "",
     email: "",
+    subject: "",
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,7 +51,7 @@ export default function Contact() {
         : "Your message has been sent successfully! We'll get back to you soon."
     );
 
-    setFormData({ name: "", organization: "", email: "", message: "" });
+    setFormData({ name: "", email: "", subject: "", message: "" });
     setIsSubmitting(false);
   };
 
@@ -59,186 +62,212 @@ export default function Contact() {
     }));
   };
 
-  // Office locations for the map
-  const offices = [
-    { 
-      city: language === "ar" ? "عدن، اليمن" : "Aden, Yemen", 
-      type: language === "ar" ? "المقر الرئيسي" : "Headquarters",
-      isMain: true
-    },
-    { 
-      city: language === "ar" ? "القاهرة، مصر" : "Cairo, Egypt", 
-      type: language === "ar" ? "المكتب الإقليمي" : "Regional Office",
-      isMain: false
-    },
-    { 
-      city: language === "ar" ? "جنيف وتالين" : "Geneva & Tallinn", 
-      type: language === "ar" ? "مخطط 2026" : "Planned 2026",
-      isMain: false
-    },
-  ];
-
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* CauseWay Contact Page - Split Layout matching mockup */}
-      <div className="flex-1 grid lg:grid-cols-2">
-        {/* Left Side - Map and Locations (Light background) */}
-        <div className="bg-[#F8F9F7] p-8 lg:p-16 flex flex-col justify-center">
-          {/* World Map SVG with office markers */}
-          <div className="relative mb-8">
-            <svg viewBox="0 0 800 400" className="w-full h-auto opacity-60">
-              {/* Simplified world map outline */}
-              <path
-                d="M50,200 Q100,150 150,180 Q200,160 250,170 Q300,150 350,160 Q400,140 450,150 Q500,130 550,140 Q600,120 650,130 Q700,110 750,120 L750,280 Q700,290 650,280 Q600,300 550,290 Q500,310 450,300 Q400,320 350,310 Q300,330 250,320 Q200,340 150,330 Q100,350 50,340 Z"
-                fill="#768064"
-                opacity="0.3"
-              />
-              {/* North America */}
-              <ellipse cx="150" cy="180" rx="80" ry="60" fill="#768064" opacity="0.25" />
-              {/* South America */}
-              <ellipse cx="200" cy="300" rx="40" ry="70" fill="#768064" opacity="0.25" />
-              {/* Europe */}
-              <ellipse cx="420" cy="160" rx="60" ry="40" fill="#768064" opacity="0.25" />
-              {/* Africa */}
-              <ellipse cx="430" cy="260" rx="50" ry="70" fill="#768064" opacity="0.25" />
-              {/* Asia */}
-              <ellipse cx="580" cy="180" rx="100" ry="60" fill="#768064" opacity="0.25" />
-              {/* Australia */}
-              <ellipse cx="680" cy="320" rx="40" ry="30" fill="#768064" opacity="0.25" />
-              
-              {/* Office Markers */}
-              {/* Aden, Yemen - Headquarters (Gold diamond) */}
-              <g transform="translate(480, 240)">
-                <rect x="-8" y="-8" width="16" height="16" fill="#C9A227" transform="rotate(45)" />
-                <text x="15" y="5" fontSize="10" fill="#2C3424" fontWeight="500">Aden, Yemen</text>
-                <text x="15" y="16" fontSize="8" fill="#768064">(Headquarters)</text>
-              </g>
-              
-              {/* Cairo, Egypt - Regional Office (Gold diamond) */}
-              <g transform="translate(450, 220)">
-                <rect x="-6" y="-6" width="12" height="12" fill="#C9A227" transform="rotate(45)" />
-                <text x="12" y="3" fontSize="9" fill="#2C3424" fontWeight="500">Cairo, Egypt</text>
-                <text x="12" y="13" fontSize="7" fill="#768064">(Regional Office)</text>
-              </g>
-              
-              {/* Geneva - Planned 2026 (Outline marker) */}
-              <g transform="translate(410, 155)">
-                <circle cx="0" cy="0" r="6" fill="none" stroke="#959581" strokeWidth="2" />
-                <text x="10" y="3" fontSize="8" fill="#959581">Geneva</text>
-                <text x="10" y="12" fontSize="7" fill="#959581">(Planned 2026)</text>
-              </g>
-              
-              {/* Tallinn - Planned 2026 (Outline marker) */}
-              <g transform="translate(440, 130)">
-                <circle cx="0" cy="0" r="6" fill="none" stroke="#959581" strokeWidth="2" />
-                <text x="10" y="3" fontSize="8" fill="#959581">Tallinn</text>
-                <text x="10" y="12" fontSize="7" fill="#959581">(Planned 2026)</text>
-              </g>
-            </svg>
-          </div>
-
-          {/* Office Locations List */}
-          <div className="space-y-3">
-            {offices.map((office, index) => (
-              <div key={index} className="flex items-center gap-3">
-                {office.isMain ? (
-                  <div className="w-3 h-3 bg-[#C9A227] transform rotate-45" />
-                ) : (
-                  <div className="w-3 h-3 border-2 border-[#959581] rounded-full" />
-                )}
-                <span className={`text-lg ${office.isMain ? 'font-semibold text-[#2C3424]' : 'text-[#768064]'}`}>
-                  {office.city} <span className="text-sm">({office.type})</span>
-                </span>
-              </div>
-            ))}
+    <div className="flex flex-col">
+      {/* Hero Section */}
+      <section className="bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border-b">
+        <div className="container py-16">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+              {language === "ar" ? "تواصل معنا" : "Contact Us"}
+            </h1>
+            <p className="text-xl text-muted-foreground">
+              {language === "ar"
+                ? "نحن هنا للإجابة على أسئلتكم ومساعدتكم في الوصول إلى البيانات الاقتصادية التي تحتاجونها"
+                : "We're here to answer your questions and help you access the economic data you need"}
+            </p>
           </div>
         </div>
+      </section>
 
-        {/* Right Side - Contact Form (Dark green background) */}
-        <div className="bg-[#2C3424] p-8 lg:p-16 flex flex-col justify-center">
-          <h1 className="text-3xl md:text-4xl font-serif font-bold text-white mb-8">
-            {language === "ar" ? "تواصل معنا" : "Get in Touch"}
-          </h1>
+      <div className="container py-16">
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Contact Form */}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  {language === "ar" ? "أرسل لنا رسالة" : "Send Us a Message"}
+                </CardTitle>
+                <CardDescription>
+                  {language === "ar"
+                    ? "املأ النموذج أدناه وسنتواصل معك في أقرب وقت ممكن"
+                    : "Fill out the form below and we'll get back to you as soon as possible"}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">
+                        {language === "ar" ? "الاسم" : "Name"}
+                      </Label>
+                      <Input
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                        placeholder={language === "ar" ? "أدخل اسمك" : "Enter your name"}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">
+                        {language === "ar" ? "البريد الإلكتروني" : "Email"}
+                      </Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        placeholder={language === "ar" ? "أدخل بريدك الإلكتروني" : "Enter your email"}
+                      />
+                    </div>
+                  </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <Input
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              placeholder={language === "ar" ? "الاسم" : "Name"}
-              className="bg-transparent border-[#768064] text-white placeholder:text-[#959581] focus:border-[#C9A227] h-12"
-            />
-            
-            <Input
-              name="organization"
-              value={formData.organization}
-              onChange={handleChange}
-              placeholder={language === "ar" ? "المؤسسة" : "Organization"}
-              className="bg-transparent border-[#768064] text-white placeholder:text-[#959581] focus:border-[#C9A227] h-12"
-            />
-            
-            <Input
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder={language === "ar" ? "البريد الإلكتروني" : "Email"}
-              className="bg-transparent border-[#768064] text-white placeholder:text-[#959581] focus:border-[#C9A227] h-12"
-            />
-            
-            <Textarea
-              name="message"
-              value={formData.message}
-              onChange={handleChange}
-              required
-              rows={5}
-              placeholder={language === "ar" ? "الرسالة" : "Message"}
-              className="bg-transparent border-[#768064] text-white placeholder:text-[#959581] focus:border-[#C9A227] resize-none"
-            />
+                  <div className="space-y-2">
+                    <Label htmlFor="subject">
+                      {language === "ar" ? "الموضوع" : "Subject"}
+                    </Label>
+                    <Input
+                      id="subject"
+                      name="subject"
+                      value={formData.subject}
+                      onChange={handleChange}
+                      required
+                      placeholder={language === "ar" ? "ما هو موضوع رسالتك؟" : "What is your message about?"}
+                    />
+                  </div>
 
-            {/* Honeypot anti-spam field - hidden from users, visible to bots */}
-            <div className="absolute -left-[9999px]" aria-hidden="true">
-              <Input
-                name="website"
-                type="text"
-                value={honeypot}
-                onChange={(e) => setHoneypot(e.target.value)}
-                tabIndex={-1}
-                autoComplete="off"
-              />
-            </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="message">
+                      {language === "ar" ? "الرسالة" : "Message"}
+                    </Label>
+                    <Textarea
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      required
+                      rows={6}
+                      placeholder={language === "ar" ? "اكتب رسالتك هنا..." : "Write your message here..."}
+                    />
+                  </div>
 
-            <Button 
-              type="submit" 
-              className="w-full bg-[#C9A227] hover:bg-[#B8931F] text-[#2C3424] font-semibold h-12 text-base"
-              disabled={isSubmitting}
-            >
-              {isSubmitting 
-                ? (language === "ar" ? "جاري الإرسال..." : "Sending...")
-                : (language === "ar" ? "إرسال الرسالة" : "Send Message")}
-            </Button>
-          </form>
+                  {/* Honeypot anti-spam field - hidden from users, visible to bots */}
+                  <div className="absolute -left-[9999px]" aria-hidden="true">
+                    <Label htmlFor="website">Website</Label>
+                    <Input
+                      id="website"
+                      name="website"
+                      type="text"
+                      value={honeypot}
+                      onChange={(e) => setHoneypot(e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                    />
+                  </div>
 
-          {/* Contact Details */}
-          <div className="mt-10 space-y-3 text-[#DADED8]">
-            <div className="flex items-center gap-3">
-              <Phone className="h-4 w-4 text-[#C9A227]" />
-              <span>+967 2 236655</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Mail className="h-4 w-4 text-[#C9A227]" />
-              <a href="mailto:info@causewaygrp.com" className="hover:text-[#C9A227] transition-colors">
-                info@causewaygrp.com
-              </a>
-            </div>
-            <div className="flex items-center gap-3">
-              <Globe className="h-4 w-4 text-[#C9A227]" />
-              <a href="https://www.causewaygrp.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#C9A227] transition-colors">
-                www.causewaygrp.com
-              </a>
-            </div>
+                  <Button type="submit" className="w-full gap-2" disabled={isSubmitting}>
+                    <Send className="h-4 w-4" />
+                    {isSubmitting 
+                      ? (language === "ar" ? "جاري الإرسال..." : "Sending...")
+                      : (language === "ar" ? "إرسال الرسالة" : "Send Message")}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Contact Information */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  {language === "ar" ? "معلومات الاتصال" : "Contact Information"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Mail className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium mb-1">
+                      {language === "ar" ? "البريد الإلكتروني" : "Email"}
+                    </p>
+                    <a 
+                      href="mailto:yeto@causewaygrp.com" 
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      yeto@causewaygrp.com
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                    <MapPin className="h-5 w-5 text-accent" />
+                  </div>
+                  <div>
+                    <p className="font-medium mb-1">
+                      {language === "ar" ? "الموقع" : "Location"}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {language === "ar" ? "عدن، اليمن" : "Aden, Yemen"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Building2 className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium mb-1">
+                      {language === "ar" ? "المؤسسة" : "Organization"}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      CauseWay Financial & Banking Consultancies
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                    <Globe className="h-5 w-5 text-accent" />
+                  </div>
+                  <div>
+                    <p className="font-medium mb-1">
+                      {language === "ar" ? "المواقع الأخرى" : "Other Locations"}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Cairo (HQ) | Tallinn | Geneva
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
+              <CardHeader>
+                <CardTitle className="text-lg">
+                  {language === "ar" ? "للاستفسارات المؤسسية" : "For Institutional Inquiries"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">
+                  {language === "ar"
+                    ? "إذا كنت تمثل منظمة حكومية أو دولية أو مؤسسة بحثية، يرجى التواصل معنا مباشرة للحصول على وصول مخصص ودعم متخصص."
+                    : "If you represent a government agency, international organization, or research institution, please contact us directly for dedicated access and specialized support."}
+                </p>
+                <Button variant="outline" className="w-full">
+                  {language === "ar" ? "طلب وصول مؤسسي" : "Request Institutional Access"}
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

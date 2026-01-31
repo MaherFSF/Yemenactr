@@ -128,10 +128,10 @@ export default function Header() {
           <div className="flex items-center gap-1">
             {/* CauseWay Logo Colors */}
             <div className="w-8 h-8 relative">
-              <div className="absolute top-0 left-0 w-4 h-4 bg-[#4C583E] rounded-sm"></div>
-              <div className="absolute top-0 right-0 w-4 h-4 bg-[#C9A227] rounded-sm"></div>
-              <div className="absolute bottom-0 left-0 w-4 h-4 bg-[#768064] rounded-sm"></div>
-              <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#959581] rounded-full"></div>
+              <div className="absolute top-0 left-0 w-4 h-4 bg-[#107040] rounded-sm"></div>
+              <div className="absolute top-0 right-0 w-4 h-4 bg-[#C0A030] rounded-sm"></div>
+              <div className="absolute bottom-0 left-0 w-4 h-4 bg-[#103050] rounded-sm"></div>
+              <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#4A90E2] rounded-full"></div>
             </div>
           </div>
           <span className="hidden sm:inline font-bold">
@@ -143,8 +143,8 @@ export default function Header() {
         <nav className="hidden lg:flex items-center gap-1">
           <Link href="/" className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
             isActive("/") && location === "/" 
-              ? "text-[#4C583E] bg-[#4C583E]/10" 
-              : "text-foreground/80 hover:text-[#4C583E] hover:bg-[#4C583E]/5"
+              ? "text-[#107040] bg-[#107040]/10" 
+              : "text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5"
           }`}>
             {language === "ar" ? "الرئيسية" : "Home"}
           </Link>
@@ -154,8 +154,8 @@ export default function Header() {
             <DropdownMenuTrigger asChild>
               <button className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                 location.startsWith("/sectors") 
-                  ? "text-[#4C583E] bg-[#4C583E]/10" 
-                  : "text-foreground/80 hover:text-[#4C583E] hover:bg-[#4C583E]/5"
+                  ? "text-[#107040] bg-[#107040]/10" 
+                  : "text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5"
               }`}>
                 {language === "ar" ? "القطاعات" : "Sectors"}
                 <ChevronDown className="h-4 w-4" />
@@ -185,8 +185,8 @@ export default function Header() {
             <DropdownMenuTrigger asChild>
               <button className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                 ["/dashboard", "/ai-assistant", "/report-builder", "/scenario-simulator", "/data-repository", "/timeline"].some(p => location.startsWith(p))
-                  ? "text-[#4C583E] bg-[#4C583E]/10" 
-                  : "text-foreground/80 hover:text-[#4C583E] hover:bg-[#4C583E]/5"
+                  ? "text-[#107040] bg-[#107040]/10" 
+                  : "text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5"
               }`}>
                 {language === "ar" ? "الأدوات" : "Tools"}
                 <ChevronDown className="h-4 w-4" />
@@ -216,8 +216,8 @@ export default function Header() {
             <DropdownMenuTrigger asChild>
               <button className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                 ["/research", "/methodology", "/glossary", "/about", "/contact"].some(p => location.startsWith(p))
-                  ? "text-[#4C583E] bg-[#4C583E]/10" 
-                  : "text-foreground/80 hover:text-[#4C583E] hover:bg-[#4C583E]/5"
+                  ? "text-[#107040] bg-[#107040]/10" 
+                  : "text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5"
               }`}>
                 {language === "ar" ? "الموارد" : "Resources"}
                 <ChevronDown className="h-4 w-4" />
@@ -245,8 +245,8 @@ export default function Header() {
           {/* Direct Links */}
           <Link href="/pricing" className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
             isActive("/pricing") 
-              ? "text-[#4C583E] bg-[#4C583E]/10" 
-              : "text-foreground/80 hover:text-[#4C583E] hover:bg-[#4C583E]/5"
+              ? "text-[#107040] bg-[#107040]/10" 
+              : "text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5"
           }`}>
             {language === "ar" ? "الاشتراكات" : "Pricing"}
           </Link>
@@ -256,8 +256,8 @@ export default function Header() {
             <DropdownMenuTrigger asChild>
               <button className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                 location.startsWith("/admin")
-                  ? "text-[#4C583E] bg-[#4C583E]/10"
-                  : "text-foreground/80 hover:text-[#4C583E] hover:bg-[#4C583E]/5"
+                  ? "text-[#107040] bg-[#107040]/10"
+                  : "text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5"
               }`}>
                 <Shield className="h-4 w-4" />
                 {language === "ar" ? "الإدارة" : "Admin"}
@@ -320,7 +320,7 @@ export default function Header() {
 
           {/* CTA Button - Desktop */}
           <Link href="/dashboard">
-            <Button size="sm" className="hidden md:flex bg-[#4C583E] hover:bg-[#2C3424]">
+            <Button size="sm" className="hidden md:flex bg-[#107040] hover:bg-[#0D5A34]">
               {language === "ar" ? "استكشف البيانات" : "Explore Data"}
             </Button>
           </Link>
@@ -347,7 +347,7 @@ export default function Header() {
           <nav className="container flex flex-col py-4 gap-1">
             <Link 
               href="/"
-              className="block px-4 py-2 text-sm font-medium text-foreground/80 hover:text-[#4C583E] hover:bg-[#4C583E]/5 rounded-md transition-colors"
+              className="block px-4 py-2 text-sm font-medium text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5 rounded-md transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
               {language === "ar" ? "الرئيسية" : "Home"}
@@ -365,7 +365,7 @@ export default function Header() {
                     <Link 
                       key={sector.href} 
                       href={sector.href}
-                      className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:text-[#4C583E] hover:bg-[#4C583E]/5 rounded-md transition-colors"
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5 rounded-md transition-colors"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       <Icon className="h-4 w-4" />
@@ -376,7 +376,7 @@ export default function Header() {
               </div>
               <Link 
                 href="/data-repository"
-                className="block mt-2 px-3 py-2 text-sm font-medium text-[#4C583E] hover:bg-[#4C583E]/5 rounded-md transition-colors"
+                className="block mt-2 px-3 py-2 text-sm font-medium text-[#107040] hover:bg-[#107040]/5 rounded-md transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {language === "ar" ? "عرض جميع القطاعات →" : "View All Sectors →"}
@@ -394,7 +394,7 @@ export default function Header() {
                   <Link 
                     key={tool.href} 
                     href={tool.href}
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:text-[#4C583E] hover:bg-[#4C583E]/5 rounded-md transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5 rounded-md transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <Icon className="h-4 w-4" />
@@ -415,7 +415,7 @@ export default function Header() {
                   <Link 
                     key={resource.href} 
                     href={resource.href}
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:text-[#4C583E] hover:bg-[#4C583E]/5 rounded-md transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:text-[#107040] hover:bg-[#107040]/5 rounded-md transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <Icon className="h-4 w-4" />
@@ -428,7 +428,7 @@ export default function Header() {
             {/* Mobile CTA */}
             <div className="px-4 py-4 border-t">
               <Link href="/dashboard">
-                <Button className="w-full bg-[#4C583E] hover:bg-[#2C3424]" onClick={() => setMobileMenuOpen(false)}>
+                <Button className="w-full bg-[#107040] hover:bg-[#0D5A34]" onClick={() => setMobileMenuOpen(false)}>
                   {language === "ar" ? "استكشف البيانات" : "Explore Data"}
                 </Button>
               </Link>

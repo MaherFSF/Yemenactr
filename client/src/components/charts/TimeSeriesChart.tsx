@@ -152,8 +152,8 @@ export function TimeSeriesChart({
                       type="monotone"
                       dataKey="adenValue"
                       name="Aden (IRG)"
-                      stroke="#4C583E"
-                      fill="#4C583E"
+                      stroke="#107040"
+                      fill="#107040"
                       fillOpacity={0.3}
                       strokeWidth={2}
                     />
@@ -161,8 +161,8 @@ export function TimeSeriesChart({
                       type="monotone"
                       dataKey="sanaaValue"
                       name="Sana'a (DFA)"
-                      stroke="#768064"
-                      fill="#768064"
+                      stroke="#103050"
+                      fill="#103050"
                       fillOpacity={0.3}
                       strokeWidth={2}
                     />
@@ -173,18 +173,18 @@ export function TimeSeriesChart({
                       type="monotone"
                       dataKey="adenValue"
                       name="Aden (IRG)"
-                      stroke="#4C583E"
+                      stroke="#107040"
                       strokeWidth={2}
-                      dot={{ fill: "#4C583E", strokeWidth: 2 }}
+                      dot={{ fill: "#107040", strokeWidth: 2 }}
                       activeDot={{ r: 6 }}
                     />
                     <Line
                       type="monotone"
                       dataKey="sanaaValue"
                       name="Sana'a (DFA)"
-                      stroke="#768064"
+                      stroke="#103050"
                       strokeWidth={2}
-                      dot={{ fill: "#768064", strokeWidth: 2 }}
+                      dot={{ fill: "#103050", strokeWidth: 2 }}
                       activeDot={{ r: 6 }}
                     />
                   </>
@@ -197,8 +197,8 @@ export function TimeSeriesChart({
                     type="monotone"
                     dataKey="value"
                     name={title}
-                    stroke="#C9A227"
-                    fill="#C9A227"
+                    stroke="#C0A030"
+                    fill="#C0A030"
                     fillOpacity={0.3}
                     strokeWidth={2}
                   />
@@ -207,9 +207,9 @@ export function TimeSeriesChart({
                     type="monotone"
                     dataKey="value"
                     name={title}
-                    stroke="#C9A227"
+                    stroke="#C0A030"
                     strokeWidth={2}
-                    dot={{ fill: "#C9A227", strokeWidth: 2 }}
+                    dot={{ fill: "#C0A030", strokeWidth: 2 }}
                     activeDot={{ r: 6 }}
                   />
                 )}

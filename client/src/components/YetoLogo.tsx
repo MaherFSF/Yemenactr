@@ -32,8 +32,8 @@ export function YetoLogo({
       <div 
         className={cn(
           sizeClasses[size],
-          'rounded-full border-2 border-[#C9A227]/40 flex items-center justify-center',
-          'bg-gradient-to-br from-[#768064]/60 to-[#1a4a70]/60 backdrop-blur-sm',
+          'rounded-full border-2 border-[#C0A030]/40 flex items-center justify-center',
+          'bg-gradient-to-br from-[#103050]/60 to-[#1a4a70]/60 backdrop-blur-sm',
           animated && 'animate-pulse',
           className
         )}
@@ -49,7 +49,7 @@ export function YetoLogo({
             cx="50" 
             cy="50" 
             r="45" 
-            stroke="#C9A227" 
+            stroke="#C0A030" 
             strokeWidth="1.5" 
             strokeDasharray="4 2"
             className={animated ? 'animate-spin' : ''}
@@ -61,7 +61,7 @@ export function YetoLogo({
             cx="50" 
             cy="50" 
             r="38" 
-            stroke="#C9A227" 
+            stroke="#C0A030" 
             strokeWidth="0.5" 
             opacity="0.5"
           />
@@ -71,7 +71,7 @@ export function YetoLogo({
             x="50" 
             y="48" 
             textAnchor="middle" 
-            fill="#C9A227" 
+            fill="#C0A030" 
             fontSize="18" 
             fontWeight="bold"
             fontFamily="Inter, sans-serif"
@@ -85,21 +85,21 @@ export function YetoLogo({
             y1="56" 
             x2="70" 
             y2="56" 
-            stroke="#C9A227" 
+            stroke="#C0A030" 
             strokeWidth="1"
             opacity="0.6"
           />
           
           {/* Small decorative elements */}
-          <circle cx="50" cy="65" r="2" fill="#4C583E" />
-          <circle cx="42" cy="65" r="1" fill="#C9A227" opacity="0.5" />
-          <circle cx="58" cy="65" r="1" fill="#C9A227" opacity="0.5" />
+          <circle cx="50" cy="65" r="2" fill="#107040" />
+          <circle cx="42" cy="65" r="1" fill="#C0A030" opacity="0.5" />
+          <circle cx="58" cy="65" r="1" fill="#C0A030" opacity="0.5" />
           
           {/* Corner accents */}
-          <path d="M20 30 L20 20 L30 20" stroke="#C9A227" strokeWidth="1" fill="none" opacity="0.4" />
-          <path d="M70 20 L80 20 L80 30" stroke="#C9A227" strokeWidth="1" fill="none" opacity="0.4" />
-          <path d="M80 70 L80 80 L70 80" stroke="#C9A227" strokeWidth="1" fill="none" opacity="0.4" />
-          <path d="M30 80 L20 80 L20 70" stroke="#C9A227" strokeWidth="1" fill="none" opacity="0.4" />
+          <path d="M20 30 L20 20 L30 20" stroke="#C0A030" strokeWidth="1" fill="none" opacity="0.4" />
+          <path d="M70 20 L80 20 L80 30" stroke="#C0A030" strokeWidth="1" fill="none" opacity="0.4" />
+          <path d="M80 70 L80 80 L70 80" stroke="#C0A030" strokeWidth="1" fill="none" opacity="0.4" />
+          <path d="M30 80 L20 80 L20 70" stroke="#C0A030" strokeWidth="1" fill="none" opacity="0.4" />
         </svg>
       </div>
     );
@@ -116,8 +116,8 @@ export function YetoLogo({
         {/* Hexagonal background */}
         <path 
           d="M50 5 L90 27.5 L90 72.5 L50 95 L10 72.5 L10 27.5 Z" 
-          fill="#768064"
-          stroke="#C9A227"
+          fill="#103050"
+          stroke="#C0A030"
           strokeWidth="2"
         />
         
@@ -125,7 +125,7 @@ export function YetoLogo({
         <path 
           d="M50 15 L80 32.5 L80 67.5 L50 85 L20 67.5 L20 32.5 Z" 
           fill="none"
-          stroke="#C9A227"
+          stroke="#C0A030"
           strokeWidth="0.5"
           opacity="0.5"
         />
@@ -135,7 +135,7 @@ export function YetoLogo({
           x="50" 
           y="55" 
           textAnchor="middle" 
-          fill="#C9A227" 
+          fill="#C0A030" 
           fontSize="20" 
           fontWeight="bold"
           fontFamily="Inter, sans-serif"
@@ -144,7 +144,7 @@ export function YetoLogo({
         </text>
         
         {/* Decorative dot */}
-        <circle cx="50" cy="70" r="3" fill="#4C583E" />
+        <circle cx="50" cy="70" r="3" fill="#107040" />
       </svg>
     );
   }
@@ -165,8 +165,8 @@ export function YetoLogo({
         {/* Shield shape */}
         <path 
           d="M25 2 L45 10 L45 30 Q45 45 25 48 Q5 45 5 30 L5 10 Z" 
-          fill="#768064"
-          stroke="#C9A227"
+          fill="#103050"
+          stroke="#C0A030"
           strokeWidth="1.5"
         />
         
@@ -174,7 +174,7 @@ export function YetoLogo({
         <path 
           d="M25 8 L40 14 L40 28 Q40 40 25 42 Q10 40 10 28 L10 14 Z" 
           fill="none"
-          stroke="#C9A227"
+          stroke="#C0A030"
           strokeWidth="0.5"
           opacity="0.4"
         />
@@ -182,7 +182,7 @@ export function YetoLogo({
         {/* Y symbol */}
         <path 
           d="M18 15 L25 25 L32 15 M25 25 L25 35" 
-          stroke="#C9A227"
+          stroke="#C0A030"
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -190,11 +190,11 @@ export function YetoLogo({
         />
         
         {/* Dot */}
-        <circle cx="25" cy="38" r="2" fill="#4C583E" />
+        <circle cx="25" cy="38" r="2" fill="#107040" />
       </svg>
       
       <div className="flex flex-col">
-        <span className={cn('font-bold text-[#768064]', textSizes[size])}>
+        <span className={cn('font-bold text-[#103050]', textSizes[size])}>
           YETO
         </span>
         <span className="text-xs text-gray-500 -mt-1">
