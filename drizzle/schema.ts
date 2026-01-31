@@ -7633,3 +7633,58 @@ export const sourceDiscoveryQueue = mysqlTable("source_discovery_queue", {
 
 export type SourceDiscoveryQueue = typeof sourceDiscoveryQueue.$inferSelect;
 export type InsertSourceDiscoveryQueue = typeof sourceDiscoveryQueue.$inferInsert;
+
+
+// ============================================================================
+// DATA UPDATES - Track detected data changes across sources
+// ============================================================================
+
+export const dataUpdates = mysqlTable("data_updates", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Update details
+  title: varchar("title", { length: 500 }).notNull(),
+  titleAr: varchar("titleAr", { length: 500 }),
+  
+  // Source info
+  sourceName: varchar("sourceName", { length: 255 }),
+  sourceType: mysqlEnum("sourceType", [
+    "official_stats",
+    "central_bank",
+    "international_org",
+    "ngo",
+    "academic",
+    "news",
+    "other"
+  ]).default("other"),
+  sourceUrl: text("sourceUrl"),
+  
+  // Sector tags (JSON array)
+  sectorTags: json("sectorTags").$type<string[]>(),
+  
+  // Impact assessment
+  whyMatters: text("whyMatters"),
+  whyMattersAr: text("whyMattersAr"),
+  impactLevel: mysqlEnum("impactLevel", ["high", "medium", "low"]).default("medium"),
+  
+  // Evidence linking
+  evidencePackId: int("evidencePackId"),
+  indicatorCodes: json("indicatorCodes").$type<string[]>(),
+  
+  // Detection metadata
+  detectedAt: timestamp("detectedAt").defaultNow().notNull(),
+  detectedBy: mysqlEnum("detectedBy", ["connector", "manual", "ai_agent"]).default("connector"),
+  
+  // Status
+  isProcessed: boolean("isProcessed").default(false),
+  processedAt: timestamp("processedAt"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  detectedAtIdx: index("data_update_detected_idx").on(table.detectedAt),
+  sourceTypeIdx: index("data_update_source_type_idx").on(table.sourceType),
+  processedIdx: index("data_update_processed_idx").on(table.isProcessed),
+}));
+
+export type DataUpdate = typeof dataUpdates.$inferSelect;
+export type InsertDataUpdate = typeof dataUpdates.$inferInsert;

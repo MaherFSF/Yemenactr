@@ -144,26 +144,27 @@ export class ReliefWebConnector extends BaseConnector {
       const existing = await db
         .select()
         .from(libraryDocuments)
-        .where(eq(libraryDocuments.externalId, `reliefweb-${report.id}`))
+        .where(eq(libraryDocuments.docId, `reliefweb-${report.id}`))
         .limit(1);
 
       const docData = {
-        externalId: `reliefweb-${report.id}`,
-        title: report.fields?.title || 'Untitled',
+        docId: `reliefweb-${report.id}`,
+        titleEn: report.fields?.title || 'Untitled',
         titleAr: null,
-        publisher: report.fields?.source?.[0]?.name || 'ReliefWeb',
-        publicationDate: report.fields?.date?.created ? new Date(report.fields.date.created) : new Date(),
-        docType: report.fields?.format?.[0]?.name || 'Report',
-        sourceUrl: report.fields?.url || `https://reliefweb.int/node/${report.id}`,
-        pdfUrl: report.fields?.file?.[0]?.url || null,
-        sectors: JSON.stringify(report.fields?.theme?.map((t: any) => t.name) || []),
-        entities: JSON.stringify(report.fields?.source?.map((s: any) => s.name) || []),
-        licenseFlag: 'open',
-        status: 'published',
-        metadata: JSON.stringify({
+        publisherName: report.fields?.source?.[0]?.name || 'ReliefWeb',
+        publishedAt: report.fields?.date?.created ? new Date(report.fields.date.created) : new Date(),
+        retrievedAt: new Date(),
+        docType: 'report' as const,
+        canonicalUrl: report.fields?.url || `https://reliefweb.int/node/${report.id}`,
+        sectors: report.fields?.theme?.map((t: any) => t.name) || [],
+        entityIds: [],
+        licenseFlag: 'open' as const,
+        status: 'published' as const,
+        metadata: {
           reliefwebId: report.id,
           fetchedAt: new Date().toISOString(),
-        }),
+          pdfUrl: report.fields?.file?.[0]?.url || null,
+        },
         updatedAt: new Date(),
       };
 
@@ -172,9 +173,7 @@ export class ReliefWebConnector extends BaseConnector {
         return { isNew: false };
       } else {
         await db.insert(libraryDocuments).values({
-          id: `rw-${report.id}`,
           ...docData,
-          createdAt: new Date(),
         });
         return { isNew: true };
       }
@@ -200,16 +199,13 @@ export class ReliefWebConnector extends BaseConnector {
 
       const seriesData = {
         indicatorCode: `RW_${indicator}`,
-        indicatorName: `ReliefWeb ${indicator.replace(/_/g, ' ')}`,
+        regimeTag: 'mixed' as const,
         value: count.toString(),
         date: new Date(dateStr),
-        source: 'ReliefWeb',
-        sourceUrl: 'https://reliefweb.int/country/yem',
-        country: 'Yemen',
-        countryCode: 'YEM',
-        frequency: 'monthly',
         unit: 'count',
-        metadata: JSON.stringify({ fetchedAt: new Date().toISOString() }),
+        confidenceRating: 'B' as const,
+        sourceId: 1, // ReliefWeb source ID
+        notes: `ReliefWeb ${indicator.replace(/_/g, ' ')} - fetched at ${new Date().toISOString()}`,
         updatedAt: new Date(),
       };
 
@@ -217,9 +213,7 @@ export class ReliefWebConnector extends BaseConnector {
         await db.update(timeSeries).set(seriesData).where(eq(timeSeries.id, existing[0].id));
       } else {
         await db.insert(timeSeries).values({
-          id: `rw-${indicator}-${year}-${month}`,
           ...seriesData,
-          createdAt: new Date(),
         });
       }
     } catch (error) {
@@ -410,16 +404,13 @@ export class ACLEDConnector extends BaseConnector {
 
       const countData = {
         indicatorCode: countIndicator,
-        indicatorName: `ACLED ${eventType.replace(/_/g, ' ')} (count)`,
+        regimeTag: 'mixed' as const,
         value: data.count.toString(),
         date: new Date(dateStr),
-        source: 'ACLED',
-        sourceUrl: 'https://acleddata.com/data-export-tool/',
-        country: 'Yemen',
-        countryCode: 'YEM',
-        frequency: 'monthly',
         unit: 'events',
-        metadata: JSON.stringify({ fetchedAt: new Date().toISOString() }),
+        confidenceRating: 'B' as const,
+        sourceId: 2, // ACLED source ID
+        notes: `ACLED ${eventType.replace(/_/g, ' ')} (count) - fetched at ${new Date().toISOString()}`,
         updatedAt: new Date(),
       };
 
@@ -427,9 +418,7 @@ export class ACLEDConnector extends BaseConnector {
         await db.update(timeSeries).set(countData).where(eq(timeSeries.id, existingCount[0].id));
       } else {
         await db.insert(timeSeries).values({
-          id: `acled-${eventType}-count-${year}-${month}`,
           ...countData,
-          createdAt: new Date(),
         });
       }
 
@@ -448,16 +437,13 @@ export class ACLEDConnector extends BaseConnector {
 
       const fatalData = {
         indicatorCode: fatalIndicator,
-        indicatorName: `ACLED ${eventType.replace(/_/g, ' ')} (fatalities)`,
+        regimeTag: 'mixed' as const,
         value: data.fatalities.toString(),
         date: new Date(dateStr),
-        source: 'ACLED',
-        sourceUrl: 'https://acleddata.com/data-export-tool/',
-        country: 'Yemen',
-        countryCode: 'YEM',
-        frequency: 'monthly',
         unit: 'persons',
-        metadata: JSON.stringify({ fetchedAt: new Date().toISOString() }),
+        confidenceRating: 'B' as const,
+        sourceId: 2, // ACLED source ID
+        notes: `ACLED ${eventType.replace(/_/g, ' ')} (fatalities) - fetched at ${new Date().toISOString()}`,
         updatedAt: new Date(),
       };
 
@@ -466,9 +452,7 @@ export class ACLEDConnector extends BaseConnector {
         return { isNew: false };
       } else {
         await db.insert(timeSeries).values({
-          id: `acled-${eventType}-fatal-${year}-${month}`,
           ...fatalData,
-          createdAt: new Date(),
         });
         return { isNew: true };
       }

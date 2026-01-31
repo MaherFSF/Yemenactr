@@ -176,6 +176,13 @@
       "when": 1769725328420,
       "tag": "0024_loving_wind_dancer",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "5",
+      "when": 1769799753740,
+      "tag": "0025_broken_vertigo",
+      "breakpoints": true
     }
   ]
 }
