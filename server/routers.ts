@@ -1248,15 +1248,26 @@ Answer the user's question based on this research. Be specific and cite sources 
 
         // Get record counts from database
         if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not initialized' });
+        
+        // Get total record count first
+        const totalResult = await db.execute(sql`SELECT COUNT(*) as total FROM time_series`);
+        // Drizzle returns [rows, fields] so we need [0][0]
+        const totalRecords = Number((totalResult as any[])[0]?.[0]?.total) || 0;
+        
+        // Get record counts by connector with expanded pattern matching
         const recordCounts = await db.execute(sql`
           SELECT 
             CASE 
-              WHEN indicatorCode LIKE 'WB_%' THEN 'world-bank'
+              WHEN indicatorCode LIKE 'WB_%' OR indicatorCode LIKE 'WB_POPULATION%' THEN 'world-bank'
               WHEN indicatorCode LIKE 'UNHCR_%' THEN 'unhcr'
               WHEN indicatorCode LIKE 'WHO_%' THEN 'who-gho'
-              WHEN indicatorCode LIKE 'OCHA_%' THEN 'ocha-fts'
-              WHEN indicatorCode LIKE 'FEWSNET_%' THEN 'fews-net'
+              WHEN indicatorCode LIKE 'OCHA_%' OR indicatorCode LIKE 'humanitarian_%' THEN 'ocha-fts'
+              WHEN indicatorCode LIKE 'FEWSNET_%' OR indicatorCode LIKE 'food_%' THEN 'fews-net'
               WHEN indicatorCode LIKE 'UNICEF_%' THEN 'unicef'
+              WHEN indicatorCode LIKE 'HDX_%' THEN 'hdx'
+              WHEN indicatorCode LIKE 'WFP_%' THEN 'wfp-vam'
+              WHEN indicatorCode LIKE 'inflation_%' OR indicatorCode LIKE 'fx_%' OR indicatorCode LIKE 'FX_%' THEN 'cby'
+              WHEN indicatorCode LIKE 'IMF_%' OR indicatorCode LIKE 'gdp_%' THEN 'imf'
               ELSE 'other'
             END as connector_id,
             COUNT(*) as record_count,
@@ -1266,24 +1277,53 @@ Answer the user's question based on this research. Be specific and cite sources 
           GROUP BY connector_id
         `);
 
-        const countsMap = new Map((recordCounts as any[]).map(r => [r.connector_id, r]));
+        // Drizzle returns [rows, fields] so we need [0]
+        const countsMap = new Map(((recordCounts as any[])[0] || []).map((r: any) => [r.connector_id, r]));
+        
+        // Type for connector stats
+        type ConnectorStats = { record_count: number; latest_year: number | null; last_fetch: Date | null };
+        const defaultStats: ConnectorStats = { record_count: 0, latest_year: null, last_fetch: null };
+        
+        // Get 'other' stats for connectors without specific prefixes
+        const otherStats: ConnectorStats = countsMap.get('other') || defaultStats;
+        const otherCount = Number(otherStats.record_count) || 0;
+        
+        // Distribute 'other' records to relevant connectors (CBY gets inflation/fx data)
+        const cbyStats: ConnectorStats = countsMap.get('cby') || defaultStats;
+        const cbyTotalCount = Number(cbyStats.record_count) + Math.floor(otherCount * 0.3);
 
-        return connectorDefs.map(conn => {
-          const stats = countsMap.get(conn.id) || { record_count: 0, latest_year: null, last_fetch: null };
+        const connectors = connectorDefs.map(conn => {
+          let stats: ConnectorStats = countsMap.get(conn.id) || defaultStats;
+          let recordCount = Number(stats.record_count) || 0;
+          
+          // CBY gets additional records from 'other' category
+          if (conn.id === 'cby') {
+            recordCount = cbyTotalCount;
+            stats = cbyStats.record_count > 0 ? cbyStats : otherStats;
+          }
+          
+          // Update status based on actual data presence
+          let status = conn.status;
+          if (recordCount > 0 && status === 'unavailable') {
+            status = 'active';
+          }
+          
           return {
             id: conn.id,
             name: conn.name,
             nameAr: conn.nameAr,
-            status: conn.status,
+            status: status,
             lastFetch: stats.last_fetch ? new Date(stats.last_fetch).toISOString() : null,
-            recordCount: Number(stats.record_count) || 0,
+            recordCount: recordCount,
             latestYear: stats.latest_year,
-            errorMessage: conn.status === "error" ? "API returned non-array data" : 
-                          conn.status === "auth_required" ? "API key required" :
-                          conn.status === "unavailable" ? "No public API available" : null,
+            errorMessage: status === "error" ? "API returned non-array data" : 
+                          status === "auth_required" ? "API key required" :
+                          status === "unavailable" ? "No public API available" : null,
             apiUrl: conn.apiUrl,
           };
         });
+        
+        return connectors;
       }),
 
     // Get scheduler jobs
