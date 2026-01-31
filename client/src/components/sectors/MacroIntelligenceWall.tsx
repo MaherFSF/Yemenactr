@@ -53,6 +53,7 @@ import ContradictionBadge from "@/components/ContradictionBadge";
 import { SectorKpiCard } from "./SectorKpiCard";
 import { SectorChart } from "./SectorChart";
 import { RelatedInsightsPanel } from "@/components/RelatedInsights";
+import { SourcesUsedPanel } from "@/components/SourcesUsedPanel";
 
 interface MacroIntelligenceWallProps {
   regime?: 'both' | 'aden_irg' | 'sanaa_dfa';
@@ -1048,7 +1049,10 @@ export function MacroIntelligenceWall({ regime = 'both', isVip = false }: MacroI
         />
       </div>
       
-      {/* Row 4: Connected Intelligence */}
+      {/* Row 4: Sources Used */}
+      <SourcesUsedPanel sectorCode="macro" sectorName={isArabic ? 'الاقتصاد الكلي' : 'Macroeconomy'} />
+
+      {/* Row 5: Connected Intelligence */}
       <ConnectedIntelligencePanel isArabic={isArabic} sectorCode="macro" />
     </div>
   );

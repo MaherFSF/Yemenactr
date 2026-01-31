@@ -37,6 +37,7 @@ import { MechanismExplainer } from "./MechanismExplainer";
 import { SectorWatchlist } from "./SectorWatchlist";
 import { SectorFaqSection } from "./SectorFaqSection";
 import { RelatedInsightsPanel } from "@/components/RelatedInsights";
+import { SourcesUsedPanel } from "@/components/SourcesUsedPanel";
 import { Network } from "lucide-react";
 
 interface SectorPageTemplateProps {
@@ -334,6 +335,12 @@ export function SectorPageTemplate({ sectorCode }: SectorPageTemplateProps) {
                 </CardContent>
               </Card>
             )}
+
+            {/* Sources Used Panel */}
+            <SourcesUsedPanel 
+              sectorCode={sectorCode}
+              sectorName={isArabic ? definition.nameAr : definition.nameEn}
+            />
 
             {/* Coverage & Quality Panel */}
             <Card>

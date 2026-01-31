@@ -23,7 +23,8 @@ interface Source {
 }
 
 interface SourcesUsedPanelProps {
-  sectorCode: string;
+  sectorCode?: string;
+  pageKey?: string;
   sources?: Source[];
   isLoading?: boolean;
   sectorName?: string;
@@ -43,19 +44,29 @@ const tierLabels: Record<string, { en: string; ar: string }> = {
   T3: { en: "Other Source", ar: "مصدر آخر" },
 };
 
-export function SourcesUsedPanel({ sectorCode, sources: propSources, isLoading: propIsLoading, sectorName }: SourcesUsedPanelProps) {
+export function SourcesUsedPanel({ sectorCode, pageKey, sources: propSources, isLoading: propIsLoading, sectorName }: SourcesUsedPanelProps) {
   const { language } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
   
   // Fetch sources from database if not provided as props
-  const { data: sourcesData, isLoading: isQueryLoading } = trpc.sectorPages.getSectorSources.useQuery(
-    { sectorCode, limit: 50 },
-    { enabled: !propSources }
+  // Support both sectorCode (for sector pages) and pageKey (for module pages)
+  const { data: sourcesData, isLoading: isQueryLoading } = trpc.feedMatrix.getSourcesForPage.useQuery(
+    { pageKey: pageKey || sectorCode || 'dashboard', sectorCode, limit: 50 },
+    { enabled: !propSources && (!!sectorCode || !!pageKey) }
   );
 
-  // Use provided sources or fetched sources
-  const sources = propSources || (sourcesData?.success ? sourcesData.sources : []) || [];
-  const isLoading = propIsLoading || isQueryLoading;
+  // Also try sectorPages query as fallback for sector pages
+  const { data: sectorSourcesData, isLoading: isSectorQueryLoading } = trpc.sectorPages.getSectorSources.useQuery(
+    { sectorCode: sectorCode || '', limit: 50 },
+    { enabled: !propSources && !!sectorCode && !sourcesData?.success }
+  );
+
+  // Use provided sources or fetched sources (try feedMatrix first, then sectorPages)
+  const sources = propSources || 
+    (sourcesData?.success ? sourcesData.sources : null) || 
+    (sectorSourcesData?.success ? sectorSourcesData.sources : []) || 
+    [];
+  const isLoading = propIsLoading || isQueryLoading || isSectorQueryLoading;
   
   // Group sources by tier
   const sourcesByTier = useMemo(() => {

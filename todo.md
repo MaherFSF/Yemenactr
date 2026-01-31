@@ -9255,3 +9255,60 @@ Based on review of master design documents and data source register:
 - [x] Source detail dialog showing full metadata
 - [x] Tests passing
 
+
+
+### Phase 73: Universal Routing Engine + Source→Page Matrix (January 31, 2026) (COMPLETED)
+
+**A) Routing Engine (Backend):**
+- [x] Create routeArtifactsToTargets function (routingEngine.ts)
+- [x] Use sectorsFed column for source→sector mapping (no separate table needed)
+- [x] Implement page routing via TARGET_PAGES config
+- [ ] Implement NLP tag extraction for documents (future)
+- [ ] Wire indicator family tags to routing (future)
+
+**B) Source Feed Matrices (Admin):**
+- [x] Build /admin/sector-feed-matrix page
+- [x] Build /admin/page-feed-matrix page
+- [x] Show sources per sector with tier distribution
+- [x] Add export functionality for matrices (CSV)
+
+**C) Sources Used Panel (Frontend):**
+- [x] Create SourcesUsedPanel component
+- [x] Add to SectorPageTemplate (all generic sectors)
+- [x] Add to MacroIntelligenceWall
+- [x] Show tier badges, source count, methodology link
+- [ ] Add to /entities page (future)
+- [ ] Add to /corporate-registry page (future)
+
+**D) Document Vault:**
+- [ ] Create document_backfill_plan table
+- [ ] Implement year-by-year capture planning
+- [ ] Wire OCR for scanned PDFs
+- [ ] Implement bilingual text storage
+- [ ] Create hybrid index (keyword+embedding)
+- [ ] Wire Resources/Literature UI with filters
+
+**E) Tests:**
+- [x] feedMatrix.test.ts - 9 tests passing
+- [x] sourceRegistry.test.ts - 11 tests passing
+
+**F) Documentation:**
+- [x] Updated REGISTRY_CONTRACT.md with Feed Matrix API
+- [x] Added SourcesUsedPanel usage documentation
+
+**Statistics:**
+- 292 sources in canonical source_registry table
+- 16 sectors in sector_codebook table
+- 265 sources mapped to sectors
+- 207 active sources
+
+**G) Previous Tests:
+- [ ] OCR test on 3 scanned PDFs
+- [ ] Translation regression test
+- [ ] Search regression test (10 queries AR+EN)
+- [ ] Evidence pack viewer test
+
+**F) Documentation:**
+- [ ] Update OPS_PLAYBOOK.md
+- [ ] Push to GitHub
+

@@ -247,3 +247,99 @@ The Source Registry Admin page is available at `/admin/source-registry` and prov
 - Full-text search
 - Source detail view with sector mappings
 - Registry statistics and lint report
+
+
+## Feed Matrix API (v2.3)
+
+The Feed Matrix provides visibility into source→page and source→sector routing:
+
+### tRPC Procedures
+
+```typescript
+// Get sector feed matrix - shows which sources feed each sector
+trpc.feedMatrix.getSectorFeedMatrix.useQuery({
+  sectorCode?: string,  // Filter to specific sector
+  limit?: number        // Default: 50
+})
+
+// Get page feed matrix - shows which sources feed each page/module
+trpc.feedMatrix.getPageFeedMatrix.useQuery({
+  pageKey?: string,     // Filter to specific page
+  limit?: number        // Default: 50
+})
+
+// Get sources for a specific page (used by SourcesUsedPanel)
+trpc.feedMatrix.getSourcesForPage.useQuery({
+  pageKey: string,      // Required: dashboard, data-repository, etc.
+  sectorCode?: string,  // Optional: filter by sector
+  limit?: number        // Default: 50
+})
+
+// Get matrix statistics
+trpc.feedMatrix.getMatrixStats.useQuery()
+
+// Export sector matrix as CSV
+trpc.feedMatrix.exportSectorMatrix.useQuery({
+  sectorCode?: string   // Optional: filter to specific sector
+})
+```
+
+### Target Pages
+
+| Page Key | Description | Source Routing |
+|----------|-------------|----------------|
+| dashboard | Main dashboard | T0/T1 sources, all sectors |
+| data-repository | Data browser | All active sources |
+| research-library | Document library | Research/document sources |
+| timeline | Event timeline | News/event sources |
+| entities | Entity profiles | Corporate registry sources |
+| corporate-registry | Business registry | Government registry sources |
+| methodology | Methodology docs | All sources (transparency) |
+| vip-cockpits | VIP dashboards | Premium T0/T1 sources |
+
+### Admin UI Pages
+
+- `/admin/sector-feed-matrix` - View sources per sector with tier distribution
+- `/admin/page-feed-matrix` - View sources per page/module
+
+## SourcesUsedPanel Component
+
+The `SourcesUsedPanel` component displays sources used on any page:
+
+```tsx
+import { SourcesUsedPanel } from '@/components/SourcesUsedPanel';
+
+// On sector pages
+<SourcesUsedPanel 
+  sectorCode="macro" 
+  sectorName="Macroeconomy" 
+/>
+
+// On module pages
+<SourcesUsedPanel 
+  pageKey="dashboard" 
+/>
+```
+
+Features:
+- Tier badges (T0-T4) with color coding
+- Source count summary by tier
+- Expandable source list (5 shown by default)
+- "Read Full Data Methodology" link
+- Bilingual support (EN/AR)
+
+## Statistics (v2.3)
+
+| Metric | Value |
+|--------|-------|
+| Total Sources | 292 |
+| Active Sources | 207 |
+| Needs API Key | 17 |
+| Pending Review | 68 |
+| T1 Sources | 95 |
+| T2 Sources | 13 |
+| T3 Sources | 17 |
+| Unknown Tier | 167 |
+| Sectors | 16 |
+| Mapped to Sectors | 265 |
+| Unmapped | 27 |
