@@ -8641,3 +8641,28 @@ Based on review of master design documents and data source register:
 - [x] Daily ingestion scheduled
 - [x] Email notifications configured
 - [x] All tests passing
+
+
+### Phase 73: Splash Page + CauseWay Branding (IN PROGRESS)
+
+**1) Splash/Intro Page:**
+- [x] Create splash page with Yemen map background (day1_challenge_ig.png style)
+- [x] Add CauseWay bilingual logo (English + Arabic)
+- [x] Add "Yemen Economic Observatory" title with Arabic translation
+- [x] Add tagline: "For a decade, decisions have been made in the dark. Something is about to change."
+- [x] Add language selection buttons (English / العربية)
+- [x] Clicking language redirects to main landing page with selected language
+
+**2) Header Logo Update:**
+- [x] Use exact CauseWay logo without green background
+- [x] Include both English "CauseWay" and Arabic "كوزواي" text
+- [x] Add "Economic Observatory" underneath instead of YETO
+
+**3) Fix Errors:**
+- [ ] Fix TypeScript errors in server connectors
+- [ ] Fix laborAlerts alertType enum issues
+
+**4) Consistent Brand Colors:**
+- [x] Apply CauseWay colors throughout the platform
+- [x] Update all buttons, links, and accents to use brand palette
+- [x] Ensure white background remains dominant

@@ -1,13 +1,15 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
+import { useEffect, useState } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
+import Splash from "./pages/Splash";
 import Dashboard from "./pages/Dashboard";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -126,14 +128,14 @@ import UpdateDetail from "./pages/UpdateDetail";
 import ResearchHub from "./pages/ResearchHub";
 import DocumentDetail from "./pages/DocumentDetail";
 
-function Router() {
-  // make sure to consider if you need authentication for certain routes
+// Main app router with header/footer
+function MainRouter() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1">
     <Switch>
-      <Route path={"/"} component={Home} />
+      <Route path={"/home"} component={Home} />
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/about"} component={About} />
       <Route path={"/contact"} component={Contact} />
@@ -264,6 +266,34 @@ function Router() {
       <Footer />
     </div>
   );
+}
+
+// Root router that handles splash vs main app
+function Router() {
+  const [location, setLocation] = useLocation();
+  
+  // Check splash state synchronously from localStorage
+  const splashSeen = typeof window !== 'undefined' ? localStorage.getItem("yeto-splash-seen") : null;
+  
+  // Handle root path routing
+  useEffect(() => {
+    if (location === "/" && splashSeen) {
+      // Redirect to /home if splash was already seen
+      setLocation("/home");
+    }
+  }, [location, splashSeen, setLocation]);
+  
+  // Show splash page on root if not seen before OR on /splash route
+  if (location === "/splash" || (location === "/" && !splashSeen)) {
+    return <Splash />;
+  }
+  
+  // Show loading while redirecting
+  if (location === "/" && splashSeen) {
+    return null;
+  }
+  
+  return <MainRouter />;
 }
 
 // NOTE: About Theme
