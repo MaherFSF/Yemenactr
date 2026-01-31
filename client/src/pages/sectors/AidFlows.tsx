@@ -34,8 +34,8 @@ export default function AidFlows() {
 
   // Top donors
   const topDonors = [
-    { donor: language === "ar" ? "الولايات المتحدة" : "United States", amount: 520, color: "#4C583E" },
-    { donor: language === "ar" ? "السعودية" : "Saudi Arabia", amount: 380, color: "#4C583E" },
+    { donor: language === "ar" ? "الولايات المتحدة" : "United States", amount: 520, color: "#2e6b4f" },
+    { donor: language === "ar" ? "السعودية" : "Saudi Arabia", amount: 380, color: "#2e6b4f" },
     { donor: language === "ar" ? "الإمارات" : "UAE", amount: 290, color: "#C0A030" },
     { donor: language === "ar" ? "الاتحاد الأوروبي" : "European Union", amount: 250, color: "#6B7280" },
     { donor: language === "ar" ? "المملكة المتحدة" : "United Kingdom", amount: 180, color: "#9CA3AF" },
@@ -252,7 +252,7 @@ export default function AidFlows() {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="funded" fill="#4C583E" name={language === "ar" ? "الممول" : "Funded"} />
+                    <Bar dataKey="funded" fill="#2e6b4f" name={language === "ar" ? "الممول" : "Funded"} />
                     <Bar dataKey="gap" fill="#EF4444" name={language === "ar" ? "الفجوة" : "Gap"} />
                   </BarChart>
                 </ResponsiveContainer>

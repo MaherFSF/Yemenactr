@@ -43,7 +43,7 @@ export default function Remittances() {
 
   // Source countries
   const sourceCountries = [
-    { nameEn: "Saudi Arabia", nameAr: "السعودية", amount: 2.18, percentage: 50, color: "#4C583E" },
+    { nameEn: "Saudi Arabia", nameAr: "السعودية", amount: 2.18, percentage: 50, color: "#2e6b4f" },
     { nameEn: "UAE", nameAr: "الإمارات", amount: 0.65, percentage: 15, color: "#C0A030" },
     { nameEn: "USA", nameAr: "أمريكا", amount: 0.44, percentage: 10, color: "#1e40af" },
     { nameEn: "UK", nameAr: "بريطانيا", amount: 0.26, percentage: 6, color: "#7c3aed" },
@@ -267,7 +267,7 @@ export default function Remittances() {
                       yAxisId="left"
                       type="monotone" 
                       dataKey="inflows" 
-                      stroke="#4C583E" 
+                      stroke="#2e6b4f" 
                       strokeWidth={2}
                       name={language === "ar" ? "التدفقات (مليار $)" : "Inflows ($B)"}
                     />

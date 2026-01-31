@@ -245,7 +245,7 @@ export default function EvidencePackButton({
                 {isArabic ? data.indicatorNameAr : data.indicatorNameEn}
               </div>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-[#4C583E]">
+                <span className="text-3xl font-bold text-[#2e6b4f]">
                   {data.value}
                 </span>
                 <span className="text-gray-500">

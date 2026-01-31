@@ -207,7 +207,7 @@ export default function Macroeconomy() {
           style={{ backgroundImage: `url(/sectors/economy.jpg)` }}
         />
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#4C583E]/90 to-[#768064]/80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#2e6b4f]/90 to-[#5a7a5a]/80" />
         {/* Pattern Overlay */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0" style={{
@@ -226,7 +226,7 @@ export default function Macroeconomy() {
               <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
                 <TrendingUp className="h-8 w-8 text-white" />
               </div>
-              <Badge className="bg-[#4C583E] text-white border-0">
+              <Badge className="bg-[#2e6b4f] text-white border-0">
                 {language === "ar" ? "القطاع الاقتصادي" : "Economic Sector"}
               </Badge>
             </div>
@@ -351,8 +351,8 @@ export default function Macroeconomy() {
                         <Area 
                           type="monotone" 
                           dataKey="gdp" 
-                          stroke="#4C583E" 
-                          fill="#4C583E"
+                          stroke="#2e6b4f" 
+                          fill="#2e6b4f"
                           fillOpacity={0.3}
                           name={language === "ar" ? "الناتج المحلي الإجمالي ($B)" : "GDP ($B)"}
                         />

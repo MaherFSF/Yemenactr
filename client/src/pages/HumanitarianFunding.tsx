@@ -38,7 +38,7 @@ export default function HumanitarianFunding() {
   // Top donors (2024)
   const topDonors = [
     { nameEn: "United States", nameAr: "الولايات المتحدة", amount: 485, percentage: 36, color: "#1e40af" },
-    { nameEn: "European Commission", nameAr: "المفوضية الأوروبية", amount: 178, percentage: 13, color: "#4C583E" },
+    { nameEn: "European Commission", nameAr: "المفوضية الأوروبية", amount: 178, percentage: 13, color: "#2e6b4f" },
     { nameEn: "Germany", nameAr: "ألمانيا", amount: 142, percentage: 11, color: "#C0A030" },
     { nameEn: "United Kingdom", nameAr: "المملكة المتحدة", amount: 98, percentage: 7, color: "#7c3aed" },
     { nameEn: "Saudi Arabia", nameAr: "السعودية", amount: 85, percentage: 6, color: "#059669" },
@@ -224,7 +224,7 @@ export default function HumanitarianFunding() {
                     <Bar 
                       yAxisId="left"
                       dataKey="received" 
-                      fill="#4C583E"
+                      fill="#2e6b4f"
                       name={language === "ar" ? "المستلم ($B)" : "Received ($B)"}
                     />
                     <Line 

@@ -88,7 +88,7 @@ const indicators = [
 ];
 
 const colorPalettes = {
-  yeto: ["#4C583E", "#4C583E", "#C0A030", "#4A90A4", "#7B8794"],
+  yeto: ["#2e6b4f", "#2e6b4f", "#C0A030", "#4A90A4", "#7B8794"],
   warm: ["#FF6B6B", "#FFA94D", "#FFD93D", "#6BCB77", "#4D96FF"],
   cool: ["#3D5A80", "#98C1D9", "#E0FBFC", "#EE6C4D", "#293241"],
   mono: ["#1a1a2e", "#16213e", "#0f3460", "#533483", "#e94560"],

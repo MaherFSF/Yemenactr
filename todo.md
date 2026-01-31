@@ -8722,3 +8722,24 @@ Based on review of master design documents and data source register:
 **5) Mobile Optimization:**
 - [ ] Fix splash page text overflow
 - [ ] Ensure all pages look good on mobile
+
+
+### Phase 76: CauseWay Exact Branding Fix
+
+**1) Global CSS - Exact CauseWay Dark Green:**
+- [ ] Update primary green to exact CauseWay dark green (#1a2e1a)
+- [ ] Ensure header uses this exact green
+- [ ] Ensure footer uses this exact green
+
+**2) Platform Tools Cards:**
+- [ ] Remove teal/blue/pink gradient cards
+- [ ] Redesign all cards to use CauseWay green palette
+- [ ] Maintain visual hierarchy with green variations
+
+**3) KPI Section:**
+- [ ] Fix KPI section background to use CauseWay green
+- [ ] Ensure consistent green across hero section
+
+**4) Logo Consistency:**
+- [ ] Use exact CauseWay logo across all components
+- [ ] Ensure logo colors match brand guidelines

@@ -362,7 +362,7 @@ If you discover a security vulnerability, please report it to security@yeto.org.
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950" dir={isArabic ? "rtl" : "ltr"}>
       {/* Header */}
-      <div className="bg-gradient-to-br from-[#4C583E] to-[#0a5030] text-white py-16">
+      <div className="bg-gradient-to-br from-[#2e6b4f] to-[#0a5030] text-white py-16">
         <div className="container max-w-5xl">
           <div className="flex items-center gap-4 mb-6">
             <div className="bg-white/20 p-3 rounded-xl">
@@ -413,7 +413,7 @@ If you discover a security vulnerability, please report it to security@yeto.org.
                   href={`#${section.id}`}
                   className="flex items-center gap-2 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 >
-                  <section.icon className="h-4 w-4 text-[#4C583E]" />
+                  <section.icon className="h-4 w-4 text-[#2e6b4f]" />
                   <span className="text-sm">
                     {isArabic ? section.titleAr : section.titleEn}
                   </span>
@@ -429,8 +429,8 @@ If you discover a security vulnerability, please report it to security@yeto.org.
             <Card key={section.id} id={section.id} className="scroll-mt-24">
               <CardHeader className="border-b">
                 <div className="flex items-center gap-3">
-                  <div className="bg-[#4C583E]/10 p-2 rounded-lg">
-                    <section.icon className="h-5 w-5 text-[#4C583E]" />
+                  <div className="bg-[#2e6b4f]/10 p-2 rounded-lg">
+                    <section.icon className="h-5 w-5 text-[#2e6b4f]" />
                   </div>
                   <CardTitle>
                     {isArabic ? section.titleAr : section.titleEn}
@@ -449,10 +449,10 @@ If you discover a security vulnerability, please report it to security@yeto.org.
         </div>
 
         {/* Contact Section */}
-        <Card className="mt-8 bg-gradient-to-br from-[#4C583E]/5 to-[#4C583E]/10 border-[#4C583E]/20">
+        <Card className="mt-8 bg-gradient-to-br from-[#2e6b4f]/5 to-[#2e6b4f]/10 border-[#2e6b4f]/20">
           <CardContent className="py-8">
             <div className="text-center">
-              <Mail className="h-10 w-10 text-[#4C583E] mx-auto mb-4" />
+              <Mail className="h-10 w-10 text-[#2e6b4f] mx-auto mb-4" />
               <h3 className="text-xl font-semibold mb-2">
                 {isArabic ? "أسئلة حول بياناتك؟" : "Questions About Your Data?"}
               </h3>
@@ -464,14 +464,14 @@ If you discover a security vulnerability, please report it to security@yeto.org.
               <div className="flex flex-wrap justify-center gap-4">
                 <a 
                   href="mailto:privacy@yeto.org"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#4C583E] text-white rounded-lg hover:bg-[#0a5030] transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#2e6b4f] text-white rounded-lg hover:bg-[#0a5030] transition-colors"
                 >
                   <Mail className="h-4 w-4" />
                   privacy@yeto.org
                 </a>
                 <a 
                   href="mailto:security@yeto.org"
-                  className="inline-flex items-center gap-2 px-4 py-2 border border-[#4C583E] text-[#4C583E] rounded-lg hover:bg-[#4C583E]/10 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 border border-[#2e6b4f] text-[#2e6b4f] rounded-lg hover:bg-[#2e6b4f]/10 transition-colors"
                 >
                   <Lock className="h-4 w-4" />
                   security@yeto.org

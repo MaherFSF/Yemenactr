@@ -76,22 +76,22 @@ export default function Splash() {
               {/* Main C shape - Cypress green with darker fill */}
               <path 
                 d="M5 8 L55 8 Q60 8 60 13 L60 22 L25 22 L25 63 L60 63 L60 72 Q60 77 55 77 L5 77 Q0 77 0 72 L0 13 Q0 8 5 8 Z" 
-                fill="#4C583E"
+                fill="#2e6b4f"
               />
               {/* Inner olive square */}
-              <rect x="40" y="30" width="22" height="22" rx="3" fill="#768064"/>
+              <rect x="40" y="30" width="22" height="22" rx="3" fill="#5a7a5a"/>
               {/* Top right gold square */}
               <rect x="68" y="8" width="22" height="22" rx="4" fill="#C9A227"/>
               {/* Bottom right small dark green square */}
-              <rect x="68" y="40" width="14" height="14" rx="3" fill="#4C583E"/>
+              <rect x="68" y="40" width="14" height="14" rx="3" fill="#2e6b4f"/>
             </svg>
           </div>
 
           {/* CauseWay | كوزواي */}
           <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-5">
             <span className="text-white text-2xl sm:text-3xl md:text-4xl font-light tracking-wide">CauseWay</span>
-            <span className="text-[#768064] text-2xl sm:text-3xl md:text-4xl font-light">|</span>
-            <span className="text-[#768064] text-2xl sm:text-3xl md:text-4xl font-arabic">كوزواي</span>
+            <span className="text-[#5a7a5a] text-2xl sm:text-3xl md:text-4xl font-light">|</span>
+            <span className="text-[#5a7a5a] text-2xl sm:text-3xl md:text-4xl font-arabic">كوزواي</span>
           </div>
 
           {/* Arabic Title */}
@@ -141,7 +141,7 @@ export default function Splash() {
           <p className="text-[#959581] text-xs sm:text-sm">
             Powered by CauseWay Financial & Banking Consultancies
           </p>
-          <p className="text-[#768064] text-xs font-arabic mt-1" dir="rtl">
+          <p className="text-[#5a7a5a] text-xs font-arabic mt-1" dir="rtl">
             بدعم من كوزواي للاستشارات المالية والمصرفية
           </p>
         </motion.div>

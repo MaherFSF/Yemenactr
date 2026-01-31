@@ -152,8 +152,8 @@ export function TimeSeriesChart({
                       type="monotone"
                       dataKey="adenValue"
                       name="Aden (IRG)"
-                      stroke="#4C583E"
-                      fill="#4C583E"
+                      stroke="#2e6b4f"
+                      fill="#2e6b4f"
                       fillOpacity={0.3}
                       strokeWidth={2}
                     />
@@ -161,8 +161,8 @@ export function TimeSeriesChart({
                       type="monotone"
                       dataKey="sanaaValue"
                       name="Sana'a (DFA)"
-                      stroke="#4C583E"
-                      fill="#4C583E"
+                      stroke="#2e6b4f"
+                      fill="#2e6b4f"
                       fillOpacity={0.3}
                       strokeWidth={2}
                     />
@@ -173,18 +173,18 @@ export function TimeSeriesChart({
                       type="monotone"
                       dataKey="adenValue"
                       name="Aden (IRG)"
-                      stroke="#4C583E"
+                      stroke="#2e6b4f"
                       strokeWidth={2}
-                      dot={{ fill: "#4C583E", strokeWidth: 2 }}
+                      dot={{ fill: "#2e6b4f", strokeWidth: 2 }}
                       activeDot={{ r: 6 }}
                     />
                     <Line
                       type="monotone"
                       dataKey="sanaaValue"
                       name="Sana'a (DFA)"
-                      stroke="#4C583E"
+                      stroke="#2e6b4f"
                       strokeWidth={2}
-                      dot={{ fill: "#4C583E", strokeWidth: 2 }}
+                      dot={{ fill: "#2e6b4f", strokeWidth: 2 }}
                       activeDot={{ r: 6 }}
                     />
                   </>

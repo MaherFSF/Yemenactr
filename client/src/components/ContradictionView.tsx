@@ -36,7 +36,7 @@ interface ContradictionViewProps {
 }
 
 const DISCREPANCY_COLORS = {
-  minor: { bg: '#e6f4ec', text: '#4C583E', border: '#4C583E' },
+  minor: { bg: '#e6f4ec', text: '#2e6b4f', border: '#2e6b4f' },
   significant: { bg: '#faf6e6', text: '#C0A030', border: '#C0A030' },
   major: { bg: '#fff3e6', text: '#d97706', border: '#d97706' },
   critical: { bg: '#fde8e8', text: '#c53030', border: '#c53030' },
@@ -46,7 +46,7 @@ const STATUS_CONFIG = {
   detected: { label: { en: 'Detected', ar: 'تم الكشف' }, color: '#c53030', bg: '#fde8e8' },
   investigating: { label: { en: 'Investigating', ar: 'قيد التحقيق' }, color: '#d97706', bg: '#fff3e6' },
   explained: { label: { en: 'Explained', ar: 'تم التفسير' }, color: '#1a6b9c', bg: '#e6f0f7' },
-  resolved: { label: { en: 'Resolved', ar: 'تم الحل' }, color: '#4C583E', bg: '#e6f4ec' },
+  resolved: { label: { en: 'Resolved', ar: 'تم الحل' }, color: '#2e6b4f', bg: '#e6f4ec' },
 };
 
 export function ContradictionView({
@@ -340,7 +340,7 @@ export function ContradictionStats({
       <StatCard
         label={language === 'ar' ? 'تم الحل' : 'Resolved'}
         value={stats.byStatus.resolved || 0}
-        color="#4C583E"
+        color="#2e6b4f"
       />
       <StatCard
         label={language === 'ar' ? 'اكتشافات حديثة' : 'Recent Detections'}

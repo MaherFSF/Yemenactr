@@ -21,9 +21,9 @@ const RATING_CONFIG = {
       en: 'Official/audited data with consistent methodology',
       ar: 'بيانات رسمية/مدققة بمنهجية متسقة'
     },
-    color: '#4C583E',
+    color: '#2e6b4f',
     bgColor: '#e6f4ec',
-    borderColor: '#4C583E',
+    borderColor: '#2e6b4f',
   },
   B: {
     label: { en: 'Reliable', ar: 'موثوق' },
@@ -231,7 +231,7 @@ export function ScoreBreakdown({ scores, language = 'en', className }: ScoreBrea
   };
   
   const getBarColor = (score: number) => {
-    if (score >= 85) return '#4C583E';
+    if (score >= 85) return '#2e6b4f';
     if (score >= 70) return '#1a6b9c';
     if (score >= 50) return '#C0A030';
     return '#c53030';

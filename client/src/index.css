@@ -48,10 +48,11 @@
      From Design System Overview
      ============================================ */
   
-  /* Primary Green Palette */
-  --causeway-moss: #2C3424;      /* Moss Green - Darkest, primary brand */
-  --causeway-cypress: #4C583E;   /* Cypress - Secondary green */
-  --causeway-olive: #768064;     /* Olive - Medium green */
+  /* Primary Green Palette - EXACT from CauseWay Logo */
+  --causeway-dark: #1a2e1a;      /* Dark Forest Green - EXACT from logo background */
+  --causeway-moss: #2C3424;      /* Moss Green - Primary brand */
+  --causeway-cypress: #2e6b4f;   /* Cypress - Logo C-shape green */
+  --causeway-olive: #5a7a5a;     /* Olive - Logo inner square */
   --causeway-cedar: #959581;     /* Cedar - Light green/gray */
   --causeway-aloe: #DADED8;      /* Aloe - Very light green/cream */
   

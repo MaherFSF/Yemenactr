@@ -60,7 +60,7 @@ export default function Home() {
       subEn: kpiData?.gdpGrowth?.subtext || "Annual Growth",
       subAr: "نمو سنوي",
       sparklineData: kpiData?.gdpGrowth?.trend || [20, 25, 30, 35, 40, 50, 55, 60, 65, 70, 80, 90],
-      color: "#4C583E",
+      color: "#2e6b4f",
       source: kpiData?.gdpGrowth?.source || "World Bank",
       confidence: kpiData?.gdpGrowth?.confidence || "B"
     },
@@ -71,7 +71,7 @@ export default function Home() {
       subEn: kpiData?.inflation?.subtext || "Year-over-Year",
       subAr: "سنوي",
       sparklineData: kpiData?.inflation?.trend || [30, 35, 40, 45, 50, 55, 50, 55, 60, 65, 70, 75],
-      color: "#4C583E",
+      color: "#2e6b4f",
       source: kpiData?.inflation?.source || "CBY Aden",
       confidence: kpiData?.inflation?.confidence || "B"
     },
@@ -82,7 +82,7 @@ export default function Home() {
       subEn: kpiData?.exchangeRateYoY?.subtext || "YER/USD YoY Change",
       subAr: "التغير السنوي",
       sparklineData: kpiData?.exchangeRateYoY?.trend || [40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95],
-      color: "#4C583E",
+      color: "#2e6b4f",
       icon: "globe",
       source: kpiData?.exchangeRateYoY?.source || "CBY Aden",
       confidence: kpiData?.exchangeRateYoY?.confidence || "B"
@@ -94,7 +94,7 @@ export default function Home() {
       subEn: kpiData?.exchangeRateAden?.subtext || "Aden Parallel Rate",
       subAr: "سعر عدن الموازي",
       sparklineData: kpiData?.exchangeRateAden?.trend || [50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72],
-      color: "#4C583E",
+      color: "#2e6b4f",
       icon: "currency",
       source: kpiData?.exchangeRateAden?.source || "CBY Aden",
       confidence: kpiData?.exchangeRateAden?.confidence || "B"
@@ -191,7 +191,7 @@ export default function Home() {
       href: "/data-repository",
       stats: "2,000+ data points",
       statsAr: "أكثر من 2000 نقطة بيانات",
-      color: "from-emerald-500 to-teal-600"
+      color: "from-[#2e6b4f] to-[#1a2e1a]"
     },
     {
       icon: BarChart3,
@@ -202,7 +202,7 @@ export default function Home() {
       href: "/dashboard",
       stats: "Real-time updates",
       statsAr: "تحديثات فورية",
-      color: "from-blue-500 to-indigo-600"
+      color: "from-[#5a7a5a] to-[#2e6b4f]"
     },
     {
       icon: Brain,
@@ -213,7 +213,7 @@ export default function Home() {
       href: "/ai-assistant",
       stats: "Evidence-backed",
       statsAr: "مدعوم بالأدلة",
-      color: "from-purple-500 to-pink-600"
+      color: "from-[#C9A227] to-[#a88a1f]"
     },
     {
       icon: FileText,
@@ -224,7 +224,7 @@ export default function Home() {
       href: "/report-builder",
       stats: "PDF/Excel export",
       statsAr: "تصدير PDF/Excel",
-      color: "from-amber-500 to-orange-600"
+      color: "from-[#1a2e1a] to-[#2C3424]"
     },
     {
       icon: TrendingUp,
@@ -235,7 +235,7 @@ export default function Home() {
       href: "/scenario-simulator",
       stats: "What-if analysis",
       statsAr: "تحليل ماذا لو",
-      color: "from-green-500 to-emerald-600"
+      color: "from-[#2C3424] to-[#5a7a5a]"
     },
     {
       icon: Search,
@@ -246,7 +246,7 @@ export default function Home() {
       href: "/research",
       stats: "500+ publications",
       statsAr: "أكثر من 500 منشور",
-      color: "from-cyan-500 to-blue-600"
+      color: "from-[#2e6b4f] to-[#5a7a5a]"
     },
   ];
 
@@ -364,7 +364,7 @@ export default function Home() {
         </div>
         {/* Green overlay for text readability - YETO brand colors - reduced opacity for better image visibility */}
         {/* CauseWay green overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#2C3424]/80 via-[#4C583E]/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#1a2e1a]/85 via-[#2e6b4f]/60 to-transparent" />
 
         {/* Content overlay */}
         <div className="relative z-10 container py-16 md:py-24">
@@ -399,7 +399,7 @@ export default function Home() {
               
               <div className="flex flex-wrap gap-4">
                 <Link href="/dashboard">
-                  <Button size="lg" className="bg-[#4C583E] hover:bg-[#2C3424] text-white gap-2 px-8 rounded-full">
+                  <Button size="lg" className="bg-[#2e6b4f] hover:bg-[#1a2e1a] text-white gap-2 px-8 rounded-full">
                     {language === "ar" ? "استكشف لوحة البيانات" : "Explore Dashboard"}
                     <ArrowRight className={`h-4 w-4 ${language === 'ar' ? 'rotate-180' : ''}`} />
                   </Button>
@@ -450,11 +450,11 @@ export default function Home() {
                         {language === "ar" ? "نمو الناتج المحلي" : "GDP Growth"}
                       </span>
                     </div>
-                    <div className="text-2xl font-bold text-[#4C583E] mb-1">{kpiData?.gdpGrowth?.value || "+2.5%"}</div>
+                    <div className="text-2xl font-bold text-[#2e6b4f] mb-1">{kpiData?.gdpGrowth?.value || "+2.5%"}</div>
                     <div className="text-xs text-gray-500 mb-2">
                       {language === "ar" ? "نمو ربع سنوي" : "Quarterly Growth"}
                     </div>
-                    <Sparkline data={kpiData?.gdpGrowth?.trend || [20, 30, 25, 40, 35, 50, 45, 60, 55, 70, 80, 90]} color="#4C583E" />
+                    <Sparkline data={kpiData?.gdpGrowth?.trend || [20, 30, 25, 40, 35, 50, 45, 60, 55, 70, 80, 90]} color="#2e6b4f" />
                   </div>
 
                   {/* Inflation Rate Card - Top Right */}
@@ -467,11 +467,11 @@ export default function Home() {
                         {language === "ar" ? "معدل التضخم" : "Inflation Rate"}
                       </span>
                     </div>
-                    <div className="text-2xl font-bold text-[#4C583E] mb-1">{kpiData?.inflation?.value || "15.0%"}</div>
+                    <div className="text-2xl font-bold text-[#2e6b4f] mb-1">{kpiData?.inflation?.value || "15.0%"}</div>
                     <div className="text-xs text-gray-500 mb-2">
                       {language === "ar" ? "سنوي" : "Year-over-Year"}
                     </div>
-                    <Sparkline data={kpiData?.inflation?.trend || [40, 45, 50, 55, 60, 55, 60, 65, 70, 75, 80, 85]} color="#4C583E" />
+                    <Sparkline data={kpiData?.inflation?.trend || [40, 45, 50, 55, 60, 55, 60, 65, 70, 75, 80, 85]} color="#2e6b4f" />
                   </div>
 
                   {/* Exchange Rate % Card - Bottom Left */}
@@ -487,11 +487,11 @@ export default function Home() {
                     <div className="flex items-center gap-1">
                       <span className="text-xs text-gray-500">YER/USD</span>
                     </div>
-                    <div className="text-2xl font-bold text-[#4C583E] mb-1">{kpiData?.exchangeRateYoY?.value || "51.9%"}</div>
+                    <div className="text-2xl font-bold text-[#2e6b4f] mb-1">{kpiData?.exchangeRateYoY?.value || "51.9%"}</div>
                     <div className="text-xs text-gray-500 mb-2">
                       {language === "ar" ? "التغير السنوي" : "YoY Change"}
                     </div>
-                    <Sparkline data={kpiData?.exchangeRateYoY?.trend || [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85]} color="#4C583E" />
+                    <Sparkline data={kpiData?.exchangeRateYoY?.trend || [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85]} color="#2e6b4f" />
                   </div>
 
                   {/* Exchange Rate Value Card - Bottom Right */}
@@ -507,11 +507,11 @@ export default function Home() {
                     <div className="flex items-center gap-1">
                       <span className="text-xs text-gray-500">YER/USD</span>
                     </div>
-                    <div className="text-xl font-bold text-[#4C583E] mb-1">{kpiData?.exchangeRateAden?.value || "1 USD = 1,620 YER"}</div>
+                    <div className="text-xl font-bold text-[#2e6b4f] mb-1">{kpiData?.exchangeRateAden?.value || "1 USD = 1,620 YER"}</div>
                     <div className="text-xs text-gray-500 mb-2">
                       {language === "ar" ? "سعر عدن الموازي" : "Aden Parallel Rate"}
                     </div>
-                    <Sparkline data={kpiData?.exchangeRateAden?.trend || [50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72]} color="#4C583E" />
+                    <Sparkline data={kpiData?.exchangeRateAden?.trend || [50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72]} color="#2e6b4f" />
                   </div>
                 </>
               )}
@@ -524,7 +524,7 @@ export default function Home() {
       </section>
 
       {/* KPI Cards Row - Unique indicators not shown in hero (Foreign Reserves, IDPs) */}
-      <section id="kpi-stats" className="py-8 bg-[#1B5E20]">
+      <section id="kpi-stats" className="py-8 bg-[#1a2e1a]">
         <div className="container">
           <StaggeredContainer staggerDelay={100} className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
@@ -543,11 +543,11 @@ export default function Home() {
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-[#1B5E20]">{kpi.value}</span>
+                  <span className="text-2xl font-bold text-[#1a2e1a]">{kpi.value}</span>
                   <div className="flex items-center gap-1">
                     {kpi.trend === "up" && <TrendingUp className="w-4 h-4 text-green-500" />}
                     {kpi.trend === "down" && <TrendingDown className="w-4 h-4 text-red-500" />}
-                    <Sparkline data={[40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95]} color="#4C583E" height={20} />
+                    <Sparkline data={[40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95]} color="#2e6b4f" height={20} />
                   </div>
                 </div>
               </div>
@@ -618,13 +618,13 @@ export default function Home() {
               <Link key={index} href={sector.href}>
                 <div className="relative rounded-xl overflow-hidden h-40 group cursor-pointer
                   transition-all duration-500 ease-out
-                  hover:shadow-2xl hover:-translate-y-2 hover:ring-4 hover:ring-[#4C583E]/30">
+                  hover:shadow-2xl hover:-translate-y-2 hover:ring-4 hover:ring-[#2e6b4f]/30">
                   <img 
                     src={sector.image} 
                     alt={language === "ar" ? sector.nameAr : sector.nameEn}
                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent transition-all duration-500 group-hover:from-[#4C583E]/90 group-hover:via-[#4C583E]/40" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent transition-all duration-500 group-hover:from-[#2e6b4f]/90 group-hover:via-[#2e6b4f]/40" />
                   <div className="absolute bottom-3 left-3 right-3 transition-transform duration-300 group-hover:translate-y-[-4px]">
                     <h3 className="text-sm font-bold text-white transition-all duration-300 group-hover:text-[#C0A030] leading-tight">
                       {language === "ar" ? sector.nameAr : sector.nameEn}
@@ -639,7 +639,7 @@ export default function Home() {
       </section>
 
       {/* Trusted Data Sources Section */}
-      <section className="py-4 bg-[#1B5E20] dark:bg-[#0D3311]">
+      <section className="py-4 bg-[#1a2e1a] dark:bg-[#0D3311]">
         <div className="container">
           <div className="flex flex-wrap justify-center items-center gap-3 md:gap-6">
             <span className="text-white/80 text-sm font-medium uppercase tracking-wider">
@@ -673,7 +673,7 @@ export default function Home() {
       <section id="updates" className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="container">
           <AnimatedSection animation="fadeInUp">
-            <h2 className="text-3xl font-bold text-center text-[#1B5E20] dark:text-white mb-12">
+            <h2 className="text-3xl font-bold text-center text-[#1a2e1a] dark:text-white mb-12">
               {language === "ar" ? "آخر التحديثات" : "Latest Updates"}
             </h2>
           </AnimatedSection>
@@ -690,11 +690,11 @@ export default function Home() {
                     />
                   </div>
                   <CardContent className="p-4">
-                    <h3 className="font-semibold text-[#1B5E20] dark:text-white mb-2 line-clamp-2">
+                    <h3 className="font-semibold text-[#1a2e1a] dark:text-white mb-2 line-clamp-2">
                       {language === "ar" ? update.titleAr : update.titleEn}
                     </h3>
                     <p className="text-sm text-gray-500">{update.date}</p>
-                    <div className="mt-3 text-[#4C583E] text-sm font-medium flex items-center gap-1">
+                    <div className="mt-3 text-[#2e6b4f] text-sm font-medium flex items-center gap-1">
                       {language === "ar" ? "اقرأ المزيد" : "Read More"}
                       <ArrowRight className={`w-4 h-4 ${language === 'ar' ? 'rotate-180' : ''}`} />
                     </div>
@@ -710,7 +710,7 @@ export default function Home() {
       <section id="features" className="py-16 bg-white dark:bg-gray-950">
         <div className="container">
           <AnimatedSection animation="fadeInUp" className={`text-center mb-12 ${language === 'ar' ? 'text-right' : ''}`}>
-            <h2 className="text-3xl font-bold text-[#1B5E20] dark:text-white mb-4">
+            <h2 className="text-3xl font-bold text-[#1a2e1a] dark:text-white mb-4">
               {language === "ar" ? "أدوات وميزات المنصة" : "Platform Tools & Features"}
             </h2>
             <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
@@ -736,13 +736,13 @@ export default function Home() {
                     </div>
                     {/* Content */}
                     <div className="p-5">
-                      <h3 className="font-bold text-lg text-[#1B5E20] dark:text-white mb-2 group-hover:text-[#4C583E] transition-colors">
+                      <h3 className="font-bold text-lg text-[#1a2e1a] dark:text-white mb-2 group-hover:text-[#2e6b4f] transition-colors">
                         {language === "ar" ? feature.titleAr : feature.titleEn}
                       </h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                         {language === "ar" ? feature.descAr : feature.descEn}
                       </p>
-                      <div className="mt-4 flex items-center text-[#4C583E] font-medium text-sm group-hover:translate-x-1 transition-transform">
+                      <div className="mt-4 flex items-center text-[#2e6b4f] font-medium text-sm group-hover:translate-x-1 transition-transform">
                         {language === "ar" ? "استكشف" : "Explore"}
                         <ArrowRight className={`h-4 w-4 ${language === 'ar' ? 'mr-2 rotate-180' : 'ml-2'}`} />
                       </div>
@@ -756,7 +756,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-[#4C583E] text-white">
+      <section className="py-16 bg-[#2e6b4f] text-white">
         <div className="container">
           <AnimatedSection animation="scaleIn" className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-4">
@@ -771,7 +771,7 @@ export default function Home() {
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/dashboard">
-                <Button size="lg" className="bg-[#4C583E] hover:bg-[#0D5A34] text-white px-8">
+                <Button size="lg" className="bg-[#2e6b4f] hover:bg-[#0D5A34] text-white px-8">
                   {language === "ar" ? "استكشف لوحة البيانات" : "Explore Dashboard"}
                 </Button>
               </Link>
@@ -793,7 +793,7 @@ export default function Home() {
             <span>{language === "ar" ? "مدعوم من" : "Powered by"}</span>
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 relative">
-                <div className="absolute top-0 left-0 w-2.5 h-2.5 bg-[#4C583E] rounded-sm"></div>
+                <div className="absolute top-0 left-0 w-2.5 h-2.5 bg-[#2e6b4f] rounded-sm"></div>
                 <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-[#C0A030] rounded-sm"></div>
                 <div className="absolute bottom-0 left-0 w-2.5 h-2.5 bg-white rounded-sm"></div>
                 <div className="absolute bottom-0 right-0 w-2 h-2 bg-[#4A90E2] rounded-full"></div>

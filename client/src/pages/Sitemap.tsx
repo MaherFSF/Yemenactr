@@ -265,7 +265,7 @@ export default function Sitemap() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
       {/* Header */}
-      <div className="bg-[#4C583E] text-white py-12">
+      <div className="bg-[#2e6b4f] text-white py-12">
         <div className="container">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">
             {language === "ar" ? "خريطة الموقع" : "Sitemap"}
@@ -300,14 +300,14 @@ export default function Sitemap() {
                       <Link
                         key={link.href}
                         href={link.href}
-                        className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:border-[#4C583E]/30 hover:bg-[#4C583E]/5 transition-all group"
+                        className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:border-[#2e6b4f]/30 hover:bg-[#2e6b4f]/5 transition-all group"
                       >
-                        <div className="p-2 rounded-md bg-gray-100 dark:bg-gray-800 group-hover:bg-[#4C583E]/10 transition-colors">
-                          <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400 group-hover:text-[#4C583E]" />
+                        <div className="p-2 rounded-md bg-gray-100 dark:bg-gray-800 group-hover:bg-[#2e6b4f]/10 transition-colors">
+                          <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400 group-hover:text-[#2e6b4f]" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium truncate group-hover:text-[#4C583E]">
+                            <span className="text-sm font-medium truncate group-hover:text-[#2e6b4f]">
                               {language === "ar" ? link.nameAr : link.name}
                             </span>
                             {link.badge && (
@@ -331,7 +331,7 @@ export default function Sitemap() {
         </div>
 
         {/* Quick Stats */}
-        <div className="mt-12 p-6 bg-[#4C583E] text-white rounded-xl">
+        <div className="mt-12 p-6 bg-[#2e6b4f] text-white rounded-xl">
           <h2 className="text-xl font-bold mb-4">
             {language === "ar" ? "إحصائيات الموقع" : "Site Statistics"}
           </h2>

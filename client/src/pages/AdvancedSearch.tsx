@@ -704,7 +704,7 @@ export default function AdvancedSearch() {
   return (
     <div className="min-h-screen bg-background" dir={isArabic ? "rtl" : "ltr"}>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-[#4C583E] via-[#2d4a6f] to-[#4C583E] text-white relative overflow-hidden">
+      <section className="bg-gradient-to-br from-[#2e6b4f] via-[#2d4a6f] to-[#2e6b4f] text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/patterns/grid.svg')] opacity-10"></div>
         <div className="container py-12 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
@@ -744,7 +744,7 @@ export default function AdvancedSearch() {
                   key={type}
                   variant={filters.types.includes(type) ? "default" : "secondary"}
                   size="sm"
-                  className={`gap-2 ${filters.types.includes(type) ? "bg-white text-[#4C583E]" : "bg-white/10 text-white hover:bg-white/20"}`}
+                  className={`gap-2 ${filters.types.includes(type) ? "bg-white text-[#2e6b4f]" : "bg-white/10 text-white hover:bg-white/20"}`}
                   onClick={() => toggleArrayFilter("types", type)}
                 >
                   {getTypeIcon(type)}

@@ -514,7 +514,7 @@ function MechanismExplainerPanel({ isArabic, sections }: {
                 variant="outline" 
                 className={section.type === 'yemen_specific' 
                   ? 'bg-green-50 text-green-700 border-green-300' 
-                  : 'bg-blue-50 text-[#4C583E] border-blue-300'
+                  : 'bg-blue-50 text-[#2e6b4f] border-blue-300'
                 }
               >
                 {section.type === 'yemen_specific' 

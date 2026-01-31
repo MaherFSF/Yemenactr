@@ -31,7 +31,7 @@ export default function SectorHero({
   backgroundImage,
   exportData,
   exportFilename,
-  gradientFrom = "#1B5E20",
+  gradientFrom = "#1a2e1a",
   gradientTo = "#2E7D32",
 }: SectorHeroProps) {
   const { language } = useLanguage();

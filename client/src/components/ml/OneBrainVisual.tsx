@@ -89,13 +89,13 @@ interface OneBrainVisualProps {
 }
 
 const COLORS = {
-  primary: "#4C583E",
-  secondary: "#4C583E",
+  primary: "#2e6b4f",
+  secondary: "#2e6b4f",
   accent: "#C0A030",
-  aden: "#4C583E",
-  sanaa: "#4C583E",
+  aden: "#2e6b4f",
+  sanaa: "#2e6b4f",
   unified: "#6B7280",
-  chart: ["#4C583E", "#4C583E", "#C0A030", "#4A90E2", "#E74C3C", "#9B59B6"],
+  chart: ["#2e6b4f", "#2e6b4f", "#C0A030", "#4A90E2", "#E74C3C", "#9B59B6"],
 };
 
 export default function OneBrainVisual({ visualization, className = "" }: OneBrainVisualProps) {
@@ -327,13 +327,13 @@ export default function OneBrainVisual({ visualization, className = "" }: OneBra
         {takeaways && takeaways.length > 0 && (
           <div className="space-y-2">
             <h4 className="text-sm font-medium flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-[#4C583E]" />
+              <TrendingUp className="h-4 w-4 text-[#2e6b4f]" />
               {language === "ar" ? "النقاط الرئيسية" : "Key Takeaways"}
             </h4>
             <ul className="space-y-1">
               {takeaways.map((takeaway, index) => (
                 <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
-                  <span className="text-[#4C583E] font-bold">•</span>
+                  <span className="text-[#2e6b4f] font-bold">•</span>
                   {takeaway}
                 </li>
               ))}

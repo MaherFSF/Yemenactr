@@ -35,18 +35,24 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-[#0D2818] text-white mt-auto">
+    <footer className="bg-[#1a2e1a] text-white mt-auto">
       {/* Main Footer */}
       <div className="container py-12">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <img 
-                src="/images/causeway-icon.png" 
-                alt="CauseWay" 
-                className="w-10 h-10 object-contain"
-              />
+              {/* CauseWay Logo SVG - Exact brand colors */}
+              <svg viewBox="0 0 100 80" className="w-10 h-10">
+                {/* C-shape - Cypress green */}
+                <path d="M10 10 L10 70 L60 70 L60 55 L25 55 L25 25 L60 25 L60 10 Z" fill="#2e6b4f" />
+                {/* Inner square - Olive */}
+                <rect x="50" y="10" width="20" height="20" fill="#5a7a5a" rx="2" />
+                {/* Gold accent square */}
+                <rect x="75" y="10" width="15" height="15" fill="#C9A227" rx="2" />
+                {/* Bottom dot - Cypress */}
+                <circle cx="85" cy="40" r="6" fill="#2e6b4f" />
+              </svg>
               <div>
                 <span className="text-xl font-bold">
                   {language === "ar" ? "يتو" : "YETO"}
@@ -142,13 +148,13 @@ export default function Footer() {
                 {/* CauseWay Logo - SVG with proper colors */}
                 <span className="inline-flex items-center gap-1.5">
                   <svg width="20" height="18" viewBox="0 0 120 100" className="h-5 w-auto">
-                    <path d="M20 15 L70 15 L70 30 L35 30 L35 70 L70 70 L70 85 L20 85 Z" fill="#4C583E" stroke="#768064" strokeWidth="2"/>
-                    <rect x="50" y="35" width="25" height="25" fill="#768064" rx="2"/>
+                    <path d="M20 15 L70 15 L70 30 L35 30 L35 70 L70 70 L70 85 L20 85 Z" fill="#2e6b4f" stroke="#5a7a5a" strokeWidth="2"/>
+                    <rect x="50" y="35" width="25" height="25" fill="#5a7a5a" rx="2"/>
                     <rect x="80" y="15" width="20" height="20" fill="#C9A227" rx="3"/>
-                    <rect x="80" y="45" width="12" height="12" fill="#4C583E" rx="2"/>
+                    <rect x="80" y="45" width="12" height="12" fill="#2e6b4f" rx="2"/>
                   </svg>
                   <span className="text-white/80 text-xs">CauseWay</span>
-                  <span className="text-[#768064] text-xs font-arabic">كوزواي</span>
+                  <span className="text-[#5a7a5a] text-xs font-arabic">كوزواي</span>
                 </span>
               </span>
               <span className="text-white/30">|</span>

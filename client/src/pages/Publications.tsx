@@ -180,7 +180,7 @@ export default function Publications() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Header */}
-      <div className="bg-[#4C583E] text-white py-12">
+      <div className="bg-[#2e6b4f] text-white py-12">
         <div className="container">
           <div className={`${language === 'ar' ? 'text-right' : ''}`}>
             <Badge className="mb-4 bg-white/20 text-white border-white/30">
@@ -224,7 +224,7 @@ export default function Publications() {
                   onClick={() => setSelectedType(key)}
                   className={`p-4 rounded-lg border transition-all ${
                     selectedType === key 
-                      ? "border-[#4C583E] bg-[#4C583E]/5" 
+                      ? "border-[#2e6b4f] bg-[#2e6b4f]/5" 
                       : "border-gray-200 hover:border-gray-300"
                   }`}
                 >
@@ -316,7 +316,7 @@ export default function Publications() {
                               {pub.date}
                             </span>
                           </div>
-                          <h3 className={`font-semibold text-lg text-[#4C583E] dark:text-white mb-2 ${language === 'ar' ? 'text-right' : ''}`}>
+                          <h3 className={`font-semibold text-lg text-[#2e6b4f] dark:text-white mb-2 ${language === 'ar' ? 'text-right' : ''}`}>
                             {language === "ar" ? pub.titleAr : pub.titleEn}
                           </h3>
                           <p className={`text-gray-600 dark:text-gray-400 mb-4 ${language === 'ar' ? 'text-right' : ''}`}>
@@ -332,7 +332,7 @@ export default function Publications() {
                               <ul className={`space-y-1 text-sm text-gray-600 dark:text-gray-400 ${language === 'ar' ? 'text-right' : ''}`}>
                                 {pub.highlights.map((highlight, index) => (
                                   <li key={index} className="flex items-center gap-2">
-                                    <TrendingUp className="h-3 w-3 text-[#4C583E] flex-shrink-0" />
+                                    <TrendingUp className="h-3 w-3 text-[#2e6b4f] flex-shrink-0" />
                                     {language === "ar" ? highlight.ar : highlight.en}
                                   </li>
                                 ))}
@@ -356,7 +356,7 @@ export default function Publications() {
                                     <Eye className="h-4 w-4 mr-1" />
                                     {language === "ar" ? "عرض" : "View"}
                                   </Button>
-                                  <Button size="sm" className="bg-[#4C583E] hover:bg-[#0D5A34]">
+                                  <Button size="sm" className="bg-[#2e6b4f] hover:bg-[#0D5A34]">
                                     <Download className="h-4 w-4 mr-1" />
                                     {language === "ar" ? "تنزيل PDF" : "Download PDF"}
                                   </Button>
@@ -397,12 +397,12 @@ export default function Publications() {
       {/* Auto-Generation Info */}
       <div className="bg-white dark:bg-gray-900 border-t py-12">
         <div className="container">
-          <Card className="bg-[#4C583E]/5 border-[#4C583E]/20">
+          <Card className="bg-[#2e6b4f]/5 border-[#2e6b4f]/20">
             <CardContent className="p-6">
               <div className={`flex items-start gap-4 ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
                 <Sparkles className="h-6 w-6 text-[#C0A030] mt-1" />
                 <div>
-                  <h3 className={`font-semibold text-[#4C583E] dark:text-white mb-2 ${language === 'ar' ? 'text-right' : ''}`}>
+                  <h3 className={`font-semibold text-[#2e6b4f] dark:text-white mb-2 ${language === 'ar' ? 'text-right' : ''}`}>
                     {language === "ar" ? "منشورات مولدة آلياً" : "Auto-Generated Publications"}
                   </h3>
                   <p className={`text-sm text-gray-600 dark:text-gray-400 mb-4 ${language === 'ar' ? 'text-right' : ''}`}>

@@ -275,7 +275,7 @@ export default function Investment() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-[#4C583E] to-[#0B1F33] text-white">
+      <section className="bg-gradient-to-r from-[#2e6b4f] to-[#0B1F33] text-white">
         <div className="container py-12">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
@@ -358,7 +358,7 @@ export default function Investment() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Briefcase className="h-5 w-5 text-[#4C583E]" />
+                    <Briefcase className="h-5 w-5 text-[#2e6b4f]" />
                     {language === "ar" ? "حالة القطاع الخاص" : "Private Sector Status"}
                   </CardTitle>
                 </CardHeader>
@@ -387,7 +387,7 @@ export default function Investment() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <DollarSign className="h-5 w-5 text-[#4C583E]" />
+                    <DollarSign className="h-5 w-5 text-[#2e6b4f]" />
                     {language === "ar" ? "الاستثمار الأجنبي" : "Foreign Investment"}
                   </CardTitle>
                 </CardHeader>
@@ -415,7 +415,7 @@ export default function Investment() {
                     <div key={index} className="p-4 border rounded-lg">
                       <div className="flex items-center gap-3 mb-3">
                         <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-                          <sector.icon className="h-5 w-5 text-[#4C583E]" />
+                          <sector.icon className="h-5 w-5 text-[#2e6b4f]" />
                         </div>
                         <div>
                           <h4 className="font-medium">
@@ -477,7 +477,7 @@ export default function Investment() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-[#4C583E]" />
+                  <TrendingUp className="h-5 w-5 text-[#2e6b4f]" />
                   {language === "ar" ? "فرص الاستثمار المحتملة" : "Potential Investment Opportunities"}
                 </CardTitle>
                 <CardDescription>

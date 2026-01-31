@@ -239,7 +239,7 @@ export function WelcomeTour({ onComplete, forceShow = false, isOpen: externalIsO
                   e.currentTarget.style.display = 'none';
                 }}
               />
-              <Badge className="bg-[#1B5E20] text-white border-0 text-xs font-medium">
+              <Badge className="bg-[#1a2e1a] text-white border-0 text-xs font-medium">
                 {language === 'ar' ? 'جولة سريعة' : 'Quick Tour'}
               </Badge>
             </div>
@@ -262,9 +262,9 @@ export function WelcomeTour({ onComplete, forceShow = false, isOpen: externalIsO
                 className={cn(
                   "h-1.5 rounded-full transition-all duration-300 cursor-pointer hover:opacity-80",
                   idx === currentStep 
-                    ? "w-8 bg-[#1B5E20]" 
+                    ? "w-8 bg-[#1a2e1a]" 
                     : idx < currentStep 
-                      ? "w-2 bg-[#1B5E20]/40" 
+                      ? "w-2 bg-[#1a2e1a]/40" 
                       : "w-2 bg-gray-200"
                 )}
               />
@@ -285,8 +285,8 @@ export function WelcomeTour({ onComplete, forceShow = false, isOpen: externalIsO
         )}>
           {/* Icon */}
           <div className="flex justify-center mb-5">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1B5E20]/10 to-[#C5A028]/10 flex items-center justify-center">
-              <Icon className="h-8 w-8 text-[#1B5E20]" />
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1a2e1a]/10 to-[#C5A028]/10 flex items-center justify-center">
+              <Icon className="h-8 w-8 text-[#1a2e1a]" />
             </div>
           </div>
           
@@ -324,7 +324,7 @@ export function WelcomeTour({ onComplete, forceShow = false, isOpen: externalIsO
             >
               <Button 
                 variant="outline" 
-                className="w-full border-[#1B5E20]/20 text-[#1B5E20] hover:bg-[#1B5E20]/5 hover:border-[#1B5E20]/40"
+                className="w-full border-[#1a2e1a]/20 text-[#1a2e1a] hover:bg-[#1a2e1a]/5 hover:border-[#1a2e1a]/40"
               >
                 {language === 'ar' ? step.actionLabelAr : step.actionLabel}
               </Button>
@@ -355,7 +355,7 @@ export function WelcomeTour({ onComplete, forceShow = false, isOpen: externalIsO
             
             <Button
               onClick={nextStep}
-              className="bg-[#1B5E20] hover:bg-[#0D2818] text-white px-5"
+              className="bg-[#1a2e1a] hover:bg-[#0D2818] text-white px-5"
             >
               {currentStep === tourSteps.length - 1 
                 ? (language === 'ar' ? 'ابدأ' : 'Start')
@@ -382,7 +382,7 @@ export function QuickTourButton() {
         variant="ghost"
         size="sm"
         onClick={() => setShowTour(true)}
-        className="text-gray-600 hover:text-[#1B5E20] hover:bg-[#1B5E20]/5"
+        className="text-gray-600 hover:text-[#1a2e1a] hover:bg-[#1a2e1a]/5"
       >
         <Sparkles className="h-4 w-4 mr-1" />
         {language === 'ar' ? 'جولة سريعة' : 'Quick Tour'}

@@ -36,7 +36,7 @@ export default function RegionalZones() {
       keyIndustriesAr: ["الميناء", "المصفاة", "الخدمات", "التجارة"],
       challenges: ["Currency volatility", "Security", "Infrastructure damage"],
       challengesAr: ["تقلب العملة", "الأمن", "تضرر البنية التحتية"],
-      color: "#4C583E"
+      color: "#2e6b4f"
     },
     {
       id: "sanaa",
@@ -132,7 +132,7 @@ export default function RegionalZones() {
 
   // Exchange rate comparison
   const exchangeComparison = [
-    { region: language === "ar" ? "عدن" : "Aden", rate: 1620, color: "#4C583E" },
+    { region: language === "ar" ? "عدن" : "Aden", rate: 1620, color: "#2e6b4f" },
     { region: language === "ar" ? "صنعاء" : "Sana'a", rate: 535, color: "#1e40af" },
     { region: language === "ar" ? "مأرب" : "Marib", rate: 1620, color: "#C0A030" },
     { region: language === "ar" ? "تعز" : "Taiz", rate: 1850, color: "#dc2626" },
@@ -211,7 +211,7 @@ export default function RegionalZones() {
                 <XAxis type="number" domain={[0, 2000]} />
                 <YAxis dataKey="region" type="category" width={100} />
                 <Tooltip />
-                <Bar dataKey="rate" fill="#4C583E" />
+                <Bar dataKey="rate" fill="#2e6b4f" />
               </BarChart>
             </ResponsiveContainer>
             <div className="mt-4 p-4 bg-muted/50 rounded-lg">
@@ -323,8 +323,8 @@ export default function RegionalZones() {
                 <Radar 
                   name={language === "ar" ? "حصة الناتج المحلي" : "GDP Share"} 
                   dataKey="gdpShare" 
-                  stroke="#4C583E" 
-                  fill="#4C583E" 
+                  stroke="#2e6b4f" 
+                  fill="#2e6b4f" 
                   fillOpacity={0.3} 
                 />
                 <Radar 

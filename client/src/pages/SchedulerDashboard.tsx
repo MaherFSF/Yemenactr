@@ -111,7 +111,7 @@ export default function SchedulerDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-[#4C583E] text-white py-8">
+      <div className="bg-[#2e6b4f] text-white py-8">
         <div className="container">
           <Link href="/admin">
             <Button variant="ghost" className="text-white/70 hover:text-white mb-4">
@@ -191,7 +191,7 @@ export default function SchedulerDashboard() {
           <Button
             onClick={() => runAllMutation.mutate()}
             disabled={runAllMutation.isPending}
-            className="bg-[#4C583E] hover:bg-[#0d5a34]"
+            className="bg-[#2e6b4f] hover:bg-[#0d5a34]"
           >
             {runAllMutation.isPending ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />

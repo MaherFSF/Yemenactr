@@ -58,7 +58,7 @@ export default function Poverty() {
 
   // Food Security IPC Phases
   const foodSecurityData = [
-    { name: language === "ar" ? "المرحلة 1" : "Phase 1", value: 8, color: "#4C583E" },
+    { name: language === "ar" ? "المرحلة 1" : "Phase 1", value: 8, color: "#2e6b4f" },
     { name: language === "ar" ? "المرحلة 2" : "Phase 2", value: 21, color: "#C0A030" },
     { name: language === "ar" ? "المرحلة 3" : "Phase 3", value: 38, color: "#F59E0B" },
     { name: language === "ar" ? "المرحلة 4" : "Phase 4", value: 28, color: "#EF4444" },
@@ -89,9 +89,9 @@ export default function Poverty() {
 
   // WASH indicators
   const washData = [
-    { name: language === "ar" ? "مياه آمنة" : "Safe Water", value: 55, color: "#4C583E" },
+    { name: language === "ar" ? "مياه آمنة" : "Safe Water", value: 55, color: "#2e6b4f" },
     { name: language === "ar" ? "صرف صحي" : "Sanitation", value: 42, color: "#C0A030" },
-    { name: language === "ar" ? "نظافة" : "Hygiene", value: 38, color: "#4C583E" },
+    { name: language === "ar" ? "نظافة" : "Hygiene", value: 38, color: "#2e6b4f" },
   ];
 
   // Alerts
@@ -125,7 +125,7 @@ export default function Poverty() {
           style={{ backgroundImage: `url(/sectors/poverty.jpg)` }}
         />
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#4C583E]/90 to-[#768064]/80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#2e6b4f]/90 to-[#5a7a5a]/80" />
         {/* Pattern Overlay */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0" style={{
@@ -138,7 +138,7 @@ export default function Poverty() {
               <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
                 <Users className="h-8 w-8 text-white" />
               </div>
-              <Badge className="bg-[#4C583E] text-white border-0">
+              <Badge className="bg-[#2e6b4f] text-white border-0">
                 {language === "ar" ? "التنمية البشرية" : "Human Development"}
               </Badge>
             </div>
@@ -206,7 +206,7 @@ export default function Poverty() {
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-[#4C583E]">
+          <Card className="border-l-4 border-l-[#2e6b4f]">
             <CardHeader className="pb-3">
               <CardDescription className="flex items-center justify-between">
                 <span>{language === "ar" ? "مؤشر التنمية البشرية" : "HDI Score"}</span>
@@ -214,7 +214,7 @@ export default function Poverty() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-[#4C583E]">0.448</div>
+              <div className="text-3xl font-bold text-[#2e6b4f]">0.448</div>
               <div className="text-sm text-muted-foreground">{language === "ar" ? "تنمية منخفضة" : "Low Development"}</div>
               <div className="flex items-center gap-1 text-sm text-red-600 mt-2">
                 <TrendingDown className="h-4 w-4" />
@@ -223,7 +223,7 @@ export default function Poverty() {
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-[#4C583E]">
+          <Card className="border-l-4 border-l-[#2e6b4f]">
             <CardHeader className="pb-3">
               <CardDescription className="flex items-center justify-between">
                 <span>{language === "ar" ? "المساعدات الإنسانية" : "Humanitarian Aid"}</span>
@@ -231,7 +231,7 @@ export default function Poverty() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-[#4C583E]">$2.1B</div>
+              <div className="text-3xl font-bold text-[#2e6b4f]">$2.1B</div>
               <div className="text-sm text-muted-foreground">{language === "ar" ? "مطلوب 2024" : "Required 2024"}</div>
               <div className="flex items-center gap-1 text-sm text-amber-600 mt-2">
                 <span>42% {language === "ar" ? "ممول" : "funded"}</span>
@@ -274,7 +274,7 @@ export default function Poverty() {
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Download className="h-5 w-5 text-[#4C583E]" />
+              <Download className="h-5 w-5 text-[#2e6b4f]" />
               {language === "ar" ? "تصدير بيانات الفقر والتنمية" : "Export Poverty & Development Data"}
             </CardTitle>
             <CardDescription>
@@ -395,8 +395,8 @@ export default function Poverty() {
                       <YAxis domain={[0, 1]} />
                       <Tooltip />
                       <Legend />
-                      <Line type="monotone" dataKey="hdi" stroke="#4C583E" strokeWidth={3} name={language === "ar" ? "مؤشر التنمية" : "HDI"} />
-                      <Line type="monotone" dataKey="health" stroke="#4C583E" strokeWidth={2} strokeDasharray="5 5" name={language === "ar" ? "الصحة" : "Health"} />
+                      <Line type="monotone" dataKey="hdi" stroke="#2e6b4f" strokeWidth={3} name={language === "ar" ? "مؤشر التنمية" : "HDI"} />
+                      <Line type="monotone" dataKey="health" stroke="#2e6b4f" strokeWidth={2} strokeDasharray="5 5" name={language === "ar" ? "الصحة" : "Health"} />
                       <Line type="monotone" dataKey="education" stroke="#C0A030" strokeWidth={2} strokeDasharray="5 5" name={language === "ar" ? "التعليم" : "Education"} />
                     </LineChart>
                   </ResponsiveContainer>
@@ -547,7 +547,7 @@ export default function Poverty() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-[#4C583E]">73%</div>
+                  <div className="text-3xl font-bold text-[#2e6b4f]">73%</div>
                 </CardContent>
               </Card>
               <Card>
@@ -634,7 +634,7 @@ export default function Poverty() {
               <CardContent>
                 <div className="grid md:grid-cols-3 gap-6">
                   <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                    <div className="text-3xl font-bold text-[#4C583E]">$2.1B</div>
+                    <div className="text-3xl font-bold text-[#2e6b4f]">$2.1B</div>
                     <div className="text-sm text-muted-foreground">{language === "ar" ? "المطلوب" : "Required"}</div>
                   </div>
                   <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">

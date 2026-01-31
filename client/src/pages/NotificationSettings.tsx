@@ -165,7 +165,7 @@ export default function NotificationSettings() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-3">
-                <FileText className="w-5 h-5 text-[#4C583E]" />
+                <FileText className="w-5 h-5 text-[#2e6b4f]" />
                 <div>
                   <CardTitle>{tNested("publications", "title")}</CardTitle>
                   <CardDescription>{tNested("publications", "description")}</CardDescription>
@@ -287,7 +287,7 @@ export default function NotificationSettings() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-3">
-                <Globe className="w-5 h-5 text-[#4C583E]" />
+                <Globe className="w-5 h-5 text-[#2e6b4f]" />
                 <div>
                   <CardTitle>{tNested("language", "title")}</CardTitle>
                   <CardDescription>{tNested("language", "description")}</CardDescription>
@@ -327,7 +327,7 @@ export default function NotificationSettings() {
             <Button
               onClick={handleSave}
               disabled={isSaving}
-              className="bg-[#4C583E] hover:bg-[#0d5a34] text-white px-8"
+              className="bg-[#2e6b4f] hover:bg-[#0d5a34] text-white px-8"
             >
               {isSaving ? t("saving") : t("save")}
             </Button>
