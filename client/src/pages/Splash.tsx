@@ -14,14 +14,48 @@ export default function Splash() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#2C3424]">
-      {/* Background Image - Full screen with the exact CauseWay mockup */}
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Pure CSS gradient background - no watermarks */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0"
         style={{ 
-          backgroundImage: `url('/images/causeway-splash.png')`,
+          background: `radial-gradient(ellipse at center, #3a4a32 0%, #2C3424 50%, #1a2018 100%)`,
         }}
       />
+
+      {/* Decorative corner frames - gold geometric pattern */}
+      <div className="absolute top-0 left-0 w-32 h-32 sm:w-48 sm:h-48 opacity-40">
+        <svg viewBox="0 0 200 200" className="w-full h-full">
+          <path d="M0 0 L200 0 L200 20 L20 20 L20 200 L0 200 Z" fill="none" stroke="#C9A227" strokeWidth="1"/>
+          <rect x="30" y="30" width="20" height="20" fill="none" stroke="#C9A227" strokeWidth="1"/>
+          <rect x="60" y="30" width="15" height="15" fill="none" stroke="#C9A227" strokeWidth="1"/>
+          <rect x="30" y="60" width="15" height="15" fill="none" stroke="#C9A227" strokeWidth="1"/>
+        </svg>
+      </div>
+      <div className="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 opacity-40 rotate-90">
+        <svg viewBox="0 0 200 200" className="w-full h-full">
+          <path d="M0 0 L200 0 L200 20 L20 20 L20 200 L0 200 Z" fill="none" stroke="#C9A227" strokeWidth="1"/>
+          <rect x="30" y="30" width="20" height="20" fill="none" stroke="#C9A227" strokeWidth="1"/>
+          <rect x="60" y="30" width="15" height="15" fill="none" stroke="#C9A227" strokeWidth="1"/>
+          <rect x="30" y="60" width="15" height="15" fill="none" stroke="#C9A227" strokeWidth="1"/>
+        </svg>
+      </div>
+      <div className="absolute bottom-0 left-0 w-32 h-32 sm:w-48 sm:h-48 opacity-40 -rotate-90">
+        <svg viewBox="0 0 200 200" className="w-full h-full">
+          <path d="M0 0 L200 0 L200 20 L20 20 L20 200 L0 200 Z" fill="none" stroke="#C9A227" strokeWidth="1"/>
+          <rect x="30" y="30" width="20" height="20" fill="none" stroke="#C9A227" strokeWidth="1"/>
+          <rect x="60" y="30" width="15" height="15" fill="none" stroke="#C9A227" strokeWidth="1"/>
+          <rect x="30" y="60" width="15" height="15" fill="none" stroke="#C9A227" strokeWidth="1"/>
+        </svg>
+      </div>
+      <div className="absolute bottom-0 right-0 w-32 h-32 sm:w-48 sm:h-48 opacity-40 rotate-180">
+        <svg viewBox="0 0 200 200" className="w-full h-full">
+          <path d="M0 0 L200 0 L200 20 L20 20 L20 200 L0 200 Z" fill="none" stroke="#C9A227" strokeWidth="1"/>
+          <rect x="30" y="30" width="20" height="20" fill="none" stroke="#C9A227" strokeWidth="1"/>
+          <rect x="60" y="30" width="15" height="15" fill="none" stroke="#C9A227" strokeWidth="1"/>
+          <rect x="30" y="60" width="15" height="15" fill="none" stroke="#C9A227" strokeWidth="1"/>
+        </svg>
+      </div>
 
       {/* Main Content - Centered with proper mobile spacing */}
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 sm:px-6">
