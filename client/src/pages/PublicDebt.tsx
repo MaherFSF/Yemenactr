@@ -38,7 +38,7 @@ export default function PublicDebt() {
 
   // External creditors
   const externalCreditors = [
-    { nameEn: "Saudi Arabia", nameAr: "السعودية", amount: 3.2, percentage: 36, color: "#2e6b4f" },
+    { nameEn: "Saudi Arabia", nameAr: "السعودية", amount: 3.2, percentage: 36, color: "#2e8b6e" },
     { nameEn: "World Bank/IDA", nameAr: "البنك الدولي", amount: 2.1, percentage: 24, color: "#1e40af" },
     { nameEn: "IMF", nameAr: "صندوق النقد الدولي", amount: 0.9, percentage: 10, color: "#C0A030" },
     { nameEn: "Arab Fund", nameAr: "الصندوق العربي", amount: 0.8, percentage: 9, color: "#7c3aed" },
@@ -49,7 +49,7 @@ export default function PublicDebt() {
   // Domestic debt holders
   const domesticDebtHolders = [
     { nameEn: "Central Bank (Monetary Financing)", nameAr: "البنك المركزي (تمويل نقدي)", percentage: 65, color: "#dc2626" },
-    { nameEn: "Commercial Banks", nameAr: "البنوك التجارية", percentage: 20, color: "#2e6b4f" },
+    { nameEn: "Commercial Banks", nameAr: "البنوك التجارية", percentage: 20, color: "#2e8b6e" },
     { nameEn: "Pension Funds", nameAr: "صناديق التقاعد", percentage: 10, color: "#1e40af" },
     { nameEn: "Other", nameAr: "أخرى", percentage: 5, color: "#6b7280" },
   ];
@@ -227,7 +227,7 @@ export default function PublicDebt() {
                       yAxisId="left"
                       type="monotone" 
                       dataKey="domestic" 
-                      stroke="#2e6b4f" 
+                      stroke="#2e8b6e" 
                       strokeWidth={2}
                       name={language === "ar" ? "الدين المحلي ($B)" : "Domestic Debt ($B)"}
                     />

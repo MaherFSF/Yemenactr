@@ -200,7 +200,7 @@ export default function APIKeys() {
   return (
     <div className="min-h-screen bg-gray-50" dir={isArabic ? "rtl" : "ltr"}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#2e6b4f] to-[#5a7a5a] text-white py-8">
+      <div className="bg-gradient-to-r from-[#2e8b6e] to-[#6b8e6b] text-white py-8">
         <div className="container">
           <div className="flex items-center justify-between">
             <div>
@@ -218,7 +218,7 @@ export default function APIKeys() {
             </div>
             <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-white text-[#2e6b4f] hover:bg-gray-100">
+                <Button className="bg-white text-[#2e8b6e] hover:bg-gray-100">
                   <Plus className="h-4 w-4 mr-2" />
                   {isArabic ? "إنشاء مفتاح جديد" : "Create New Key"}
                 </Button>
@@ -350,7 +350,7 @@ export default function APIKeys() {
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div 
-                            className="bg-[#2e6b4f] h-2 rounded-full" 
+                            className="bg-[#2e8b6e] h-2 rounded-full" 
                             style={{ width: `${(apiKey.requestsToday / apiKey.requestsLimit) * 100}%` }}
                           />
                         </div>

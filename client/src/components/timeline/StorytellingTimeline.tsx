@@ -106,7 +106,7 @@ const storyChapters: StoryChapter[] = [
 
 // Theme colors
 const themeColors: Record<string, string> = {
-  stability: '#2e6b4f',
+  stability: '#2e8b6e',
   crisis: '#dc2626',
   fragmentation: '#f59e0b',
   pandemic: '#7c3aed',
@@ -386,7 +386,7 @@ export function StorytellingTimeline({ events = [], onEventSelect }: Storytellin
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <Banknote className="h-4 w-4 text-blue-600" />
-                    <span className="font-medium text-[#2e6b4f]">
+                    <span className="font-medium text-[#2e8b6e]">
                       {language === 'ar' ? 'تأثير العملة' : 'Currency Impact'}
                     </span>
                   </div>
@@ -529,7 +529,7 @@ export function StorytellingTimeline({ events = [], onEventSelect }: Storytellin
               {/* Period 1 */}
               <Card className="border-2 border-blue-200">
                 <CardHeader className="bg-blue-50">
-                  <CardTitle className="text-lg text-[#2e6b4f]">
+                  <CardTitle className="text-lg text-[#2e8b6e]">
                     {language === 'ar' ? 'الفترة الأولى' : 'Period 1'}
                   </CardTitle>
                   <p className="text-sm text-blue-600">2010-2014 (Pre-Conflict)</p>

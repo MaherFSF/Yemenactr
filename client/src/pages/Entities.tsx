@@ -353,7 +353,7 @@ export default function Entities() {
 
 
       {/* Header */}
-      <div className="bg-[#2e6b4f] text-white py-12">
+      <div className="bg-[#2e8b6e] text-white py-12">
         <div className="container">
           <div className="flex items-center gap-3 mb-4">
             <Network className="h-10 w-10" />
@@ -399,7 +399,7 @@ export default function Entities() {
         {/* Featured Entities */}
         {featuredEntities.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-xl font-bold text-[#2e6b4f] dark:text-white mb-4">
+            <h2 className="text-xl font-bold text-[#2e8b6e] dark:text-white mb-4">
               {isArabic ? "الكيانات الرئيسية" : "Key Entities"}
             </h2>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -417,7 +417,7 @@ export default function Entities() {
                         </Badge>
                       </div>
                     </div>
-                    <CardTitle className="mt-4 group-hover:text-[#2e6b4f] transition-colors">
+                    <CardTitle className="mt-4 group-hover:text-[#2e8b6e] transition-colors">
                       {isArabic ? entity.nameAr : entity.nameEn}
                     </CardTitle>
                     <CardDescription>
@@ -450,7 +450,7 @@ export default function Entities() {
                     )}
 
                     <Link href={`/entities/${entity.id}`}>
-                      <Button variant="outline" className="w-full group-hover:bg-[#2e6b4f] group-hover:text-white transition-colors">
+                      <Button variant="outline" className="w-full group-hover:bg-[#2e8b6e] group-hover:text-white transition-colors">
                         {isArabic ? "عرض الملف الكامل" : "View Full Profile"}
                         <ChevronRight className="h-4 w-4 ml-2" />
                       </Button>
@@ -465,7 +465,7 @@ export default function Entities() {
         {/* Other Entities */}
         {otherEntities.length > 0 && (
           <div>
-            <h2 className="text-xl font-bold text-[#2e6b4f] dark:text-white mb-4">
+            <h2 className="text-xl font-bold text-[#2e8b6e] dark:text-white mb-4">
               {isArabic ? "كيانات أخرى" : "Other Entities"}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -487,7 +487,7 @@ export default function Entities() {
                           {isArabic ? entity.sectorAr : entity.sectorEn}
                         </p>
                         <Link href={`/entities/${entity.id}`}>
-                          <Button variant="ghost" size="sm" className="p-0 h-auto text-[#2e6b4f]">
+                          <Button variant="ghost" size="sm" className="p-0 h-auto text-[#2e8b6e]">
                             {isArabic ? "عرض الملف" : "View Profile"}
                             <ChevronRight className="h-4 w-4 ml-1" />
                           </Button>

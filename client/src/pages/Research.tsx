@@ -322,7 +322,7 @@ export default function Research() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-[#2e6b4f] to-[#2d4a3e] text-white py-16">
+      <div className="bg-gradient-to-r from-[#2e8b6e] to-[#2d4a3e] text-white py-16">
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
@@ -571,7 +571,7 @@ export default function Research() {
                         </Badge>
                       </div>
 
-                      <h3 className="text-xl font-semibold text-slate-900 mb-2 hover:text-[#2e6b4f] cursor-pointer"
+                      <h3 className="text-xl font-semibold text-slate-900 mb-2 hover:text-[#2e8b6e] cursor-pointer"
                           onClick={() => handleViewSource(doc)}>
                         {language === "ar" ? doc.titleAr : doc.titleEn}
                       </h3>
@@ -587,7 +587,7 @@ export default function Research() {
                             href={doc.source?.url || "#"} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="hover:text-[#2e6b4f] hover:underline"
+                            className="hover:text-[#2e8b6e] hover:underline"
                           >
                             {language === "ar" ? doc.source?.nameAr : doc.source?.nameEn}
                           </a>
@@ -621,7 +621,7 @@ export default function Research() {
                     <div className="flex lg:flex-col gap-2 lg:w-40">
                       {(doc.downloadUrl || doc.externalUrl) && doc.downloadUrl !== "#" && (
                         <Button 
-                          className="flex-1 bg-[#2e6b4f] hover:bg-[#2d4a3e] gap-2"
+                          className="flex-1 bg-[#2e8b6e] hover:bg-[#2d4a3e] gap-2"
                           onClick={() => handleDownload(doc)}
                         >
                           <Download className="h-4 w-4" />
@@ -674,7 +674,7 @@ export default function Research() {
         {/* Loading State */}
         {dbLoading && allDocuments.length === 0 && (
           <Card className="p-12 text-center">
-            <Loader2 className="h-16 w-16 mx-auto text-[#2e6b4f] mb-4 animate-spin" />
+            <Loader2 className="h-16 w-16 mx-auto text-[#2e8b6e] mb-4 animate-spin" />
             <h3 className="text-xl font-semibold text-slate-700 mb-2">
               {language === "ar" ? "جاري تحميل الوثائق..." : "Loading documents..."}
             </h3>
@@ -685,7 +685,7 @@ export default function Research() {
         <Card className="mt-12 border-slate-200">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-[#2e6b4f]" />
+              <Building2 className="h-5 w-5 text-[#2e8b6e]" />
               {language === "ar" ? "مصادر البيانات" : "Data Sources"}
             </CardTitle>
             <CardDescription>

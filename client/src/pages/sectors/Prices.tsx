@@ -363,7 +363,7 @@ export default function Prices() {
                     <Line 
                       type="monotone" 
                       dataKey="aden" 
-                      stroke="#2e6b4f" 
+                      stroke="#2e8b6e" 
                       strokeWidth={2}
                       name={language === "ar" ? "عدن (IRG)" : "Aden (IRG)"}
                     />
@@ -416,7 +416,7 @@ export default function Prices() {
                     <Tooltip />
                     <Bar 
                       dataKey="cost" 
-                      fill="#2e6b4f"
+                      fill="#2e8b6e"
                       name={language === "ar" ? "التكلفة (YER)" : "Cost (YER)"}
                     />
                   </BarChart>

@@ -91,7 +91,7 @@ function HumanitarianFeedPanel({ isArabic, items, onPin }: {
   }, [items, filter]);
 
   const sourceColors: Record<string, string> = {
-    ocha: 'bg-[#DADED8] text-[#2C3424] dark:bg-blue-900 dark:text-blue-200',
+    ocha: 'bg-[#DADED8] text-[#2a3a28] dark:bg-blue-900 dark:text-blue-200',
     wfp: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
     unhcr: 'bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-200',
     unicef: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200',
@@ -458,7 +458,7 @@ function HumanitarianMechanismPanel({ isArabic, mechanisms }: {
   mechanisms: HumanitarianMechanism[];
 }) {
   const typeColors = {
-    conceptual: 'bg-[#DADED8] text-[#2C3424] dark:bg-blue-900 dark:text-blue-200',
+    conceptual: 'bg-[#DADED8] text-[#2a3a28] dark:bg-blue-900 dark:text-blue-200',
     yemen_specific: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
     response: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
   };

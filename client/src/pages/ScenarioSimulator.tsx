@@ -200,7 +200,7 @@ export default function ScenarioSimulator() {
       {
         driver: language === "ar" ? "إنتاج النفط" : "Oil Production",
         contribution: Math.round(ECONOMIC_MODEL.gdpFromOil * (oilProduction[0] / BASELINE.oilProduction - 1) * 100 * 10) / 10,
-        color: "#2e6b4f"
+        color: "#2e8b6e"
       },
       {
         driver: language === "ar" ? "المساعدات الدولية" : "International Aid",
@@ -210,7 +210,7 @@ export default function ScenarioSimulator() {
       {
         driver: language === "ar" ? "التحويلات" : "Remittances",
         contribution: Math.round(ECONOMIC_MODEL.gdpFromRemittances * (remittances[0] / BASELINE.remittances - 1) * 100 * 10) / 10,
-        color: "#2e6b4f"
+        color: "#2e8b6e"
       },
       {
         driver: language === "ar" ? "تأثير الصراع" : "Conflict Impact",
@@ -817,7 +817,7 @@ export default function ScenarioSimulator() {
                         <Area 
                           type="monotone" 
                           dataKey="gdpUpper" 
-                          fill="#2e6b4f20" 
+                          fill="#2e8b6e20" 
                           stroke="none"
                           name={language === "ar" ? "الحد الأعلى" : "Upper Bound"}
                         />
@@ -831,7 +831,7 @@ export default function ScenarioSimulator() {
                         <Line 
                           type="monotone" 
                           dataKey="gdp" 
-                          stroke="#2e6b4f" 
+                          stroke="#2e8b6e" 
                           strokeWidth={2}
                           name={language === "ar" ? "الناتج المحلي" : "GDP Index"}
                         />
@@ -863,7 +863,7 @@ export default function ScenarioSimulator() {
                               className="h-full rounded-full transition-all"
                               style={{ 
                                 width: `${Math.min(100, Math.abs(driver.contribution) * 5)}%`,
-                                backgroundColor: driver.contribution >= 0 ? '#2e6b4f' : '#DC2626',
+                                backgroundColor: driver.contribution >= 0 ? '#2e8b6e' : '#DC2626',
                                 marginLeft: driver.contribution < 0 ? 'auto' : 0
                               }}
                             />

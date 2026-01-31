@@ -35,31 +35,26 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-[#1a2e1a] text-white mt-auto">
+    <footer className="bg-[#1f2d1d] text-white mt-auto">
       {/* Main Footer */}
       <div className="container py-12">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              {/* CauseWay Logo SVG - Exact brand colors */}
-              <svg viewBox="0 0 100 80" className="w-10 h-10">
-                {/* C-shape - Cypress green */}
-                <path d="M10 10 L10 70 L60 70 L60 55 L25 55 L25 25 L60 25 L60 10 Z" fill="#2e6b4f" />
-                {/* Inner square - Olive */}
-                <rect x="50" y="10" width="20" height="20" fill="#5a7a5a" rx="2" />
-                {/* Gold accent square */}
-                <rect x="75" y="10" width="15" height="15" fill="#C9A227" rx="2" />
-                {/* Bottom dot - Cypress */}
-                <circle cx="85" cy="40" r="6" fill="#2e6b4f" />
+              {/* CauseWay Logo SVG - Exact from mockup */}
+              <svg viewBox="0 0 120 100" className="w-10 h-10">
+                <path d="M8 10 L62 10 Q68 10 68 16 L68 28 L28 28 L28 72 L68 72 L68 84 Q68 90 62 90 L8 90 Q2 90 2 84 L2 16 Q2 10 8 10 Z" fill="#2e8b6e" />
+                <rect x="48" y="36" width="26" height="26" rx="4" fill="#6b8e6b" />
+                <rect x="82" y="10" width="26" height="26" rx="5" fill="#d4a528" />
+                <rect x="82" y="48" width="16" height="16" rx="8" fill="#2e8b6e" />
               </svg>
-              <div>
-                <span className="text-xl font-bold">
-                  {language === "ar" ? "يتو" : "YETO"}
+              <div className="flex flex-col">
+                <span className="text-lg font-semibold text-white tracking-wide">CauseWay</span>
+                <span className="text-sm text-[#6b8e6b] font-arabic -mt-0.5">كوزواي</span>
+                <span className="text-[9px] uppercase tracking-[0.15em] text-[#d4a528] font-medium mt-0.5">
+                  {language === "ar" ? "مرصد اقتصادي" : "Economic Observatory"}
                 </span>
-                <p className="text-xs text-white/60">
-                  {language === "ar" ? "كوزواي" : "CauseWay"}
-                </p>
               </div>
             </div>
             <p className="text-sm text-white/70 mb-4">
@@ -148,13 +143,13 @@ export default function Footer() {
                 {/* CauseWay Logo - SVG with proper colors */}
                 <span className="inline-flex items-center gap-1.5">
                   <svg width="20" height="18" viewBox="0 0 120 100" className="h-5 w-auto">
-                    <path d="M20 15 L70 15 L70 30 L35 30 L35 70 L70 70 L70 85 L20 85 Z" fill="#2e6b4f" stroke="#5a7a5a" strokeWidth="2"/>
-                    <rect x="50" y="35" width="25" height="25" fill="#5a7a5a" rx="2"/>
-                    <rect x="80" y="15" width="20" height="20" fill="#C9A227" rx="3"/>
-                    <rect x="80" y="45" width="12" height="12" fill="#2e6b4f" rx="2"/>
+                    <path d="M20 15 L70 15 L70 30 L35 30 L35 70 L70 70 L70 85 L20 85 Z" fill="#2e8b6e" stroke="#6b8e6b" strokeWidth="2"/>
+                    <rect x="50" y="35" width="25" height="25" fill="#6b8e6b" rx="2"/>
+                    <rect x="80" y="15" width="20" height="20" fill="#d4a528" rx="3"/>
+                    <rect x="80" y="45" width="12" height="12" fill="#2e8b6e" rx="2"/>
                   </svg>
                   <span className="text-white/80 text-xs">CauseWay</span>
-                  <span className="text-[#5a7a5a] text-xs font-arabic">كوزواي</span>
+                  <span className="text-[#6b8e6b] text-xs font-arabic">كوزواي</span>
                 </span>
               </span>
               <span className="text-white/30">|</span>

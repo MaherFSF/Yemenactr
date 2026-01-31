@@ -155,7 +155,7 @@ export default function Glossary() {
   return (
     <div className="flex flex-col min-h-screen" dir={isArabic ? "rtl" : "ltr"}>
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-[#2e6b4f] to-[#5a7a5a] text-white border-b">
+      <section className="bg-gradient-to-r from-[#2e8b6e] to-[#6b8e6b] text-white border-b">
         <div className="container py-12">
           <div className="max-w-4xl">
             <div className="flex items-center gap-3 mb-4">

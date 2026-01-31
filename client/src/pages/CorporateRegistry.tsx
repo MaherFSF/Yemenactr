@@ -64,7 +64,7 @@ export default function CorporateRegistry() {
 
   // Sector distribution
   const sectorDistribution = [
-    { nameEn: "Trade & Commerce", nameAr: "التجارة", value: 35, color: "#2e6b4f" },
+    { nameEn: "Trade & Commerce", nameAr: "التجارة", value: 35, color: "#2e8b6e" },
     { nameEn: "Services", nameAr: "الخدمات", value: 25, color: "#C0A030" },
     { nameEn: "Construction", nameAr: "البناء", value: 12, color: "#1e40af" },
     { nameEn: "Manufacturing", nameAr: "التصنيع", value: 10, color: "#7c3aed" },
@@ -417,7 +417,7 @@ export default function CorporateRegistry() {
                     <Legend />
                     <Bar 
                       dataKey="new" 
-                      fill="#2e6b4f" 
+                      fill="#2e8b6e" 
                       name={language === "ar" ? "تسجيلات جديدة" : "New Registrations"}
                     />
                     <Bar 
@@ -466,7 +466,7 @@ export default function CorporateRegistry() {
                     <Tooltip />
                     <Bar 
                       dataKey="businesses" 
-                      fill="#2e6b4f"
+                      fill="#2e8b6e"
                       name={language === "ar" ? "عدد الشركات" : "Number of Businesses"}
                     />
                   </BarChart>

@@ -100,7 +100,7 @@ function BankingFeedPanel({ isArabic, items, onPin }: {
   const sourceColors: Record<string, string> = {
     cby: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
     imf: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-    world_bank: 'bg-[#DADED8] text-[#2C3424] dark:bg-blue-900 dark:text-blue-200',
+    world_bank: 'bg-[#DADED8] text-[#2a3a28] dark:bg-blue-900 dark:text-blue-200',
     commercial_bank: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200',
     regulator: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
     media: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
@@ -452,7 +452,7 @@ function BankingMechanismPanel({ isArabic, mechanisms }: {
   mechanisms: BankingMechanism[];
 }) {
   const typeColors = {
-    conceptual: 'bg-[#DADED8] text-[#2C3424] dark:bg-blue-900 dark:text-blue-200',
+    conceptual: 'bg-[#DADED8] text-[#2a3a28] dark:bg-blue-900 dark:text-blue-200',
     yemen_specific: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
     regulatory: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200',
   };

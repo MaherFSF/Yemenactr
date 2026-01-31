@@ -30,14 +30,14 @@ interface KPICardProps {
 
 const confidenceColors = {
   A: "bg-green-500/20 text-green-700 border-green-500/30",
-  B: "bg-blue-500/20 text-[#2e6b4f] border-blue-500/30",
+  B: "bg-blue-500/20 text-[#2e8b6e] border-blue-500/30",
   C: "bg-yellow-500/20 text-yellow-700 border-yellow-500/30",
   D: "bg-red-500/20 text-red-700 border-red-500/30",
 };
 
 const regimeColors = {
-  aden: "#2e6b4f",
-  sanaa: "#2e6b4f",
+  aden: "#2e8b6e",
+  sanaa: "#2e8b6e",
   mixed: "#C0A030",
 };
 

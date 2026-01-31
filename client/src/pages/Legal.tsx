@@ -32,7 +32,7 @@ export default function Legal() {
   return (
     <div className="flex flex-col">
       {/* Header */}
-      <section className="bg-gradient-to-r from-[#2e6b4f] to-[#0B1F33] text-white">
+      <section className="bg-gradient-to-r from-[#2e8b6e] to-[#0B1F33] text-white">
         <div className="container py-12">
           <Badge className="mb-4 bg-white/10 text-white border-white/20">
             {language === "ar" ? "قانوني" : "Legal"}
@@ -83,7 +83,7 @@ export default function Legal() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-5 w-5 text-[#2e6b4f]" />
+                    <Shield className="h-5 w-5 text-[#2e8b6e]" />
                     {language === "ar" ? "سياسة الخصوصية" : "Privacy Policy"}
                   </CardTitle>
                   <Badge variant="outline" className="flex items-center gap-1">
@@ -145,8 +145,8 @@ export default function Legal() {
                         للاستفسارات المتعلقة بالخصوصية، يرجى التواصل معنا على:
                       </p>
                       <div className="flex items-center gap-2 mt-2">
-                        <Mail className="h-4 w-4 text-[#2e6b4f]" />
-                        <a href="mailto:yeto@causewaygrp.com" className="text-[#2e6b4f] hover:underline">
+                        <Mail className="h-4 w-4 text-[#2e8b6e]" />
+                        <a href="mailto:yeto@causewaygrp.com" className="text-[#2e8b6e] hover:underline">
                           yeto@causewaygrp.com
                         </a>
                       </div>
@@ -204,8 +204,8 @@ export default function Legal() {
                         For privacy-related inquiries, please contact us at:
                       </p>
                       <div className="flex items-center gap-2 mt-2">
-                        <Mail className="h-4 w-4 text-[#2e6b4f]" />
-                        <a href="mailto:yeto@causewaygrp.com" className="text-[#2e6b4f] hover:underline">
+                        <Mail className="h-4 w-4 text-[#2e8b6e]" />
+                        <a href="mailto:yeto@causewaygrp.com" className="text-[#2e8b6e] hover:underline">
                           yeto@causewaygrp.com
                         </a>
                       </div>
@@ -222,7 +222,7 @@ export default function Legal() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-[#2e6b4f]" />
+                    <FileText className="h-5 w-5 text-[#2e8b6e]" />
                     {language === "ar" ? "شروط الخدمة" : "Terms of Service"}
                   </CardTitle>
                   <Badge variant="outline" className="flex items-center gap-1">
@@ -333,7 +333,7 @@ export default function Legal() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">
-                    <Database className="h-5 w-5 text-[#2e6b4f]" />
+                    <Database className="h-5 w-5 text-[#2e8b6e]" />
                     {language === "ar" ? "ترخيص البيانات وإعادة الاستخدام" : "Data License & Reuse"}
                   </CardTitle>
                   <Badge variant="outline" className="flex items-center gap-1">
@@ -456,7 +456,7 @@ export default function Legal() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">
-                    <Accessibility className="h-5 w-5 text-[#2e6b4f]" />
+                    <Accessibility className="h-5 w-5 text-[#2e8b6e]" />
                     {language === "ar" ? "بيان إمكانية الوصول" : "Accessibility Statement"}
                   </CardTitle>
                   <Badge variant="outline" className="flex items-center gap-1">
@@ -517,8 +517,8 @@ export default function Legal() {
                         إذا واجهت أي عوائق في إمكانية الوصول، يرجى الاتصال بنا:
                       </p>
                       <div className="flex items-center gap-2 mt-2">
-                        <Mail className="h-4 w-4 text-[#2e6b4f]" />
-                        <a href="mailto:yeto@causewaygrp.com" className="text-[#2e6b4f] hover:underline">
+                        <Mail className="h-4 w-4 text-[#2e8b6e]" />
+                        <a href="mailto:yeto@causewaygrp.com" className="text-[#2e8b6e] hover:underline">
                           yeto@causewaygrp.com
                         </a>
                       </div>
@@ -575,8 +575,8 @@ export default function Legal() {
                         If you encounter any accessibility barriers, please contact us:
                       </p>
                       <div className="flex items-center gap-2 mt-2">
-                        <Mail className="h-4 w-4 text-[#2e6b4f]" />
-                        <a href="mailto:yeto@causewaygrp.com" className="text-[#2e6b4f] hover:underline">
+                        <Mail className="h-4 w-4 text-[#2e8b6e]" />
+                        <a href="mailto:yeto@causewaygrp.com" className="text-[#2e8b6e] hover:underline">
                           yeto@causewaygrp.com
                         </a>
                       </div>

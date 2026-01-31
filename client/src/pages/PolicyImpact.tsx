@@ -257,10 +257,10 @@ export default function PolicyImpact() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-[#2e6b4f] to-[#5a7a5a] text-white py-16">
+      <section className="bg-gradient-to-br from-[#2e8b6e] to-[#6b8e6b] text-white py-16">
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-4 bg-[#C0A030] text-[#2e6b4f]">
+            <Badge className="mb-4 bg-[#C0A030] text-[#2e8b6e]">
               {language === "ar" ? "أدوات التحليل" : "Analysis Tools"}
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -401,7 +401,7 @@ export default function PolicyImpact() {
                             {language === "ar" ? "مقارنة مع خط الأساس" : "Compare with baseline"}
                           </Label>
                         </div>
-                        <Button onClick={runSimulation} className="bg-[#C0A030] hover:bg-[#a08020] text-[#2e6b4f]">
+                        <Button onClick={runSimulation} className="bg-[#C0A030] hover:bg-[#a08020] text-[#2e8b6e]">
                           <Play className="w-4 h-4 mr-2" />
                           {language === "ar" ? "تشغيل المحاكاة" : "Run Simulation"}
                         </Button>
@@ -468,7 +468,7 @@ export default function PolicyImpact() {
                                 </div>
                                 <div className="flex items-end justify-between">
                                   <div>
-                                    <div className="text-2xl font-bold text-[#2e6b4f] dark:text-white">
+                                    <div className="text-2xl font-bold text-[#2e8b6e] dark:text-white">
                                       {impact.value.toLocaleString()}
                                     </div>
                                     <div className="text-xs text-gray-500">{indicator.unit}</div>

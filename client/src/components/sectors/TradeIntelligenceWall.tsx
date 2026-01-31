@@ -90,7 +90,7 @@ function TradeFeedPanel({ isArabic, items, onPin }: {
   }, [items, filter]);
 
   const sourceColors: Record<string, string> = {
-    un_comtrade: 'bg-[#DADED8] text-[#2C3424] dark:bg-blue-900 dark:text-blue-200',
+    un_comtrade: 'bg-[#DADED8] text-[#2a3a28] dark:bg-blue-900 dark:text-blue-200',
     customs: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200',
     port_authority: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200',
     world_bank: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
@@ -437,7 +437,7 @@ function TradeMechanismPanel({ isArabic, mechanisms }: {
   mechanisms: TradeMechanism[];
 }) {
   const typeColors = {
-    conceptual: 'bg-[#DADED8] text-[#2C3424] dark:bg-blue-900 dark:text-blue-200',
+    conceptual: 'bg-[#DADED8] text-[#2a3a28] dark:bg-blue-900 dark:text-blue-200',
     yemen_specific: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200',
     port_specific: 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200',
   };

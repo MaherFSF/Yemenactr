@@ -174,7 +174,7 @@ const DATA_SOURCES = [
     nameEn: "CBY Aden",
     nameAr: "البنك المركزي - عدن",
     icon: Building2,
-    color: "bg-[#2e6b4f]",
+    color: "bg-[#2e8b6e]",
     refreshSchedule: "Weekly",
     refreshScheduleAr: "أسبوعياً",
     indicators: 12,
@@ -185,7 +185,7 @@ const DATA_SOURCES = [
     nameEn: "CBY Sana'a",
     nameAr: "البنك المركزي - صنعاء",
     icon: Building2,
-    color: "bg-[#2e6b4f]",
+    color: "bg-[#2e8b6e]",
     refreshSchedule: "Weekly",
     refreshScheduleAr: "أسبوعياً",
     indicators: 4,
@@ -372,7 +372,7 @@ export default function DataFreshness() {
   return (
     <div className={`min-h-screen bg-gray-50 dark:bg-gray-950 ${isRTL ? "rtl" : "ltr"}`} dir={isRTL ? "rtl" : "ltr"}>
       {/* Header */}
-      <div className="bg-[#2e6b4f] text-white py-12">
+      <div className="bg-[#2e8b6e] text-white py-12">
         <div className="container">
           <div className="flex items-center justify-between">
             <div>
@@ -388,7 +388,7 @@ export default function DataFreshness() {
             <Button 
               onClick={handleRefresh} 
               disabled={isRefreshing}
-              className="bg-[#2e6b4f] hover:bg-[#0d5a34]"
+              className="bg-[#2e8b6e] hover:bg-[#0d5a34]"
             >
               <RefreshCw className={`w-4 h-4 ${isRTL ? "ml-2" : "mr-2"} ${isRefreshing ? "animate-spin" : ""}`} />
               {isRTL ? "تحديث" : "Refresh"}
@@ -402,8 +402,8 @@ export default function DataFreshness() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <Card>
             <CardContent className="p-4 text-center">
-              <Database className="w-8 h-8 mx-auto mb-2 text-[#2e6b4f]" />
-              <div className="text-2xl font-bold text-[#2e6b4f]">{totalSources}</div>
+              <Database className="w-8 h-8 mx-auto mb-2 text-[#2e8b6e]" />
+              <div className="text-2xl font-bold text-[#2e8b6e]">{totalSources}</div>
               <div className="text-sm text-gray-500">
                 {isRTL ? "إجمالي المصادر" : "Total Sources"}
               </div>
@@ -412,8 +412,8 @@ export default function DataFreshness() {
           
           <Card>
             <CardContent className="p-4 text-center">
-              <Activity className="w-8 h-8 mx-auto mb-2 text-[#2e6b4f]" />
-              <div className="text-2xl font-bold text-[#2e6b4f]">{activeSources}</div>
+              <Activity className="w-8 h-8 mx-auto mb-2 text-[#2e8b6e]" />
+              <div className="text-2xl font-bold text-[#2e8b6e]">{activeSources}</div>
               <div className="text-sm text-gray-500">
                 {isRTL ? "مصادر نشطة" : "Active Sources"}
               </div>
@@ -460,7 +460,7 @@ export default function DataFreshness() {
                 variant={selectedCategory === cat.id ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedCategory(cat.id)}
-                className={selectedCategory === cat.id ? "bg-[#2e6b4f]" : ""}
+                className={selectedCategory === cat.id ? "bg-[#2e8b6e]" : ""}
               >
                 {isRTL ? cat.labelAr : cat.labelEn}
               </Button>

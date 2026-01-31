@@ -48,17 +48,17 @@
      From Design System Overview
      ============================================ */
   
-  /* Primary Green Palette - EXACT from CauseWay Logo */
-  --causeway-dark: #1a2e1a;      /* Dark Forest Green - EXACT from logo background */
-  --causeway-moss: #2C3424;      /* Moss Green - Primary brand */
-  --causeway-cypress: #2e6b4f;   /* Cypress - Logo C-shape green */
-  --causeway-olive: #5a7a5a;     /* Olive - Logo inner square */
-  --causeway-cedar: #959581;     /* Cedar - Light green/gray */
+  /* Primary Green Palette - EXACT from CauseWay Logo Mockup */
+  --causeway-dark: #1f2d1d;      /* Dark Forest Green - Background from mockup */
+  --causeway-moss: #2a3a28;      /* Moss Green - Lighter dark green */
+  --causeway-cypress: #2e8b6e;   /* Teal/Cypress - Logo C-shape green (EXACT) */
+  --causeway-olive: #6b8e6b;     /* Sage/Olive - Logo inner square (EXACT) */
+  --causeway-cedar: #8a9a8a;     /* Cedar - Light sage */
   --causeway-aloe: #DADED8;      /* Aloe - Very light green/cream */
   
-  /* Accent Color */
-  --causeway-gold: #C9A227;      /* Old Gold - Primary accent */
-  --causeway-gold-light: #D4B84A; /* Light gold for hover states */
+  /* Accent Color - Gold/Mustard from logo */
+  --causeway-gold: #d4a528;      /* Mustard Gold - Primary accent (EXACT from logo) */
+  --causeway-gold-light: #e0b030; /* Light gold for hover states */
   
   /* Utility Colors */
   --causeway-white: #FFFFFF;

@@ -39,7 +39,7 @@ export function SectorKpiCard({
   const getConfidenceBadge = (conf: string) => {
     const colors: Record<string, string> = {
       'A': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-      'B': 'bg-[#DADED8] text-[#2C3424] dark:bg-blue-900 dark:text-blue-200',
+      'B': 'bg-[#DADED8] text-[#2a3a28] dark:bg-blue-900 dark:text-blue-200',
       'C': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
       'D': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
     };

@@ -15,97 +15,107 @@ export default function Splash() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Pure CSS gradient background matching CauseWay brand */}
+      {/* Pure CSS gradient background matching exact CauseWay mockup */}
       <div 
         className="absolute inset-0"
         style={{ 
-          background: `radial-gradient(ellipse at center, #3a4a32 0%, #2C3424 50%, #1a2018 100%)`,
+          background: `radial-gradient(ellipse at center, #2a3a28 0%, #1f2d1d 40%, #162016 100%)`,
         }}
       />
 
-      {/* Decorative corner frames - gold geometric pattern */}
-      <div className="absolute top-4 left-4 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 opacity-50">
+      {/* Decorative corner frames - gold geometric pattern matching mockup */}
+      <div className="absolute top-4 left-4 w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 opacity-60">
         <svg viewBox="0 0 200 200" className="w-full h-full">
-          <path d="M0 0 L180 0 L180 15 L15 15 L15 180 L0 180 Z" fill="none" stroke="#C9A227" strokeWidth="1.5"/>
-          <rect x="25" y="25" width="18" height="18" fill="none" stroke="#C9A227" strokeWidth="1"/>
-          <rect x="50" y="25" width="12" height="12" fill="none" stroke="#C9A227" strokeWidth="1"/>
-          <rect x="25" y="50" width="12" height="12" fill="none" stroke="#C9A227" strokeWidth="1"/>
+          <path d="M0 0 L180 0 L180 12 L12 12 L12 180 L0 180 Z" fill="none" stroke="#d4a528" strokeWidth="1.5"/>
+          <rect x="22" y="22" width="16" height="16" fill="none" stroke="#d4a528" strokeWidth="1"/>
+          <rect x="45" y="22" width="10" height="10" fill="none" stroke="#d4a528" strokeWidth="1"/>
+          <rect x="22" y="45" width="10" height="10" fill="none" stroke="#d4a528" strokeWidth="1"/>
         </svg>
       </div>
-      <div className="absolute top-4 right-4 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 opacity-50 rotate-90">
+      <div className="absolute top-4 right-4 w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 opacity-60 rotate-90">
         <svg viewBox="0 0 200 200" className="w-full h-full">
-          <path d="M0 0 L180 0 L180 15 L15 15 L15 180 L0 180 Z" fill="none" stroke="#C9A227" strokeWidth="1.5"/>
-          <rect x="25" y="25" width="18" height="18" fill="none" stroke="#C9A227" strokeWidth="1"/>
-          <rect x="50" y="25" width="12" height="12" fill="none" stroke="#C9A227" strokeWidth="1"/>
-          <rect x="25" y="50" width="12" height="12" fill="none" stroke="#C9A227" strokeWidth="1"/>
+          <path d="M0 0 L180 0 L180 12 L12 12 L12 180 L0 180 Z" fill="none" stroke="#d4a528" strokeWidth="1.5"/>
+          <rect x="22" y="22" width="16" height="16" fill="none" stroke="#d4a528" strokeWidth="1"/>
+          <rect x="45" y="22" width="10" height="10" fill="none" stroke="#d4a528" strokeWidth="1"/>
+          <rect x="22" y="45" width="10" height="10" fill="none" stroke="#d4a528" strokeWidth="1"/>
         </svg>
       </div>
-      <div className="absolute bottom-4 left-4 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 opacity-50 -rotate-90">
+      <div className="absolute bottom-4 left-4 w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 opacity-60 -rotate-90">
         <svg viewBox="0 0 200 200" className="w-full h-full">
-          <path d="M0 0 L180 0 L180 15 L15 15 L15 180 L0 180 Z" fill="none" stroke="#C9A227" strokeWidth="1.5"/>
-          <rect x="25" y="25" width="18" height="18" fill="none" stroke="#C9A227" strokeWidth="1"/>
-          <rect x="50" y="25" width="12" height="12" fill="none" stroke="#C9A227" strokeWidth="1"/>
-          <rect x="25" y="50" width="12" height="12" fill="none" stroke="#C9A227" strokeWidth="1"/>
+          <path d="M0 0 L180 0 L180 12 L12 12 L12 180 L0 180 Z" fill="none" stroke="#d4a528" strokeWidth="1.5"/>
+          <rect x="22" y="22" width="16" height="16" fill="none" stroke="#d4a528" strokeWidth="1"/>
+          <rect x="45" y="22" width="10" height="10" fill="none" stroke="#d4a528" strokeWidth="1"/>
+          <rect x="22" y="45" width="10" height="10" fill="none" stroke="#d4a528" strokeWidth="1"/>
         </svg>
       </div>
-      <div className="absolute bottom-4 right-4 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 opacity-50 rotate-180">
+      <div className="absolute bottom-4 right-4 w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 opacity-60 rotate-180">
         <svg viewBox="0 0 200 200" className="w-full h-full">
-          <path d="M0 0 L180 0 L180 15 L15 15 L15 180 L0 180 Z" fill="none" stroke="#C9A227" strokeWidth="1.5"/>
-          <rect x="25" y="25" width="18" height="18" fill="none" stroke="#C9A227" strokeWidth="1"/>
-          <rect x="50" y="25" width="12" height="12" fill="none" stroke="#C9A227" strokeWidth="1"/>
-          <rect x="25" y="50" width="12" height="12" fill="none" stroke="#C9A227" strokeWidth="1"/>
+          <path d="M0 0 L180 0 L180 12 L12 12 L12 180 L0 180 Z" fill="none" stroke="#d4a528" strokeWidth="1.5"/>
+          <rect x="22" y="22" width="16" height="16" fill="none" stroke="#d4a528" strokeWidth="1"/>
+          <rect x="45" y="22" width="10" height="10" fill="none" stroke="#d4a528" strokeWidth="1"/>
+          <rect x="22" y="45" width="10" height="10" fill="none" stroke="#d4a528" strokeWidth="1"/>
         </svg>
       </div>
 
-      {/* Main Content - Centered with proper mobile spacing */}
+      {/* Main Content - Centered */}
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 sm:px-8">
         
-        {/* Logo and Text Container */}
+        {/* Logo Container - Exact placement from mockup */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="flex flex-col items-center text-center mb-8 sm:mb-10"
         >
-          {/* CauseWay Logo Icon - Exact recreation matching mockup */}
+          {/* CauseWay Logo Icon - EXACT recreation from mockup */}
           <div className="mb-6 sm:mb-8">
             <svg 
-              viewBox="0 0 100 85" 
-              className="w-20 h-16 sm:w-28 sm:h-24 md:w-36 md:h-28"
+              viewBox="0 0 120 100" 
+              className="w-24 h-20 sm:w-32 sm:h-28 md:w-40 md:h-32"
             >
-              {/* Main C shape - Cypress green with darker fill */}
+              {/* Main C shape - Teal/Cypress green */}
               <path 
-                d="M5 8 L55 8 Q60 8 60 13 L60 22 L25 22 L25 63 L60 63 L60 72 Q60 77 55 77 L5 77 Q0 77 0 72 L0 13 Q0 8 5 8 Z" 
-                fill="#2e6b4f"
+                d="M8 10 L62 10 Q68 10 68 16 L68 28 L28 28 L28 72 L68 72 L68 84 Q68 90 62 90 L8 90 Q2 90 2 84 L2 16 Q2 10 8 10 Z" 
+                fill="#2e8b6e"
               />
-              {/* Inner olive square */}
-              <rect x="40" y="30" width="22" height="22" rx="3" fill="#5a7a5a"/>
-              {/* Top right gold square */}
-              <rect x="68" y="8" width="22" height="22" rx="4" fill="#C9A227"/>
-              {/* Bottom right small dark green square */}
-              <rect x="68" y="40" width="14" height="14" rx="3" fill="#2e6b4f"/>
+              {/* Inner olive/sage square */}
+              <rect x="48" y="36" width="26" height="26" rx="4" fill="#6b8e6b"/>
+              {/* Top right gold/mustard square */}
+              <rect x="82" y="10" width="26" height="26" rx="5" fill="#d4a528"/>
+              {/* Bottom right small teal circle/square */}
+              <rect x="82" y="48" width="16" height="16" rx="8" fill="#2e8b6e"/>
             </svg>
           </div>
 
-          {/* CauseWay | كوزواي */}
-          <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-5">
-            <span className="text-white text-2xl sm:text-3xl md:text-4xl font-light tracking-wide">CauseWay</span>
-            <span className="text-[#5a7a5a] text-2xl sm:text-3xl md:text-4xl font-light">|</span>
-            <span className="text-[#5a7a5a] text-2xl sm:text-3xl md:text-4xl font-arabic">كوزواي</span>
+          {/* CauseWay - English text (white) */}
+          <h1 className="text-white text-3xl sm:text-4xl md:text-5xl font-light tracking-wider mb-3">
+            CauseWay
+          </h1>
+
+          {/* كوزواي - Arabic text (sage green) */}
+          <h2 className="text-[#6b8e6b] text-3xl sm:text-4xl md:text-5xl font-arabic mb-8 sm:mb-10" dir="rtl">
+            كوزواي
+          </h2>
+
+          {/* Economic Observatory subtitle - creative addition */}
+          <div className="border-t border-b border-[#d4a528]/30 py-3 px-6 mb-6">
+            <p className="text-[#d4a528] text-sm sm:text-base tracking-[0.3em] uppercase">
+              Economic Observatory
+            </p>
           </div>
 
           {/* Arabic Title */}
-          <h1 className="text-[#DADED8] text-lg sm:text-xl md:text-2xl font-arabic mb-2 leading-relaxed" dir="rtl">
+          <h3 className="text-[#DADED8] text-lg sm:text-xl md:text-2xl font-arabic mb-2 leading-relaxed" dir="rtl">
             المرصد اليمني للشفافية الاقتصادية
-          </h1>
+          </h3>
 
           {/* English Subtitle */}
-          <p className="text-[#959581] text-xs sm:text-sm md:text-base tracking-wide mb-5 sm:mb-6">
-            (Yemen Economic Transparency Observatory)
+          <p className="text-[#8a9a8a] text-xs sm:text-sm md:text-base tracking-wide mb-6">
+            Yemen Economic Transparency Observatory
           </p>
 
           {/* Arabic Tagline - Gold color */}
-          <p className="text-[#C9A227] text-base sm:text-lg md:text-xl font-arabic" dir="rtl">
+          <p className="text-[#d4a528] text-base sm:text-lg md:text-xl font-arabic" dir="rtl">
             نحو اقتصاد مبني على الحقائق
           </p>
         </motion.div>
@@ -119,13 +129,13 @@ export default function Splash() {
         >
           <button
             onClick={() => handleLanguageSelect("ar")}
-            className="flex-1 px-6 sm:px-8 py-3 sm:py-4 bg-[#C9A227] text-[#2C3424] hover:bg-[#d4ad32] transition-all duration-300 rounded text-base sm:text-lg font-arabic font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+            className="flex-1 px-6 sm:px-8 py-3 sm:py-4 bg-[#d4a528] text-[#1f2d1d] hover:bg-[#e0b030] transition-all duration-300 rounded text-base sm:text-lg font-arabic font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
           >
             ادخل بالعربية
           </button>
           <button
             onClick={() => handleLanguageSelect("en")}
-            className="flex-1 px-6 sm:px-8 py-3 sm:py-4 border-2 border-[#C9A227] text-[#C9A227] hover:bg-[#C9A227]/10 transition-all duration-300 rounded text-base sm:text-lg tracking-wide"
+            className="flex-1 px-6 sm:px-8 py-3 sm:py-4 border-2 border-[#d4a528] text-[#d4a528] hover:bg-[#d4a528]/10 transition-all duration-300 rounded text-base sm:text-lg tracking-wide"
           >
             Enter in English
           </button>
@@ -136,12 +146,12 @@ export default function Splash() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="mt-8 sm:mt-10 text-center"
+          className="mt-10 sm:mt-12 text-center"
         >
-          <p className="text-[#959581] text-xs sm:text-sm">
+          <p className="text-[#8a9a8a] text-xs sm:text-sm">
             Powered by CauseWay Financial & Banking Consultancies
           </p>
-          <p className="text-[#5a7a5a] text-xs font-arabic mt-1" dir="rtl">
+          <p className="text-[#6b8e6b] text-xs font-arabic mt-1" dir="rtl">
             بدعم من كوزواي للاستشارات المالية والمصرفية
           </p>
         </motion.div>

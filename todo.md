@@ -8743,3 +8743,23 @@ Based on review of master design documents and data source register:
 **4) Logo Consistency:**
 - [ ] Use exact CauseWay logo across all components
 - [ ] Ensure logo colors match brand guidelines
+
+
+### Phase 77: Exact CauseWay Logo and Color Scheme
+
+**1) Exact Logo Placement (from mockup):**
+- [ ] Icon on top (C-shape with squares)
+- [ ] "CauseWay" text below icon (English)
+- [ ] "كوزواي" text at bottom (Arabic)
+- [ ] Add "Economic Observatory" subtitle creatively
+
+**2) Apply to All Locations:**
+- [ ] Splash page logo
+- [ ] Header logo
+- [ ] Footer logo
+
+**3) Exact Color Scheme:**
+- [ ] Dark green background (#1a2e1a or exact from mockup)
+- [ ] Gold accents (#C9A227)
+- [ ] Consistent colors across entire platform
+

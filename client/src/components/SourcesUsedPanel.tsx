@@ -74,9 +74,9 @@ export function SourcesUsedPanel({ sectorCode, sources: propSources, isLoading: 
 
   if (isLoading) {
     return (
-      <Card className="border-[#2e6b4f]/20 bg-[#DADED8]/10">
+      <Card className="border-[#2e8b6e]/20 bg-[#DADED8]/10">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2 text-[#2C3424]">
+          <CardTitle className="text-base flex items-center gap-2 text-[#2a3a28]">
             <Database className="h-4 w-4" />
             {language === "ar" ? "المصادر المستخدمة" : "Sources Used on This Page"}
           </CardTitle>
@@ -94,9 +94,9 @@ export function SourcesUsedPanel({ sectorCode, sources: propSources, isLoading: 
 
   if (!sources || sources.length === 0) {
     return (
-      <Card className="border-[#2e6b4f]/20 bg-[#DADED8]/10">
+      <Card className="border-[#2e8b6e]/20 bg-[#DADED8]/10">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2 text-[#2C3424]">
+          <CardTitle className="text-base flex items-center gap-2 text-[#2a3a28]">
             <Database className="h-4 w-4" />
             {language === "ar" ? "المصادر المستخدمة" : "Sources Used on This Page"}
           </CardTitle>
@@ -113,10 +113,10 @@ export function SourcesUsedPanel({ sectorCode, sources: propSources, isLoading: 
   }
 
   return (
-    <Card className="border-[#2e6b4f]/20 bg-gradient-to-br from-[#DADED8]/20 to-white dark:from-[#2C3424]/20 dark:to-background">
+    <Card className="border-[#2e8b6e]/20 bg-gradient-to-br from-[#DADED8]/20 to-white dark:from-[#2a3a28]/20 dark:to-background">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base flex items-center gap-2 text-[#2C3424] dark:text-[#DADED8]">
+          <CardTitle className="text-base flex items-center gap-2 text-[#2a3a28] dark:text-[#DADED8]">
             <Database className="h-4 w-4" />
             {language === "ar" ? "المصادر المستخدمة في هذه الصفحة" : "Sources Used on This Page"}
           </CardTitle>
@@ -132,7 +132,7 @@ export function SourcesUsedPanel({ sectorCode, sources: propSources, isLoading: 
       </CardHeader>
       <CardContent className="space-y-3">
         {/* Tier Summary */}
-        <div className="flex flex-wrap gap-2 pb-2 border-b border-[#2e6b4f]/10">
+        <div className="flex flex-wrap gap-2 pb-2 border-b border-[#2e8b6e]/10">
           {tierOrder.map((tier) => {
             const count = sourcesByTier[tier]?.length || 0;
             if (count === 0) return null;
@@ -149,7 +149,7 @@ export function SourcesUsedPanel({ sectorCode, sources: propSources, isLoading: 
           {displayedSources.map((source: Source) => (
             <div
               key={source.id}
-              className="flex items-center justify-between p-2 rounded-lg bg-white/50 dark:bg-white/5 border border-[#2e6b4f]/10 hover:border-[#2e6b4f]/30 transition-colors"
+              className="flex items-center justify-between p-2 rounded-lg bg-white/50 dark:bg-white/5 border border-[#2e8b6e]/10 hover:border-[#2e8b6e]/30 transition-colors"
             >
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 <Badge className={`${tierColors[source.tier]} text-xs shrink-0`}>
@@ -208,8 +208,8 @@ export function SourcesUsedPanel({ sectorCode, sources: propSources, isLoading: 
         )}
 
         {/* Methodology Link */}
-        <div className="pt-2 border-t border-[#2e6b4f]/10">
-          <Button variant="link" size="sm" className="h-auto p-0 text-xs text-[#2e6b4f]">
+        <div className="pt-2 border-t border-[#2e8b6e]/10">
+          <Button variant="link" size="sm" className="h-auto p-0 text-xs text-[#2e8b6e]">
             <FileText className="h-3 w-3 mr-1" />
             {language === "ar" ? "اقرأ منهجية البيانات الكاملة" : "Read Full Data Methodology"}
           </Button>

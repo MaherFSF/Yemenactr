@@ -110,7 +110,7 @@ export default function TimeTravelView({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-2 text-gray-500 hover:text-[#2e6b4f]">
+        <Button variant="ghost" size="sm" className="gap-2 text-gray-500 hover:text-[#2e8b6e]">
           <History className="h-4 w-4" />
           {isArabic ? "عرض التاريخ" : "View History"}
         </Button>
@@ -118,7 +118,7 @@ export default function TimeTravelView({
       <DialogContent className="max-w-2xl" dir={isArabic ? "rtl" : "ltr"}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-[#2e6b4f]" />
+            <Clock className="h-5 w-5 text-[#2e8b6e]" />
             {isArabic ? "السفر عبر الزمن: ماذا كان معروفاً ومتى" : "Time Travel: What Was Known When"}
           </DialogTitle>
           <DialogDescription>
@@ -130,18 +130,18 @@ export default function TimeTravelView({
 
         <div className="space-y-6">
           {/* Current Value */}
-          <Card className="bg-[#2e6b4f]/5 border-[#2e6b4f]/20">
+          <Card className="bg-[#2e8b6e]/5 border-[#2e8b6e]/20">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-sm text-gray-500 mb-1">
                     {isArabic ? "القيمة الحالية" : "Current Value"}
                   </div>
-                  <div className="text-2xl font-bold text-[#2e6b4f]">
+                  <div className="text-2xl font-bold text-[#2e8b6e]">
                     {currentValue} {unit}
                   </div>
                 </div>
-                <Badge className="bg-[#2e6b4f]">
+                <Badge className="bg-[#2e8b6e]">
                   {isArabic ? "أحدث" : "Latest"}
                 </Badge>
               </div>
@@ -233,13 +233,13 @@ export default function TimeTravelView({
                   <div 
                     key={vintage.id}
                     className={`relative flex items-start gap-4 pl-10 cursor-pointer transition-colors ${
-                      selectedVintage === vintage.id ? 'bg-[#2e6b4f]/10 -mx-4 px-4 py-2 rounded-lg' : ''
+                      selectedVintage === vintage.id ? 'bg-[#2e8b6e]/10 -mx-4 px-4 py-2 rounded-lg' : ''
                     }`}
                     onClick={() => setSelectedVintage(vintage.id)}
                   >
                     <div className={`absolute left-2 w-4 h-4 rounded-full border-2 ${
                       index === 0 
-                        ? 'bg-[#2e6b4f] border-[#2e6b4f]' 
+                        ? 'bg-[#2e8b6e] border-[#2e8b6e]' 
                         : 'bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600'
                     }`} />
                     <div className="flex-1">

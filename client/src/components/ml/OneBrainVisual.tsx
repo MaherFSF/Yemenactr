@@ -89,13 +89,13 @@ interface OneBrainVisualProps {
 }
 
 const COLORS = {
-  primary: "#2e6b4f",
-  secondary: "#2e6b4f",
+  primary: "#2e8b6e",
+  secondary: "#2e8b6e",
   accent: "#C0A030",
-  aden: "#2e6b4f",
-  sanaa: "#2e6b4f",
+  aden: "#2e8b6e",
+  sanaa: "#2e8b6e",
   unified: "#6B7280",
-  chart: ["#2e6b4f", "#2e6b4f", "#C0A030", "#4A90E2", "#E74C3C", "#9B59B6"],
+  chart: ["#2e8b6e", "#2e8b6e", "#C0A030", "#4A90E2", "#E74C3C", "#9B59B6"],
 };
 
 export default function OneBrainVisual({ visualization, className = "" }: OneBrainVisualProps) {
@@ -126,7 +126,7 @@ export default function OneBrainVisual({ visualization, className = "" }: OneBra
   const getConfidenceBadge = (level: string) => {
     const colors: Record<string, string> = {
       A: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-      B: "bg-[#DADED8] text-[#2C3424] dark:bg-blue-900/30 dark:text-blue-300",
+      B: "bg-[#DADED8] text-[#2a3a28] dark:bg-blue-900/30 dark:text-blue-300",
       C: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
       D: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
     };
@@ -327,13 +327,13 @@ export default function OneBrainVisual({ visualization, className = "" }: OneBra
         {takeaways && takeaways.length > 0 && (
           <div className="space-y-2">
             <h4 className="text-sm font-medium flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-[#2e6b4f]" />
+              <TrendingUp className="h-4 w-4 text-[#2e8b6e]" />
               {language === "ar" ? "النقاط الرئيسية" : "Key Takeaways"}
             </h4>
             <ul className="space-y-1">
               {takeaways.map((takeaway, index) => (
                 <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
-                  <span className="text-[#2e6b4f] font-bold">•</span>
+                  <span className="text-[#2e8b6e] font-bold">•</span>
                   {takeaway}
                 </li>
               ))}

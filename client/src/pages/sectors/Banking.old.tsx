@@ -135,7 +135,7 @@ export default function Banking() {
     { name: language === "ar" ? "بدون خدمات" : "Unbanked", value: 57 },
   ];
 
-  const COLORS = ['#2e6b4f', '#2e6b4f', '#C0A030', '#9E9E9E'];
+  const COLORS = ['#2e8b6e', '#2e8b6e', '#C0A030', '#9E9E9E'];
 
   // Banking alerts - January 2026 updates
   const bankingAlerts = [
@@ -180,7 +180,7 @@ export default function Banking() {
           style={{ backgroundImage: `url(/sectors/banking.png)` }}
         />
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#2e6b4f]/90 to-[#5a7a5a]/80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#2e8b6e]/90 to-[#6b8e6b]/80" />
         {/* Pattern Overlay */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0" style={{
@@ -193,7 +193,7 @@ export default function Banking() {
               <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
                 <Landmark className="h-8 w-8 text-white" />
               </div>
-              <Badge className="bg-[#2e6b4f] text-white border-0">
+              <Badge className="bg-[#2e8b6e] text-white border-0">
                 {language === "ar" ? "القطاع المصرفي" : "Banking Sector"}
               </Badge>
             </div>
@@ -235,7 +235,7 @@ export default function Banking() {
               onClick={() => setSelectedRegime("both")}
               className={`px-4 py-2 text-sm font-medium transition-colors ${
                 selectedRegime === "both" 
-                  ? "bg-[#2e6b4f] text-white" 
+                  ? "bg-[#2e8b6e] text-white" 
                   : "bg-white text-gray-700 hover:bg-gray-100"
               }`}
             >
@@ -245,7 +245,7 @@ export default function Banking() {
               onClick={() => setSelectedRegime("aden")}
               className={`px-4 py-2 text-sm font-medium transition-colors border-x ${
                 selectedRegime === "aden" 
-                  ? "bg-[#2e6b4f] text-white" 
+                  ? "bg-[#2e8b6e] text-white" 
                   : "bg-white text-gray-700 hover:bg-gray-100"
               }`}
             >
@@ -266,7 +266,7 @@ export default function Banking() {
 
         {/* Key Metrics */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card className="border-l-4 border-l-[#2e6b4f]">
+          <Card className="border-l-4 border-l-[#2e8b6e]">
             <CardHeader className="pb-3">
               <CardDescription className="flex items-center justify-between">
                 <span>{language === "ar" ? "سعر الصرف (عدن)" : "Exchange Rate (Aden)"}</span>
@@ -274,7 +274,7 @@ export default function Banking() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-[#2e6b4f]">1,890</div>
+              <div className="text-3xl font-bold text-[#2e8b6e]">1,890</div>
               <div className="text-sm text-muted-foreground">{language === "ar" ? "ريال/دولار" : "YER/USD"}</div>
               <div className="flex items-center gap-1 text-sm text-red-600 mt-2">
                 <TrendingUp className="h-4 w-4" />
@@ -292,7 +292,7 @@ export default function Banking() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-[#2e6b4f]">530</div>
+              <div className="text-3xl font-bold text-[#2e8b6e]">530</div>
               <div className="text-sm text-muted-foreground">{language === "ar" ? "ريال/دولار" : "YER/USD"}</div>
               <div className="flex items-center gap-1 text-sm text-green-600 mt-2">
                 <TrendingDown className="h-4 w-4" />
@@ -328,7 +328,7 @@ export default function Banking() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-[#2e6b4f]">$1.15B</div>
+              <div className="text-3xl font-bold text-[#2e8b6e]">$1.15B</div>
               <div className="text-sm text-muted-foreground">{language === "ar" ? "تقديري" : "Estimated"}</div>
               <div className="flex items-center gap-1 text-sm text-green-600 mt-2">
                 <TrendingUp className="h-4 w-4" />
@@ -376,7 +376,7 @@ export default function Banking() {
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Download className="h-5 w-5 text-[#2e6b4f]" />
+              <Download className="h-5 w-5 text-[#2e8b6e]" />
               {language === "ar" ? "تصدير بيانات القطاع المصرفي" : "Export Banking Data"}
             </CardTitle>
             <CardDescription>
@@ -458,10 +458,10 @@ export default function Banking() {
                         <Line 
                           type="monotone" 
                           dataKey="adenRate" 
-                          stroke="#2e6b4f" 
+                          stroke="#2e8b6e" 
                           strokeWidth={2}
                           name={language === "ar" ? "عدن" : "Aden"}
-                          dot={{ fill: "#2e6b4f" }}
+                          dot={{ fill: "#2e8b6e" }}
                         />
                       )}
                       {(selectedRegime === "both" || selectedRegime === "sanaa") && (
@@ -511,8 +511,8 @@ export default function Banking() {
                         <Area 
                           type="monotone" 
                           dataKey="aden" 
-                          stroke="#2e6b4f" 
-                          fill="#2e6b4f"
+                          stroke="#2e8b6e" 
+                          fill="#2e8b6e"
                           fillOpacity={0.3}
                           name={language === "ar" ? "عدن" : "Aden"}
                         />
@@ -582,7 +582,7 @@ export default function Banking() {
                         <Line 
                           type="monotone" 
                           dataKey="aden" 
-                          stroke="#2e6b4f" 
+                          stroke="#2e8b6e" 
                           strokeWidth={2}
                           name={language === "ar" ? "عدن" : "Aden"}
                         />
@@ -748,8 +748,8 @@ export default function Banking() {
                       <Area 
                         type="monotone" 
                         dataKey="reserves" 
-                        stroke="#2e6b4f" 
-                        fill="#2e6b4f"
+                        stroke="#2e8b6e" 
+                        fill="#2e8b6e"
                         fillOpacity={0.3}
                         name={language === "ar" ? "الاحتياطيات" : "Reserves"}
                       />
@@ -782,7 +782,7 @@ export default function Banking() {
                       <Legend />
                       <Bar 
                         dataKey="m1" 
-                        fill="#2e6b4f" 
+                        fill="#2e8b6e" 
                         name="M1"
                         radius={[4, 4, 0, 0]}
                       />
@@ -877,7 +877,7 @@ export default function Banking() {
 
         {/* Enhanced Visualizations Section */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-[#2e6b4f] mb-6">
+          <h2 className="text-2xl font-bold text-[#2e8b6e] mb-6">
             {language === "ar" ? "التحليلات المتقدمة" : "Advanced Analytics"}
           </h2>
           
@@ -885,7 +885,7 @@ export default function Banking() {
           <Card className="mb-6 overflow-hidden">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-[#2e6b4f]" />
+                <TrendingUp className="h-5 w-5 text-[#2e8b6e]" />
                 {language === "ar" ? "رؤى مباشرة" : "Live Insights"}
               </CardTitle>
             </CardHeader>
@@ -997,7 +997,7 @@ export default function Banking() {
           <Card className="mb-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <CreditCard className="h-5 w-5 text-[#2e6b4f]" />
+                <CreditCard className="h-5 w-5 text-[#2e8b6e]" />
                 {language === "ar" ? "مصفوفة الارتباط" : "Correlation Matrix"}
               </CardTitle>
               <CardDescription>
@@ -1029,7 +1029,7 @@ export default function Banking() {
                   <p className="text-sm text-muted-foreground">
                     {language === "ar" ? "سعر الصرف (يناير 2026)" : "FX Rate (Jan 2026)"}
                   </p>
-                  <p className="text-2xl font-bold text-[#2e6b4f]">1,950</p>
+                  <p className="text-2xl font-bold text-[#2e8b6e]">1,950</p>
                 </div>
                 <Sparkline 
                   data={[730, 1050, 1150, 1550, 1890, 2050, 1950]} 
@@ -1046,7 +1046,7 @@ export default function Banking() {
                   <p className="text-sm text-muted-foreground">
                     {language === "ar" ? "التضخم (2025)" : "Inflation (2025)"}
                   </p>
-                  <p className="text-2xl font-bold text-[#2e6b4f]">18.0%</p>
+                  <p className="text-2xl font-bold text-[#2e8b6e]">18.0%</p>
                 </div>
                 <Sparkline 
                   data={[10, 22, 35, 28, 25, 22.5, 18]} 
@@ -1063,7 +1063,7 @@ export default function Banking() {
                   <p className="text-sm text-muted-foreground">
                     {language === "ar" ? "الاحتياطيات (2026)" : "Reserves (2026)"}
                   </p>
-                  <p className="text-2xl font-bold text-[#2e6b4f]">$1.15B</p>
+                  <p className="text-2xl font-bold text-[#2e8b6e]">$1.15B</p>
                 </div>
                 <Sparkline 
                   data={[4700, 2100, 1200, 850, 1500, 1200, 1800, 1400, 1100, 850, 1200, 1150]} 

@@ -112,7 +112,7 @@ export function EvidencePack({
       {/* Data Summary */}
       <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
         <div className="flex items-center justify-between mb-3">
-          <h4 className="font-semibold text-[#2e6b4f] dark:text-white">
+          <h4 className="font-semibold text-[#2e8b6e] dark:text-white">
             {language === "ar" ? indicatorNameAr || indicatorName : indicatorName}
           </h4>
           <Badge className={confidenceConfig[confidence].color}>
@@ -148,7 +148,7 @@ export function EvidencePack({
 
       {/* Sources */}
       <div>
-        <h4 className="font-semibold text-[#2e6b4f] dark:text-white mb-3 flex items-center gap-2">
+        <h4 className="font-semibold text-[#2e8b6e] dark:text-white mb-3 flex items-center gap-2">
           <FileText className="h-4 w-4" />
           {language === "ar" ? "المصادر" : "Sources"} ({sources.length})
         </h4>
@@ -211,7 +211,7 @@ export function EvidencePack({
       {/* Methodology */}
       {methodology && (
         <div>
-          <h4 className="font-semibold text-[#2e6b4f] dark:text-white mb-3 flex items-center gap-2">
+          <h4 className="font-semibold text-[#2e8b6e] dark:text-white mb-3 flex items-center gap-2">
             <Shield className="h-4 w-4" />
             {language === "ar" ? "المنهجية" : "Methodology"}
           </h4>
@@ -222,11 +222,11 @@ export function EvidencePack({
       )}
 
       {/* Data Quality Notice */}
-      <div className="bg-[#2e6b4f]/5 border border-[#2e6b4f]/20 rounded-lg p-4">
+      <div className="bg-[#2e8b6e]/5 border border-[#2e8b6e]/20 rounded-lg p-4">
         <div className="flex items-start gap-3">
-          <Info className="h-5 w-5 text-[#2e6b4f] mt-0.5" />
+          <Info className="h-5 w-5 text-[#2e8b6e] mt-0.5" />
           <div>
-            <h5 className="font-medium text-[#2e6b4f] mb-1">
+            <h5 className="font-medium text-[#2e8b6e] mb-1">
               {language === "ar" ? "ملاحظة جودة البيانات" : "Data Quality Note"}
             </h5>
             <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -234,7 +234,7 @@ export function EvidencePack({
                 ? "يتم التحقق من جميع البيانات في YETO من خلال منهجية صارمة تشمل التحقق من المصادر المتعددة والمراجعة من قبل الخبراء. إذا وجدت أي خطأ، يرجى الإبلاغ عنه."
                 : "All data in YETO is verified through a rigorous methodology including multi-source verification and expert review. If you find any errors, please report them."}
             </p>
-            <Button variant="link" className="text-[#2e6b4f] p-0 h-auto mt-2">
+            <Button variant="link" className="text-[#2e8b6e] p-0 h-auto mt-2">
               {language === "ar" ? "الإبلاغ عن مشكلة" : "Report an Issue"}
             </Button>
           </div>
@@ -251,7 +251,7 @@ export function EvidencePack({
           <Button 
             variant="outline" 
             size="sm" 
-            className={`text-[#2e6b4f] border-[#2e6b4f]/30 hover:bg-[#2e6b4f]/10 ${className}`}
+            className={`text-[#2e8b6e] border-[#2e8b6e]/30 hover:bg-[#2e8b6e]/10 ${className}`}
           >
             <Eye className="h-4 w-4 mr-2" />
             {language === "ar" ? "كيف نعرف هذا؟" : "How do we know this?"}
@@ -260,7 +260,7 @@ export function EvidencePack({
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Database className="h-5 w-5 text-[#2e6b4f]" />
+              <Database className="h-5 w-5 text-[#2e8b6e]" />
               {language === "ar" ? "حزمة الأدلة" : "Evidence Pack"}
             </DialogTitle>
             <DialogDescription>
@@ -283,7 +283,7 @@ export function EvidencePack({
           <Button 
             variant="ghost" 
             size="sm" 
-            className={`h-6 w-6 p-0 text-[#2e6b4f] hover:bg-[#2e6b4f]/10 ${className}`}
+            className={`h-6 w-6 p-0 text-[#2e8b6e] hover:bg-[#2e8b6e]/10 ${className}`}
           >
             <Eye className="h-4 w-4" />
           </Button>
@@ -291,7 +291,7 @@ export function EvidencePack({
         <PopoverContent className="w-96 max-h-[400px] overflow-y-auto">
           <div className="space-y-4">
             <div className="flex items-center gap-2 font-semibold">
-              <Database className="h-4 w-4 text-[#2e6b4f]" />
+              <Database className="h-4 w-4 text-[#2e8b6e]" />
               {language === "ar" ? "حزمة الأدلة" : "Evidence Pack"}
             </div>
             <EvidenceContent />
@@ -305,7 +305,7 @@ export function EvidencePack({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className={`inline-flex items-center gap-1 text-[#2e6b4f] hover:underline text-sm ${className}`}>
+        <button className={`inline-flex items-center gap-1 text-[#2e8b6e] hover:underline text-sm ${className}`}>
           <Link2 className="h-3 w-3" />
           {language === "ar" ? "عرض المصادر" : "View sources"}
         </button>
@@ -313,7 +313,7 @@ export function EvidencePack({
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Database className="h-5 w-5 text-[#2e6b4f]" />
+            <Database className="h-5 w-5 text-[#2e8b6e]" />
             {language === "ar" ? "حزمة الأدلة" : "Evidence Pack"}
           </DialogTitle>
           <DialogDescription>

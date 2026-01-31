@@ -94,7 +94,7 @@ function DayFeedPanel({ isArabic, items, onPin }: {
   }, [items, filter]);
 
   const sourceColors: Record<string, string> = {
-    world_bank: 'bg-[#DADED8] text-[#2C3424] dark:bg-blue-900 dark:text-blue-200',
+    world_bank: 'bg-[#DADED8] text-[#2a3a28] dark:bg-blue-900 dark:text-blue-200',
     imf: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
     un: 'bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-200',
     ocha: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
@@ -514,7 +514,7 @@ function MechanismExplainerPanel({ isArabic, sections }: {
                 variant="outline" 
                 className={section.type === 'yemen_specific' 
                   ? 'bg-green-50 text-green-700 border-green-300' 
-                  : 'bg-blue-50 text-[#2e6b4f] border-blue-300'
+                  : 'bg-blue-50 text-[#2e8b6e] border-blue-300'
                 }
               >
                 {section.type === 'yemen_specific' 

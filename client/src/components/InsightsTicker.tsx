@@ -175,14 +175,14 @@ export default function InsightsTicker() {
       case "alert":
         return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
       default:
-        return <Info className="h-4 w-4 text-[#C9A227]" />;
+        return <Info className="h-4 w-4 text-[#d4a528]" />;
     }
   };
 
   const getConfidenceBadge = (confidence: string) => {
     const colors: Record<string, string> = {
       A: "bg-green-500",
-      B: "bg-[#2e6b4f]",
+      B: "bg-[#2e8b6e]",
       C: "bg-yellow-500",
       D: "bg-red-500"
     };
@@ -197,7 +197,7 @@ export default function InsightsTicker() {
 
   return (
     <div 
-      className="bg-gradient-to-r from-[#2C3424] to-[#2e6b4f] text-white py-2 sticky top-0 z-50"
+      className="bg-gradient-to-r from-[#2a3a28] to-[#2e8b6e] text-white py-2 sticky top-0 z-50"
       dir={isArabic ? "rtl" : "ltr"}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
@@ -333,7 +333,7 @@ export default function InsightsTicker() {
                               href={source.url} 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className="text-[#2e6b4f] hover:text-[#2C3424]"
+                              className="text-[#2e8b6e] hover:text-[#2a3a28]"
                             >
                               <ExternalLink className="h-3 w-3" />
                             </a>
