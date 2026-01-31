@@ -15,98 +15,120 @@ export default function Splash() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Background - Yemen Map with dark green overlay */}
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-[#1a2318] via-[#2C3424] to-[#1a2318]">
+      {/* Subtle texture overlay */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 opacity-30"
         style={{ 
-          backgroundImage: "url('/images/yemen-map-splash.png')",
+          backgroundImage: `radial-gradient(circle at 20% 50%, rgba(76, 88, 62, 0.3) 0%, transparent 50%),
+                           radial-gradient(circle at 80% 50%, rgba(76, 88, 62, 0.2) 0%, transparent 50%)`,
         }}
       />
       
-      {/* Gradient overlay for better text readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#2C3424]/90 via-[#2C3424]/80 to-[#2C3424]/95" />
-      
       {/* Decorative corner frames - matching CauseWay design */}
-      <div className="absolute top-8 left-8 w-24 h-24 border-l-2 border-t-2 border-[#C9A227]/40" />
-      <div className="absolute top-8 right-8 w-24 h-24 border-r-2 border-t-2 border-[#C9A227]/40" />
-      <div className="absolute bottom-8 left-8 w-24 h-24 border-l-2 border-b-2 border-[#C9A227]/40" />
-      <div className="absolute bottom-8 right-8 w-24 h-24 border-r-2 border-b-2 border-[#C9A227]/40" />
+      {/* Top Left Corner */}
+      <div className="absolute top-4 sm:top-8 left-4 sm:left-8">
+        <div className="w-16 sm:w-24 h-16 sm:h-24 border-l-2 border-t-2 border-[#C9A227]/50" />
+        <div className="absolute top-2 left-2 w-3 sm:w-4 h-3 sm:h-4 border border-[#C9A227]/30" />
+        <div className="absolute top-6 sm:top-10 left-6 sm:left-10 w-2 sm:w-3 h-2 sm:h-3 border border-[#C9A227]/20" />
+      </div>
       
-      {/* Small decorative squares in corners */}
-      <div className="absolute top-12 left-12 w-4 h-4 border border-[#C9A227]/30" />
-      <div className="absolute top-20 left-20 w-3 h-3 border border-[#C9A227]/20" />
-      <div className="absolute top-12 right-12 w-4 h-4 border border-[#C9A227]/30" />
-      <div className="absolute top-20 right-20 w-3 h-3 border border-[#C9A227]/20" />
-      <div className="absolute bottom-12 left-12 w-4 h-4 border border-[#C9A227]/30" />
-      <div className="absolute bottom-20 left-20 w-3 h-3 border border-[#C9A227]/20" />
-      <div className="absolute bottom-12 right-12 w-4 h-4 border border-[#C9A227]/30" />
-      <div className="absolute bottom-20 right-20 w-3 h-3 border border-[#C9A227]/20" />
+      {/* Top Right Corner */}
+      <div className="absolute top-4 sm:top-8 right-4 sm:right-8">
+        <div className="w-16 sm:w-24 h-16 sm:h-24 border-r-2 border-t-2 border-[#C9A227]/50" />
+        <div className="absolute top-2 right-2 w-3 sm:w-4 h-3 sm:h-4 border border-[#C9A227]/30" />
+        <div className="absolute top-6 sm:top-10 right-6 sm:right-10 w-2 sm:w-3 h-2 sm:h-3 border border-[#C9A227]/20" />
+      </div>
+      
+      {/* Bottom Left Corner */}
+      <div className="absolute bottom-4 sm:bottom-8 left-4 sm:left-8">
+        <div className="w-16 sm:w-24 h-16 sm:h-24 border-l-2 border-b-2 border-[#C9A227]/50" />
+        <div className="absolute bottom-2 left-2 w-3 sm:w-4 h-3 sm:h-4 border border-[#C9A227]/30" />
+        <div className="absolute bottom-6 sm:bottom-10 left-6 sm:left-10 w-2 sm:w-3 h-2 sm:h-3 border border-[#C9A227]/20" />
+      </div>
+      
+      {/* Bottom Right Corner */}
+      <div className="absolute bottom-4 sm:bottom-8 right-4 sm:right-8">
+        <div className="w-16 sm:w-24 h-16 sm:h-24 border-r-2 border-b-2 border-[#C9A227]/50" />
+        <div className="absolute bottom-2 right-2 w-3 sm:w-4 h-3 sm:h-4 border border-[#C9A227]/30" />
+        <div className="absolute bottom-6 sm:bottom-10 right-6 sm:right-10 w-2 sm:w-3 h-2 sm:h-3 border border-[#C9A227]/20" />
+      </div>
 
       {/* Main Content */}
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6">
-        {/* CauseWay Logo */}
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 py-8">
+        {/* CauseWay Logo Icon */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="mb-8"
+          className="mb-4 sm:mb-6"
         >
-          {/* Logo Icon */}
-          <div className="flex justify-center mb-4">
-            <svg width="100" height="80" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-              {/* Main C shape */}
-              <path 
-                d="M10 10 L10 70 L60 70 L60 55 L25 55 L25 25 L60 25 L60 10 Z" 
-                fill="#4C583E" 
-                stroke="#4C583E" 
-                strokeWidth="2"
-              />
-              {/* Top right square - Olive */}
-              <rect x="50" y="10" width="20" height="20" fill="#768064" rx="2" />
-              {/* Bottom right square - Gold */}
-              <rect x="75" y="10" width="15" height="15" fill="#C9A227" rx="2" />
-              {/* Small circle */}
-              <circle cx="85" cy="40" r="6" fill="#4C583E" />
-            </svg>
-          </div>
-          
-          {/* CauseWay Text */}
-          <h1 className="text-4xl md:text-5xl font-serif text-white text-center tracking-wide">
-            CauseWay
-          </h1>
-          <p className="text-2xl md:text-3xl text-[#768064] text-center font-arabic mt-1">
-            كوزواي
-          </p>
+          {/* Logo Icon - Exact CauseWay Design */}
+          <svg 
+            className="w-20 h-16 sm:w-28 sm:h-22 md:w-32 md:h-24" 
+            viewBox="0 0 140 100" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            {/* Main C shape - Dark Cypress Green with gradient effect */}
+            <defs>
+              <linearGradient id="cGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#4C583E" />
+                <stop offset="100%" stopColor="#3a4530" />
+              </linearGradient>
+            </defs>
+            <path 
+              d="M10 10 L10 80 L65 80 L65 65 L25 65 L25 25 L65 25 L65 10 Z" 
+              fill="url(#cGradient)"
+            />
+            {/* Top right square - Olive Green */}
+            <rect x="70" y="18" width="28" height="28" fill="#768064" rx="4" />
+            {/* Top right small square - Old Gold */}
+            <rect x="103" y="18" width="22" height="22" fill="#C9A227" rx="4" />
+            {/* Bottom small circle - Cypress */}
+            <circle cx="114" cy="60" r="10" fill="#4C583E" />
+          </svg>
         </motion.div>
 
-        {/* Yemen Economic Observatory Title */}
+        {/* CauseWay Text with Arabic - Horizontal Layout */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-center mb-8"
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mb-4 sm:mb-6"
         >
-          <h2 className="text-xl md:text-2xl text-[#DADED8] tracking-[0.3em] uppercase font-light">
-            Yemen Economic Observatory
-          </h2>
-          <p className="text-lg md:text-xl text-[#959581] font-arabic mt-2">
-            مرصد اليمن الاقتصادي
+          <span className="text-2xl sm:text-3xl md:text-4xl text-[#C9A227] font-arabic">كوزواي</span>
+          <span className="hidden sm:block text-2xl sm:text-3xl md:text-4xl text-[#C9A227]/60">|</span>
+          <span className="text-2xl sm:text-3xl md:text-4xl font-serif text-white tracking-wide">CauseWay</span>
+        </motion.div>
+
+        {/* Yemen Economic Transparency Observatory - Arabic Primary */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="text-center mb-4 sm:mb-6 px-4"
+        >
+          <h1 className="text-lg sm:text-xl md:text-2xl text-[#C9A227] font-arabic mb-2" dir="rtl">
+            المرصد اليمني للشفافية الاقتصادية
+          </h1>
+          <p className="text-sm sm:text-base md:text-lg text-[#959581] tracking-wide">
+            (Yemen Economic Transparency Observatory)
           </p>
         </motion.div>
 
-        {/* Tagline */}
+        {/* Tagline - Arabic */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="text-center mb-12 max-w-2xl"
+          className="text-center mb-8 sm:mb-12 px-4"
         >
-          <p className="text-xl md:text-2xl text-white/90 italic font-serif leading-relaxed">
-            "For a decade, decisions have been made in the dark.
+          <p className="text-xl sm:text-2xl md:text-3xl text-white font-arabic leading-relaxed" dir="rtl">
+            نحو اقتصاد مبني على الحقائق
           </p>
-          <p className="text-xl md:text-2xl text-[#C9A227] italic font-serif mt-2">
-            Something is about to change."
+          <p className="text-sm sm:text-base md:text-lg text-[#959581] mt-2 italic">
+            Towards an economy built on facts
           </p>
         </motion.div>
 
@@ -114,32 +136,37 @@ export default function Splash() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.9 }}
-          className="flex gap-4"
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full max-w-xs sm:max-w-none sm:w-auto"
         >
           <button
-            onClick={() => handleLanguageSelect("en")}
-            className="px-8 py-3 border-2 border-[#C9A227]/60 text-white hover:bg-[#C9A227]/20 transition-all duration-300 rounded-sm text-lg tracking-wide"
+            onClick={() => handleLanguageSelect("ar")}
+            className="px-6 sm:px-8 py-3 bg-[#C9A227] text-[#2C3424] hover:bg-[#d4ad32] transition-all duration-300 rounded-sm text-base sm:text-lg font-arabic font-semibold shadow-lg"
           >
-            English
+            ادخل بالعربية
           </button>
           <button
-            onClick={() => handleLanguageSelect("ar")}
-            className="px-8 py-3 bg-[#C9A227]/10 border-2 border-[#C9A227]/60 text-white hover:bg-[#C9A227]/30 transition-all duration-300 rounded-sm text-lg font-arabic"
+            onClick={() => handleLanguageSelect("en")}
+            className="px-6 sm:px-8 py-3 border-2 border-[#C9A227] text-[#C9A227] hover:bg-[#C9A227]/10 transition-all duration-300 rounded-sm text-base sm:text-lg tracking-wide"
           >
-            العربية
+            Enter in English
           </button>
         </motion.div>
 
         {/* Bottom tagline */}
-        <motion.p
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
-          className="absolute bottom-12 text-[#959581] text-sm md:text-base text-center max-w-xl px-4"
+          transition={{ duration: 0.8, delay: 1.0 }}
+          className="absolute bottom-6 sm:bottom-10 text-center max-w-md sm:max-w-xl px-4"
         >
-          Illuminating Yemen's path to economic recovery through data-driven accountability
-        </motion.p>
+          <p className="text-[#768064] text-xs sm:text-sm">
+            Powered by CauseWay Financial & Banking Consultancies
+          </p>
+          <p className="text-[#768064]/70 text-xs font-arabic mt-1" dir="rtl">
+            بدعم من كوزواي للاستشارات المالية والمصرفية
+          </p>
+        </motion.div>
       </div>
     </div>
   );
