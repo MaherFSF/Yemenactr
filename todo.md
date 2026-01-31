@@ -8690,3 +8690,35 @@ Based on review of master design documents and data source register:
 **4) UI Enhancement:**
 - [ ] Apply consistent CauseWay brand colors across platform
 - [ ] Enhance visual consistency and user experience
+
+
+### Phase 75: UI Fixes and Brand Consistency
+
+**1) Logo Fix:**
+- [ ] Use exact CauseWay logo from mockup (IMG_3866)
+- [ ] Fix mobile responsiveness - text cut off on splash page
+- [ ] Ensure logo displays correctly on all screen sizes
+
+**2) Color Consistency:**
+- [ ] Remove all blue colors (#1e3a5f, etc.)
+- [ ] Replace with CauseWay green palette only:
+  - Moss Green: #2C3424
+  - Cypress: #4C583E
+  - Olive: #768064
+  - Cedar: #959581
+  - Aloe: #DADED8
+  - Old Gold: #C9A227
+- [ ] Update header, footer, CTA sections to use green
+
+**3) Hero Images:**
+- [ ] Find high-quality watermark-free Yemen photos
+- [ ] Update homepage hero with better Aden/Sana'a image
+- [ ] Review all sector hero images
+
+**4) Header/Ticker Fix:**
+- [ ] Clean up ticker font styling
+- [ ] Ensure proper contrast and readability
+
+**5) Mobile Optimization:**
+- [ ] Fix splash page text overflow
+- [ ] Ensure all pages look good on mobile

@@ -345,10 +345,10 @@ export default function ApiDocs() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-[#103050] to-[#1a4a70] text-white py-16">
+      <section className="bg-gradient-to-br from-[#4C583E] to-[#768064] text-white py-16">
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-4 bg-[#C0A030] text-[#103050]">
+            <Badge className="mb-4 bg-[#C0A030] text-[#4C583E]">
               {language === "ar" ? "وثائق API" : "API Documentation"}
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -360,7 +360,7 @@ export default function ApiDocs() {
                 : "Programmatic access to comprehensive Yemen economic data"}
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Button size="lg" className="bg-[#C0A030] hover:bg-[#a08020] text-[#103050]">
+              <Button size="lg" className="bg-[#C0A030] hover:bg-[#a08020] text-[#4C583E]">
                 <Key className="w-5 h-5 mr-2" />
                 {language === "ar" ? "احصل على مفتاح API" : "Get API Key"}
               </Button>
@@ -673,7 +673,7 @@ export default function ApiDocs() {
                     <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg">
                       <code className="text-sm">Authorization: Bearer your_api_key_here</code>
                     </div>
-                    <Button className="w-full bg-[#C0A030] hover:bg-[#a08020] text-[#103050]">
+                    <Button className="w-full bg-[#C0A030] hover:bg-[#a08020] text-[#4C583E]">
                       <Key className="w-4 h-4 mr-2" />
                       {language === "ar" ? "احصل على مفتاح API" : "Get Your API Key"}
                     </Button>
@@ -750,7 +750,7 @@ export default function ApiDocs() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-[#103050] text-white">
+      <section className="py-16 bg-[#4C583E] text-white">
         <div className="container text-center">
           <h2 className="text-3xl font-bold mb-4">
             {language === "ar" ? "هل أنت مستعد للبدء؟" : "Ready to Get Started?"}
@@ -761,7 +761,7 @@ export default function ApiDocs() {
               : "Join hundreds of developers and researchers using the YETO API to access Yemen economic data."}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" className="bg-[#C0A030] hover:bg-[#a08020] text-[#103050]">
+            <Button size="lg" className="bg-[#C0A030] hover:bg-[#a08020] text-[#4C583E]">
               <Key className="w-5 h-5 mr-2" />
               {language === "ar" ? "إنشاء حساب مجاني" : "Create Free Account"}
             </Button>

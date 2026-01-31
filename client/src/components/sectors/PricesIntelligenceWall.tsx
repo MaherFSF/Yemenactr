@@ -375,7 +375,7 @@ function PriceMechanismPanel({ isArabic }: { isArabic: boolean }) {
               <div className={`p-2 rounded-lg ${
                 mech.impact === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' :
                 mech.impact === 'medium' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300' :
-                'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                'bg-[#DADED8] text-[#4C583E] dark:bg-blue-900 dark:text-blue-300'
               }`}>
                 {mech.icon}
               </div>

@@ -89,13 +89,13 @@ interface OneBrainVisualProps {
 }
 
 const COLORS = {
-  primary: "#107040",
-  secondary: "#103050",
+  primary: "#4C583E",
+  secondary: "#4C583E",
   accent: "#C0A030",
-  aden: "#107040",
-  sanaa: "#103050",
+  aden: "#4C583E",
+  sanaa: "#4C583E",
   unified: "#6B7280",
-  chart: ["#107040", "#103050", "#C0A030", "#4A90E2", "#E74C3C", "#9B59B6"],
+  chart: ["#4C583E", "#4C583E", "#C0A030", "#4A90E2", "#E74C3C", "#9B59B6"],
 };
 
 export default function OneBrainVisual({ visualization, className = "" }: OneBrainVisualProps) {
@@ -126,7 +126,7 @@ export default function OneBrainVisual({ visualization, className = "" }: OneBra
   const getConfidenceBadge = (level: string) => {
     const colors: Record<string, string> = {
       A: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-      B: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+      B: "bg-[#DADED8] text-[#2C3424] dark:bg-blue-900/30 dark:text-blue-300",
       C: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
       D: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
     };
@@ -327,13 +327,13 @@ export default function OneBrainVisual({ visualization, className = "" }: OneBra
         {takeaways && takeaways.length > 0 && (
           <div className="space-y-2">
             <h4 className="text-sm font-medium flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-[#107040]" />
+              <TrendingUp className="h-4 w-4 text-[#4C583E]" />
               {language === "ar" ? "النقاط الرئيسية" : "Key Takeaways"}
             </h4>
             <ul className="space-y-1">
               {takeaways.map((takeaway, index) => (
                 <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
-                  <span className="text-[#107040] font-bold">•</span>
+                  <span className="text-[#4C583E] font-bold">•</span>
                   {takeaway}
                 </li>
               ))}

@@ -265,7 +265,7 @@ export default function CoverageScorecard() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#103050] to-[#1a4a70] text-white">
+      <div className="bg-gradient-to-r from-[#4C583E] to-[#768064] text-white">
         <div className="container py-8">
           <div className={language === "ar" ? "text-right" : ""}>
             <h1 className="text-3xl font-bold mb-2">
@@ -286,14 +286,14 @@ export default function CoverageScorecard() {
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-[#107040]/10 rounded-lg">
-                  <Target className="h-6 w-6 text-[#107040]" />
+                <div className="p-3 bg-[#4C583E]/10 rounded-lg">
+                  <Target className="h-6 w-6 text-[#4C583E]" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">
                     {language === "ar" ? "التغطية الإجمالية" : "Overall Coverage"}
                   </p>
-                  <p className="text-2xl font-bold text-[#103050]">{overallCoverage}%</p>
+                  <p className="text-2xl font-bold text-[#4C583E]">{overallCoverage}%</p>
                 </div>
               </div>
             </CardContent>
@@ -309,7 +309,7 @@ export default function CoverageScorecard() {
                   <p className="text-sm text-muted-foreground">
                     {language === "ar" ? "إجمالي المؤشرات" : "Total Indicators"}
                   </p>
-                  <p className="text-2xl font-bold text-[#103050]">{totalIndicators}</p>
+                  <p className="text-2xl font-bold text-[#4C583E]">{totalIndicators}</p>
                 </div>
               </div>
             </CardContent>
@@ -325,7 +325,7 @@ export default function CoverageScorecard() {
                   <p className="text-sm text-muted-foreground">
                     {language === "ar" ? "فجوات البيانات" : "Data Gaps"}
                   </p>
-                  <p className="text-2xl font-bold text-[#103050]">{totalGaps}</p>
+                  <p className="text-2xl font-bold text-[#4C583E]">{totalGaps}</p>
                 </div>
               </div>
             </CardContent>
@@ -341,7 +341,7 @@ export default function CoverageScorecard() {
                   <p className="text-sm text-muted-foreground">
                     {language === "ar" ? "تذاكر مفتوحة" : "Open Tickets"}
                   </p>
-                  <p className="text-2xl font-bold text-[#103050]">{openTickets}</p>
+                  <p className="text-2xl font-bold text-[#4C583E]">{openTickets}</p>
                 </div>
               </div>
             </CardContent>
@@ -417,7 +417,7 @@ export default function CoverageScorecard() {
               </div>
               <Dialog open={isNewGapDialogOpen} onOpenChange={setIsNewGapDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-[#107040] hover:bg-[#0D5A34]">
+                  <Button className="bg-[#4C583E] hover:bg-[#0D5A34]">
                     <Plus className="h-4 w-4 mr-2" />
                     {language === "ar" ? "إضافة فجوة جديدة" : "Add New Gap"}
                   </Button>
@@ -489,7 +489,7 @@ export default function CoverageScorecard() {
                     <Button variant="outline" onClick={() => setIsNewGapDialogOpen(false)}>
                       {language === "ar" ? "إلغاء" : "Cancel"}
                     </Button>
-                    <Button className="bg-[#107040] hover:bg-[#0D5A34]" onClick={handleSubmitGap}>
+                    <Button className="bg-[#4C583E] hover:bg-[#0D5A34]" onClick={handleSubmitGap}>
                       {language === "ar" ? "إرسال" : "Submit"}
                     </Button>
                   </DialogFooter>

@@ -125,7 +125,7 @@ export default function Dashboard() {
   ];
 
   // Simple sparkline component
-  const MiniSparkline = ({ data, color = "#107040" }: { data: number[], color?: string }) => {
+  const MiniSparkline = ({ data, color = "#4C583E" }: { data: number[], color?: string }) => {
     const max = Math.max(...data);
     const min = Math.min(...data);
     const range = max - min || 1;
@@ -155,7 +155,7 @@ export default function Dashboard() {
       <div className="bg-white dark:bg-gray-900 border-b">
         <div className="container py-6">
           <div className={`${language === 'ar' ? 'text-right' : ''}`}>
-            <h1 className="text-2xl md:text-3xl font-bold text-[#103050] dark:text-white mb-2">
+            <h1 className="text-2xl md:text-3xl font-bold text-[#4C583E] dark:text-white mb-2">
               {language === "ar" ? "لوحة المؤشرات الاقتصادية" : "Economic Indicators Dashboard"}
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
@@ -211,7 +211,7 @@ export default function Dashboard() {
                   onClick={() => setRegimeTag("both")}
                   className={`px-4 py-2 text-sm font-medium transition-colors ${
                     regimeTag === "both" 
-                      ? "bg-[#103050] text-white" 
+                      ? "bg-[#4C583E] text-white" 
                       : "bg-white text-gray-700 hover:bg-gray-100"
                   }`}
                 >
@@ -221,7 +221,7 @@ export default function Dashboard() {
                   onClick={() => setRegimeTag("sanaa")}
                   className={`px-4 py-2 text-sm font-medium transition-colors border-x ${
                     regimeTag === "sanaa" 
-                      ? "bg-[#103050] text-white" 
+                      ? "bg-[#4C583E] text-white" 
                       : "bg-white text-gray-700 hover:bg-gray-100"
                   }`}
                 >
@@ -231,7 +231,7 @@ export default function Dashboard() {
                   onClick={() => setRegimeTag("aden")}
                   className={`px-4 py-2 text-sm font-medium transition-colors ${
                     regimeTag === "aden" 
-                      ? "bg-[#103050] text-white" 
+                      ? "bg-[#4C583E] text-white" 
                       : "bg-white text-gray-700 hover:bg-gray-100"
                   }`}
                 >
@@ -250,7 +250,7 @@ export default function Dashboard() {
                   onClick={() => setGranularity("annual")}
                   className={`px-3 py-2 text-sm font-medium transition-colors ${
                     granularity === "annual" 
-                      ? "bg-[#103050] text-white" 
+                      ? "bg-[#4C583E] text-white" 
                       : "bg-white text-gray-700 hover:bg-gray-100"
                   }`}
                 >
@@ -260,7 +260,7 @@ export default function Dashboard() {
                   onClick={() => setGranularity("quarterly")}
                   className={`px-3 py-2 text-sm font-medium transition-colors border-x ${
                     granularity === "quarterly" 
-                      ? "bg-[#103050] text-white" 
+                      ? "bg-[#4C583E] text-white" 
                       : "bg-white text-gray-700 hover:bg-gray-100"
                   }`}
                 >
@@ -270,7 +270,7 @@ export default function Dashboard() {
                   onClick={() => setGranularity("monthly")}
                   className={`px-3 py-2 text-sm font-medium transition-colors ${
                     granularity === "monthly" 
-                      ? "bg-[#103050] text-white" 
+                      ? "bg-[#4C583E] text-white" 
                       : "bg-white text-gray-700 hover:bg-gray-100"
                   }`}
                 >
@@ -322,7 +322,7 @@ export default function Dashboard() {
                       <div className="flex items-center gap-2">
                         {stat.trend === "up" && <TrendingUp className="h-4 w-4 text-red-500" />}
                         {stat.trend === "warning" && <AlertTriangle className="h-4 w-4 text-amber-500" />}
-                        <span className="font-bold text-[#103050] dark:text-white">{stat.value}</span>
+                        <span className="font-bold text-[#4C583E] dark:text-white">{stat.value}</span>
                       </div>
                       <MiniSparkline data={stat.sparkline} color={stat.trend === "warning" ? "#F59E0B" : "#EF4444"} />
                     </div>
@@ -405,7 +405,7 @@ export default function Dashboard() {
                     <span className="text-sm text-gray-600 dark:text-gray-400">
                       {language === "ar" ? item.labelAr : item.labelEn}
                     </span>
-                    <span className="font-medium text-[#103050] dark:text-white">{item.value}</span>
+                    <span className="font-medium text-[#4C583E] dark:text-white">{item.value}</span>
                   </div>
                 ))}
               </CardContent>
@@ -424,7 +424,7 @@ export default function Dashboard() {
                     ? "يتم جمع البيانات ومعالجتها من مصادر رسمية وغير رسمية متعددة في جميع أنحاء اليمن، بما في ذلك المؤسسات الحكومية، المنظمات الدولية، ومراكز الأبحاث المستقلة، مع تطبيق منهجية صارمة للتحقق والتوثيق."
                     : "Data is collected and processed from multiple official and unofficial sources across Yemen, including government institutions, international organizations, and independent research centers, with rigorous verification methodology."}
                 </p>
-                <Button variant="link" className="text-[#107040] p-0 h-auto mt-2">
+                <Button variant="link" className="text-[#4C583E] p-0 h-auto mt-2">
                   {language === "ar" ? "عرض حزمة الأدلة" : "View Evidence Pack"}
                 </Button>
               </CardContent>
@@ -441,15 +441,15 @@ export default function Dashboard() {
                   </CardTitle>
                   <div className="flex items-center gap-4 text-sm">
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-0.5 bg-[#107040]"></div>
+                      <div className="w-3 h-0.5 bg-[#4C583E]"></div>
                       <span className="text-gray-600">{language === "ar" ? "نظام عدن" : "Aden Regime"}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-0.5 bg-[#103050] border-dashed border-t-2 border-[#103050]"></div>
+                      <div className="w-3 h-0.5 bg-[#4C583E] border-dashed border-t-2 border-[#4C583E]"></div>
                       <span className="text-gray-600">{language === "ar" ? "نظام صنعاء" : "Sana'a Regime"}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-[#107040]/20 rounded"></div>
+                      <div className="w-3 h-3 bg-[#4C583E]/20 rounded"></div>
                       <span className="text-gray-600">{language === "ar" ? "مجال الثقة (95%)" : "Confidence Band (95%)"}</span>
                     </div>
                   </div>
@@ -490,7 +490,7 @@ export default function Dashboard() {
                       <Area 
                         type="monotone" 
                         dataKey="aden" 
-                        fill="#107040" 
+                        fill="#4C583E" 
                         fillOpacity={0.1} 
                         stroke="none"
                       />
@@ -500,10 +500,10 @@ export default function Dashboard() {
                         <Line 
                           type="monotone" 
                           dataKey="aden" 
-                          stroke="#107040" 
+                          stroke="#4C583E" 
                           strokeWidth={2}
-                          dot={{ fill: "#107040", strokeWidth: 2, r: 4 }}
-                          activeDot={{ r: 6, fill: "#107040" }}
+                          dot={{ fill: "#4C583E", strokeWidth: 2, r: 4 }}
+                          activeDot={{ r: 6, fill: "#4C583E" }}
                           name={language === "ar" ? "عدن" : "Aden"}
                         />
                       )}
@@ -513,11 +513,11 @@ export default function Dashboard() {
                         <Line 
                           type="monotone" 
                           dataKey="sanaa" 
-                          stroke="#103050" 
+                          stroke="#4C583E" 
                           strokeWidth={2}
                           strokeDasharray="5 5"
-                          dot={{ fill: "#103050", strokeWidth: 2, r: 4 }}
-                          activeDot={{ r: 6, fill: "#103050" }}
+                          dot={{ fill: "#4C583E", strokeWidth: 2, r: 4 }}
+                          activeDot={{ r: 6, fill: "#4C583E" }}
                           name={language === "ar" ? "صنعاء" : "Sana'a"}
                         />
                       )}
@@ -607,7 +607,7 @@ export default function Dashboard() {
                   </Link>
                 ))}
                 <Link href="/sectors">
-                  <Button variant="link" className="text-[#107040] w-full justify-start">
+                  <Button variant="link" className="text-[#4C583E] w-full justify-start">
                     {language === "ar" ? "عرض جميع القطاعات" : "View All Sectors"}
                   </Button>
                 </Link>
@@ -644,7 +644,7 @@ export default function Dashboard() {
             </Card>
 
             {/* Help Card */}
-            <Card className="bg-[#103050] text-white">
+            <Card className="bg-[#4C583E] text-white">
               <CardContent className="pt-6">
                 <Info className="h-8 w-8 mb-3 text-[#C0A030]" />
                 <h3 className="font-semibold mb-2">
@@ -656,7 +656,7 @@ export default function Dashboard() {
                     : "Ask our AI assistant any question about Yemen's economy"}
                 </p>
                 <Link href="/ai-assistant">
-                  <Button size="sm" className="bg-[#107040] hover:bg-[#0D5A34] text-white w-full">
+                  <Button size="sm" className="bg-[#4C583E] hover:bg-[#0D5A34] text-white w-full">
                     {language === "ar" ? "اسأل الآن" : "Ask Now"}
                   </Button>
                 </Link>

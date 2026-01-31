@@ -27,12 +27,12 @@ export function OneBrainAvatar({ size = 64, className = '', animated = true }: O
         {/* Background circle with gradient */}
         <defs>
           <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#103050" />
+            <stop offset="0%" stopColor="#4C583E" />
             <stop offset="50%" stopColor="#1a4a6e" />
-            <stop offset="100%" stopColor="#103050" />
+            <stop offset="100%" stopColor="#4C583E" />
           </linearGradient>
           <linearGradient id="brainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#107040" />
+            <stop offset="0%" stopColor="#4C583E" />
             <stop offset="100%" stopColor="#15a060" />
           </linearGradient>
           <linearGradient id="circuitGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -138,7 +138,7 @@ export function OneBrainAvatar({ size = 64, className = '', animated = true }: O
       {/* Pulsing ring effect */}
       {animated && (
         <div 
-          className="absolute inset-0 rounded-full border-2 border-[#107040] animate-ping opacity-20"
+          className="absolute inset-0 rounded-full border-2 border-[#4C583E] animate-ping opacity-20"
           style={{ animationDuration: '2s' }}
         />
       )}

@@ -67,7 +67,7 @@ const gradeConfig: Record<ConfidenceGrade, {
     }
   },
   B: {
-    color: 'text-blue-700 dark:text-blue-400',
+    color: 'text-[#4C583E] dark:text-blue-400',
     bgColor: 'bg-blue-50 dark:bg-blue-950/50',
     borderColor: 'border-blue-200 dark:border-blue-800',
     icon: CheckCircle,

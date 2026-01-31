@@ -277,7 +277,7 @@ Ask me any question about Yemen's economy and I'll provide a documented answer w
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-[#1a365d] via-[#234876] to-[#2d5a8a] text-white py-10">
+      <div className="bg-gradient-to-r from-[#4C583E] via-[#234876] to-[#2d5a8a] text-white py-10">
         <div className="container">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-sm">

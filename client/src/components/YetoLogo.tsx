@@ -33,7 +33,7 @@ export function YetoLogo({
         className={cn(
           sizeClasses[size],
           'rounded-full border-2 border-[#C0A030]/40 flex items-center justify-center',
-          'bg-gradient-to-br from-[#103050]/60 to-[#1a4a70]/60 backdrop-blur-sm',
+          'bg-gradient-to-br from-[#4C583E]/60 to-[#768064]/60 backdrop-blur-sm',
           animated && 'animate-pulse',
           className
         )}
@@ -91,7 +91,7 @@ export function YetoLogo({
           />
           
           {/* Small decorative elements */}
-          <circle cx="50" cy="65" r="2" fill="#107040" />
+          <circle cx="50" cy="65" r="2" fill="#4C583E" />
           <circle cx="42" cy="65" r="1" fill="#C0A030" opacity="0.5" />
           <circle cx="58" cy="65" r="1" fill="#C0A030" opacity="0.5" />
           
@@ -116,7 +116,7 @@ export function YetoLogo({
         {/* Hexagonal background */}
         <path 
           d="M50 5 L90 27.5 L90 72.5 L50 95 L10 72.5 L10 27.5 Z" 
-          fill="#103050"
+          fill="#4C583E"
           stroke="#C0A030"
           strokeWidth="2"
         />
@@ -144,7 +144,7 @@ export function YetoLogo({
         </text>
         
         {/* Decorative dot */}
-        <circle cx="50" cy="70" r="3" fill="#107040" />
+        <circle cx="50" cy="70" r="3" fill="#4C583E" />
       </svg>
     );
   }
@@ -165,7 +165,7 @@ export function YetoLogo({
         {/* Shield shape */}
         <path 
           d="M25 2 L45 10 L45 30 Q45 45 25 48 Q5 45 5 30 L5 10 Z" 
-          fill="#103050"
+          fill="#4C583E"
           stroke="#C0A030"
           strokeWidth="1.5"
         />
@@ -190,11 +190,11 @@ export function YetoLogo({
         />
         
         {/* Dot */}
-        <circle cx="25" cy="38" r="2" fill="#107040" />
+        <circle cx="25" cy="38" r="2" fill="#4C583E" />
       </svg>
       
       <div className="flex flex-col">
-        <span className={cn('font-bold text-[#103050]', textSizes[size])}>
+        <span className={cn('font-bold text-[#4C583E]', textSizes[size])}>
           YETO
         </span>
         <span className="text-xs text-gray-500 -mt-1">

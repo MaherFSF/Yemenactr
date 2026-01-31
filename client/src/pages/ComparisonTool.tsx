@@ -127,7 +127,7 @@ export default function ComparisonTool() {
       <div className="bg-white border-b">
         <div className="container py-8">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-lg bg-[#103050]/10 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-lg bg-[#4C583E]/10 flex items-center justify-center">
               <BarChart3 className="h-6 w-6" style={{ color: YETO_COLORS.navy }} />
             </div>
             <div>

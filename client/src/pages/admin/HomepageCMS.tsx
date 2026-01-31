@@ -109,7 +109,7 @@ export default function HomepageCMS() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <Home className="w-6 h-6 text-[#107040]" />
+              <Home className="w-6 h-6 text-[#4C583E]" />
               {isArabic ? "إدارة الصفحة الرئيسية" : "Homepage CMS"}
             </h1>
             <p className="text-gray-500 dark:text-gray-400 mt-1">
@@ -126,7 +126,7 @@ export default function HomepageCMS() {
             <Button 
               onClick={handleSave} 
               disabled={isSaving}
-              className="gap-2 bg-[#107040] hover:bg-[#0d5c34]"
+              className="gap-2 bg-[#4C583E] hover:bg-[#0d5c34]"
             >
               {isSaving ? (
                 <RefreshCw className="w-4 h-4 animate-spin" />
@@ -279,7 +279,7 @@ export default function HomepageCMS() {
                       <div className="flex items-center gap-4">
                         <GripVertical className="w-5 h-5 text-gray-400 cursor-grab" />
                         <div className="flex items-center gap-3">
-                          {section.type === "kpis" && <BarChart3 className="w-5 h-5 text-[#107040]" />}
+                          {section.type === "kpis" && <BarChart3 className="w-5 h-5 text-[#4C583E]" />}
                           {section.type === "sectors" && <Layout className="w-5 h-5 text-blue-500" />}
                           {section.type === "sources" && <Users className="w-5 h-5 text-purple-500" />}
                           {section.type === "updates" && <FileText className="w-5 h-5 text-orange-500" />}
@@ -326,7 +326,7 @@ export default function HomepageCMS() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5 text-[#107040]" />
+                    <BarChart3 className="w-5 h-5 text-[#4C583E]" />
                     {isArabic ? "مؤشرات KPI" : "KPI Indicators"}
                   </CardTitle>
                 </CardHeader>

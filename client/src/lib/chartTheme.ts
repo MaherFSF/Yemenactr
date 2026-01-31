@@ -1,77 +1,92 @@
 /**
  * YETO Chart Theme - Standardized colors and styles for all charts
- * Based on YETO brand colors: Navy (#103050), Green (#107040), Gold (#C0A030)
+ * Based on CauseWay brand colors: Moss Green (#2C3424), Cypress (#4C583E), Olive (#768064), Gold (#C9A227)
  */
 
-// Primary brand colors
+// CauseWay Brand Colors
+export const CAUSEWAY_COLORS = {
+  moss: '#2C3424',      // Moss Green - Darkest
+  cypress: '#4C583E',   // Cypress - Primary green
+  olive: '#768064',     // Olive - Medium green
+  cedar: '#959581',     // Cedar - Light green/gray
+  aloe: '#DADED8',      // Aloe - Very light
+  gold: '#C9A227',      // Old Gold - Accent
+  goldLight: '#D4B84A', // Light gold
+  white: '#FFFFFF',
+};
+
+// Primary brand colors (legacy compatibility)
 export const YETO_COLORS = {
-  navy: '#103050',
-  navyLight: '#1a4a6e',
-  navyDark: '#0a2030',
-  green: '#107040',
-  greenLight: '#15a060',
-  greenDark: '#0a5030',
-  gold: '#C0A030',
-  goldLight: '#e0c050',
+  navy: CAUSEWAY_COLORS.cypress,      // Use Cypress instead of navy
+  navyLight: CAUSEWAY_COLORS.olive,   // Use Olive instead
+  navyDark: CAUSEWAY_COLORS.moss,     // Use Moss instead
+  green: CAUSEWAY_COLORS.cypress,
+  greenLight: CAUSEWAY_COLORS.olive,
+  greenDark: CAUSEWAY_COLORS.moss,
+  gold: CAUSEWAY_COLORS.gold,
+  goldLight: CAUSEWAY_COLORS.goldLight,
   goldDark: '#a08020',
   // Semantic colors
-  positive: '#107040',
+  positive: CAUSEWAY_COLORS.cypress,
   negative: '#dc2626',
-  warning: '#C0A030',
-  neutral: '#6b7280',
+  warning: CAUSEWAY_COLORS.gold,
+  neutral: CAUSEWAY_COLORS.cedar,
   // Chart-specific
-  aden: '#107040',      // Green for Aden/IRG
-  sanaa: '#103050',     // Navy for Sana'a
-  mixed: '#C0A030',     // Gold for mixed/comparison
+  aden: CAUSEWAY_COLORS.cypress,      // Green for Aden/IRG
+  sanaa: CAUSEWAY_COLORS.moss,        // Dark green for Sana'a
+  mixed: CAUSEWAY_COLORS.gold,        // Gold for mixed/comparison
 };
 
 // Chart color palettes for different use cases
 export const CHART_PALETTES = {
-  // Primary palette for most charts
+  // Primary palette for most charts - CauseWay colors
   primary: [
-    '#107040', // Green
-    '#103050', // Navy
-    '#C0A030', // Gold
-    '#15a060', // Light Green
-    '#1a4a6e', // Light Navy
-    '#e0c050', // Light Gold
+    CAUSEWAY_COLORS.cypress,  // Cypress
+    CAUSEWAY_COLORS.gold,     // Gold
+    CAUSEWAY_COLORS.olive,    // Olive
+    CAUSEWAY_COLORS.moss,     // Moss
+    CAUSEWAY_COLORS.cedar,    // Cedar
+    CAUSEWAY_COLORS.goldLight,// Light Gold
   ],
   // Sequential palette for heatmaps/gradients
   sequential: [
-    '#e8f5e9', // Lightest green
-    '#a5d6a7',
-    '#66bb6a',
-    '#43a047',
-    '#2e7d32',
-    '#107040', // Darkest green
+    CAUSEWAY_COLORS.aloe,     // Lightest
+    '#c4ccc0',
+    '#9caa90',
+    CAUSEWAY_COLORS.olive,
+    CAUSEWAY_COLORS.cypress,
+    CAUSEWAY_COLORS.moss,     // Darkest
   ],
   // Diverging palette for positive/negative
   diverging: [
     '#dc2626', // Red (negative)
     '#ef4444',
     '#fca5a5',
-    '#d1d5db', // Neutral
-    '#86efac',
-    '#22c55e',
-    '#107040', // Green (positive)
+    CAUSEWAY_COLORS.cedar,    // Neutral
+    CAUSEWAY_COLORS.olive,
+    CAUSEWAY_COLORS.cypress,
+    CAUSEWAY_COLORS.moss,     // Green (positive)
   ],
   // Regime comparison
   regime: {
-    aden: '#107040',
-    sanaa: '#103050',
-    mixed: '#C0A030',
-    comparison: '#C0A030',
+    aden: CAUSEWAY_COLORS.cypress,
+    sanaa: CAUSEWAY_COLORS.moss,
+    mixed: CAUSEWAY_COLORS.gold,
+    comparison: CAUSEWAY_COLORS.gold,
   },
-  // Sector colors
+  // Sector colors - all using CauseWay palette
   sectors: {
-    trade: '#103050',
-    banking: '#107040',
-    poverty: '#C0A030',
-    energy: '#1a4a6e',
-    agriculture: '#15a060',
+    trade: CAUSEWAY_COLORS.moss,
+    banking: CAUSEWAY_COLORS.cypress,
+    poverty: CAUSEWAY_COLORS.gold,
+    energy: CAUSEWAY_COLORS.olive,
+    agriculture: CAUSEWAY_COLORS.cypress,
     conflict: '#dc2626',
-    humanitarian: '#e0c050',
-    infrastructure: '#6b7280',
+    humanitarian: CAUSEWAY_COLORS.gold,
+    infrastructure: CAUSEWAY_COLORS.cedar,
+    macro: CAUSEWAY_COLORS.cypress,
+    prices: CAUSEWAY_COLORS.olive,
+    labor: CAUSEWAY_COLORS.moss,
   },
 };
 
@@ -79,7 +94,7 @@ export const CHART_PALETTES = {
 export const RECHARTS_THEME = {
   // Axis styling
   axis: {
-    stroke: '#9ca3af',
+    stroke: CAUSEWAY_COLORS.cedar,
     fontSize: 12,
     fontFamily: 'Inter, sans-serif',
     tickLine: false,
@@ -139,7 +154,7 @@ export function getRegimeColor(regime: 'aden' | 'sanaa' | 'mixed' | 'comparison'
 // Helper function to get sector color
 export function getSectorColor(sector: string): string {
   const sectorKey = sector.toLowerCase().replace(/[^a-z]/g, '') as keyof typeof CHART_PALETTES.sectors;
-  return CHART_PALETTES.sectors[sectorKey] || YETO_COLORS.navy;
+  return CHART_PALETTES.sectors[sectorKey] || CAUSEWAY_COLORS.cypress;
 }
 
 // Format number for chart display
@@ -173,6 +188,7 @@ export function formatChartNumberAr(value: number, type: 'currency' | 'percent' 
 // Export default theme
 export default {
   colors: YETO_COLORS,
+  causeway: CAUSEWAY_COLORS,
   palettes: CHART_PALETTES,
   recharts: RECHARTS_THEME,
   configs: CHART_CONFIGS,

@@ -115,7 +115,7 @@ const typeIcons = {
 const typeColors = {
   trend: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
   anomaly: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-  prediction: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+  prediction: 'bg-[#DADED8] text-[#4C583E] dark:bg-blue-900/30 dark:text-blue-400',
   recommendation: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
 };
 

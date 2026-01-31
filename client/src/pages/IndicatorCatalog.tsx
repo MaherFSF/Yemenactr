@@ -121,7 +121,7 @@ export default function IndicatorCatalog() {
   return (
     <div className="min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#103050] to-[#107040] text-white py-12">
+      <div className="bg-gradient-to-r from-[#4C583E] to-[#4C583E] text-white py-12">
         <div className="container">
           <div className="flex items-center gap-3 mb-4">
             <Database className="w-8 h-8" />

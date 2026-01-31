@@ -368,7 +368,7 @@ export default function Changelog() {
   return (
     <div className="min-h-screen bg-gray-50" dir={isArabic ? "rtl" : "ltr"}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#103050] to-[#1a4a70] text-white py-12">
+      <div className="bg-gradient-to-r from-[#4C583E] to-[#768064] text-white py-12">
         <div className="container">
           <div className="flex items-center gap-3 mb-4">
             <Rocket className="h-8 w-8" />

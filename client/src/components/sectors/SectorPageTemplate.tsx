@@ -93,7 +93,7 @@ export function SectorPageTemplate({ sectorCode }: SectorPageTemplateProps) {
       <section 
         className="relative h-[350px] overflow-hidden"
         style={{ 
-          background: `linear-gradient(135deg, ${definition.heroColor || '#1E3A5F'}ee, ${definition.heroColor || '#1E3A5F'}99)`
+          background: `linear-gradient(135deg, ${definition.heroColor || '#2C3424'}ee, ${definition.heroColor || '#4C583E'}99)`
         }}
       >
         <div className="absolute inset-0 opacity-10">

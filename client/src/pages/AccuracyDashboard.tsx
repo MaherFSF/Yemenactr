@@ -72,10 +72,10 @@ export default function AccuracyDashboard() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-[#103050] to-[#1a4a70] text-white py-16">
+      <section className="bg-gradient-to-br from-[#4C583E] to-[#768064] text-white py-16">
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-4 bg-[#C0A030] text-[#103050]">
+            <Badge className="mb-4 bg-[#C0A030] text-[#4C583E]">
               {language === "ar" ? "مراقبة الجودة" : "Quality Control"}
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -90,7 +90,7 @@ export default function AccuracyDashboard() {
               onClick={handleRunChecks}
               disabled={isRunning || isLoading}
               size="lg"
-              className="bg-[#C0A030] hover:bg-[#a08020] text-[#103050]"
+              className="bg-[#C0A030] hover:bg-[#a08020] text-[#4C583E]"
             >
               {isRunning || isLoading ? (
                 <>

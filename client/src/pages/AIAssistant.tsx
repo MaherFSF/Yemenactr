@@ -280,7 +280,7 @@ export default function AIAssistant() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section - Matching Mockup Design */}
-      <section className="bg-[#1e3a5f] text-white relative overflow-hidden">
+      <section className="bg-[#4C583E] text-white relative overflow-hidden">
         <div className="container py-6 relative z-10">
           <div className="flex items-center justify-between">
             <div>

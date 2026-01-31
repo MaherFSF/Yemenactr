@@ -307,10 +307,10 @@ export default function DataExchangeHub() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-[#103050] to-[#1a4a70] text-white py-16">
+      <section className="bg-gradient-to-br from-[#4C583E] to-[#768064] text-white py-16">
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-4 bg-[#C0A030] text-[#103050]">
+            <Badge className="mb-4 bg-[#C0A030] text-[#4C583E]">
               {language === "ar" ? "تبادل البيانات" : "Data Exchange"}
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -359,7 +359,7 @@ export default function DataExchangeHub() {
                 <div className={`w-12 h-12 mx-auto mb-3 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center ${stat.color}`}>
                   <stat.icon className="w-6 h-6" />
                 </div>
-                <div className="text-2xl font-bold text-[#103050] dark:text-white">{stat.value}</div>
+                <div className="text-2xl font-bold text-[#4C583E] dark:text-white">{stat.value}</div>
                 <div className="text-sm text-gray-500">{stat.label}</div>
               </div>
             ))}
@@ -408,7 +408,7 @@ export default function DataExchangeHub() {
                       variant={selectedType === filter.value ? "default" : "outline"}
                       size="sm"
                       onClick={() => setSelectedType(filter.value)}
-                      className={selectedType === filter.value ? "bg-[#C0A030] text-[#103050]" : ""}
+                      className={selectedType === filter.value ? "bg-[#C0A030] text-[#4C583E]" : ""}
                     >
                       {filter.label}
                     </Button>
@@ -668,7 +668,7 @@ export default function DataExchangeHub() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-[#103050] text-white">
+      <section className="py-16 bg-[#4C583E] text-white">
         <div className="container text-center">
           <h2 className="text-3xl font-bold mb-4">
             {language === "ar" ? "هل تريد أن تصبح شريكًا في البيانات؟" : "Want to Become a Data Partner?"}
@@ -680,7 +680,7 @@ export default function DataExchangeHub() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/contact">
-              <Button size="lg" className="bg-[#C0A030] hover:bg-[#a08020] text-[#103050]">
+              <Button size="lg" className="bg-[#C0A030] hover:bg-[#a08020] text-[#4C583E]">
                 {language === "ar" ? "تواصل معنا" : "Contact Us"}
               </Button>
             </Link>
