@@ -636,3 +636,103 @@ The existing vipCockpitSignals and notification systems will be extended rather 
 
 *Updated: January 29, 2026 - Prompt 13/∞*
 
+
+
+---
+
+## Prompt 1/4 Additions: Source Universe Supermax (2026-01-31)
+
+### STEP 0 Audit Results
+
+#### Split Truth Issue (CRITICAL)
+
+| Table | Records | Purpose | Status |
+|-------|---------|---------|--------|
+| `sources` | 307 | Legacy sources table | ⚠️ SHOULD DEPRECATE |
+| `source_registry` | 292 | Master registry from Excel | ✅ CANONICAL |
+
+**Resolution:** `source_registry` is the CANONICAL table. All Admin UI and connectors should query `source_registry`. The `sources` table should be aliased or deprecated to prevent split truth.
+
+#### Registry Tables Status
+
+| Table | Records | Wired | Notes |
+|-------|---------|-------|-------|
+| `source_registry` | 292 | ✅ YES | Imported from Excel v2.0 |
+| `registry_sector_map` | EXISTS | ✅ YES | Maps sources to 16 sectors |
+| `registry_lint_results` | EXISTS | ✅ YES | P0/P1 lint results |
+| `source_tier_audit_log` | EXISTS | ✅ YES | Tier change tracking |
+| `source_year_coverage` | EXISTS | ⚠️ PARTIAL | Not fully populated |
+| `source_feed_matrix` | EXISTS | ❌ NO | Empty - needs population |
+| `source_discovery_queue` | EXISTS | ❌ NO | Empty - needs product discovery |
+
+#### Connectors Inventory
+
+**Active Connectors (15+):**
+1. WorldBankConnector.ts - World Bank WDI API
+2. IMFConnector.ts - IMF SDMX API
+3. cbyConnector.ts - Central Bank Yemen
+4. hdxCkanConnector.ts - HDX CKAN API
+5. ochaFtsConnector.ts - OCHA FTS (fixed)
+6. fewsNetConnector.ts - FEWS NET
+7. reliefWebConnector.ts - ReliefWeb API
+8. UNAgenciesConnector.ts - UNHCR, UNICEF, WFP
+9. HumanitarianConnector.ts - Humanitarian data
+10. acledConnector.ts - ACLED conflict data
+11. faoConnector.ts - FAO FAOSTAT
+12. iatiConnector.ts - IATI aid data
+13. iomDtmConnector.ts - IOM displacement
+14. IngestionOrchestrator.ts - Orchestrates all
+15. bankingDocuments.ts - Banking documents
+
+#### Backfill Infrastructure
+
+| Component | File | Status |
+|-----------|------|--------|
+| Backfill Runner | `server/services/backfillRunner.ts` | ✅ WIRED |
+| Backfill Orchestrator | `server/services/backfillOrchestrator.ts` | ✅ WIRED |
+| Backfill Router | `server/routers/backfillRouter.ts` | ✅ WIRED |
+| Backfill Admin UI | `client/src/pages/admin/BackfillDashboardPage.tsx` | ✅ WIRED |
+
+#### Coverage & Evidence
+
+| Component | File | Status |
+|-----------|------|--------|
+| Coverage Map Service | `server/services/coverageMap.ts` | ✅ WIRED |
+| Coverage Governor | `server/services/coverageGovernor.ts` | ✅ WIRED |
+| Evidence Router | `server/routers/evidence.ts` | ✅ WIRED |
+| Evidence Tribunal | `server/services/evidenceTribunal.ts` | ✅ WIRED |
+| Document Ingestion | `server/services/documentIngestionService.ts` | ✅ WIRED |
+
+#### Admin Release Gate
+
+| Component | File | Status |
+|-----------|------|--------|
+| Release Gate UI | `client/src/pages/admin/ReleaseGate.tsx` | ✅ WIRED |
+| QA Dashboard | `client/src/pages/admin/QADashboard.tsx` | ✅ WIRED |
+
+### Present But NOT Wired
+
+| Component | Issue | Action |
+|-----------|-------|--------|
+| `source_feed_matrix` | Empty | Populate from Excel |
+| `source_discovery_queue` | Empty | Implement product discovery |
+| `sources` table | Split truth | Deprecate/alias to `source_registry` |
+| Source Products | No table | Create `source_products` for multi-endpoint |
+| Year-Spine Backfill | Not implemented | Add 2026→2020 descending backfill |
+
+### Blockers for STEP 1
+
+1. **NO `source_products` TABLE** - Need to create for multi-endpoint discovery
+2. **ADMIN UI USES MOCK DATA** - SourceConsole.tsx uses hardcoded data, not `source_registry`
+3. **SPLIT TRUTH** - Both `sources` and `source_registry` exist
+
+### Next Actions
+
+1. Create `source_products` table for multi-endpoint discovery
+2. Update SourceConsole.tsx to query `source_registry` via tRPC
+3. Implement product discovery for 50+ sources
+4. Create year-spine backfill runner (2026→2020)
+
+---
+
+*Updated: 2026-01-31 - Prompt 1/4 STEP 0*

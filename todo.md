@@ -9097,3 +9097,88 @@ Based on review of master design documents and data source register:
 - [x] Research gender development indicators
 - [x] Ingest HDI data into database (507 records)
 - [x] Update UNDP HDI connector status to active (10/12 connectors)
+
+
+### Phase 81: Source Registry & Knowledge Base Lock (RUNTIME-TRUTH, EVIDENCE-FIRST)
+
+**Goal:** Implement the full "Source → Ingest → Evidence → Index → Reflect everywhere" loop
+
+**STEP 1: Import Master Source Registry**
+- [ ] Check for YETO_Sources_Universe_Master_PRODUCTION_READY_v2_0.xlsx
+- [ ] Create source_registry database table with all required fields
+- [ ] Create registry_sector_map table for SOURCE_SECTOR_MATRIX_292
+- [ ] Create ingestion_runs table for tracking
+- [ ] Create raw_objects table for durable snapshots
+- [ ] Create documents table for Knowledge Base items
+- [ ] Create evidence_packs table for EVIDENCE-FIRST contract
+- [ ] Create events table for timeline
+- [ ] Create gap_tickets table for self-running gap loop
+- [ ] Create partnership_access_requests table
+- [ ] Implement registry importer script
+- [ ] Add registry_lint validation
+- [ ] Create Admin UI for source registry management
+
+**STEP 2: Connector Framework**
+- [ ] Implement connector interface with strict outputs
+- [ ] Create APIConnector for JSON/CSV endpoints
+- [ ] Create WebConnector for HTML/RSS
+- [ ] Create PDFVaultConnector for PDF collections
+- [ ] Implement idempotency rules (canonical_url + sha256 dedupe)
+
+**STEP 3: Document Pipeline**
+- [ ] Implement raw_objects storage with hashes
+- [ ] Add PDF text extraction
+- [ ] Add OCR for scanned documents
+- [ ] Implement bilingual handling (language detection, translation)
+- [ ] Create document viewer in Research Library
+
+**STEP 4: Data Feed Pipeline**
+- [ ] Enforce series metadata completeness
+- [ ] Implement regime_tag split (Aden vs Sana'a)
+- [ ] Add vintage/revision tracking
+- [ ] Create evidence packs for KPIs
+
+**STEP 5: Knowledge Graph Linking**
+- [ ] Implement Document ↔ sector auto-linker
+- [ ] Implement Document ↔ indicator auto-linker
+- [ ] Implement Document ↔ event auto-linker
+- [ ] Create admin approval/rejection workflow
+
+**STEP 6: Self-Running Gap Loop**
+- [ ] Auto-create gap tickets for stale data
+- [ ] Auto-create gap tickets for missing data
+- [ ] Auto-create gap tickets for contradictions
+- [ ] Create public Gap Registry page
+
+
+### Phase 82: Source Universe Supermax (Prompt 1/4)
+
+**STEP 0 - Audit First:**
+- [ ] Verify registry tables, connectors SDK, backfill runner
+- [ ] Verify coverage map, document ingestion, evidence packs
+- [ ] Identify "present but not wired" components
+- [ ] Ensure no split truth tables (sources vs source_registry)
+- [ ] Create /docs/INVENTORY_RUNTIME_WIRING.md
+
+**STEP 1 - Source Product Discovery:**
+- [ ] Create source_products table for multi-endpoint discovery
+- [ ] Discover products for 50+ sources (APIs, PDFs, portals, etc.)
+- [ ] Mark needs_key/partnership_required where applicable
+- [ ] Admin UI shows SourceProduct list per source
+
+**STEP 2 - Year-by-Year Backfill (2026→2020):**
+- [ ] Backfill 2026 data (quant + qual)
+- [ ] Backfill 2025 data (quant + qual)
+- [ ] Backfill 2024 data (quant + qual)
+- [ ] Backfill 2023 data (quant + qual)
+- [ ] Backfill 2022 data (quant + qual)
+- [ ] Backfill 2021 data (quant + qual)
+- [ ] Backfill 2020 data (quant + qual)
+- [ ] Update CoverageMap with missing ranges
+- [ ] Create gap tickets for missing products
+
+**STEP 3 - Platform Reflection:**
+- [ ] Research Library: all docs searchable with filters
+- [ ] Sector pages: add "Latest documents" and "Sources used" panels
+- [ ] Timeline: create evidence-backed event entries
+- [ ] Verify evidence drawers work on 3 pages

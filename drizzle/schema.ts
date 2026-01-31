@@ -7688,3 +7688,262 @@ export const dataUpdates = mysqlTable("data_updates", {
 
 export type DataUpdate = typeof dataUpdates.$inferSelect;
 export type InsertDataUpdate = typeof dataUpdates.$inferInsert;
+
+
+// ============================================================================
+// SOURCE REGISTRY EXTENDED FIELDS (from YETO_Sources_Universe_Master_PRODUCTION_READY_v2_0.xlsx)
+// ============================================================================
+
+// Registry Sector Map: Maps sources to 16 sectors with weight (primary/secondary)
+export const registrySectorMap = mysqlTable("registry_sector_map", {
+  id: int("id").autoincrement().primaryKey(),
+  sourceRegistryId: int("sourceRegistryId").notNull().references(() => sourceRegistry.id),
+  sectorCode: varchar("sectorCode", { length: 10 }).notNull(), // S01-S16
+  weight: mysqlEnum("weight", ["primary", "secondary", "tertiary"]).default("secondary").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  sourceIdx: index("rsm_source_idx").on(table.sourceRegistryId),
+  sectorIdx: index("rsm_sector_idx").on(table.sectorCode),
+  uniqueMapping: unique("rsm_unique").on(table.sourceRegistryId, table.sectorCode),
+}));
+
+export type RegistrySectorMap = typeof registrySectorMap.$inferSelect;
+export type InsertRegistrySectorMap = typeof registrySectorMap.$inferInsert;
+
+// Sector Codebook: The 16 official YETO sectors
+export const sectorCodebook = mysqlTable("sector_codebook", {
+  id: int("id").autoincrement().primaryKey(),
+  sectorCode: varchar("sectorCode", { length: 10 }).notNull().unique(), // S01-S16
+  sectorName: varchar("sectorName", { length: 255 }).notNull(),
+  sectorNameAr: varchar("sectorNameAr", { length: 255 }),
+  definition: text("definition"),
+  definitionAr: text("definitionAr"),
+  displayOrder: int("displayOrder").default(0),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SectorCodebook = typeof sectorCodebook.$inferSelect;
+export type InsertSectorCodebook = typeof sectorCodebook.$inferInsert;
+
+// ============================================================================
+// RAW OBJECTS (Durable Snapshots for Evidence)
+// ============================================================================
+
+export const rawObjects = mysqlTable("raw_objects", {
+  id: int("id").autoincrement().primaryKey(),
+  sourceRegistryId: int("sourceRegistryId").references(() => sourceRegistry.id),
+  ingestionRunId: int("ingestionRunId").references(() => ingestionRuns.id),
+  
+  // Content identification
+  contentType: varchar("contentType", { length: 100 }).notNull(), // application/pdf, text/html, etc.
+  canonicalUrl: text("canonicalUrl").notNull(),
+  retrievalTs: timestamp("retrievalTs").notNull(),
+  
+  // Integrity
+  sha256: varchar("sha256", { length: 64 }).notNull(),
+  fileSize: int("fileSize"), // bytes
+  
+  // Storage
+  storageUri: text("storageUri").notNull(), // S3 key or local path
+  
+  // Compliance snapshots
+  licenseSnapshot: text("licenseSnapshot"),
+  robotsSnapshot: text("robotsSnapshot"), // robots.txt at time of retrieval
+  headersSnapshot: json("headersSnapshot").$type<Record<string, string>>(),
+  
+  // Status
+  status: mysqlEnum("status", ["active", "superseded", "deleted"]).default("active").notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  sourceIdx: index("raw_source_idx").on(table.sourceRegistryId),
+  sha256Idx: index("raw_sha256_idx").on(table.sha256),
+  urlIdx: index("raw_url_idx").on(table.canonicalUrl(255)),
+  retrievalIdx: index("raw_retrieval_idx").on(table.retrievalTs),
+}));
+
+export type RawObject = typeof rawObjects.$inferSelect;
+export type InsertRawObject = typeof rawObjects.$inferInsert;
+
+// ============================================================================
+// GAP TICKETS (Self-Running Gap Loop)
+// ============================================================================
+
+export const gapTickets = mysqlTable("gap_tickets", {
+  id: int("id").autoincrement().primaryKey(),
+  gapId: varchar("gapId", { length: 50 }).notNull().unique(), // GAP-XXXX
+  
+  // Classification
+  severity: mysqlEnum("severity", ["critical", "high", "medium", "low"]).default("medium").notNull(),
+  gapType: mysqlEnum("gapType", [
+    "missing_data",
+    "stale",
+    "access_blocked",
+    "schema_drift",
+    "contradiction",
+    "quality_low",
+    "coverage_gap",
+    "ingestion_failed"
+  ]).notNull(),
+  
+  // References
+  sourceRegistryId: int("sourceRegistryId").references(() => sourceRegistry.id),
+  relatedSeriesId: int("relatedSeriesId"),
+  relatedDocumentId: int("relatedDocumentId"),
+  sectorCode: varchar("sectorCode", { length: 10 }),
+  indicatorCode: varchar("indicatorCode", { length: 100 }),
+  
+  // Details
+  titleEn: varchar("titleEn", { length: 500 }).notNull(),
+  titleAr: varchar("titleAr", { length: 500 }),
+  descriptionEn: text("descriptionEn"),
+  descriptionAr: text("descriptionAr"),
+  
+  // Resolution
+  status: mysqlEnum("status", ["open", "in_progress", "resolved", "wont_fix", "duplicate"]).default("open").notNull(),
+  ownerRole: varchar("ownerRole", { length: 100 }),
+  assignedTo: int("assignedTo").references(() => users.id),
+  recommendedAction: text("recommendedAction"),
+  resolutionNotes: text("resolutionNotes"),
+  resolvedAt: timestamp("resolvedAt"),
+  resolvedBy: int("resolvedBy").references(() => users.id),
+  
+  // Escalation
+  escalationNeeded: boolean("escalationNeeded").default(false).notNull(),
+  escalatedAt: timestamp("escalatedAt"),
+  
+  // Public visibility (for Gap Registry page)
+  isPublic: boolean("isPublic").default(true).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  gapIdIdx: index("gap_id_idx").on(table.gapId),
+  severityIdx: index("gap_severity_idx").on(table.severity),
+  typeIdx: index("gap_type_idx").on(table.gapType),
+  statusIdx: index("gap_status_idx").on(table.status),
+  sourceIdx: index("gap_source_idx").on(table.sourceRegistryId),
+  sectorIdx: index("gap_sector_idx").on(table.sectorCode),
+}));
+
+export type GapTicket = typeof gapTickets.$inferSelect;
+export type InsertGapTicket = typeof gapTickets.$inferInsert;
+
+// ============================================================================
+// PARTNERSHIP ACCESS REQUESTS
+// ============================================================================
+
+export const partnershipAccessRequests = mysqlTable("partnership_access_requests", {
+  id: int("id").autoincrement().primaryKey(),
+  requestId: varchar("requestId", { length: 50 }).notNull().unique(), // PAR-XXXX
+  
+  // Source reference
+  sourceRegistryId: int("sourceRegistryId").notNull().references(() => sourceRegistry.id),
+  
+  // Request details
+  requestType: mysqlEnum("requestType", ["api_key", "data_sharing", "partnership", "license_clarification"]).notNull(),
+  contactEmail: varchar("contactEmail", { length: 255 }),
+  contactName: varchar("contactName", { length: 255 }),
+  organizationName: varchar("organizationName", { length: 255 }),
+  
+  // Status
+  status: mysqlEnum("status", ["draft", "queued", "sent", "responded", "approved", "rejected", "expired"]).default("draft").notNull(),
+  
+  // Email tracking
+  emailSubject: varchar("emailSubject", { length: 500 }),
+  emailBody: text("emailBody"),
+  sentAt: timestamp("sentAt"),
+  responseReceivedAt: timestamp("responseReceivedAt"),
+  responseNotes: text("responseNotes"),
+  
+  // Outcome
+  accessGranted: boolean("accessGranted").default(false),
+  accessExpiresAt: timestamp("accessExpiresAt"),
+  apiKeyReceived: boolean("apiKeyReceived").default(false),
+  
+  // Audit
+  createdBy: int("createdBy").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  requestIdIdx: index("par_request_id_idx").on(table.requestId),
+  sourceIdx: index("par_source_idx").on(table.sourceRegistryId),
+  statusIdx: index("par_status_idx").on(table.status),
+}));
+
+export type PartnershipAccessRequest = typeof partnershipAccessRequests.$inferSelect;
+export type InsertPartnershipAccessRequest = typeof partnershipAccessRequests.$inferInsert;
+
+// ============================================================================
+// EMAIL OUTBOX (for partnership requests)
+// ============================================================================
+
+export const emailOutbox = mysqlTable("email_outbox", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Email details
+  toEmail: varchar("toEmail", { length: 255 }).notNull(),
+  ccEmails: json("ccEmails").$type<string[]>(),
+  subject: varchar("subject", { length: 500 }).notNull(),
+  bodyHtml: text("bodyHtml"),
+  bodyText: text("bodyText"),
+  
+  // Reference
+  relatedType: varchar("relatedType", { length: 50 }), // partnership_request, gap_notification, etc.
+  relatedId: int("relatedId"),
+  
+  // Status
+  status: mysqlEnum("status", ["queued", "sending", "sent", "failed", "cancelled"]).default("queued").notNull(),
+  sentAt: timestamp("sentAt"),
+  errorMessage: text("errorMessage"),
+  retryCount: int("retryCount").default(0),
+  
+  // Audit
+  createdBy: int("createdBy").references(() => users.id),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  statusIdx: index("email_status_idx").on(table.status),
+  relatedIdx: index("email_related_idx").on(table.relatedType, table.relatedId),
+}));
+
+export type EmailOutbox = typeof emailOutbox.$inferSelect;
+export type InsertEmailOutbox = typeof emailOutbox.$inferInsert;
+
+// ============================================================================
+// REGISTRY LINT RESULTS (Governance & Enforcement)
+// ============================================================================
+
+export const registryLintResults = mysqlTable("registry_lint_results", {
+  id: int("id").autoincrement().primaryKey(),
+  runId: varchar("runId", { length: 50 }).notNull(), // LINT-XXXX
+  runAt: timestamp("runAt").notNull(),
+  
+  // Results
+  totalSources: int("totalSources").notNull(),
+  passedSources: int("passedSources").notNull(),
+  failedSources: int("failedSources").notNull(),
+  warningCount: int("warningCount").default(0),
+  
+  // Failures detail (JSON array)
+  failures: json("failures").$type<{
+    sourceId: string;
+    field: string;
+    rule: string;
+    message: string;
+    severity: "error" | "warning";
+  }[]>(),
+  
+  // Status
+  overallStatus: mysqlEnum("overallStatus", ["pass", "fail", "warning"]).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  runIdIdx: index("lint_run_id_idx").on(table.runId),
+  runAtIdx: index("lint_run_at_idx").on(table.runAt),
+}));
+
+export type RegistryLintResult = typeof registryLintResults.$inferSelect;
+export type InsertRegistryLintResult = typeof registryLintResults.$inferInsert;
