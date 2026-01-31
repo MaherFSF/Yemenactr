@@ -39,11 +39,13 @@ interface FTSPlan {
 }
 
 interface FTSResponse<T> {
-  data: T[];
+  data: {
+    flows: T[];
+  };
   meta: {
-    total: number;
-    page: number;
-    pageSize: number;
+    language: string;
+    count: number;
+    nextLink?: string;
   };
 }
 
@@ -117,8 +119,25 @@ async function fetchFlows(year?: number): Promise<FTSFlow[]> {
     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
   }
   
-  const json = await response.json() as FTSResponse<FTSFlow>;
-  return json.data || [];
+  const json = await response.json();
+  
+  // Handle the actual API response format: { data: { flows: [...] }, meta: {...} }
+  if (json.data && json.data.flows && Array.isArray(json.data.flows)) {
+    return json.data.flows;
+  }
+  
+  // Fallback for direct array response
+  if (Array.isArray(json.data)) {
+    return json.data;
+  }
+  
+  // If data is an object with flows property
+  if (json.data && typeof json.data === 'object') {
+    return json.data.flows || [];
+  }
+  
+  console.warn('[OCHA-FTS] Unexpected response format:', Object.keys(json));
+  return [];
 }
 
 /**
@@ -150,7 +169,16 @@ async function aggregateFundingFromFlows(year: number): Promise<{
     }
     
     const json = await response.json();
-    const flows = json.data || [];
+    
+    // Handle the actual API response format: { data: { flows: [...] }, meta: {...} }
+    let flows: any[] = [];
+    if (json.data && json.data.flows && Array.isArray(json.data.flows)) {
+      flows = json.data.flows;
+    } else if (Array.isArray(json.data)) {
+      flows = json.data;
+    } else if (json.data && typeof json.data === 'object') {
+      flows = json.data.flows || [];
+    }
     
     let totalFunding = 0;
     const donorAmounts: Record<string, number> = {};

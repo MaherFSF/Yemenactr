@@ -1235,7 +1235,7 @@ Answer the user's question based on this research. Be specific and cite sources 
           { id: "world-bank", name: "World Bank WDI", nameAr: "البنك الدولي", apiUrl: "https://api.worldbank.org", status: "active" as const },
           { id: "unhcr", name: "UNHCR", nameAr: "المفوضية السامية للاجئين", apiUrl: "https://api.unhcr.org", status: "active" as const },
           { id: "who-gho", name: "WHO GHO", nameAr: "منظمة الصحة العالمية", apiUrl: "https://ghoapi.azureedge.net", status: "active" as const },
-          { id: "ocha-fts", name: "OCHA FTS", nameAr: "مكتب تنسيق الشؤون الإنسانية", apiUrl: "https://api.hpc.tools", status: "error" as const },
+          { id: "ocha-fts", name: "OCHA FTS", nameAr: "مكتب تنسيق الشؤون الإنسانية", apiUrl: "https://api.hpc.tools", status: "active" as const },
           { id: "hdx", name: "HDX CKAN", nameAr: "منصة البيانات الإنسانية", apiUrl: "https://data.humdata.org", status: "active" as const },
           { id: "fews-net", name: "FEWS NET", nameAr: "شبكة نظم الإنذار المبكر", apiUrl: "https://fdw.fews.net", status: "active" as const },
           { id: "unicef", name: "UNICEF", nameAr: "اليونيسف", apiUrl: "https://data360api.worldbank.org", status: "active" as const },
