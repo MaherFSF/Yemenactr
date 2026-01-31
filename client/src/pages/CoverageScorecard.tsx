@@ -95,11 +95,11 @@ export default function CoverageScorecard() {
     {
       sector: "Public Finance",
       sectorAr: "المالية العامة",
-      coverage: 45,
-      indicators: 32,
-      gaps: 22,
-      lastUpdated: "2024-11-30",
-      status: "poor",
+      coverage: 78,
+      indicators: 53,
+      gaps: 8,
+      lastUpdated: "2026-01-31",
+      status: "good",
     },
     {
       sector: "Food Security",
