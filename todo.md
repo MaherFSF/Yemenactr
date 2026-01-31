@@ -9182,3 +9182,76 @@ Based on review of master design documents and data source register:
 - [ ] Sector pages: add "Latest documents" and "Sources used" panels
 - [ ] Timeline: create evidence-backed event entries
 - [ ] Verify evidence drawers work on 3 pages
+
+
+### Phase 83: Source Registry Canonicalization (v2.3)
+**A) Canonical Schema Decision:**
+- [ ] Enforce source_registry as ONE canonical table
+- [ ] Deprecate/rename legacy sources table
+- [ ] Add unique(sourceId) constraint
+- [ ] Add indexes: status, tier, accessType, updateFrequency, needsPartnership, connectorType
+
+**B) Importer Upgrade:**
+- [ ] Import SOURCE_ENDPOINTS sheet → source_endpoints table
+- [ ] Import SOURCE_PRODUCTS sheet → source_products table
+- [ ] Implement idempotent upsert (no duplicates on rerun)
+
+**C) Policy Enforcement:**
+- [ ] Implement allowedUse policy enforcement
+- [ ] Add PIPE_REGISTRY_LINT with CI failure rules
+- [ ] Create /admin/source-registry "Registry Diff" view
+
+**D) Crash-Safe Execution:**
+- [ ] Add ingestion_work_queue table
+- [ ] Implement pause/resume/retry with backoff
+
+**Tests:**
+- [ ] Unit tests for enum normalization + idempotent import
+- [ ] Integration test for v2.3 import row counts
+- [ ] E2E test for Admin Source Registry + Registry Diff
+
+
+### Phase 72: Source Registry Canonical Implementation (January 31, 2026)
+
+**1) Data Import:**
+- [x] Import 292 sources from YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx
+- [x] Import 16 sectors from SECTOR_CODEBOOK sheet
+- [x] Create import script (scripts/import-registry-v2.3.ts)
+- [x] Verify data integrity (292 sources, 16 sectors in database)
+
+**2) tRPC Router:**
+- [x] Create sourceRegistry router (server/routers/sourceRegistry.ts)
+- [x] getAll procedure with tier/status/search filters
+- [x] getById procedure for single source lookup
+- [x] getStats procedure for registry statistics
+- [x] getSectors procedure for sector codebook
+- [x] getSourcesBySector procedure
+- [x] getSourcesNeedingAccess procedure
+- [x] updateStatus procedure (admin only)
+- [x] getLintReport procedure
+
+**3) Admin UI:**
+- [x] Create SourceRegistry admin page (client/src/pages/admin/SourceRegistry.tsx)
+- [x] Display all 292 sources with pagination
+- [x] Tier and status filtering
+- [x] Full-text search
+- [x] Source detail dialog with sector mappings
+- [x] Registry statistics cards
+- [x] Tier distribution visualization
+- [x] Add route to App.tsx (/admin/source-registry)
+
+**4) Documentation:**
+- [x] Update REGISTRY_CONTRACT.md with v2.3 information
+- [x] Add tRPC API reference
+- [x] Document Admin UI features
+
+**5) Testing:**
+- [x] Create sourceRegistry.test.ts (11 tests)
+- [x] All tests passing
+
+**Stop Conditions:**
+- [x] 292 sources visible in Admin UI
+- [x] Tier/status filtering working
+- [x] Source detail dialog showing full metadata
+- [x] Tests passing
+

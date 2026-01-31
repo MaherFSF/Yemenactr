@@ -192,5 +192,58 @@ The importer maps Excel columns from `SOURCES_MASTER_EXT` sheet as follows:
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.3 | 2026-01-31 | Full import of 292 sources, added tRPC router, Admin UI page |
 | 2.0 | 2026-01-31 | Production-safe importer with P0/P1 lint enforcement |
 | 1.0 | 2026-01-30 | Initial import from Excel workbook |
+
+## tRPC API Reference
+
+All consuming applications MUST use the `sourceRegistry` tRPC router:
+
+```typescript
+// Get all sources with filtering
+trpc.sourceRegistry.getAll.useQuery({
+  tier?: string,      // T0-T4, UNKNOWN
+  status?: string,    // ACTIVE, NEEDS_KEY, etc.
+  search?: string,    // Full-text search
+  limit?: number,     // Default: 100
+  offset?: number,    // Default: 0
+})
+
+// Get single source
+trpc.sourceRegistry.getById.useQuery({ sourceId: string })
+
+// Get statistics
+trpc.sourceRegistry.getStats.useQuery()
+
+// Get sectors
+trpc.sourceRegistry.getSectors.useQuery()
+
+// Get sources by sector
+trpc.sourceRegistry.getSourcesBySector.useQuery({
+  sectorCode: string,
+  primaryOnly?: boolean,
+})
+
+// Get sources needing access
+trpc.sourceRegistry.getSourcesNeedingAccess.useQuery()
+
+// Update status (admin only)
+trpc.sourceRegistry.updateStatus.useMutation({
+  sourceId: string,
+  status: 'ACTIVE' | 'NEEDS_KEY' | 'PENDING_REVIEW' | 'INACTIVE' | 'DEPRECATED',
+})
+
+// Get lint report
+trpc.sourceRegistry.getLintReport.useQuery()
+```
+
+## Admin UI
+
+The Source Registry Admin page is available at `/admin/source-registry` and provides:
+
+- Full listing of all 292 sources
+- Tier and status filtering
+- Full-text search
+- Source detail view with sector mappings
+- Registry statistics and lint report

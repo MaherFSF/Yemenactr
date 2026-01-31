@@ -1,14 +1,17 @@
 /**
- * YETO Source Registry Admin Page
+ * YETO Source Registry Admin Page - CANONICAL
  * 
- * Manages all 226 data sources with:
- * - Source listing with status/priority/frequency
- * - Connector health monitoring
- * - Manual sync triggers
- * - SLA threshold configuration
+ * Displays all 292 sources from the canonical source_registry table
+ * imported from YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx
+ * 
+ * Features:
+ * - Source listing with tier/status/frequency filters
+ * - Search across names and descriptions
+ * - Source detail view with sector mappings
+ * - Registry statistics and lint report
  */
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,13 +39,12 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Database,
   RefreshCw,
   Search,
-  Settings,
   CheckCircle,
   AlertTriangle,
   XCircle,
@@ -50,267 +52,104 @@ import {
   Globe,
   FileText,
   Activity,
-  Zap,
   Filter,
+  ExternalLink,
+  Key,
+  Building,
+  Calendar,
+  Shield,
+  AlertCircle,
+  Layers,
 } from "lucide-react";
 import { toast } from "sonner";
 
-// Source categories
-const CATEGORIES = [
-  { id: "all", label: "All Sources", labelAr: "جميع المصادر" },
-  { id: "international", label: "International Orgs", labelAr: "المنظمات الدولية" },
-  { id: "government", label: "Government", labelAr: "الحكومة" },
-  { id: "research", label: "Research", labelAr: "البحث" },
-  { id: "humanitarian", label: "Humanitarian", labelAr: "الإنسانية" },
-  { id: "financial", label: "Financial", labelAr: "المالية" },
-];
+// Tier colors
+const TIER_COLORS: Record<string, string> = {
+  T0: "bg-purple-600",
+  T1: "bg-blue-600",
+  T2: "bg-green-600",
+  T3: "bg-yellow-600",
+  T4: "bg-orange-600",
+  UNKNOWN: "bg-gray-500",
+};
 
-// API types
-const API_TYPES = ["REST", "SDMX", "CKAN", "OData", "MANUAL", "SCRAPER"];
-
-// Frequencies
-const FREQUENCIES = ["REALTIME", "DAILY", "WEEKLY", "MONTHLY", "QUARTERLY", "YEARLY"];
-
-// Sample flagship sources (would come from API in production)
-const FLAGSHIP_SOURCES = [
-  {
-    id: "world-bank",
-    name: "World Bank WDI",
-    nameAr: "البنك الدولي",
-    category: "international",
-    apiType: "REST",
-    frequency: "DAILY",
-    priority: 1,
-    status: "active",
-    lastSync: "2025-01-29T10:00:00Z",
-    recordCount: 15420,
-    indicators: ["GDP", "Population", "Poverty", "Trade"],
-    url: "https://api.worldbank.org/v2/",
-  },
-  {
-    id: "imf-data",
-    name: "IMF SDMX",
-    nameAr: "صندوق النقد الدولي",
-    category: "international",
-    apiType: "SDMX",
-    frequency: "WEEKLY",
-    priority: 1,
-    status: "active",
-    lastSync: "2025-01-28T08:00:00Z",
-    recordCount: 8750,
-    indicators: ["Exchange Rates", "Reserves", "Balance of Payments"],
-    url: "https://sdmxcentral.imf.org/",
-  },
-  {
-    id: "unhcr",
-    name: "UNHCR Refugee Data",
-    nameAr: "المفوضية السامية للاجئين",
-    category: "humanitarian",
-    apiType: "REST",
-    frequency: "DAILY",
-    priority: 1,
-    status: "active",
-    lastSync: "2025-01-29T06:00:00Z",
-    recordCount: 4230,
-    indicators: ["Refugees", "IDPs", "Asylum Seekers"],
-    url: "https://api.unhcr.org/",
-  },
-  {
-    id: "who-gho",
-    name: "WHO Global Health",
-    nameAr: "منظمة الصحة العالمية",
-    category: "humanitarian",
-    apiType: "OData",
-    frequency: "WEEKLY",
-    priority: 1,
-    status: "active",
-    lastSync: "2025-01-27T12:00:00Z",
-    recordCount: 6890,
-    indicators: ["Life Expectancy", "Mortality", "Disease Burden"],
-    url: "https://ghoapi.azureedge.net/api/",
-  },
-  {
-    id: "ocha-fts",
-    name: "OCHA Financial Tracking",
-    nameAr: "مكتب تنسيق الشؤون الإنسانية",
-    category: "humanitarian",
-    apiType: "REST",
-    frequency: "DAILY",
-    priority: 1,
-    status: "active",
-    lastSync: "2025-01-29T07:00:00Z",
-    recordCount: 3450,
-    indicators: ["Humanitarian Funding", "Appeals", "Donors"],
-    url: "https://api.hpc.tools/v2/public/fts/",
-  },
-  {
-    id: "wfp-vam",
-    name: "WFP Food Security",
-    nameAr: "برنامج الأغذية العالمي",
-    category: "humanitarian",
-    apiType: "REST",
-    frequency: "DAILY",
-    priority: 1,
-    status: "active",
-    lastSync: "2025-01-29T05:00:00Z",
-    recordCount: 2890,
-    indicators: ["Food Prices", "Food Security", "Nutrition"],
-    url: "https://api.vam.wfp.org/",
-  },
-  {
-    id: "cby-aden",
-    name: "CBY Aden",
-    nameAr: "البنك المركزي اليمني - عدن",
-    category: "government",
-    apiType: "MANUAL",
-    frequency: "DAILY",
-    priority: 1,
-    status: "active",
-    lastSync: "2025-01-29T04:00:00Z",
-    recordCount: 1250,
-    indicators: ["Exchange Rate", "Monetary Policy", "Reserves"],
-    url: "https://cby-ye.com/",
-  },
-  {
-    id: "cby-sanaa",
-    name: "CBY Sana'a",
-    nameAr: "البنك المركزي اليمني - صنعاء",
-    category: "government",
-    apiType: "MANUAL",
-    frequency: "DAILY",
-    priority: 1,
-    status: "warning",
-    lastSync: "2025-01-25T04:00:00Z",
-    recordCount: 980,
-    indicators: ["Exchange Rate", "Monetary Policy"],
-    url: "https://centralbank.gov.ye/",
-  },
-  {
-    id: "hdx-hapi",
-    name: "HDX Humanitarian",
-    nameAr: "منصة البيانات الإنسانية",
-    category: "humanitarian",
-    apiType: "CKAN",
-    frequency: "DAILY",
-    priority: 1,
-    status: "active",
-    lastSync: "2025-01-29T08:00:00Z",
-    recordCount: 5670,
-    indicators: ["Population", "Displacement", "Needs"],
-    url: "https://data.humdata.org/",
-  },
-  {
-    id: "fews-net",
-    name: "FEWS NET",
-    nameAr: "شبكة نظم الإنذار المبكر",
-    category: "humanitarian",
-    apiType: "REST",
-    frequency: "WEEKLY",
-    priority: 1,
-    status: "active",
-    lastSync: "2025-01-27T10:00:00Z",
-    recordCount: 890,
-    indicators: ["IPC Classification", "Food Security Outlook"],
-    url: "https://fdw.fews.net/api/",
-  },
-  {
-    id: "un-comtrade",
-    name: "UN Comtrade",
-    nameAr: "قاعدة بيانات التجارة الدولية",
-    category: "international",
-    apiType: "REST",
-    frequency: "MONTHLY",
-    priority: 2,
-    status: "active",
-    lastSync: "2025-01-15T00:00:00Z",
-    recordCount: 12340,
-    indicators: ["Imports", "Exports", "Trade Partners"],
-    url: "https://comtradeapi.un.org/",
-  },
-  {
-    id: "acled",
-    name: "ACLED Conflict Data",
-    nameAr: "بيانات النزاعات المسلحة",
-    category: "research",
-    apiType: "REST",
-    frequency: "DAILY",
-    priority: 1,
-    status: "active",
-    lastSync: "2025-01-29T03:00:00Z",
-    recordCount: 8920,
-    indicators: ["Conflict Events", "Fatalities", "Actors"],
-    url: "https://api.acleddata.com/",
-  },
-];
+// Status colors
+const STATUS_COLORS: Record<string, string> = {
+  ACTIVE: "bg-green-500",
+  NEEDS_KEY: "bg-yellow-500",
+  PENDING_REVIEW: "bg-blue-500",
+  INACTIVE: "bg-gray-500",
+  DEPRECATED: "bg-red-500",
+};
 
 export default function SourceRegistry() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [tierFilter, setTierFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [selectedSource, setSelectedSource] = useState<typeof FLAGSHIP_SOURCES[0] | null>(null);
+  const [selectedSourceId, setSelectedSourceId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageSize = 50;
 
-  // Filter sources
-  const filteredSources = FLAGSHIP_SOURCES.filter((source) => {
-    const matchesSearch =
-      source.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      source.nameAr.includes(searchQuery) ||
-      source.id.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = categoryFilter === "all" || source.category === categoryFilter;
-    const matchesStatus = statusFilter === "all" || source.status === statusFilter;
-    return matchesSearch && matchesCategory && matchesStatus;
+  // Fetch sources from canonical source_registry table
+  const { data: sourcesData, isLoading: sourcesLoading, refetch: refetchSources } = trpc.sourceRegistry.getAll.useQuery({
+    tier: tierFilter === "all" ? undefined : tierFilter,
+    status: statusFilter === "all" ? undefined : statusFilter,
+    search: searchQuery || undefined,
+    limit: pageSize,
+    offset: currentPage * pageSize,
   });
 
-  // Stats
-  const stats = {
-    total: FLAGSHIP_SOURCES.length,
-    active: FLAGSHIP_SOURCES.filter((s) => s.status === "active").length,
-    warning: FLAGSHIP_SOURCES.filter((s) => s.status === "warning").length,
-    error: FLAGSHIP_SOURCES.filter((s) => s.status === "error").length,
-    totalRecords: FLAGSHIP_SOURCES.reduce((sum, s) => sum + s.recordCount, 0),
+  // Fetch registry statistics
+  const { data: statsData, isLoading: statsLoading } = trpc.sourceRegistry.getStats.useQuery();
+
+  // Fetch lint report
+  const { data: lintData } = trpc.sourceRegistry.getLintReport.useQuery();
+
+  // Fetch selected source details
+  const { data: sourceDetail, isLoading: detailLoading } = trpc.sourceRegistry.getById.useQuery(
+    { sourceId: selectedSourceId || "" },
+    { enabled: !!selectedSourceId }
+  );
+
+  // Fetch sectors
+  const { data: sectorsData } = trpc.sourceRegistry.getSectors.useQuery();
+
+  const sources = sourcesData?.sources || [];
+  const total = sourcesData?.total || 0;
+  const stats = statsData?.stats;
+  const lint = lintData?.report;
+  const sectors = sectorsData?.sectors || [];
+
+  const getTierBadge = (tier: string) => {
+    return (
+      <Badge className={`${TIER_COLORS[tier] || TIER_COLORS.UNKNOWN} text-white`}>
+        {tier}
+      </Badge>
+    );
   };
 
   const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "active":
-        return <Badge className="bg-green-500"><CheckCircle className="w-3 h-3 mr-1" />Active</Badge>;
-      case "warning":
-        return <Badge className="bg-yellow-500"><AlertTriangle className="w-3 h-3 mr-1" />Warning</Badge>;
-      case "error":
-        return <Badge className="bg-red-500"><XCircle className="w-3 h-3 mr-1" />Error</Badge>;
-      default:
-        return <Badge variant="secondary">{status}</Badge>;
-    }
+    const icons: Record<string, ReactNode> = {
+      ACTIVE: <CheckCircle className="w-3 h-3 mr-1" />,
+      NEEDS_KEY: <Key className="w-3 h-3 mr-1" />,
+      PENDING_REVIEW: <Clock className="w-3 h-3 mr-1" />,
+      INACTIVE: <XCircle className="w-3 h-3 mr-1" />,
+      DEPRECATED: <AlertTriangle className="w-3 h-3 mr-1" />,
+    };
+    return (
+      <Badge className={`${STATUS_COLORS[status] || STATUS_COLORS.PENDING_REVIEW} text-white`}>
+        {icons[status]}
+        {status.replace("_", " ")}
+      </Badge>
+    );
   };
 
-  const getPriorityBadge = (priority: number) => {
-    switch (priority) {
-      case 1:
-        return <Badge className="bg-purple-500">P1 Critical</Badge>;
-      case 2:
-        return <Badge className="bg-blue-500">P2 High</Badge>;
-      case 3:
-        return <Badge variant="secondary">P3 Medium</Badge>;
-      default:
-        return <Badge variant="outline">P4 Low</Badge>;
-    }
+  const handleRefresh = () => {
+    refetchSources();
+    toast.success("Refreshing source registry...");
   };
 
-  const handleSync = (sourceId: string) => {
-    toast.success(`Triggering sync for ${sourceId}...`);
-    // In production, this would call trpc.admin.triggerConnectorRefresh
-  };
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const now = new Date();
-    const diffHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
-    if (diffHours < 1) return "Just now";
-    if (diffHours < 24) return `${diffHours}h ago`;
-    const diffDays = Math.floor(diffHours / 24);
-    if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString();
-  };
+  const totalPages = Math.ceil(total / pageSize);
 
   return (
     <div className="container py-8 space-y-6">
@@ -318,87 +157,89 @@ export default function SourceRegistry() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Database className="w-8 h-8" />
+            <Database className="w-8 h-8 text-[#2e8b6e]" />
             Source Registry
           </h1>
           <p className="text-muted-foreground mt-1">
-            Manage all {stats.total} data sources and connectors
+            Canonical registry of {total} data sources from YETO Universe v2.3
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => toast.info("Refreshing all sources...")}>
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh All
-          </Button>
-          <Button>
-            <Settings className="w-4 h-4 mr-2" />
-            Configure SLAs
-          </Button>
-        </div>
+        <Button variant="outline" onClick={handleRefresh}>
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Refresh
+        </Button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Sources</p>
-                <p className="text-2xl font-bold">{stats.total}</p>
-              </div>
-              <Database className="w-8 h-8 text-muted-foreground" />
-            </div>
+          <CardContent className="pt-4">
+            <div className="text-2xl font-bold text-[#2e8b6e]">{stats?.total || 0}</div>
+            <p className="text-sm text-muted-foreground">Total Sources</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Active</p>
-                <p className="text-2xl font-bold text-green-500">{stats.active}</p>
-              </div>
-              <CheckCircle className="w-8 h-8 text-green-500" />
-            </div>
+          <CardContent className="pt-4">
+            <div className="text-2xl font-bold text-green-600">{stats?.active || 0}</div>
+            <p className="text-sm text-muted-foreground">Active</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Warnings</p>
-                <p className="text-2xl font-bold text-yellow-500">{stats.warning}</p>
-              </div>
-              <AlertTriangle className="w-8 h-8 text-yellow-500" />
-            </div>
+          <CardContent className="pt-4">
+            <div className="text-2xl font-bold text-yellow-600">{stats?.needsKey || 0}</div>
+            <p className="text-sm text-muted-foreground">Needs API Key</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Errors</p>
-                <p className="text-2xl font-bold text-red-500">{stats.error}</p>
-              </div>
-              <XCircle className="w-8 h-8 text-red-500" />
-            </div>
+          <CardContent className="pt-4">
+            <div className="text-2xl font-bold text-blue-600">{stats?.pending || 0}</div>
+            <p className="text-sm text-muted-foreground">Pending Review</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Records</p>
-                <p className="text-2xl font-bold">{stats.totalRecords.toLocaleString()}</p>
-              </div>
-              <Activity className="w-8 h-8 text-muted-foreground" />
+          <CardContent className="pt-4">
+            <div className="text-2xl font-bold text-purple-600">{stats?.sectorCount || 0}</div>
+            <p className="text-sm text-muted-foreground">Sectors</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4">
+            <div className={`text-2xl font-bold ${lint?.status === 'PASS' ? 'text-green-600' : 'text-red-600'}`}>
+              {lint?.p0Errors || 0} / {lint?.p1Warnings || 0}
             </div>
+            <p className="text-sm text-muted-foreground">P0 / P1 Issues</p>
           </CardContent>
         </Card>
       </div>
 
+      {/* Tier Distribution */}
+      {stats?.byTier && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Layers className="w-4 h-4" />
+              Source Tier Distribution
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-4">
+              {Object.entries(stats.byTier).map(([tier, count]) => (
+                <div key={tier} className="flex items-center gap-2">
+                  {getTierBadge(tier)}
+                  <span className="text-sm font-medium">{count}</span>
+                  <span className="text-xs text-muted-foreground">
+                    ({stats.tierDescriptions?.[tier]?.split(' ')[0] || tier})
+                  </span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Filters */}
       <Card>
-        <CardContent className="pt-6">
+        <CardContent className="pt-4">
           <div className="flex flex-wrap gap-4">
             <div className="flex-1 min-w-[200px]">
               <div className="relative">
@@ -406,33 +247,39 @@ export default function SourceRegistry() {
                 <Input
                   placeholder="Search sources..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setCurrentPage(0);
+                  }}
                   className="pl-10"
                 />
               </div>
             </div>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-[180px]">
-                <Filter className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Category" />
+            <Select value={tierFilter} onValueChange={(v) => { setTierFilter(v); setCurrentPage(0); }}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="Tier" />
               </SelectTrigger>
               <SelectContent>
-                {CATEGORIES.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id}>
-                    {cat.label}
-                  </SelectItem>
-                ))}
+                <SelectItem value="all">All Tiers</SelectItem>
+                <SelectItem value="T0">T0 - Government</SelectItem>
+                <SelectItem value="T1">T1 - International</SelectItem>
+                <SelectItem value="T2">T2 - Research</SelectItem>
+                <SelectItem value="T3">T3 - Aggregated</SelectItem>
+                <SelectItem value="T4">T4 - Supplementary</SelectItem>
+                <SelectItem value="UNKNOWN">Unknown</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[150px]">
+            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(0); }}>
+              <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="warning">Warning</SelectItem>
-                <SelectItem value="error">Error</SelectItem>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="ACTIVE">Active</SelectItem>
+                <SelectItem value="NEEDS_KEY">Needs API Key</SelectItem>
+                <SelectItem value="PENDING_REVIEW">Pending Review</SelectItem>
+                <SelectItem value="INACTIVE">Inactive</SelectItem>
+                <SelectItem value="DEPRECATED">Deprecated</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -442,134 +289,249 @@ export default function SourceRegistry() {
       {/* Sources Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Data Sources ({filteredSources.length})</CardTitle>
-          <CardDescription>
-            Click on a source to view details and configure settings
-          </CardDescription>
+          <CardTitle className="flex items-center justify-between">
+            <span>Sources ({total})</span>
+            <div className="flex items-center gap-2 text-sm font-normal">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === 0}
+                onClick={() => setCurrentPage(p => p - 1)}
+              >
+                Previous
+              </Button>
+              <span className="text-muted-foreground">
+                Page {currentPage + 1} of {totalPages || 1}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage >= totalPages - 1}
+                onClick={() => setCurrentPage(p => p + 1)}
+              >
+                Next
+              </Button>
+            </div>
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Source</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>API Type</TableHead>
-                <TableHead>Frequency</TableHead>
-                <TableHead>Priority</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Last Sync</TableHead>
-                <TableHead>Records</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredSources.map((source) => (
-                <TableRow
-                  key={source.id}
-                  className="cursor-pointer hover:bg-muted/50"
-                  onClick={() => setSelectedSource(source)}
-                >
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{source.name}</p>
-                      <p className="text-sm text-muted-foreground">{source.nameAr}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="capitalize">
-                      {source.category}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">{source.apiType}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {source.frequency}
-                    </div>
-                  </TableCell>
-                  <TableCell>{getPriorityBadge(source.priority)}</TableCell>
-                  <TableCell>{getStatusBadge(source.status)}</TableCell>
-                  <TableCell>{formatDate(source.lastSync)}</TableCell>
-                  <TableCell>{source.recordCount.toLocaleString()}</TableCell>
-                  <TableCell>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSync(source.id);
-                      }}
-                    >
-                      <RefreshCw className="w-4 h-4" />
-                    </Button>
-                  </TableCell>
+          {sourcesLoading ? (
+            <div className="text-center py-8 text-muted-foreground">Loading sources...</div>
+          ) : sources.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">No sources found</div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Source ID</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Tier</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Frequency</TableHead>
+                  <TableHead>Access</TableHead>
+                  <TableHead>Sector</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {sources.map((source: any) => (
+                  <TableRow
+                    key={source.sourceId}
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => setSelectedSourceId(source.sourceId)}
+                  >
+                    <TableCell className="font-mono text-xs">{source.sourceId}</TableCell>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{source.name}</div>
+                        {source.nameAr && (
+                          <div className="text-xs text-muted-foreground" dir="rtl">{source.nameAr}</div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>{getTierBadge(source.tier)}</TableCell>
+                    <TableCell>{getStatusBadge(source.status)}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{source.updateFrequency || 'N/A'}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">{source.accessType || 'WEB'}</Badge>
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground max-w-[150px] truncate">
+                      {source.sectorCategory || '-'}
+                    </TableCell>
+                    <TableCell>
+                      {source.url && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.open(source.url, '_blank');
+                          }}
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
 
       {/* Source Detail Dialog */}
-      <Dialog open={!!selectedSource} onOpenChange={() => setSelectedSource(null)}>
-        <DialogContent className="max-w-2xl">
-          {selectedSource && (
-            <>
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  <Globe className="w-5 h-5" />
-                  {selectedSource.name}
-                </DialogTitle>
-                <DialogDescription>{selectedSource.nameAr}</DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">API URL</p>
-                    <p className="font-mono text-sm">{selectedSource.url}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">API Type</p>
-                    <Badge variant="secondary">{selectedSource.apiType}</Badge>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Frequency</p>
-                    <p>{selectedSource.frequency}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Status</p>
-                    {getStatusBadge(selectedSource.status)}
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">Indicators</p>
+      <Dialog open={!!selectedSourceId} onOpenChange={() => setSelectedSourceId(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh]">
+          <ScrollArea className="max-h-[80vh]">
+            {detailLoading ? (
+              <div className="text-center py-8">Loading source details...</div>
+            ) : sourceDetail?.source ? (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Globe className="w-5 h-5 text-[#2e8b6e]" />
+                    {sourceDetail.source.name}
+                  </DialogTitle>
+                  <DialogDescription>
+                    {sourceDetail.source.altName && (
+                      <span dir="rtl" className="block">{sourceDetail.source.altName}</span>
+                    )}
+                    <span className="font-mono text-xs">{sourceDetail.source.sourceId}</span>
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-6 mt-4">
+                  {/* Status Row */}
                   <div className="flex flex-wrap gap-2">
-                    {selectedSource.indicators.map((ind) => (
-                      <Badge key={ind} variant="outline">
-                        {ind}
-                      </Badge>
-                    ))}
+                    {getTierBadge(sourceDetail.source.tier)}
+                    {getStatusBadge(sourceDetail.source.status)}
+                    <Badge variant="outline">{sourceDetail.source.updateFrequency || 'N/A'}</Badge>
+                    <Badge variant="secondary">{sourceDetail.source.accessType || 'WEB'}</Badge>
+                    {sourceDetail.source.confidenceRating && (
+                      <Badge className="bg-amber-500">Grade: {sourceDetail.source.confidenceRating}</Badge>
+                    )}
+                  </div>
+
+                  {/* Description */}
+                  {sourceDetail.source.description && (
+                    <div>
+                      <h4 className="text-sm font-medium mb-1">Description</h4>
+                      <p className="text-sm text-muted-foreground">{sourceDetail.source.description}</p>
+                    </div>
+                  )}
+
+                  {/* Details Grid */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="text-sm font-medium mb-1 flex items-center gap-1">
+                        <Building className="w-4 h-4" /> Publisher
+                      </h4>
+                      <p className="text-sm">{sourceDetail.source.publisher || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium mb-1 flex items-center gap-1">
+                        <Globe className="w-4 h-4" /> URL
+                      </h4>
+                      {sourceDetail.source.webUrl ? (
+                        <a 
+                          href={sourceDetail.source.webUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-sm text-blue-600 hover:underline truncate block"
+                        >
+                          {sourceDetail.source.webUrl}
+                        </a>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">N/A</p>
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium mb-1 flex items-center gap-1">
+                        <Calendar className="w-4 h-4" /> Coverage
+                      </h4>
+                      <p className="text-sm">
+                        {sourceDetail.source.historicalStart || '?'} - {sourceDetail.source.historicalEnd || 'Present'}
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium mb-1 flex items-center gap-1">
+                        <Shield className="w-4 h-4" /> License
+                      </h4>
+                      <p className="text-sm">{sourceDetail.source.license || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium mb-1">Geographic Scope</h4>
+                      <p className="text-sm">{sourceDetail.source.geographicScope || 'Yemen'}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium mb-1">Freshness SLA</h4>
+                      <p className="text-sm">
+                        {sourceDetail.source.freshnessSla ? `${sourceDetail.source.freshnessSla} days` : 'N/A'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* API Key / Partnership Info */}
+                  {(sourceDetail.source.apiKeyRequired || sourceDetail.source.needsPartnership) && (
+                    <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                      <h4 className="text-sm font-medium mb-2 flex items-center gap-1 text-yellow-800 dark:text-yellow-200">
+                        <Key className="w-4 h-4" /> Access Requirements
+                      </h4>
+                      {sourceDetail.source.apiKeyRequired && (
+                        <p className="text-sm text-yellow-700 dark:text-yellow-300">• API key required</p>
+                      )}
+                      {sourceDetail.source.needsPartnership && (
+                        <p className="text-sm text-yellow-700 dark:text-yellow-300">• Partnership required</p>
+                      )}
+                      {sourceDetail.source.partnershipContact && (
+                        <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                          Contact: {sourceDetail.source.partnershipContact}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Sectors */}
+                  {sourceDetail.source.sectors && sourceDetail.source.sectors.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Sectors</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {sourceDetail.source.sectors.map((sector: any) => (
+                          <Badge 
+                            key={sector.code} 
+                            variant={sector.isPrimary ? "default" : "outline"}
+                            className={sector.isPrimary ? "bg-[#2e8b6e]" : ""}
+                          >
+                            {sector.code}: {sector.name}
+                            {sector.isPrimary && " (Primary)"}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Connector Info */}
+                  {sourceDetail.source.connectorType && (
+                    <div>
+                      <h4 className="text-sm font-medium mb-1">Connector Type</h4>
+                      <p className="text-sm text-muted-foreground">{sourceDetail.source.connectorType}</p>
+                    </div>
+                  )}
+
+                  {/* Tier Description */}
+                  <div className="p-4 bg-muted rounded-lg">
+                    <h4 className="text-sm font-medium mb-1">Tier Classification</h4>
+                    <p className="text-sm text-muted-foreground">{sourceDetail.source.tierDescription}</p>
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <Button onClick={() => handleSync(selectedSource.id)}>
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    Sync Now
-                  </Button>
-                  <Button variant="outline">
-                    <FileText className="w-4 h-4 mr-2" />
-                    View Logs
-                  </Button>
-                  <Button variant="outline">
-                    <Settings className="w-4 h-4 mr-2" />
-                    Configure
-                  </Button>
-                </div>
-              </div>
-            </>
-          )}
+              </>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">Source not found</div>
+            )}
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     </div>
