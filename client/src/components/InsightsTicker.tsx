@@ -197,7 +197,7 @@ export default function InsightsTicker() {
 
   return (
     <div 
-      className="bg-gradient-to-r from-[#103050] to-[#1a4a70] text-white py-2 sticky top-0 z-50"
+      className="bg-gradient-to-r from-[#768064] to-[#1a4a70] text-white py-2 sticky top-0 z-50"
       dir={isArabic ? "rtl" : "ltr"}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}

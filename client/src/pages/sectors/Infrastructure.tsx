@@ -271,7 +271,7 @@ export default function Infrastructure() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-[#103050] to-[#0B1F33] text-white">
+      <section className="bg-gradient-to-r from-[#768064] to-[#0B1F33] text-white">
         <div className="container py-12">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
@@ -529,7 +529,7 @@ export default function Infrastructure() {
                           <td className="p-3 font-medium">
                             {language === "ar" ? need.sectorAr : need.sectorEn}
                           </td>
-                          <td className="p-3 font-semibold text-[#103050]">
+                          <td className="p-3 font-semibold text-[#768064]">
                             {need.estimateEn}
                           </td>
                           <td className="p-3">

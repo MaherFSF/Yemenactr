@@ -345,10 +345,10 @@ export default function ApiDocs() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-[#103050] to-[#1a4a70] text-white py-16">
+      <section className="bg-gradient-to-br from-[#768064] to-[#1a4a70] text-white py-16">
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-4 bg-[#C0A030] text-[#103050]">
+            <Badge className="mb-4 bg-[#C9A227] text-[#768064]">
               {language === "ar" ? "وثائق API" : "API Documentation"}
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -360,7 +360,7 @@ export default function ApiDocs() {
                 : "Programmatic access to comprehensive Yemen economic data"}
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Button size="lg" className="bg-[#C0A030] hover:bg-[#a08020] text-[#103050]">
+              <Button size="lg" className="bg-[#C9A227] hover:bg-[#a08020] text-[#768064]">
                 <Key className="w-5 h-5 mr-2" />
                 {language === "ar" ? "احصل على مفتاح API" : "Get API Key"}
               </Button>
@@ -401,8 +401,8 @@ export default function ApiDocs() {
             ].map((feature, index) => (
               <Card key={index} className="text-center">
                 <CardContent className="pt-6">
-                  <div className="w-12 h-12 bg-[#C0A030]/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <feature.icon className="w-6 h-6 text-[#C0A030]" />
+                  <div className="w-12 h-12 bg-[#C9A227]/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <feature.icon className="w-6 h-6 text-[#C9A227]" />
                   </div>
                   <h3 className="font-semibold mb-2">{feature.title}</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">{feature.description}</p>
@@ -446,7 +446,7 @@ export default function ApiDocs() {
                             key={endIndex}
                             onClick={() => setSelectedEndpoint(endpoint)}
                             className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2 ${
-                              selectedEndpoint?.path === endpoint.path ? "bg-[#C0A030]/10 border-l-2 border-[#C0A030]" : ""
+                              selectedEndpoint?.path === endpoint.path ? "bg-[#C9A227]/10 border-l-2 border-[#C9A227]" : ""
                             }`}
                           >
                             <Badge
@@ -477,7 +477,7 @@ export default function ApiDocs() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Terminal className="w-5 h-5 text-[#C0A030]" />
+                    <Terminal className="w-5 h-5 text-[#C9A227]" />
                     {language === "ar" ? "البدء السريع" : "Quick Start"}
                   </CardTitle>
                   <CardDescription>
@@ -560,7 +560,7 @@ export default function ApiDocs() {
                           <tbody>
                             {selectedEndpoint.params.map((param, index) => (
                               <tr key={index} className="border-t">
-                                <td className="px-4 py-2 font-mono text-[#C0A030]">{param.name}</td>
+                                <td className="px-4 py-2 font-mono text-[#C9A227]">{param.name}</td>
                                 <td className="px-4 py-2 text-gray-600 dark:text-gray-400">{param.type}</td>
                                 <td className="px-4 py-2">
                                   {param.required ? (
@@ -609,11 +609,11 @@ export default function ApiDocs() {
                     <Card key={catIndex}>
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                          {catIndex === 0 && <BarChart3 className="w-5 h-5 text-[#C0A030]" />}
-                          {catIndex === 1 && <Database className="w-5 h-5 text-[#C0A030]" />}
-                          {catIndex === 2 && <FileText className="w-5 h-5 text-[#C0A030]" />}
-                          {catIndex === 3 && <Clock className="w-5 h-5 text-[#C0A030]" />}
-                          {catIndex === 4 && <Globe className="w-5 h-5 text-[#C0A030]" />}
+                          {catIndex === 0 && <BarChart3 className="w-5 h-5 text-[#C9A227]" />}
+                          {catIndex === 1 && <Database className="w-5 h-5 text-[#C9A227]" />}
+                          {catIndex === 2 && <FileText className="w-5 h-5 text-[#C9A227]" />}
+                          {catIndex === 3 && <Clock className="w-5 h-5 text-[#C9A227]" />}
+                          {catIndex === 4 && <Globe className="w-5 h-5 text-[#C9A227]" />}
                           {language === "ar" ? category.categoryAr : category.category}
                         </CardTitle>
                       </CardHeader>
@@ -623,7 +623,7 @@ export default function ApiDocs() {
                             <button
                               key={endIndex}
                               onClick={() => setSelectedEndpoint(endpoint)}
-                              className="w-full text-left p-4 border rounded-lg hover:border-[#C0A030] hover:bg-[#C0A030]/5 transition-colors"
+                              className="w-full text-left p-4 border rounded-lg hover:border-[#C9A227] hover:bg-[#C9A227]/5 transition-colors"
                             >
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
@@ -660,7 +660,7 @@ export default function ApiDocs() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Shield className="w-5 h-5 text-[#C0A030]" />
+                      <Shield className="w-5 h-5 text-[#C9A227]" />
                       {language === "ar" ? "المصادقة" : "Authentication"}
                     </CardTitle>
                   </CardHeader>
@@ -673,7 +673,7 @@ export default function ApiDocs() {
                     <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg">
                       <code className="text-sm">Authorization: Bearer your_api_key_here</code>
                     </div>
-                    <Button className="w-full bg-[#C0A030] hover:bg-[#a08020] text-[#103050]">
+                    <Button className="w-full bg-[#C9A227] hover:bg-[#a08020] text-[#768064]">
                       <Key className="w-4 h-4 mr-2" />
                       {language === "ar" ? "احصل على مفتاح API" : "Get Your API Key"}
                     </Button>
@@ -683,7 +683,7 @@ export default function ApiDocs() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Zap className="w-5 h-5 text-[#C0A030]" />
+                      <Zap className="w-5 h-5 text-[#C9A227]" />
                       {language === "ar" ? "حدود الاستخدام" : "Rate Limits"}
                     </CardTitle>
                   </CardHeader>
@@ -692,7 +692,7 @@ export default function ApiDocs() {
                       {[
                         { tier: "Free", limit: "100 requests/day", color: "bg-gray-500" },
                         { tier: "Researcher", limit: "10,000 requests/day", color: "bg-blue-500" },
-                        { tier: "Institutional", limit: "100,000 requests/day", color: "bg-[#C0A030]" },
+                        { tier: "Institutional", limit: "100,000 requests/day", color: "bg-[#C9A227]" },
                       ].map((tier, index) => (
                         <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                           <div className="flex items-center gap-2">
@@ -711,7 +711,7 @@ export default function ApiDocs() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Code className="w-5 h-5 text-[#C0A030]" />
+                    <Code className="w-5 h-5 text-[#C9A227]" />
                     {language === "ar" ? "حزم SDK والمكتبات" : "SDKs & Libraries"}
                   </CardTitle>
                   <CardDescription>
@@ -735,7 +735,7 @@ export default function ApiDocs() {
                         <code className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded block">
                           {sdk.package}
                         </code>
-                        <Button variant="link" className="p-0 h-auto mt-2 text-[#C0A030]">
+                        <Button variant="link" className="p-0 h-auto mt-2 text-[#C9A227]">
                           {language === "ar" ? "عرض على GitHub" : "View on GitHub"}
                           <ExternalLink className="w-3 h-3 ml-1" />
                         </Button>
@@ -750,7 +750,7 @@ export default function ApiDocs() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-[#103050] text-white">
+      <section className="py-16 bg-[#768064] text-white">
         <div className="container text-center">
           <h2 className="text-3xl font-bold mb-4">
             {language === "ar" ? "هل أنت مستعد للبدء؟" : "Ready to Get Started?"}
@@ -761,7 +761,7 @@ export default function ApiDocs() {
               : "Join hundreds of developers and researchers using the YETO API to access Yemen economic data."}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" className="bg-[#C0A030] hover:bg-[#a08020] text-[#103050]">
+            <Button size="lg" className="bg-[#C9A227] hover:bg-[#a08020] text-[#768064]">
               <Key className="w-5 h-5 mr-2" />
               {language === "ar" ? "إنشاء حساب مجاني" : "Create Free Account"}
             </Button>

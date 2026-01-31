@@ -173,7 +173,7 @@ export default function EntityDetail() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Header */}
-      <div className="bg-[#103050] text-white py-8">
+      <div className="bg-[#768064] text-white py-8">
         <div className="container">
           <Link href="/entities">
             <Button variant="ghost" className="text-white/70 hover:text-white hover:bg-white/10 mb-4">
@@ -318,9 +318,9 @@ export default function EntityDetail() {
                 </Card>
 
                 {/* Evidence Pack */}
-                <Card className="bg-[#107040]/5 border-[#107040]/20">
+                <Card className="bg-[#4C583E]/5 border-[#4C583E]/20">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-[#107040]">
+                    <CardTitle className="flex items-center gap-2 text-[#4C583E]">
                       <Eye className="h-5 w-5" />
                       {language === "ar" ? "حزمة الأدلة" : "Evidence Pack"}
                     </CardTitle>
@@ -341,7 +341,7 @@ export default function EntityDetail() {
                         <span>{language === "ar" ? "آخر تحديث: ديسمبر 2024" : "Last updated: December 2024"}</span>
                       </div>
                     </div>
-                    <Button variant="outline" className="w-full text-[#107040] border-[#107040]/30 hover:bg-[#107040]/10">
+                    <Button variant="outline" className="w-full text-[#4C583E] border-[#4C583E]/30 hover:bg-[#4C583E]/10">
                       {language === "ar" ? "كيف نعرف هذا؟" : "How do we know this?"}
                     </Button>
                   </CardContent>
@@ -364,7 +364,7 @@ export default function EntityDetail() {
                         {language === "ar" ? indicator.labelAr : indicator.labelEn}
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-2xl font-bold text-[#103050] dark:text-white">
+                        <span className="text-2xl font-bold text-[#768064] dark:text-white">
                           {indicator.value}
                         </span>
                         {indicator.trend === "up" && (
@@ -446,7 +446,7 @@ export default function EntityDetail() {
                   <div className="space-y-6">
                     {entity.timeline.map((event: any, index: number) => (
                       <div key={index} className="relative pl-10">
-                        <div className="absolute left-2 top-1 w-4 h-4 rounded-full bg-[#107040] border-4 border-white dark:border-gray-900"></div>
+                        <div className="absolute left-2 top-1 w-4 h-4 rounded-full bg-[#4C583E] border-4 border-white dark:border-gray-900"></div>
                         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
                           <Badge variant="outline" className="mb-2">{event.year}</Badge>
                           <p className="text-gray-700 dark:text-gray-300">

@@ -97,7 +97,7 @@ export default function FoodSecurity() {
           style={{ backgroundImage: `url(/sectors/food-security.jpg)` }}
         />
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#103050]/90 to-[#1a4a70]/80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#768064]/90 to-[#1a4a70]/80" />
         {/* Pattern Overlay */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0" style={{
@@ -116,7 +116,7 @@ export default function FoodSecurity() {
               <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
                 <Wheat className="h-8 w-8 text-white" />
               </div>
-              <Badge className="bg-[#107040] text-white border-0">
+              <Badge className="bg-[#4C583E] text-white border-0">
                 {language === "ar" ? "القطاع الإنساني" : "Humanitarian Sector"}
               </Badge>
             </div>

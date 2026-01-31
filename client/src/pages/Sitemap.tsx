@@ -265,7 +265,7 @@ export default function Sitemap() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
       {/* Header */}
-      <div className="bg-[#103050] text-white py-12">
+      <div className="bg-[#768064] text-white py-12">
         <div className="container">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">
             {language === "ar" ? "خريطة الموقع" : "Sitemap"}
@@ -300,14 +300,14 @@ export default function Sitemap() {
                       <Link
                         key={link.href}
                         href={link.href}
-                        className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:border-[#107040]/30 hover:bg-[#107040]/5 transition-all group"
+                        className="flex items-center gap-3 p-3 rounded-lg border border-transparent hover:border-[#4C583E]/30 hover:bg-[#4C583E]/5 transition-all group"
                       >
-                        <div className="p-2 rounded-md bg-gray-100 dark:bg-gray-800 group-hover:bg-[#107040]/10 transition-colors">
-                          <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400 group-hover:text-[#107040]" />
+                        <div className="p-2 rounded-md bg-gray-100 dark:bg-gray-800 group-hover:bg-[#4C583E]/10 transition-colors">
+                          <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400 group-hover:text-[#4C583E]" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium truncate group-hover:text-[#107040]">
+                            <span className="text-sm font-medium truncate group-hover:text-[#4C583E]">
                               {language === "ar" ? link.nameAr : link.name}
                             </span>
                             {link.badge && (
@@ -331,31 +331,31 @@ export default function Sitemap() {
         </div>
 
         {/* Quick Stats */}
-        <div className="mt-12 p-6 bg-[#103050] text-white rounded-xl">
+        <div className="mt-12 p-6 bg-[#768064] text-white rounded-xl">
           <h2 className="text-xl font-bold mb-4">
             {language === "ar" ? "إحصائيات الموقع" : "Site Statistics"}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div>
-              <div className="text-3xl font-bold text-[#C0A030]">{totalPages}</div>
+              <div className="text-3xl font-bold text-[#C9A227]">{totalPages}</div>
               <div className="text-sm text-white/70">
                 {language === "ar" ? "إجمالي الصفحات" : "Total Pages"}
               </div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#C0A030]">{sections.length}</div>
+              <div className="text-3xl font-bold text-[#C9A227]">{sections.length}</div>
               <div className="text-sm text-white/70">
                 {language === "ar" ? "الأقسام" : "Sections"}
               </div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#C0A030]">16</div>
+              <div className="text-3xl font-bold text-[#C9A227]">16</div>
               <div className="text-sm text-white/70">
                 {language === "ar" ? "القطاعات الاقتصادية" : "Economic Sectors"}
               </div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#C0A030]">14</div>
+              <div className="text-3xl font-bold text-[#C9A227]">14</div>
               <div className="text-sm text-white/70">
                 {language === "ar" ? "صفحات الإدارة" : "Admin Pages"}
               </div>

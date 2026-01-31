@@ -36,7 +36,7 @@ export function ScrollToTop({ showAfter = 400, className = '' }: ScrollToTopProp
       onClick={scrollToTop}
       className={cn(
         'fixed bottom-6 right-6 z-50 rounded-full w-12 h-12 p-0',
-        'bg-[#107040] hover:bg-[#0D5A34] text-white shadow-lg',
+        'bg-[#4C583E] hover:bg-[#2C3424] text-white shadow-lg',
         'transition-all duration-300 transform',
         isVisible 
           ? 'opacity-100 translate-y-0' 

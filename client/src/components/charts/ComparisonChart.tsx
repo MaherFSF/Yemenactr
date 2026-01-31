@@ -130,8 +130,8 @@ export function ComparisonChart({
               formatter={(value: number) => [`${value.toLocaleString()} ${unit}`, ""]}
             />
             <Legend />
-            <Bar dataKey="adenValue" name="Aden (IRG)" fill="#107040" radius={[0, 4, 4, 0]} />
-            <Bar dataKey="sanaaValue" name="Sana'a (DFA)" fill="#103050" radius={[0, 4, 4, 0]} />
+            <Bar dataKey="adenValue" name="Aden (IRG)" fill="#4C583E" radius={[0, 4, 4, 0]} />
+            <Bar dataKey="sanaaValue" name="Sana'a (DFA)" fill="#768064" radius={[0, 4, 4, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

@@ -36,7 +36,7 @@ export default function RegionalZones() {
       keyIndustriesAr: ["الميناء", "المصفاة", "الخدمات", "التجارة"],
       challenges: ["Currency volatility", "Security", "Infrastructure damage"],
       challengesAr: ["تقلب العملة", "الأمن", "تضرر البنية التحتية"],
-      color: "#107040"
+      color: "#4C583E"
     },
     {
       id: "sanaa",
@@ -68,7 +68,7 @@ export default function RegionalZones() {
       keyIndustriesAr: ["النفط/الغاز", "توليد الكهرباء", "الزراعة"],
       challenges: ["Conflict frontline", "IDP influx", "Infrastructure strain"],
       challengesAr: ["خط المواجهة", "تدفق النازحين", "ضغط البنية التحتية"],
-      color: "#C0A030"
+      color: "#C9A227"
     },
     {
       id: "taiz",
@@ -132,9 +132,9 @@ export default function RegionalZones() {
 
   // Exchange rate comparison
   const exchangeComparison = [
-    { region: language === "ar" ? "عدن" : "Aden", rate: 1620, color: "#107040" },
+    { region: language === "ar" ? "عدن" : "Aden", rate: 1620, color: "#4C583E" },
     { region: language === "ar" ? "صنعاء" : "Sana'a", rate: 535, color: "#1e40af" },
-    { region: language === "ar" ? "مأرب" : "Marib", rate: 1620, color: "#C0A030" },
+    { region: language === "ar" ? "مأرب" : "Marib", rate: 1620, color: "#C9A227" },
     { region: language === "ar" ? "تعز" : "Taiz", rate: 1850, color: "#dc2626" },
     { region: language === "ar" ? "الحديدة" : "Hodeidah", rate: 535, color: "#7c3aed" },
     { region: language === "ar" ? "حضرموت" : "Hadramawt", rate: 1620, color: "#059669" },
@@ -211,7 +211,7 @@ export default function RegionalZones() {
                 <XAxis type="number" domain={[0, 2000]} />
                 <YAxis dataKey="region" type="category" width={100} />
                 <Tooltip />
-                <Bar dataKey="rate" fill="#107040" />
+                <Bar dataKey="rate" fill="#4C583E" />
               </BarChart>
             </ResponsiveContainer>
             <div className="mt-4 p-4 bg-muted/50 rounded-lg">
@@ -323,15 +323,15 @@ export default function RegionalZones() {
                 <Radar 
                   name={language === "ar" ? "حصة الناتج المحلي" : "GDP Share"} 
                   dataKey="gdpShare" 
-                  stroke="#107040" 
-                  fill="#107040" 
+                  stroke="#4C583E" 
+                  fill="#4C583E" 
                   fillOpacity={0.3} 
                 />
                 <Radar 
                   name={language === "ar" ? "الاستقرار" : "Stability"} 
                   dataKey="stability" 
-                  stroke="#C0A030" 
-                  fill="#C0A030" 
+                  stroke="#C9A227" 
+                  fill="#C9A227" 
                   fillOpacity={0.3} 
                 />
                 <Radar 

@@ -40,9 +40,9 @@ export default function PublicFinance() {
 
   // Expenditure breakdown
   const expenditureData = [
-    { name: language === "ar" ? "الرواتب" : "Salaries", value: 45, color: "#103050" },
-    { name: language === "ar" ? "الدفاع والأمن" : "Defense & Security", value: 25, color: "#107040" },
-    { name: language === "ar" ? "الخدمات" : "Services", value: 15, color: "#C0A030" },
+    { name: language === "ar" ? "الرواتب" : "Salaries", value: 45, color: "#768064" },
+    { name: language === "ar" ? "الدفاع والأمن" : "Defense & Security", value: 25, color: "#4C583E" },
+    { name: language === "ar" ? "الخدمات" : "Services", value: 15, color: "#C9A227" },
     { name: language === "ar" ? "البنية التحتية" : "Infrastructure", value: 8, color: "#6B7280" },
     { name: language === "ar" ? "أخرى" : "Other", value: 7, color: "#9CA3AF" },
   ];
@@ -246,9 +246,9 @@ export default function PublicFinance() {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="oil" stackId="a" fill="#103050" name={language === "ar" ? "النفط" : "Oil"} />
-                    <Bar dataKey="customs" stackId="a" fill="#107040" name={language === "ar" ? "الجمارك" : "Customs"} />
-                    <Bar dataKey="taxes" stackId="a" fill="#C0A030" name={language === "ar" ? "الضرائب" : "Taxes"} />
+                    <Bar dataKey="oil" stackId="a" fill="#768064" name={language === "ar" ? "النفط" : "Oil"} />
+                    <Bar dataKey="customs" stackId="a" fill="#4C583E" name={language === "ar" ? "الجمارك" : "Customs"} />
+                    <Bar dataKey="taxes" stackId="a" fill="#C9A227" name={language === "ar" ? "الضرائب" : "Taxes"} />
                     <Bar dataKey="other" stackId="a" fill="#6B7280" name={language === "ar" ? "أخرى" : "Other"} />
                   </BarChart>
                 </ResponsiveContainer>

@@ -191,7 +191,7 @@ export default function ConflictEconomy() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-[#103050] to-[#0B1F33] text-white">
+      <section className="bg-gradient-to-r from-[#768064] to-[#0B1F33] text-white">
         <div className="container py-12">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
@@ -270,7 +270,7 @@ export default function ConflictEconomy() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Landmark className="h-5 w-5 text-[#103050]" />
+                    <Landmark className="h-5 w-5 text-[#768064]" />
                     {language === "ar" ? "السياق السياسي" : "Political Context"}
                   </CardTitle>
                 </CardHeader>
@@ -286,7 +286,7 @@ export default function ConflictEconomy() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Scale className="h-5 w-5 text-[#107040]" />
+                    <Scale className="h-5 w-5 text-[#4C583E]" />
                     {language === "ar" ? "التجزئة الاقتصادية" : "Economic Fragmentation"}
                   </CardTitle>
                 </CardHeader>
@@ -388,7 +388,7 @@ export default function ConflictEconomy() {
               {economicImpacts.map((impact, index) => (
                 <Card key={index}>
                   <CardContent className="pt-6 text-center">
-                    <div className="text-3xl font-bold text-[#103050] mb-2">
+                    <div className="text-3xl font-bold text-[#768064] mb-2">
                       {impact.valueEn}
                     </div>
                     <h4 className="font-medium mb-2">

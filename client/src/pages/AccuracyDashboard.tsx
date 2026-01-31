@@ -72,10 +72,10 @@ export default function AccuracyDashboard() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-[#103050] to-[#1a4a70] text-white py-16">
+      <section className="bg-gradient-to-br from-[#768064] to-[#1a4a70] text-white py-16">
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-4 bg-[#C0A030] text-[#103050]">
+            <Badge className="mb-4 bg-[#C9A227] text-[#768064]">
               {language === "ar" ? "مراقبة الجودة" : "Quality Control"}
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -90,7 +90,7 @@ export default function AccuracyDashboard() {
               onClick={handleRunChecks}
               disabled={isRunning || isLoading}
               size="lg"
-              className="bg-[#C0A030] hover:bg-[#a08020] text-[#103050]"
+              className="bg-[#C9A227] hover:bg-[#a08020] text-[#768064]"
             >
               {isRunning || isLoading ? (
                 <>
@@ -154,7 +154,7 @@ export default function AccuracyDashboard() {
                 <Card className="md:col-span-2">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <BarChart3 className="w-5 h-5 text-[#C0A030]" />
+                      <BarChart3 className="w-5 h-5 text-[#C9A227]" />
                       {language === "ar" ? "النتيجة الإجمالية" : "Overall Score"}
                     </CardTitle>
                   </CardHeader>
@@ -252,7 +252,7 @@ export default function AccuracyDashboard() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2">
-                      <Shield className="w-5 h-5 text-[#C0A030]" />
+                      <Shield className="w-5 h-5 text-[#C9A227]" />
                       {language === "ar" ? "نتائج الفحوصات التفصيلية" : "Detailed Check Results"}
                     </CardTitle>
                     <Button variant="outline" size="sm">
@@ -337,7 +337,7 @@ export default function AccuracyDashboard() {
           <Card className="mt-8">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-[#C0A030]" />
+                <FileText className="w-5 h-5 text-[#C9A227]" />
                 {language === "ar" ? "حول فحوصات الدقة" : "About Accuracy Checks"}
               </CardTitle>
             </CardHeader>
@@ -388,8 +388,8 @@ export default function AccuracyDashboard() {
                   },
                 ].map((item, index) => (
                   <div key={index} className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-[#C0A030]/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <item.icon className="w-5 h-5 text-[#C0A030]" />
+                    <div className="w-10 h-10 bg-[#C9A227]/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <item.icon className="w-5 h-5 text-[#C9A227]" />
                     </div>
                     <div>
                       <h4 className="font-medium">{item.title}</h4>

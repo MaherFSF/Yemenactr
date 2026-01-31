@@ -201,7 +201,7 @@ export default function UserDashboard() {
   return (
     <div className="min-h-screen bg-gray-50" dir={isArabic ? "rtl" : "ltr"}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#103050] to-[#1a4a70] text-white py-8">
+      <div className="bg-gradient-to-r from-[#768064] to-[#1a4a70] text-white py-8">
         <div className="container">
           <div className="flex items-center justify-between">
             <div>

@@ -307,10 +307,10 @@ export default function DataExchangeHub() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-[#103050] to-[#1a4a70] text-white py-16">
+      <section className="bg-gradient-to-br from-[#768064] to-[#1a4a70] text-white py-16">
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-4 bg-[#C0A030] text-[#103050]">
+            <Badge className="mb-4 bg-[#C9A227] text-[#768064]">
               {language === "ar" ? "تبادل البيانات" : "Data Exchange"}
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
@@ -352,14 +352,14 @@ export default function DataExchangeHub() {
                 icon: RefreshCw, 
                 value: "24/7", 
                 label: language === "ar" ? "مزامنة تلقائية" : "Auto Sync",
-                color: "text-[#C0A030]",
+                color: "text-[#C9A227]",
               },
             ].map((stat, index) => (
               <div key={index} className="text-center">
                 <div className={`w-12 h-12 mx-auto mb-3 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center ${stat.color}`}>
                   <stat.icon className="w-6 h-6" />
                 </div>
-                <div className="text-2xl font-bold text-[#103050] dark:text-white">{stat.value}</div>
+                <div className="text-2xl font-bold text-[#768064] dark:text-white">{stat.value}</div>
                 <div className="text-sm text-gray-500">{stat.label}</div>
               </div>
             ))}
@@ -408,7 +408,7 @@ export default function DataExchangeHub() {
                       variant={selectedType === filter.value ? "default" : "outline"}
                       size="sm"
                       onClick={() => setSelectedType(filter.value)}
-                      className={selectedType === filter.value ? "bg-[#C0A030] text-[#103050]" : ""}
+                      className={selectedType === filter.value ? "bg-[#C9A227] text-[#768064]" : ""}
                     >
                       {filter.label}
                     </Button>
@@ -422,7 +422,7 @@ export default function DataExchangeHub() {
                   <Card 
                     key={partner.id} 
                     className={`cursor-pointer transition-all hover:shadow-lg ${
-                      selectedPartner?.id === partner.id ? "ring-2 ring-[#C0A030]" : ""
+                      selectedPartner?.id === partner.id ? "ring-2 ring-[#C9A227]" : ""
                     }`}
                     onClick={() => setSelectedPartner(partner)}
                   >
@@ -501,7 +501,7 @@ export default function DataExchangeHub() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <ArrowRightLeft className="w-5 h-5 text-[#C0A030]" />
+                    <ArrowRightLeft className="w-5 h-5 text-[#C9A227]" />
                     {language === "ar" ? "سجل التبادلات الأخيرة" : "Recent Exchange Log"}
                   </CardTitle>
                 </CardHeader>
@@ -569,7 +569,7 @@ export default function DataExchangeHub() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <LinkIcon className="w-5 h-5 text-[#C0A030]" />
+                      <LinkIcon className="w-5 h-5 text-[#C9A227]" />
                       {language === "ar" ? "بروتوكولات التبادل المدعومة" : "Supported Exchange Protocols"}
                     </CardTitle>
                   </CardHeader>
@@ -594,7 +594,7 @@ export default function DataExchangeHub() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Shield className="w-5 h-5 text-[#C0A030]" />
+                      <Shield className="w-5 h-5 text-[#C9A227]" />
                       {language === "ar" ? "معايير الأمان والجودة" : "Security & Quality Standards"}
                     </CardTitle>
                   </CardHeader>
@@ -622,8 +622,8 @@ export default function DataExchangeHub() {
                       },
                     ].map((item, index) => (
                       <div key={index} className="flex items-start gap-4 p-4 border rounded-lg">
-                        <div className="w-10 h-10 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
-                          <item.icon className="w-5 h-5 text-[#C0A030]" />
+                        <div className="w-10 h-10 bg-[#C9A227]/20 rounded-lg flex items-center justify-center">
+                          <item.icon className="w-5 h-5 text-[#C9A227]" />
                         </div>
                         <div>
                           <div className="font-medium">{item.title}</div>
@@ -639,7 +639,7 @@ export default function DataExchangeHub() {
               <Card className="mt-6">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <FileJson className="w-5 h-5 text-[#C0A030]" />
+                    <FileJson className="w-5 h-5 text-[#C9A227]" />
                     {language === "ar" ? "صيغ التصدير المتاحة" : "Available Export Formats"}
                   </CardTitle>
                 </CardHeader>
@@ -653,8 +653,8 @@ export default function DataExchangeHub() {
                       { name: "GeoJSON", icon: Globe, description: "Geographic JSON" },
                       { name: "API", icon: Zap, description: "RESTful API" },
                     ].map((format, index) => (
-                      <div key={index} className="p-4 border rounded-lg text-center hover:border-[#C0A030] transition-colors">
-                        <format.icon className="w-8 h-8 mx-auto mb-2 text-[#C0A030]" />
+                      <div key={index} className="p-4 border rounded-lg text-center hover:border-[#C9A227] transition-colors">
+                        <format.icon className="w-8 h-8 mx-auto mb-2 text-[#C9A227]" />
                         <div className="font-medium">{format.name}</div>
                         <div className="text-xs text-gray-500">{format.description}</div>
                       </div>
@@ -668,7 +668,7 @@ export default function DataExchangeHub() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-[#103050] text-white">
+      <section className="py-16 bg-[#768064] text-white">
         <div className="container text-center">
           <h2 className="text-3xl font-bold mb-4">
             {language === "ar" ? "هل تريد أن تصبح شريكًا في البيانات؟" : "Want to Become a Data Partner?"}
@@ -680,7 +680,7 @@ export default function DataExchangeHub() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/contact">
-              <Button size="lg" className="bg-[#C0A030] hover:bg-[#a08020] text-[#103050]">
+              <Button size="lg" className="bg-[#C9A227] hover:bg-[#a08020] text-[#768064]">
                 {language === "ar" ? "تواصل معنا" : "Contact Us"}
               </Button>
             </Link>

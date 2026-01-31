@@ -75,9 +75,9 @@ export default function Trade() {
 
   // Export composition - Based on actual Yemen export structure
   const exportCompositionData = [
-    { name: language === "ar" ? "النفط الخام" : "Crude Oil", value: 62, valueUSD: 1302, color: "#103050" },
-    { name: language === "ar" ? "الأسماك والمأكولات البحرية" : "Fish & Seafood", value: 18, valueUSD: 378, color: "#107040" },
-    { name: language === "ar" ? "البن اليمني" : "Yemeni Coffee", value: 8, valueUSD: 168, color: "#C0A030" },
+    { name: language === "ar" ? "النفط الخام" : "Crude Oil", value: 62, valueUSD: 1302, color: "#768064" },
+    { name: language === "ar" ? "الأسماك والمأكولات البحرية" : "Fish & Seafood", value: 18, valueUSD: 378, color: "#4C583E" },
+    { name: language === "ar" ? "البن اليمني" : "Yemeni Coffee", value: 8, valueUSD: 168, color: "#C9A227" },
     { name: language === "ar" ? "العسل" : "Honey", value: 5, valueUSD: 105, color: "#E57373" },
     { name: language === "ar" ? "المعادن" : "Minerals", value: 4, valueUSD: 84, color: "#64B5F6" },
     { name: language === "ar" ? "أخرى" : "Others", value: 3, valueUSD: 63, color: "#9E9E9E" },
@@ -85,9 +85,9 @@ export default function Trade() {
 
   // Import composition - Based on actual Yemen import structure
   const importCompositionData = [
-    { name: language === "ar" ? "المواد الغذائية" : "Food Products", value: 32, valueUSD: 2304, color: "#103050" },
-    { name: language === "ar" ? "الوقود والمشتقات النفطية" : "Fuel & Petroleum", value: 28, valueUSD: 2016, color: "#107040" },
-    { name: language === "ar" ? "الآلات والمعدات" : "Machinery & Equipment", value: 15, valueUSD: 1080, color: "#C0A030" },
+    { name: language === "ar" ? "المواد الغذائية" : "Food Products", value: 32, valueUSD: 2304, color: "#768064" },
+    { name: language === "ar" ? "الوقود والمشتقات النفطية" : "Fuel & Petroleum", value: 28, valueUSD: 2016, color: "#4C583E" },
+    { name: language === "ar" ? "الآلات والمعدات" : "Machinery & Equipment", value: 15, valueUSD: 1080, color: "#C9A227" },
     { name: language === "ar" ? "الأدوية والمستلزمات الطبية" : "Medicine & Medical", value: 10, valueUSD: 720, color: "#E57373" },
     { name: language === "ar" ? "مواد البناء" : "Construction Materials", value: 8, valueUSD: 576, color: "#64B5F6" },
     { name: language === "ar" ? "أخرى" : "Others", value: 7, valueUSD: 504, color: "#9E9E9E" },
@@ -222,7 +222,7 @@ export default function Trade() {
     },
   ];
 
-  const COLORS = ['#103050', '#107040', '#C0A030', '#E57373', '#64B5F6', '#9E9E9E'];
+  const COLORS = ['#768064', '#4C583E', '#C9A227', '#E57373', '#64B5F6', '#9E9E9E'];
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -233,7 +233,7 @@ export default function Trade() {
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(/sectors/trade.jpg)` }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-[#103050]/90 via-[#103050]/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#768064]/90 via-[#768064]/70 to-transparent" />
         </div>
         <div className="container relative h-full flex items-center">
           <div className={`max-w-2xl ${language === 'ar' ? 'mr-auto text-right' : 'ml-0'}`}>
@@ -241,7 +241,7 @@ export default function Trade() {
               <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur flex items-center justify-center">
                 <Ship className="h-8 w-8 text-white" />
               </div>
-              <Badge className="bg-[#107040] text-white border-0">
+              <Badge className="bg-[#4C583E] text-white border-0">
                 {language === "ar" ? "قطاع التجارة" : "Trade Sector"}
               </Badge>
             </div>
@@ -275,7 +275,7 @@ export default function Trade() {
       <div className="container py-8">
         {/* Key Metrics Overview */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card className="border-l-4 border-l-[#107040]">
+          <Card className="border-l-4 border-l-[#4C583E]">
             <CardHeader className="pb-3">
               <CardDescription className="flex items-center justify-between">
                 <span>{language === "ar" ? "إجمالي الصادرات (2025)" : "Total Exports (2025)"}</span>
@@ -283,7 +283,7 @@ export default function Trade() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-[#103050]">$1.1B</div>
+              <div className="text-3xl font-bold text-[#768064]">$1.1B</div>
               <div className="flex items-center gap-1 text-sm text-red-600 mt-2">
                 <TrendingDown className="h-4 w-4" />
                 <span>-47.6%</span>
@@ -312,7 +312,7 @@ export default function Trade() {
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-[#C0A030]">
+          <Card className="border-l-4 border-l-[#C9A227]">
             <CardHeader className="pb-3">
               <CardDescription className="flex items-center justify-between">
                 <span>{language === "ar" ? "إجمالي الواردات (2025)" : "Total Imports (2025)"}</span>
@@ -320,7 +320,7 @@ export default function Trade() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-[#103050]">$16.2B</div>
+              <div className="text-3xl font-bold text-[#768064]">$16.2B</div>
               <div className="flex items-center gap-1 text-sm text-red-600 mt-2">
                 <TrendingUp className="h-4 w-4" />
                 <span>+4.5%</span>
@@ -368,7 +368,7 @@ export default function Trade() {
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-[#103050]">
+          <Card className="border-l-4 border-l-[#768064]">
             <CardHeader className="pb-3">
               <CardDescription className="flex items-center justify-between">
                 <span>{language === "ar" ? "الموانئ النشطة" : "Active Ports"}</span>
@@ -376,7 +376,7 @@ export default function Trade() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-[#103050]">3</div>
+              <div className="text-3xl font-bold text-[#768064]">3</div>
               <div className="flex items-center gap-1 text-sm text-muted-foreground mt-2">
                 <Anchor className="h-4 w-4" />
                 <span>{language === "ar" ? "عدن، الحديدة، المكلا" : "Aden, Hodeidah, Mukalla"}</span>
@@ -422,7 +422,7 @@ export default function Trade() {
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Download className="h-5 w-5 text-[#107040]" />
+              <Download className="h-5 w-5 text-[#4C583E]" />
               {language === "ar" ? "تصدير بيانات التجارة" : "Export Trade Data"}
             </CardTitle>
             <CardDescription>
@@ -513,13 +513,13 @@ export default function Trade() {
                       <Legend />
                       <Bar 
                         dataKey="imports" 
-                        fill="#C0A030" 
+                        fill="#C9A227" 
                         name={language === "ar" ? "الواردات" : "Imports"}
                         radius={[4, 4, 0, 0]}
                       />
                       <Bar 
                         dataKey="exports" 
-                        fill="#107040" 
+                        fill="#4C583E" 
                         name={language === "ar" ? "الصادرات" : "Exports"}
                         radius={[4, 4, 0, 0]}
                       />
@@ -563,8 +563,8 @@ export default function Trade() {
                         type="monotone" 
                         dataKey="imports" 
                         stackId="1"
-                        stroke="#C0A030" 
-                        fill="#C0A030"
+                        stroke="#C9A227" 
+                        fill="#C9A227"
                         fillOpacity={0.6}
                         name={language === "ar" ? "الواردات" : "Imports"}
                       />
@@ -572,8 +572,8 @@ export default function Trade() {
                         type="monotone" 
                         dataKey="exports" 
                         stackId="2"
-                        stroke="#107040" 
-                        fill="#107040"
+                        stroke="#4C583E" 
+                        fill="#4C583E"
                         fillOpacity={0.6}
                         name={language === "ar" ? "الصادرات" : "Exports"}
                       />
@@ -687,7 +687,7 @@ export default function Trade() {
                       <XAxis type="number" />
                       <YAxis dataKey="name" type="category" width={120} />
                       <Tooltip formatter={(value: number) => [`$${value}M`, '']} />
-                      <Bar dataKey="valueUSD" fill="#107040" radius={[0, 4, 4, 0]} />
+                      <Bar dataKey="valueUSD" fill="#4C583E" radius={[0, 4, 4, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -786,7 +786,7 @@ export default function Trade() {
                       <XAxis type="number" />
                       <YAxis dataKey="name" type="category" width={150} />
                       <Tooltip formatter={(value: number) => [`$${value}M`, '']} />
-                      <Bar dataKey="valueUSD" fill="#C0A030" radius={[0, 4, 4, 0]} />
+                      <Bar dataKey="valueUSD" fill="#C9A227" radius={[0, 4, 4, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -899,24 +899,24 @@ export default function Trade() {
                       type="monotone" 
                       dataKey="aden" 
                       stackId="1"
-                      stroke="#107040" 
-                      fill="#107040"
+                      stroke="#4C583E" 
+                      fill="#4C583E"
                       name={language === "ar" ? "عدن" : "Aden"}
                     />
                     <Area 
                       type="monotone" 
                       dataKey="hodeidah" 
                       stackId="1"
-                      stroke="#C0A030" 
-                      fill="#C0A030"
+                      stroke="#C9A227" 
+                      fill="#C9A227"
                       name={language === "ar" ? "الحديدة" : "Hodeidah"}
                     />
                     <Area 
                       type="monotone" 
                       dataKey="mukalla" 
                       stackId="1"
-                      stroke="#103050" 
-                      fill="#103050"
+                      stroke="#768064" 
+                      fill="#768064"
                       name={language === "ar" ? "المكلا" : "Mukalla"}
                     />
                   </AreaChart>
@@ -947,13 +947,13 @@ export default function Trade() {
                       <Legend />
                       <Bar 
                         dataKey="imports" 
-                        fill="#C0A030" 
+                        fill="#C9A227" 
                         name={language === "ar" ? "الواردات" : "Imports"}
                         radius={[4, 4, 0, 0]}
                       />
                       <Bar 
                         dataKey="exports" 
-                        fill="#107040" 
+                        fill="#4C583E" 
                         name={language === "ar" ? "الصادرات" : "Exports"}
                         radius={[4, 4, 0, 0]}
                       />

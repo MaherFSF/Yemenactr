@@ -328,9 +328,9 @@ function LicenseFlag({ label, value }: { label: string; value: boolean }) {
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 85) return '#107040';
+  if (score >= 85) return '#4C583E';
   if (score >= 70) return '#1a6b9c';
-  if (score >= 50) return '#C0A030';
+  if (score >= 50) return '#C9A227';
   return '#c53030';
 }
 

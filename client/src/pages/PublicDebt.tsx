@@ -38,9 +38,9 @@ export default function PublicDebt() {
 
   // External creditors
   const externalCreditors = [
-    { nameEn: "Saudi Arabia", nameAr: "السعودية", amount: 3.2, percentage: 36, color: "#107040" },
+    { nameEn: "Saudi Arabia", nameAr: "السعودية", amount: 3.2, percentage: 36, color: "#4C583E" },
     { nameEn: "World Bank/IDA", nameAr: "البنك الدولي", amount: 2.1, percentage: 24, color: "#1e40af" },
-    { nameEn: "IMF", nameAr: "صندوق النقد الدولي", amount: 0.9, percentage: 10, color: "#C0A030" },
+    { nameEn: "IMF", nameAr: "صندوق النقد الدولي", amount: 0.9, percentage: 10, color: "#C9A227" },
     { nameEn: "Arab Fund", nameAr: "الصندوق العربي", amount: 0.8, percentage: 9, color: "#7c3aed" },
     { nameEn: "Kuwait Fund", nameAr: "الصندوق الكويتي", amount: 0.6, percentage: 7, color: "#059669" },
     { nameEn: "Other Bilateral", nameAr: "ثنائية أخرى", amount: 1.3, percentage: 14, color: "#6b7280" },
@@ -49,7 +49,7 @@ export default function PublicDebt() {
   // Domestic debt holders
   const domesticDebtHolders = [
     { nameEn: "Central Bank (Monetary Financing)", nameAr: "البنك المركزي (تمويل نقدي)", percentage: 65, color: "#dc2626" },
-    { nameEn: "Commercial Banks", nameAr: "البنوك التجارية", percentage: 20, color: "#107040" },
+    { nameEn: "Commercial Banks", nameAr: "البنوك التجارية", percentage: 20, color: "#4C583E" },
     { nameEn: "Pension Funds", nameAr: "صناديق التقاعد", percentage: 10, color: "#1e40af" },
     { nameEn: "Other", nameAr: "أخرى", percentage: 5, color: "#6b7280" },
   ];
@@ -227,7 +227,7 @@ export default function PublicDebt() {
                       yAxisId="left"
                       type="monotone" 
                       dataKey="domestic" 
-                      stroke="#107040" 
+                      stroke="#4C583E" 
                       strokeWidth={2}
                       name={language === "ar" ? "الدين المحلي ($B)" : "Domestic Debt ($B)"}
                     />
@@ -235,7 +235,7 @@ export default function PublicDebt() {
                       yAxisId="right"
                       type="monotone" 
                       dataKey="gdp_pct" 
-                      stroke="#C0A030" 
+                      stroke="#C9A227" 
                       strokeWidth={2}
                       strokeDasharray="5 5"
                       name={language === "ar" ? "% من الناتج المحلي" : "% of GDP"}

@@ -173,7 +173,7 @@ export default function Corrections() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Header */}
-      <div className="bg-[#103050] text-white py-12">
+      <div className="bg-[#768064] text-white py-12">
         <div className="container">
           <div className={`${language === 'ar' ? 'text-right' : ''}`}>
             <Badge className="mb-4 bg-white/20 text-white border-white/30">
@@ -191,7 +191,7 @@ export default function Corrections() {
             {/* Report Issue Button */}
             <Dialog open={reportDialogOpen} onOpenChange={setReportDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-[#C0A030] hover:bg-[#A08020] text-white">
+                <Button className="bg-[#C9A227] hover:bg-[#A08020] text-white">
                   <Flag className="h-4 w-4 mr-2" />
                   {language === "ar" ? "الإبلاغ عن مشكلة" : "Report an Issue"}
                 </Button>
@@ -266,7 +266,7 @@ export default function Corrections() {
                   <Button variant="outline" onClick={() => setReportDialogOpen(false)}>
                     {language === "ar" ? "إلغاء" : "Cancel"}
                   </Button>
-                  <Button onClick={handleSubmitReport} className="bg-[#107040] hover:bg-[#0D5A34]">
+                  <Button onClick={handleSubmitReport} className="bg-[#4C583E] hover:bg-[#2C3424]">
                     {language === "ar" ? "إرسال التقرير" : "Submit Report"}
                   </Button>
                 </DialogFooter>
@@ -323,7 +323,7 @@ export default function Corrections() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="text-3xl font-bold text-[#103050] dark:text-white">{corrections.length}</div>
+              <div className="text-3xl font-bold text-[#768064] dark:text-white">{corrections.length}</div>
               <div className="text-sm text-gray-500">
                 {language === "ar" ? "إجمالي التصحيحات" : "Total Corrections"}
               </div>
@@ -389,7 +389,7 @@ export default function Corrections() {
                     </div>
                   </div>
 
-                  <h3 className="font-semibold text-lg text-[#103050] dark:text-white mb-2">
+                  <h3 className="font-semibold text-lg text-[#768064] dark:text-white mb-2">
                     {language === "ar" ? correction.indicatorAr : correction.indicator}
                   </h3>
 
@@ -459,12 +459,12 @@ export default function Corrections() {
       {/* Commitment Section */}
       <div className="bg-white dark:bg-gray-900 border-t py-12">
         <div className="container">
-          <Card className="bg-[#103050]/5 border-[#103050]/20">
+          <Card className="bg-[#768064]/5 border-[#768064]/20">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
-                <AlertCircle className="h-6 w-6 text-[#103050] mt-1" />
+                <AlertCircle className="h-6 w-6 text-[#768064] mt-1" />
                 <div>
-                  <h3 className="font-semibold text-[#103050] dark:text-white mb-2">
+                  <h3 className="font-semibold text-[#768064] dark:text-white mb-2">
                     {language === "ar" ? "التزامنا بالدقة" : "Our Commitment to Accuracy"}
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
@@ -473,10 +473,10 @@ export default function Corrections() {
                       : "We take data quality seriously. When we discover or receive a report of an error, we investigate promptly, correct it, and document the change here. We aim to resolve all corrections within 48 hours."}
                   </p>
                   <div className="flex flex-wrap gap-4">
-                    <Button variant="outline" className="text-[#107040] border-[#107040]/30 hover:bg-[#107040]/10">
+                    <Button variant="outline" className="text-[#4C583E] border-[#4C583E]/30 hover:bg-[#4C583E]/10">
                       {language === "ar" ? "عرض المنهجية" : "View Methodology"}
                     </Button>
-                    <Button variant="outline" className="text-[#107040] border-[#107040]/30 hover:bg-[#107040]/10">
+                    <Button variant="outline" className="text-[#4C583E] border-[#4C583E]/30 hover:bg-[#4C583E]/10">
                       {language === "ar" ? "سياسة جودة البيانات" : "Data Quality Policy"}
                     </Button>
                   </div>

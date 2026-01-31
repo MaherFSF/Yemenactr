@@ -35,7 +35,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-[#0D2818] text-white mt-auto">
+    <footer className="bg-[#2C3424] text-white mt-auto">
       {/* Main Footer */}
       <div className="container py-12">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -103,7 +103,7 @@ export default function Footer() {
                 </li>
               ))}
               <li>
-                <Link href="/data-repository" className="text-sm text-[#C0A030] hover:text-[#D4B440] transition-colors flex items-center gap-1">
+                <Link href="/data-repository" className="text-sm text-[#C9A227] hover:text-[#D4B84A] transition-colors flex items-center gap-1">
                   {language === "ar" ? "عرض جميع القطاعات" : "View All Sectors"}
                   <ExternalLink className="h-3 w-3" />
                 </Link>
