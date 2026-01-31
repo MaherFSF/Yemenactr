@@ -8666,3 +8666,27 @@ Based on review of master design documents and data source register:
 - [x] Apply CauseWay colors throughout the platform
 - [x] Update all buttons, links, and accents to use brand palette
 - [x] Ensure white background remains dominant
+
+
+### Phase 74: Splash Page Image + TypeScript Fixes + Bank Profiles
+
+**1) Splash Page with Attached Image:**
+- [ ] Use IMG_3925.jpeg as splash page background
+- [ ] Add Arabic button "ادخل بالعربية" at bottom
+- [ ] Add English button "Enter in English" at bottom
+- [ ] Ensure mobile responsiveness
+
+**2) TypeScript Error Fixes:**
+- [ ] Fix enum type mismatches in sectorAlerts
+- [ ] Fix alertType enum issues in laborAlerts router
+- [ ] Resolve all 108 TypeScript errors
+
+**3) Commercial Bank Profiles:**
+- [ ] Research Yemen commercial banks with factual data
+- [ ] Add bank profiles with financial metrics
+- [ ] Include regulatory status and branch information
+- [ ] Implement dynamic data ingestion for bank data
+
+**4) UI Enhancement:**
+- [ ] Apply consistent CauseWay brand colors across platform
+- [ ] Enhance visual consistency and user experience

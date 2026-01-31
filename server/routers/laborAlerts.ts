@@ -114,27 +114,23 @@ export const laborAlertsRouter = router({
       titleAr: z.string(),
       descriptionEn: z.string(),
       descriptionAr: z.string().optional(),
-      alertType: z.string(),
-      severity: z.enum(['low', 'medium', 'high', 'critical']),
+      alertType: z.enum(['threshold_breach', 'staleness', 'contradiction_detected', 'significant_change', 'data_gap', 'source_update']),
+      severity: z.enum(['critical', 'warning', 'info']),
       indicatorCode: z.string().optional(),
       thresholdValue: z.number().optional(),
       currentValue: z.number().optional()
     }))
     .mutation(async ({ input, ctx }) => {
       try {
+        // Use the alerts table which has a simpler schema
         const result = await db.insert(alerts).values({
-          titleEn: input.titleEn,
+          type: input.alertType,
+          title: input.titleEn,
           titleAr: input.titleAr,
-          descriptionEn: input.descriptionEn,
-          descriptionAr: input.descriptionAr,
-          alertType: input.alertType as any,
-          severity: input.severity,
-          sector: 'labor_wages',
+          description: input.descriptionEn,
           indicatorCode: input.indicatorCode,
-          thresholdValue: input.thresholdValue?.toString(),
-          currentValue: input.currentValue?.toString(),
-          status: 'active',
-          triggeredAt: new Date()
+          severity: input.severity,
+          isRead: false
         });
         
         return { success: true, id: result[0].insertId };

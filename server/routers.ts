@@ -2042,10 +2042,11 @@ Answer the user's question based on this research. Be specific and cite sources 
   }),
 
   // ============================================================================
-  // DATA INGESTION (Real Data Sources)
+  // DATA INGESTION - EXTERNAL API CONNECTORS (Section 7)
+  // Note: Main ingestion router is imported from ./routers/ingestionRouter
   // ============================================================================
 
-  ingestion: router({
+  legacyIngestion: router({
     // Get status of all data sources
     getSourceStatus: publicProcedure
       .query(async () => {
