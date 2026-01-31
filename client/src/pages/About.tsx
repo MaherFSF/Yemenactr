@@ -263,11 +263,13 @@ export default function About() {
               <div className="flex flex-col lg:flex-row">
                 {/* Logo Section */}
                 <div className="lg:w-1/3 bg-white p-8 flex items-center justify-center border-b lg:border-b-0 lg:border-r">
-                  <img 
-                    src="/causeway-logo.jpeg" 
-                    alt="CauseWay - كوزواي" 
-                    className="max-w-full h-auto max-h-48 object-contain"
-                  />
+                  <a href="https://causewayfin-gbgfrjgy.manus.space" target="_blank" rel="noopener noreferrer">
+                    <img 
+                      src="/images/causeway-logo.png" 
+                      alt="CauseWay - كوزواي" 
+                      className="max-w-full h-auto max-h-48 object-contain hover:opacity-90 transition-opacity"
+                    />
+                  </a>
                 </div>
                 {/* Content Section */}
                 <div className="lg:w-2/3 p-8">
@@ -314,6 +316,16 @@ export default function About() {
                       <MapPin className="h-4 w-4" style={{ color: '#1B6B3D' }} />
                       <span>{language === "ar" ? "عدن، اليمن" : "Aden, Yemen"}</span>
                     </div>
+                    <a 
+                      href="https://causewayfin-gbgfrjgy.manus.space" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity ml-auto"
+                      style={{ backgroundColor: '#1B6B3D' }}
+                    >
+                      <Building2 className="h-4 w-4" />
+                      {language === "ar" ? "زيارة الموقع" : "Visit Website"}
+                    </a>
                   </div>
                 </div>
               </div>

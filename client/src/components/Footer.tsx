@@ -138,7 +138,12 @@ export default function Footer() {
               © {new Date().getFullYear()} {language === "ar" ? "يتو. جميع الحقوق محفوظة." : "YETO. All rights reserved."}
             </p>
             <div className="flex items-center gap-4">
-              <span className="flex items-center gap-2">
+              <a 
+                href="https://causewayfin-gbgfrjgy.manus.space" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              >
                 {language === "ar" ? "بدعم من" : "Powered by"}{" "}
                 {/* CauseWay Logo - SVG with proper colors */}
                 <span className="inline-flex items-center gap-1.5">
@@ -151,7 +156,7 @@ export default function Footer() {
                   <span className="text-white/80 text-xs">CauseWay</span>
                   <span className="text-[#6b8e6b] text-xs font-arabic">كوزواي</span>
                 </span>
-              </span>
+              </a>
               <span className="text-white/30">|</span>
               <Link href="/data-policy" className="hover:text-white transition-colors">
                 {language === "ar" ? "سياسة البيانات" : "Data Policy"}
