@@ -139,11 +139,17 @@ export default function Footer() {
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-2">
                 {language === "ar" ? "بدعم من" : "Powered by"}{" "}
-                <img 
-                  src="/images/causeway-logo.png" 
-                  alt="CauseWay" 
-                  className="h-5 inline-block"
-                />
+                {/* CauseWay Logo - SVG with proper colors */}
+                <span className="inline-flex items-center gap-1.5">
+                  <svg width="20" height="18" viewBox="0 0 120 100" className="h-5 w-auto">
+                    <path d="M20 15 L70 15 L70 30 L35 30 L35 70 L70 70 L70 85 L20 85 Z" fill="#4C583E" stroke="#768064" strokeWidth="2"/>
+                    <rect x="50" y="35" width="25" height="25" fill="#768064" rx="2"/>
+                    <rect x="80" y="15" width="20" height="20" fill="#C9A227" rx="3"/>
+                    <rect x="80" y="45" width="12" height="12" fill="#4C583E" rx="2"/>
+                  </svg>
+                  <span className="text-white/80 text-xs">CauseWay</span>
+                  <span className="text-[#768064] text-xs font-arabic">كوزواي</span>
+                </span>
               </span>
               <span className="text-white/30">|</span>
               <Link href="/data-policy" className="hover:text-white transition-colors">
