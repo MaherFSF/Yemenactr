@@ -9578,3 +9578,39 @@ Based on review of master design documents and data source register:
 - [ ] Create and run S3 asset upload script
 - [ ] Fix TypeScript errors (missing publication-engine.ts)
 - [ ] Final verification and checkpoint
+
+
+### Phase 74: Entity Claims Population
+- [ ] Examine entity_claims schema structure
+- [ ] Identify top 5 entities by importance
+- [ ] Research real economic data for Central Bank of Yemen
+- [ ] Research real economic data for Yemen LNG
+- [ ] Research real economic data for Aden Refinery Company
+- [ ] Research real economic data for Al-Amal Microfinance Bank
+- [ ] Research real economic data for Yemen Commercial Bank
+- [ ] Insert verified claims into database
+- [ ] Verify claims display on entity pages
+
+
+### Phase 72: Entity Claims Population (February 2025)
+
+**Entity Claims Data Population:**
+- [x] Researched top 5 entities: CBY Aden, Yemen Commercial Bank, Al-Amal Microfinance Bank, Yemen LNG Company, Aden Refinery Company
+- [x] Gathered real data from official sources and reports
+- [x] Created population script (scripts/populate-entity-claims.mjs)
+- [x] Inserted 18 verified claims into entity_claims table:
+  - CBY Aden: 3 claims (total assets, FX reserves, M2 money supply)
+  - Yemen Commercial Bank: 3 claims (establishment, ATM network, employees)
+  - Al-Amal Microfinance Bank: 4 claims (establishment, branches, savings accounts, loans)
+  - Yemen LNG Company: 5 claims (establishment, capacity, investment, ownership, status)
+  - Aden Refinery Company: 3 claims (establishment, capacity, nationalization)
+- [x] Verified claims stored correctly in database with proper entity links
+- [x] Confidence grades assigned: A (high confidence), B (medium), C (lower confidence)
+
+**Data Sources Used:**
+- Central Bank of Yemen - Aden Monthly Reports (August 2024)
+- Yemen Commercial Bank Official Website
+- Al-Amal Microfinance Bank Official Website
+- Yemen LNG Official Website and Wikipedia
+- Aden Refinery Company Official Website and Wikipedia
+
