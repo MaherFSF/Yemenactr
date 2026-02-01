@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { trpc } from '@/lib/trpc';
+import { useAuth } from '@/_core/hooks/useAuth';
+import { getLoginUrl } from '@/const';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -24,7 +27,9 @@ import {
   Target,
   Layers,
   Users,
-  FileCheck
+  FileCheck,
+  LogIn,
+  Lock
 } from 'lucide-react';
 
 const TIER_COLORS: Record<string, string> = {
@@ -46,6 +51,9 @@ const TIER_DESCRIPTIONS: Record<string, string> = {
 };
 
 export default function BulkClassification() {
+  const { user, loading: authLoading } = useAuth();
+  const { language } = useLanguage();
+  const isArabic = language === 'ar';
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedSources, setSelectedSources] = useState<number[]>([]);
   const [minConfidence, setMinConfidence] = useState(0.85);
@@ -129,6 +137,41 @@ export default function BulkClassification() {
   const stats = statsQuery.data;
   const preview = previewQuery.data;
   const reviewQueue = reviewQueueQuery.data;
+
+  // Check for auth errors
+  const isUnauthorized = statsQuery.error?.data?.code === 'UNAUTHORIZED' || 
+                         previewQuery.error?.data?.code === 'UNAUTHORIZED';
+
+  // Show login required card if not authenticated
+  if (!authLoading && (!user || isUnauthorized)) {
+    return (
+      <div className={`container py-8 ${isArabic ? 'rtl' : 'ltr'}`}>
+        <Card className="max-w-lg mx-auto">
+          <CardHeader className="text-center">
+            <div className="mx-auto w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+              <Lock className="w-8 h-8 text-amber-600" />
+            </div>
+            <CardTitle className="text-2xl">
+              {isArabic ? 'تسجيل الدخول مطلوب' : 'Login Required'}
+            </CardTitle>
+            <CardDescription className="text-base">
+              {isArabic 
+                ? 'تسجيل الدخول مطلوب لعرض صفحة الإدارة هذه.'
+                : 'Login required to view this admin page.'}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center">
+            <Button asChild className="gap-2">
+              <a href={getLoginUrl()}>
+                <LogIn className="w-4 h-4" />
+                {isArabic ? 'تسجيل الدخول' : 'Sign In'}
+              </a>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="container py-8 space-y-6">

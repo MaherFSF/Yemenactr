@@ -345,3 +345,42 @@
 
 *Control Pack Version: v0.0-control-pack*
 *Last Updated: January 29, 2025*
+
+
+---
+
+## ADR-016: Safe State Audit Findings — February 1, 2026
+
+**Date:** 2026-02-01
+
+**Context:** Safe state audit performed after "PROMPT 5.1/6 (P0 PATCH) — Zero-Fake UI" checkpoint to validate platform readiness.
+
+### Assumptions Made During Audit
+
+1. **Connection Pool Issue is P0**: The stale MySQL connection issue is the root cause of `/entities` showing "No Data Available" based on console error evidence (`Can't add new command when connection is in closed state`).
+
+2. **Schema is Correct**: Verified that the `entities` table uses `name` and `nameAr` columns (not `nameEn`), matching both Drizzle schema and database. Previous context suggesting a column mismatch was incorrect.
+
+3. **GitHub Export via UI**: The operator will use Management UI → Settings → GitHub for export rather than direct git push, as Manus uses internal S3 storage for version control.
+
+4. **Documentation Changes Safe**: Created/updated documentation files without saving a new checkpoint, as these are audit artifacts and do not affect platform functionality.
+
+5. **129 TS Errors Non-Blocking**: TypeScript errors are non-blocking for runtime since all tests pass and the application executes correctly. These are technical debt, not P0 blockers.
+
+### Decisions Made
+
+| Decision | Rationale |
+|----------|-----------|
+| Classify connection issue as P0 | Directly affects public page functionality |
+| Recommend PROMPT 6/6 for connection fix | P0 must be resolved before production |
+| Do not implement fixes in audit prompt | Operator requested safe state audit only |
+| Log all findings to Decision Packet | Provides proof-grade status for operator |
+
+**Consequences:**
+- `/entities` page remains broken until connection fix implemented
+- GitHub export should wait until P0 resolved
+- Full Decision Packet available at `/docs/STATE_AUDIT_DECISION_PACKET.md`
+
+---
+
+*Last Updated: February 1, 2026*

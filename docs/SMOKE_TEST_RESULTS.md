@@ -75,3 +75,65 @@
 ---
 
 *This document will be updated as testing progresses.*
+
+
+---
+
+# Safe State Audit - 2026-02-01
+
+## /entities Page
+- **Status**: ⚠️ SHOWS "No Data Available"
+- **Total Entities**: 0 (expected: 79)
+- **With Verified Data**: 0
+- **Data Gaps**: 0
+- **Entity Types**: 0
+- **SourcesUsedPanel**: Present but shows "No sources currently linked to this sector"
+- **Screenshot**: /home/ubuntu/screenshots/3000-i4vxq021yxgpq5e_2026-01-31_19-50-40_4307.webp
+
+**Root Cause**: Column name mismatch - code queries `name` but DB has `nameEn`
+
+
+## /corporate-registry Page
+- **Status**: ✅ Zero-Fake UI WORKING
+- **Data Source Policy Banner**: Present
+- **GAP Tickets Displayed**: GAP-CORP-001 through GAP-CORP-007 (7 tickets)
+- **SourcesUsedPanel**: ✅ Present - Shows "50 sources" with breakdown:
+  - Official Government: 16
+  - International Organization: 34
+- **Evidence Drawer**: Expandable with "Show 45 More Sources" button
+- **Screenshot**: /home/ubuntu/screenshots/3000-i4vxq021yxgpq5e_2026-01-31_19-51-18_4704.webp
+
+**Verdict**: Zero-Fake UI correctly implemented - shows GAP tickets instead of fake data
+
+
+## /admin/source-registry Page
+- **Status**: ✅ WORKING
+- **Total Sources**: 292
+- **Active**: 234
+- **Needs API Key**: 17
+- **Pending Review**: 41
+- **Sectors**: 16
+- **P0/P1 Issues**: 0/477
+- **Tier Distribution**: T1 (117), UNKNOWN (119), T0 (16), T3 (18), T2 (22)
+- **Table**: Shows sources with ID, Name (bilingual), Tier, Status, Frequency, Access, Sector
+- **Pagination**: Working (Page 1 of 6)
+- **Filters**: All Tiers, All Statuses dropdowns present
+- **Screenshot**: /home/ubuntu/screenshots/3000-i4vxq021yxgpq5e_2026-01-31_19-51-43_5254.webp
+
+**Verdict**: Admin Source Registry fully functional
+
+
+## /admin/bulk-classification Page
+- **Status**: ⚠️ SHOWS 0 SOURCES (data not loading)
+- **Total Sources**: 0 (expected: 292)
+- **Review Queue**: 0
+- **Unknown Tier**: 0 (expected: 119)
+- **Target Progress**: Shows "% unknown (target: <50%)"
+- **Tier Distribution**: All showing 0
+- **Tabs**: Classification Preview, Review Queue (0)
+- **Apply Classification Button**: Present
+- **Min Confidence Dropdown**: 85%
+- **Screenshot**: /home/ubuntu/screenshots/3000-i4vxq021yxgpq5e_2026-01-31_19-52-08_7432.webp
+
+**Root Cause**: tRPC query not returning data - likely connection pool issue or query error
+

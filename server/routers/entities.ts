@@ -8,32 +8,39 @@ import { z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../_core/trpc";
 import { getDb } from "../db";
 
-// Helper function for raw SQL queries with parameters
+// Helper function for raw SQL queries with parameters using connection pool
 import mysql from 'mysql2/promise';
 
-let _rawConn: mysql.Connection | null = null;
+let _pool: mysql.Pool | null = null;
 
-async function getRawConnection(): Promise<mysql.Connection | null> {
-  if (!_rawConn && process.env.DATABASE_URL) {
+function getPool(): mysql.Pool | null {
+  if (!_pool && process.env.DATABASE_URL) {
     try {
-      _rawConn = await mysql.createConnection(process.env.DATABASE_URL);
+      _pool = mysql.createPool({
+        uri: process.env.DATABASE_URL,
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 10000,
+      });
     } catch (error) {
-      console.warn('[rawQuery] Failed to create connection:', error);
+      console.warn('[rawQuery] Failed to create pool:', error);
       return null;
     }
   }
-  return _rawConn;
+  return _pool;
 }
 
 async function rawQuery(sql: string, params: any[] = []): Promise<any[]> {
-  const conn = await getRawConnection();
-  if (!conn) {
-    console.warn('[rawQuery] No connection available');
+  const pool = getPool();
+  if (!pool) {
+    console.warn('[rawQuery] No pool available');
     return [];
   }
   try {
     // Use query() instead of execute() for LIMIT/OFFSET compatibility
-    const [rows] = await conn.query(sql, params);
+    const [rows] = await pool.query(sql, params);
     return (rows as any[]) || [];
   } catch (error) {
     console.error('[rawQuery] Query failed:', error);

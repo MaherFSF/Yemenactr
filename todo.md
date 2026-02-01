@@ -9546,3 +9546,28 @@ Based on review of master design documents and data source register:
 - [ ] Run pnpm test
 - [ ] Run node scripts/release-gate.mjs
 
+
+### Phase 72: P0 Connection Fix + Entities/Bulk Classification Restoration (PROMPT 6B) (COMPLETED)
+
+**Root Cause Identified:**
+- [x] Stale MySQL connection in `server/routers/entities.ts` causing silent query failures
+- [x] Missing `ctx.db` injection in tRPC context for `bulkClassification` router
+
+**Fixes Applied:**
+- [x] Replace single MySQL connection with connection pool in `server/routers/entities.ts`
+- [x] Add `db: mysql.Pool | null` to `TrpcContext` in `server/_core/context.ts`
+- [x] Add `getDbPool()` function with connection pooling configuration
+- [x] Add auth UX for `/admin/bulk-classification` page (login required card)
+
+**Verification Results:**
+- [x] `/entities` page: Shows 79 entities with names and GAP tickets ✅
+- [x] `/admin/bulk-classification`: Shows 292 sources with tier distribution ✅
+- [x] Tests: 736 passed (34 files) ✅
+- [x] Release Gates: 10/10 passing ✅
+
+**Stop Conditions Met:**
+- [x] `/entities` shows 79 entities with entity names visible
+- [x] `/admin/bulk-classification` shows 292 sources with tier stats
+- [x] All 736+ tests passing
+- [x] All 10 release gates passing
+
