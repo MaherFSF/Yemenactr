@@ -28,6 +28,7 @@ import {
   Plane
 } from "lucide-react";
 import { useState } from "react";
+import { SourcesUsedPanel } from "@/components/SourcesUsedPanel";
 import { Link, useLocation } from "wouter";
 import {
   Select,
@@ -500,6 +501,9 @@ export default function Entities() {
             </div>
           </div>
         )}
+
+        {/* Sources Used Panel */}
+        <SourcesUsedPanel pageKey="entities" className="mt-8" />
 
         {/* No Results */}
         {filteredEntities.length === 0 && (

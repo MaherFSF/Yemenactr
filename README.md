@@ -17,9 +17,10 @@
 <p align="center">
   <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript" alt="TypeScript">
   <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react" alt="React">
-  <img src="https://img.shields.io/badge/Tests-432%2B_Passing-brightgreen?style=flat-square" alt="Tests">
+  <img src="https://img.shields.io/badge/Tests-750%2B_Passing-brightgreen?style=flat-square" alt="Tests">
   <img src="https://img.shields.io/badge/Data_Points-5%2C500%2B-blue?style=flat-square" alt="Data Points">
-  <img src="https://img.shields.io/badge/Sources-292-orange?style=flat-square" alt="Sources">
+  <img src="https://img.shields.io/badge/Sources-292_(234_Active)-orange?style=flat-square" alt="Sources">
+  <img src="https://img.shields.io/badge/Tier_Classification-59%25_Complete-blue?style=flat-square" alt="Tier Classification">
   <img src="https://img.shields.io/badge/Release_Gate-✅_PASSING-brightgreen?style=flat-square" alt="Release Gate">
   <img src="https://img.shields.io/badge/License-Proprietary-C0A030?style=flat-square" alt="License">
 </p>
@@ -92,6 +93,8 @@ YETO is not just a data portal—it is an **Economic Intelligence Platform** tha
 | **Dual-Regime Tracking** | Separate tracking for Aden (IRG) and Sana'a (DFA) economies | Regime Tags |
 | **AI Economic Analyst** | "One Brain" intelligence system with zero-fabrication guarantee | LLM + RAG + Truth Layer |
 | **Real-Time Ingestion** | Automated data pipelines from 292 sources with freshness tracking | ETL Scheduler |
+| **Source Trust Hardening** | Deterministic tier classification (T0-T4) with allowedUse enforcement | Bulk Classification Engine |
+| **Transparency Panels** | "Sources Used" panels on every page showing evidence provenance | SourcesUsedPanel |
 | **Bilingual Interface** | Full Arabic (RTL) and English support | i18n Framework |
 | **Export Everything** | CSV, JSON, XLSX, PDF exports with provenance metadata | Export Engine |
 

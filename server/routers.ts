@@ -93,6 +93,7 @@ import { ingestionRouter } from "./routers/ingestionRouter";
 import { laborAlertsRouter } from "./routers/laborAlerts";
 import { sourceRegistryRouter } from "./routers/sourceRegistry";
 import { feedMatrixRouter } from "./routers/feedMatrix";
+import { bulkClassificationRouter } from "./routers/bulkClassification";
 import { povertyHumandevRouter } from "./routers/povertyHumandev";
 import { methodologyDownloadsRouter } from "./routers/methodologyDownloads";
 import { sql, desc, eq, like, or, and, inArray } from "drizzle-orm";
@@ -127,6 +128,7 @@ export const appRouter = router({
   laborAlerts: laborAlertsRouter,
   sourceRegistry: sourceRegistryRouter,
   feedMatrix: feedMatrixRouter,
+  bulkClassification: bulkClassificationRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

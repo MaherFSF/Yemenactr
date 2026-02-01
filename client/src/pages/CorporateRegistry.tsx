@@ -24,6 +24,7 @@ import {
   Banknote
 } from "lucide-react";
 import { useState } from "react";
+import { SourcesUsedPanel } from "@/components/SourcesUsedPanel";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 export default function CorporateRegistry() {
@@ -475,6 +476,9 @@ export default function CorporateRegistry() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Sources Used Panel */}
+        <SourcesUsedPanel pageKey="corporate-registry" className="mt-8" />
       </div>
     </div>
   );

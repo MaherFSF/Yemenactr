@@ -125,6 +125,7 @@ import SourceConsole from "./pages/admin/SourceConsole";
 import SourceRegistry from "./pages/admin/SourceRegistry";
 import SectorFeedMatrix from "./pages/admin/SectorFeedMatrix";
 import PageFeedMatrix from "./pages/admin/PageFeedMatrix";
+import BulkClassification from "./pages/admin/BulkClassification";
 import RoleAwareEntryPoints from "./components/RoleAwareEntryPoints";
 import Updates from "./pages/Updates";
 import UpdateDetail from "./pages/UpdateDetail";
@@ -239,6 +240,7 @@ function MainRouter() {
           <Route path="/admin/source-registry" component={SourceRegistry} />
           <Route path="/admin/sector-feed-matrix" component={SectorFeedMatrix} />
           <Route path="/admin/page-feed-matrix" component={PageFeedMatrix} />
+          <Route path="/admin/bulk-classification" component={BulkClassification} />
       <Route path="/updates" component={Updates} />
       <Route path="/updates/:id" component={UpdateDetail} />
       <Route path="/publications-hub" component={PublicationsHub} />
