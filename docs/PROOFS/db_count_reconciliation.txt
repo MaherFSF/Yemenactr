@@ -1,0 +1,295 @@
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+================================================================================
+DB COUNT RECONCILIATION
+Timestamp: 2026-02-01T20:16:22.280Z
+================================================================================
+
+=== SHOW TABLES ===
+Total tables: 243
+  __drizzle_migrations
+  access_needed_items
+  admin_audit_log
+  admin_email_outbox
+  admin_incidents
+  admin_outbox
+  agent_tasks
+  ai_projections
+  ai_query_logs
+  alerts
+  annotation_exports
+  annotation_mentions
+  annotation_upvotes
+  api_access_logs
+  api_registration_instructions
+  audit_logs
+  audit_trail
+  auto_brief_instances
+  auto_brief_subscriptions
+  auto_brief_templates
+  autopilot_events
+  autopilot_settings
+  backfill_checkpoints
+  backfill_requests
+  bank_historical_metrics
+  banking_sector_metrics
+  cby_directives
+  chart_overlays
+  claim_confidence_scores
+  claim_evidence_links
+  claim_sets
+  claims
+  cockpit_snapshots
+  commercial_banks
+  commercial_entities
+  compliance_disputes
+  confidence_ratings
+  conflicts
+  connector_thresholds
+  context_packs
+  corrections
+  coverage_cells
+  coverage_items
+  credibility_metrics
+  data_annotations
+  data_contracts
+  data_contradictions
+  data_gap_tickets
+  data_sources
+  data_updates
+  data_vintages
+  dataset_cards
+  dataset_versions
+  datasets
+  decision_follow_ups
+  decision_journal
+  decision_journal_entries
+  decision_outcomes
+  documents
+  drift_metrics
+  economic_events
+  email_notification_queue
+  email_outbox
+  email_subscriptions
+  entities
+  entity_alias
+  entity_aliases
+  entity_artifact_link
+  entity_assertion
+  entity_claims
+  entity_disclosure_checklist
+  entity_documents
+  entity_evidence_packs
+  entity_external_id
+  entity_facilities
+  entity_facts
+  entity_links
+  entity_matches
+  entity_resolution_case
+  entity_right_to_reply
+  entity_spine
+  entity_timeline
+  entity_timeline_events
+  eval_runs
+  event_indicator_links
+  evidence_datasets
+  evidence_documents
+  evidence_excerpts
+  evidence_items
+  evidence_observations
+  evidence_packs
+  evidence_sets
+  evidence_sources
+  evidence_store
+  executive_dashboard_widgets
+  executive_profiles
+  export_manifests
+  fix_tickets
+  fx_gap_tickets
+  fx_rates
+  fx_source_registry
+  gap_tickets
+  generated_reports
+  generated_reports_new
+  geospatial_data
+  glossary_terms
+  glossary_versions
+  governance_policies
+  graph_health_metrics
+  graph_review_queue
+  historical_snapshots
+  images
+  indicators
+  ingestion_runs
+  ingestion_work_queue
+  insight_miner_proposals
+  institutional_subscribers
+  integrity_reports
+  key_events
+  knowledge_graph_links
+  library_documents
+  link_rule_runs
+  link_rules
+  methodology_notes
+  microfinance_institutions
+  moderation_queue
+  nightly_job_runs
+  notification_preferences
+  notification_preferences_enhanced
+  organizations
+  page_build_runs
+  partner_contributions
+  partner_organizations
+  partner_submissions
+  partnership_access_requests
+  partnership_requests
+  phone_verifications
+  policy_event_spine
+  prompt_versions
+  provenance_ledger
+  provenance_ledger_full
+  provenance_log
+  public_changelog
+  publication_authors
+  publication_changelog
+  publication_drafts
+  publication_evidence_bundles
+  publication_log
+  publication_metrics
+  publication_runs
+  publication_spine
+  publication_templates
+  publish_runs
+  qa_runs
+  raw_objects
+  reading_list_items
+  registry_import_diff
+  registry_lint_results
+  registry_sector_map
+  regulations
+  related_items_cache
+  release_gate_checks
+  release_gate_runs
+  reliability_runs
+  reliability_tests
+  report_archive
+  report_distribution_log_new
+  report_instances
+  report_schedule_new
+  report_subscribers_new
+  report_templates
+  report_templates_new
+  report_trend_analysis
+  report_version_changes
+  research_authors
+  research_completeness_audit
+  research_ingestion_sources
+  research_organizations
+  research_publications
+  role_lens_configs
+  sanctions_designations
+  sanctions_entries
+  sanctions_lists
+  saved_reports
+  saved_searches
+  scheduled_report_deliveries
+  scheduler_jobs
+  scheduler_run_history
+  sector_agent_runs
+  sector_alerts
+  sector_briefs
+  sector_codebook
+  sector_context_packs
+  sector_definitions
+  sector_faqs
+  sector_kpis
+  sector_mechanisms
+  sector_release_gates
+  sector_spine
+  sector_watchlist_items
+  sent_emails
+  session_tokens
+  sms_alert_preferences
+  sms_delivery_log
+  source_contacts
+  source_credentials
+  source_discovery_queue
+  source_endpoints
+  source_feed_matrix
+  source_products
+  source_products_v2
+  source_registry
+  source_tier_audit_log
+  source_year_coverage
+  sources
+  stakeholders
+  story_mode_narratives
+  submission_validations
+  subscriptions
+  time_series
+  time_series_data
+  time_spine_day
+  timeline_evidence_packs
+  topic_alerts
+  translation_records
+  tribunal_runs
+  user_bookmarks
+  user_reading_lists
+  user_watchlist
+  users
+  verification_queue
+  vip_briefs
+  vip_cockpit_drivers
+  vip_cockpit_options
+  vip_cockpit_signals
+  vip_role_profiles
+  vip_user_assignments
+  vip_watchlist_items
+  visual_suggestions
+  visualization_specs
+  webhook_delivery_logs
+  webhook_event_types
+  webhooks
+
+=== CRITICAL TABLE COUNTS ===
+entities: 79
+source_registry: 292
+time_series: 6699
+economic_events: 237
+documents: 61
+library_documents: 49
+raw_objects: 0
+entity_claims: 18
+gap_tickets: 7
+evidence_packs: 17
+evidence_sources: 41
+ingestion_runs: 42
+indicators: 165
+datasets: 100
+users: 6
+
+=== INGESTION_RUNS STATUS ===
+  success: 3
+  failed: 39
+
+=== LATEST 5 INGESTION RUNS ===
+  ID 30006: reliefweb_api_proof | failed | fetched=0
+  ID 30005: world_bank_api_proof | success | fetched=9
+  ID 30004: reliefweb_api_proof | failed | fetched=0
+  ID 30003: world_bank_api_proof | success | fetched=9
+  ID 30002: test_connector_proof | success | fetched=15
+
+=== EVIDENCE_PACKS BY SUBJECT TYPE ===
+  claim: 17
+
+=== ENTITY_CLAIMS BY TYPE ===
+  ownership: 2
+  employee_count: 1
+  production_capacity: 2
+  facility: 2
+  investment: 1
+  other: 10
+
+=== GAP_TICKETS BY STATUS ===
+  open: 7
+
+=== RECONCILIATION COMPLETE ===

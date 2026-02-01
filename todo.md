@@ -9829,3 +9829,30 @@ Based on review of master design documents and data source register:
 - [x] pnpm test passes - 736/736 tests
 - [x] release gate passes - 11/11 gates
 - [x] Proof file written: /docs/AUDIT_PACK/2026-02-01/proofs/ingestion_fix_proof.txt
+
+
+### Phase 79: Real Connector Proof + Evidence Pack Population (COMPLETED)
+
+**Phase 1 - Real Connector Proof:**
+- [x] Identify 2 stable connectors - World Bank API, ReliefWeb API
+- [x] Run connector 1 end-to-end - World Bank: status=success, fetched=9
+- [x] Run connector 2 end-to-end - ReliefWeb: status=failed (403), clean failure
+- [x] Verify both complete with status=success/failed (not stuck) - VERIFIED
+- [x] Capture proof to /docs/PROOFS/real_connector_proof.txt - 80 lines
+
+**Phase 2 - Evidence Pack Population:**
+- [x] Analyze evidence_packs table schema - 26 columns documented
+- [x] Create evidence packs for existing entity_claims - 17/18 created (1 date error)
+- [x] Link evidence packs to provenance sources - citations JSON populated
+- [x] Verify evidence_packs count > 0 - COUNT: 17
+
+**Phase 3 - DB Count Reconciliation:**
+- [x] Update /docs/PROOFS/db_count_reconciliation.txt - 295 lines
+- [x] Include all critical table counts with timestamps - 15 tables documented
+- [x] Verify no count contradictions - entities=79, evidence_packs=17, gap_tickets=7
+
+**Stop Conditions:**
+- [x] 2 real connectors completed (not stuck) - VERIFIED
+- [x] evidence_packs count > 0 - COUNT: 17
+- [x] Proof files saved to /docs/PROOFS/ - 2 files, 375 lines total
+- [x] DB reconciliation updated - VERIFIED
