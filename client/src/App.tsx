@@ -44,6 +44,8 @@ import Legal from "./pages/Legal";
 import DataPolicy from "./pages/DataPolicy";
 import Entities from "./pages/Entities";
 import EntityDetail from "./pages/EntityDetail";
+import EntityProfileDB from "./pages/EntityProfileDB";
+import EntityRouter from "./pages/EntityRouter";
 import BankDetail from "./pages/entities/BankDetail";
 import Corrections from "./pages/Corrections";
 import Publications from "./pages/Publications";
@@ -184,7 +186,7 @@ function MainRouter() {
       <Route path={"/legal"} component={Legal} />
       <Route path={"/entities"} component={Entities} />
       <Route path="/company/hsa-group" component={HSAGroupProfile} />
-      <Route path={"/entities/:id"} component={EntityDetail} />
+      <Route path={"/entities/:id"} component={EntityRouter} />
       <Route path={"/entities/bank/:id"} component={BankDetail} />
       <Route path={"/corrections"} component={Corrections} />
       <Route path={"/publications"} component={Publications} />

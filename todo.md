@@ -9914,3 +9914,57 @@ Based on review of master design documents and data source register:
 - [x] Save checkpoint v0.2.3
 - [ ] Push to MaherFSF/Yemenactr (pending user action)
 - [ ] Create release tag v0.2.3 (pending user action)
+
+
+### Phase 81: Proof-Grade Finalization (5 Phases)
+
+**PHASE 1 - Evidence Pack UI Wiring (P0):**
+- [ ] Confirm evidence_packs DB row count
+- [ ] Confirm sample pack structure
+- [ ] Verify tRPC endpoint fetches evidence by id
+- [ ] Update EvidencePackButton to show real drawer or GAP state
+- [ ] Screenshots: 3 entities + 2 sector KPIs
+- [ ] API response logs saved
+
+**PHASE 2 - Fix ARC-ESTABLISHMENT-1952 Timestamp (P0):**
+- [ ] Find broken claim row with invalid timestamp
+- [ ] Normalize to ISO date (1952-01-01) with precision field
+- [ ] Rebuild evidence pack link for that claim
+- [ ] SQL before/after proof
+- [ ] Unit test for invalid year-only timestamps
+
+**PHASE 3 - Real Connector Runs (P0):**
+- [ ] Run one connector expected to succeed
+- [ ] Run one connector expected to fail (403/401)
+- [ ] Verify status transitions (running → success/failed)
+- [ ] Verify failed connectors create GAP ticket
+- [ ] Proof: run IDs, DB deltas, sample records
+
+**PHASE 4 - Bilingual Parity (P1):**
+- [ ] Verify EN + AR on all core routes
+- [ ] Desktop + mobile screenshots
+- [ ] Create BILINGUAL_PARITY_REPORT.md
+
+**PHASE 5 - GitHub Canonical Sync (P0):**
+- [ ] Ensure repo clean, no secrets
+- [ ] Push to MaherFSF/Yemenactr main
+- [ ] Verify GitHub Actions CI passes
+- [ ] Create tag v0.2.3-proof-grade-finalization
+
+### Bug Fix: February 2, 2025 - Entity Page P0 Bug
+
+**P0 Bug: Entity pages with numeric IDs showing blank content**
+- [x] Fixed EvidencePackButton import (changed from named to default export)
+- [x] Fixed getVerifiedClaims SQL query (removed non-existent source_id column)
+- [x] Verified entity pages load correctly with real data from database
+- [x] Verified verified claims display correctly on entity pages
+- [x] Verified Arabic language support works correctly
+
+**Root Causes:**
+1. Build error: `EvidencePackButton` was exported as default but imported as named
+2. SQL error: `getVerifiedClaims` query referenced `ep.source_id` which doesn't exist in evidence_packs table
+
+**Files Modified:**
+- `client/src/pages/EntityProfileDB.tsx` - Fixed import statement
+- `server/routers/entities.ts` - Fixed SQL query to use correct column names
+

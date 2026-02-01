@@ -402,6 +402,31 @@ export const entitiesRouter = router({
       };
     }),
 
+  // Get verified claims for an entity with evidence pack info
+  getVerifiedClaims: publicProcedure
+    .input(z.object({
+      entityId: z.number(),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+      
+      // Get claims with evidence pack info
+      // Note: evidence_packs uses confidenceGrade (camelCase) and citations contains source info
+      const claims = await rawQuery(
+        `SELECT ec.*, 
+                ep.citations, ep.confidenceGrade as confidence_grade, 
+                ep.dqafIntegrity, ep.dqafMethodology, ep.dqafAccuracyReliability
+         FROM entity_claims ec
+         LEFT JOIN evidence_packs ep ON ec.primary_evidence_id = ep.id
+         WHERE ec.entity_id = ? AND ec.status = 'verified'
+         ORDER BY ec.created_at DESC`,
+        [input.entityId]
+      );
+      
+      return claims || [];
+    }),
+
   // Resolve a resolution case
   resolveCase: protectedProcedure
     .input(z.object({
