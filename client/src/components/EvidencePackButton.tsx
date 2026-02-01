@@ -73,7 +73,9 @@ interface EvidencePackButtonProps {
   data?: EvidencePackData;
   evidencePackId?: string;
   packId?: string; // alias for evidencePackId
-  variant?: "button" | "icon" | "link" | "badge" | "ghost" | "outline";
+  subjectType?: string; // For fetching evidence by subject
+  subjectId?: string; // For fetching evidence by subject
+  variant?: "button" | "icon" | "link" | "badge" | "ghost" | "outline" | "compact";
   size?: "sm" | "default" | "lg";
   showConfidence?: boolean;
   className?: string;
@@ -93,6 +95,8 @@ export default function EvidencePackButton({
   data: providedData, 
   evidencePackId,
   packId,
+  subjectType: propSubjectType,
+  subjectId: propSubjectId,
   variant = "button",
   size = "sm",
   showConfidence = true,
@@ -107,11 +111,13 @@ export default function EvidencePackButton({
   const [isRequestingEvidence, setIsRequestingEvidence] = useState(false);
   const [gapTicketId, setGapTicketId] = useState<string | null>(null);
   
-  const requestedId = evidencePackId || packId || "unknown";
+  // Support both evidencePackId/packId and subjectType/subjectId patterns
+  const requestedId = propSubjectId || evidencePackId || packId || "unknown";
+  const querySubjectType = propSubjectType || "claim";
   
   // TRUTH-NATIVE: Fetch real evidence from database if evidencePackId is provided
   const { data: dbEvidence, isLoading: isLoadingEvidence } = trpc.evidence.getBySubject.useQuery(
-    { subjectType: "claim", subjectId: requestedId },
+    { subjectType: querySubjectType, subjectId: requestedId },
     { enabled: !!requestedId && requestedId !== "unknown" && !providedData }
   );
   
@@ -289,6 +295,23 @@ export default function EvidencePackButton({
               </span>
             )}
           </Badge>
+        );
+      case "compact":
+        return (
+          <Button variant="outline" size="sm" className={`gap-1 text-xs ${!hasEvidence ? 'border-amber-300 text-amber-700' : 'border-green-300 text-green-700'} ${className || ''}`}>
+            <FileText className="h-3 w-3" />
+            {isArabic ? "كيف نعرف هذا؟" : "How do we know this?"}
+            {hasEvidence && effectiveData && (
+              <Badge className={`ml-1 text-xs py-0 px-1 ${getConfidenceColor(effectiveData.confidence)}`}>
+                Grade {effectiveData.confidence}
+              </Badge>
+            )}
+            {!hasEvidence && (
+              <Badge className="ml-1 text-xs py-0 px-1 bg-amber-100 text-amber-700 border-amber-300">
+                {isArabic ? "فجوة" : "GAP"}
+              </Badge>
+            )}
+          </Button>
         );
       default:
         return (

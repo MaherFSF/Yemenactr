@@ -9951,6 +9951,16 @@ Based on review of master design documents and data source register:
 - [ ] Verify GitHub Actions CI passes
 - [ ] Create tag v0.2.3-proof-grade-finalization
 
+### Task: February 2, 2025 - Entity Claims Evidence Pack Linkage (COMPLETED)
+
+- [x] Find failing claim ARC-ESTABLISHMENT-1952 and normalize date
+- [x] Generate evidence packs for all 18 entity_claims
+- [x] Verify 18/18 claims have valid evidence pack links
+- [x] Browser proof: evidence drawer shows real data for Entity 45 (Aden Refinery)
+- [x] Browser proof: evidence drawer shows real data for Entity 12 (Yemen Commercial Bank)
+- [x] Tests pass (736/736)
+- [x] Created /docs/PROOFS/evidence_pack_entity_claims_proof.md
+
 ### Bug Fix: February 2, 2025 - Entity Page P0 Bug
 
 **P0 Bug: Entity pages with numeric IDs showing blank content**
@@ -9967,4 +9977,16 @@ Based on review of master design documents and data source register:
 **Files Modified:**
 - `client/src/pages/EntityProfileDB.tsx` - Fixed import statement
 - `server/routers/entities.ts` - Fixed SQL query to use correct column names
+
+
+### Task: February 2, 2025 - Entity Claims Evidence Pack Linkage
+
+**Objective: Ensure all 18 entity_claims have valid timestamps and evidence_pack linkage**
+
+- [ ] Find and fix ARC-ESTABLISHMENT-1952 claim with invalid date
+- [ ] Normalize all claim dates to valid DB datetime format
+- [ ] Generate evidence packs for all entity_claims
+- [ ] Verify 18/18 claims have valid evidence pack links
+- [ ] Browser proof: evidence drawer shows real data for 2+ entities
+- [ ] Create /docs/PROOFS/evidence_pack_entity_claims_proof.md with SQL + screenshots
 
