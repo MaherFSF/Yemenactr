@@ -50,7 +50,8 @@ describe('BaseConnector', () => {
     const startTime = Date.now();
     await new Promise(resolve => setTimeout(resolve, 100)); // Simulate delay
     const elapsed = Date.now() - startTime;
-    expect(elapsed).toBeGreaterThanOrEqual(100);
+    // Allow 5ms tolerance for timer precision
+    expect(elapsed).toBeGreaterThanOrEqual(95);
   });
 });
 
