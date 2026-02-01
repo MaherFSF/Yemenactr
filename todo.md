@@ -9687,3 +9687,37 @@ Based on review of master design documents and data source register:
 - [x] No secrets committed
 - [x] Code Freeze Report delivered
 
+
+
+### Phase 75: Truth-Native Evidence System (P0 Fix) (COMPLETED)
+
+**Task 1 - Remove Mock Evidence Fallback:**
+- [x] Delete getMockEvidenceData() function from EvidencePackButton.tsx
+- [x] Replace mock fallback with "No evidence available" UI state
+- [x] Add bilingual messages (EN/AR) for missing evidence
+- [x] Add "Request evidence" action that creates GAP ticket
+
+**Task 2 - Strict UI Guard:**
+- [x] Create useEvidenceGuard hook for KPI cards
+- [x] Enforce DB-driven + evidence_pack_id + license check
+- [x] Replace invalid values with "— | GAP-ID"
+
+**Task 3 - Release Gate Update:**
+- [x] Add NO_MOCK_EVIDENCE gate to release-gate.mjs (Gate 11)
+- [x] Fail if getMockEvidenceData exists in codebase
+
+**Task 4 - Tests:**
+- [x] Unit test: EvidencePackButton renders "No evidence available"
+- [x] Unit test: useEvidenceGuard hook tests
+
+**Task 5 - Browser Proof:**
+- [x] Test /sectors/banking (Arabic) - KPIs show N/A for missing data
+- [x] Test /entities (English) - Shows 79 entities with GAP indicators
+- [x] Test /entities (Arabic) - Shows GAP-ENTITY-XX indicators
+- [x] Screenshots saved to proofs/evidence_drawer_browser_proof.md
+
+**Task 6 - Final Verification:**
+- [x] Verify no getMockEvidenceData references in repo (only in test assertions)
+- [x] Verify release gate passes with NO_MOCK_EVIDENCE (11/11 gates)
+- [x] Verify pnpm test passes (736/736)
+- [x] Commit and tag v0.2.1-truth-native-evidence

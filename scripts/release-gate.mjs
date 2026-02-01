@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 /**
- * YETO Platform Release Gate v2.5
+ * YETO Platform Release Gate v2.6 (Truth-Native)
  * 
  * This script verifies data integrity before any deployment.
- * All 9 gates must pass for a release to proceed.
+ * All 11 gates must pass for a release to proceed.
+ * 
+ * Gate 11 (NO_MOCK_EVIDENCE) ensures EvidencePackButton never shows fabricated data.
  * 
  * Usage: node scripts/release-gate.mjs
  */
@@ -162,6 +164,50 @@ async function runReleaseGate() {
     });
   }
   results.push({ gate: 'NO_STATIC_PUBLIC_KPIS', value: violations.length === 0 ? 'Clean' : `${violations.length} violations`, expected: 'No static KPIs', pass: gate10Pass });
+
+  // Gate 11: NO_MOCK_EVIDENCE - Ensure EvidencePackButton has no mock fallback
+  console.log('🔍 Gate 11: NO_MOCK_EVIDENCE');
+  let gate11Pass = true;
+  const mockEvidencePatterns = [
+    { pattern: /getMockEvidenceData/g, desc: 'getMockEvidenceData function' },
+    { pattern: /mock.*evidence/gi, desc: 'Mock evidence references' },
+    { pattern: /providedData\s*\|\|\s*getMock/g, desc: 'Mock fallback pattern' },
+    { pattern: /Loading\.\.\..*جاري التحميل/g, desc: 'Loading placeholder as data' },
+  ];
+  
+  const evidenceFilesToScan = [
+    'client/src/components/EvidencePackButton.tsx',
+    'client/src/components/EvidenceDrawer.tsx',
+  ];
+  
+  const mockViolations = [];
+  
+  for (const file of evidenceFilesToScan) {
+    try {
+      const filePath = path.join(projectRoot, file);
+      const content = await fs.readFile(filePath, 'utf-8');
+      
+      for (const { pattern, desc } of mockEvidencePatterns) {
+        const matches = content.match(pattern);
+        if (matches && matches.length > 0) {
+          mockViolations.push({ file, pattern: desc, count: matches.length });
+          gate11Pass = false;
+        }
+      }
+    } catch (err) {
+      // File doesn't exist or can't be read - skip
+    }
+  }
+  
+  if (gate11Pass) {
+    console.log('   ✅ No mock evidence fallback found');
+  } else {
+    console.log('   ❌ Found mock evidence patterns:');
+    mockViolations.forEach(v => {
+      console.log(`      - ${v.file}: ${v.pattern} (${v.count} occurrences)`);
+    });
+  }
+  results.push({ gate: 'NO_MOCK_EVIDENCE', value: mockViolations.length === 0 ? 'Clean' : `${mockViolations.length} violations`, expected: 'No mock evidence', pass: gate11Pass });
 
   // Get additional stats
   const [statusDist] = await conn.execute('SELECT status, COUNT(*) as count FROM source_registry GROUP BY status');
