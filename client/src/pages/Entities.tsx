@@ -5,31 +5,21 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { 
   Building2, 
-  Banknote, 
-  Ship, 
-  Smartphone, 
-  Factory,
   Search,
   Filter,
   ExternalLink,
   Users,
   Globe,
-  TrendingUp,
   AlertTriangle,
   FileText,
   ChevronRight,
   Info,
-  Landmark,
-  Fuel,
-  ShoppingCart,
-  Wheat,
-  Network,
-  Building,
-  Plane
+  Database,
+  AlertCircle
 } from "lucide-react";
 import { useState } from "react";
 import { SourcesUsedPanel } from "@/components/SourcesUsedPanel";
-import { Link, useLocation } from "wouter";
+import { Link } from "wouter";
 import {
   Select,
   SelectContent,
@@ -37,342 +27,158 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import DataQualityBadge from "@/components/DataQualityBadge";
-import EvidencePackButton from "@/components/EvidencePackButton";
+import { trpc } from "@/lib/trpc";
+import { Skeleton } from "@/components/ui/skeleton";
 
-// Complete Entity data with HSA Group subsidiaries
-const entities = [
-  {
-    id: "hsa-group",
-    nameEn: "Hayel Saeed Anam Group (HSA)",
-    nameAr: "مجموعة هائل سعيد أنعم",
-    typeEn: "Commercial Conglomerate",
-    typeAr: "تكتل تجاري",
-    sectorEn: "Multi-sector",
-    sectorAr: "متعدد القطاعات",
-    foundedYear: 1938,
-    headquarters: "Taiz / Aden",
-    employeesEn: "15,000+",
-    employeesAr: "15,000+",
-    revenueEn: "$2.5B+ (est.)",
-    revenueAr: "2.5+ مليار دولار (تقدير)",
-    descriptionEn: "Yemen's largest private conglomerate with operations spanning food manufacturing, trading, banking, telecommunications, and real estate. Founded by Hayel Saeed Anam in Taiz in 1938, the group has grown to become a dominant economic force in Yemen and the region, with significant market share across multiple sectors.",
-    descriptionAr: "أكبر تكتل خاص في اليمن مع عمليات تشمل تصنيع الأغذية والتجارة والخدمات المصرفية والاتصالات والعقارات. أسسها هائل سعيد أنعم في تعز عام 1938، ونمت المجموعة لتصبح قوة اقتصادية مهيمنة في اليمن والمنطقة، مع حصة سوقية كبيرة عبر قطاعات متعددة.",
-    subsidiaries: [
-      { 
-        id: "ykb",
-        nameEn: "Yemen Kuwait Bank", 
-        nameAr: "بنك اليمن والكويت", 
-        sector: "banking",
-        ownership: "Major shareholder",
-        descEn: "One of Yemen's largest commercial banks",
-        descAr: "أحد أكبر البنوك التجارية في اليمن",
-        icon: Banknote
-      },
-      { 
-        id: "hsa-trading",
-        nameEn: "HSA Trading Company", 
-        nameAr: "شركة هائل سعيد للتجارة", 
-        sector: "trading",
-        ownership: "100%",
-        descEn: "Import/export and distribution",
-        descAr: "الاستيراد والتصدير والتوزيع",
-        icon: ShoppingCart
-      },
-      { 
-        id: "ycgs",
-        nameEn: "Yemen Company for Ghee & Soap (YCGS)", 
-        nameAr: "الشركة اليمنية للسمن والصابون", 
-        sector: "manufacturing",
-        ownership: "100%",
-        descEn: "Largest FMCG manufacturer in Yemen",
-        descAr: "أكبر مصنع للسلع الاستهلاكية في اليمن",
-        icon: Factory
-      },
-      { 
-        id: "nfi",
-        nameEn: "National Food Industries", 
-        nameAr: "الصناعات الغذائية الوطنية", 
-        sector: "food",
-        ownership: "100%",
-        descEn: "Food processing and packaging",
-        descAr: "تصنيع وتعبئة المواد الغذائية",
-        icon: Wheat
-      },
-      { 
-        id: "aujan",
-        nameEn: "Aujan Industries Yemen", 
-        nameAr: "صناعات أوجان اليمن", 
-        sector: "beverages",
-        ownership: "Joint venture",
-        descEn: "Beverage manufacturing (Rani, Barbican)",
-        descAr: "تصنيع المشروبات (راني، باربيكان)",
-        icon: Factory
-      },
-      { 
-        id: "hsa-real-estate",
-        nameEn: "HSA Real Estate", 
-        nameAr: "هائل سعيد للعقارات", 
-        sector: "real_estate",
-        ownership: "100%",
-        descEn: "Commercial and residential development",
-        descAr: "التطوير التجاري والسكني",
-        icon: Building
-      },
-      { 
-        id: "yemen-mobile",
-        nameEn: "Yemen Mobile (Y)", 
-        nameAr: "يمن موبايل", 
-        sector: "telecom",
-        ownership: "Minority stake",
-        descEn: "Mobile telecommunications",
-        descAr: "الاتصالات المتنقلة",
-        icon: Smartphone
-      },
-    ],
-    keyIndicators: [
-      { labelEn: "Market Share (Food/FMCG)", labelAr: "حصة السوق (الغذاء/السلع الاستهلاكية)", value: "~40%", confidence: "B" },
-      { labelEn: "Banking Assets (YKB)", labelAr: "الأصول المصرفية (بنك اليمن والكويت)", value: "YER 850B", confidence: "A" },
-      { labelEn: "Annual Import Volume", labelAr: "حجم الاستيراد السنوي", value: "$800M", confidence: "C" },
-      { labelEn: "Employment (Direct)", labelAr: "التوظيف (مباشر)", value: "15,000+", confidence: "B" },
-      { labelEn: "Distribution Network", labelAr: "شبكة التوزيع", value: "All 22 governorates", confidence: "A" },
-    ],
-    riskFactors: [
-      { en: "Sanctions exposure through banking operations and international transfers", ar: "التعرض للعقوبات من خلال العمليات المصرفية والتحويلات الدولية", severity: "high" },
-      { en: "Supply chain disruptions due to ongoing conflict and port blockades", ar: "اضطرابات سلسلة التوريد بسبب الصراع المستمر وحصار الموانئ", severity: "high" },
-      { en: "Currency volatility affecting import costs and pricing", ar: "تقلبات العملة التي تؤثر على تكاليف الاستيراد والتسعير", severity: "medium" },
-      { en: "Regulatory uncertainty across divided governance structures", ar: "عدم اليقين التنظيمي عبر هياكل الحوكمة المنقسمة", severity: "medium" },
-    ],
-    timeline: [
-      { year: 1938, eventEn: "Founded by Hayel Saeed Anam in Taiz", eventAr: "تأسست على يد هائل سعيد أنعم في تعز" },
-      { year: 1971, eventEn: "Established Yemen Company for Ghee & Soap", eventAr: "تأسيس الشركة اليمنية للسمن والصابون" },
-      { year: 1979, eventEn: "Became major shareholder in Yemen Kuwait Bank", eventAr: "أصبحت مساهماً رئيسياً في بنك اليمن والكويت" },
-      { year: 2000, eventEn: "Expanded into telecommunications sector", eventAr: "التوسع في قطاع الاتصالات" },
-      { year: 2015, eventEn: "Operations disrupted by civil war", eventAr: "تعطلت العمليات بسبب الحرب الأهلية" },
-      { year: 2020, eventEn: "Adapted supply chains to conflict conditions", eventAr: "تكييف سلاسل التوريد مع ظروف الصراع" },
-    ],
-    icon: Building2,
-    color: "bg-blue-100 text-blue-700",
-    featured: true
-  },
-  {
-    id: "cby-aden",
-    nameEn: "Central Bank of Yemen (Aden)",
-    nameAr: "البنك المركزي اليمني (عدن)",
-    typeEn: "Central Bank",
-    typeAr: "بنك مركزي",
-    sectorEn: "Banking & Finance",
-    sectorAr: "القطاع المصرفي والمالي",
-    foundedYear: 1971,
-    headquarters: "Aden",
-    employeesEn: "2,000+",
-    employeesAr: "2,000+",
-    revenueEn: "N/A",
-    revenueAr: "غير متاح",
-    descriptionEn: "The internationally recognized central bank of Yemen, relocated to Aden in 2016. Responsible for monetary policy, currency issuance, and banking supervision in government-controlled areas. Maintains relationships with international financial institutions.",
-    descriptionAr: "البنك المركزي المعترف به دولياً في اليمن، انتقل إلى عدن في 2016. مسؤول عن السياسة النقدية وإصدار العملة والرقابة المصرفية في المناطق الخاضعة لسيطرة الحكومة. يحافظ على العلاقات مع المؤسسات المالية الدولية.",
-    subsidiaries: [],
-    keyIndicators: [
-      { labelEn: "Foreign Reserves", labelAr: "الاحتياطيات الأجنبية", value: "$1.2B (est.)", confidence: "C" },
-      { labelEn: "Currency in Circulation", labelAr: "العملة المتداولة", value: "YER 2.8T", confidence: "B" },
-      { labelEn: "Licensed Banks", labelAr: "البنوك المرخصة", value: "18", confidence: "A" },
-    ],
-    riskFactors: [
-      { en: "Limited foreign reserves constraining monetary policy", ar: "محدودية الاحتياطيات الأجنبية تقيد السياسة النقدية", severity: "high" },
-      { en: "Dual central bank system creating monetary fragmentation", ar: "نظام البنك المركزي المزدوج يخلق تجزئة نقدية", severity: "high" },
-    ],
-    timeline: [
-      { year: 1971, eventEn: "Central Bank of Yemen established in Sana'a", eventAr: "تأسيس البنك المركزي اليمني في صنعاء" },
-      { year: 2016, eventEn: "Headquarters relocated to Aden by presidential decree", eventAr: "نقل المقر الرئيسي إلى عدن بمرسوم رئاسي" },
-      { year: 2018, eventEn: "Saudi deposit of $2B to stabilize currency", eventAr: "وديعة سعودية بقيمة 2 مليار دولار لتثبيت العملة" },
-    ],
-    icon: Landmark,
-    color: "bg-green-100 text-green-700",
-    featured: true
-  },
-  {
-    id: "cby-sanaa",
-    nameEn: "Central Bank of Yemen (Sana'a)",
-    nameAr: "البنك المركزي اليمني (صنعاء)",
-    typeEn: "Central Bank (De facto)",
-    typeAr: "بنك مركزي (بحكم الأمر الواقع)",
-    sectorEn: "Banking & Finance",
-    sectorAr: "القطاع المصرفي والمالي",
-    foundedYear: 1971,
-    headquarters: "Sana'a",
-    employeesEn: "3,000+",
-    employeesAr: "3,000+",
-    revenueEn: "N/A",
-    revenueAr: "غير متاح",
-    descriptionEn: "The de facto central bank operating in Houthi-controlled areas. Continues to operate from the original headquarters in Sana'a. Issues currency and manages banking operations in northern Yemen, though not internationally recognized.",
-    descriptionAr: "البنك المركزي بحكم الأمر الواقع العامل في المناطق الخاضعة لسيطرة الحوثيين. يواصل العمل من المقر الأصلي في صنعاء. يصدر العملة ويدير العمليات المصرفية في شمال اليمن، رغم عدم الاعتراف الدولي.",
-    subsidiaries: [],
-    keyIndicators: [
-      { labelEn: "Old Currency Notes", labelAr: "الأوراق النقدية القديمة", value: "Only pre-2017 accepted", confidence: "A" },
-      { labelEn: "Exchange Rate (unofficial)", labelAr: "سعر الصرف (غير رسمي)", value: "YER 530/USD", confidence: "B" },
-    ],
-    riskFactors: [
-      { en: "International isolation and sanctions risk", ar: "العزلة الدولية ومخاطر العقوبات", severity: "high" },
-      { en: "Currency fragmentation with Aden-issued notes", ar: "تجزئة العملة مع الأوراق النقدية الصادرة من عدن", severity: "high" },
-    ],
-    timeline: [
-      { year: 2016, eventEn: "Split from Aden branch after government relocation", eventAr: "الانفصال عن فرع عدن بعد انتقال الحكومة" },
-      { year: 2019, eventEn: "Banned new currency notes issued by Aden CBY", eventAr: "حظر الأوراق النقدية الجديدة الصادرة من البنك المركزي في عدن" },
-    ],
-    icon: Landmark,
-    color: "bg-red-100 text-red-700",
-    featured: true
-  },
-  {
-    id: "aden-port",
-    nameEn: "Aden Container Terminal",
-    nameAr: "محطة حاويات عدن",
-    typeEn: "Port Authority",
-    typeAr: "هيئة ميناء",
-    sectorEn: "Logistics & Trade",
-    sectorAr: "الخدمات اللوجستية والتجارة",
-    foundedYear: 1999,
-    headquarters: "Aden",
-    employeesEn: "1,500+",
-    employeesAr: "1,500+",
-    revenueEn: "$150M (est.)",
-    revenueAr: "150 مليون دولار (تقدير)",
-    descriptionEn: "Yemen's primary container port, strategically located at the entrance to the Red Sea. Operated by DP World until 2012, now under government management. Critical for humanitarian aid and commercial imports.",
-    descriptionAr: "الميناء الرئيسي للحاويات في اليمن، يقع استراتيجياً عند مدخل البحر الأحمر. كان يديره موانئ دبي العالمية حتى 2012، والآن تحت إدارة الحكومة. حيوي للمساعدات الإنسانية والواردات التجارية.",
-    subsidiaries: [],
-    keyIndicators: [
-      { labelEn: "Container Throughput", labelAr: "حركة الحاويات", value: "450,000 TEU/yr", confidence: "B" },
-      { labelEn: "Vessel Calls", labelAr: "رسو السفن", value: "~800/yr", confidence: "B" },
-    ],
-    riskFactors: [
-      { en: "Security concerns affecting shipping insurance", ar: "مخاوف أمنية تؤثر على تأمين الشحن", severity: "high" },
-      { en: "Infrastructure damage from conflict", ar: "أضرار البنية التحتية من الصراع", severity: "medium" },
-    ],
-    timeline: [],
-    icon: Ship,
-    color: "bg-cyan-100 text-cyan-700",
-    featured: false
-  },
-  {
-    id: "yemen-mobile",
-    nameEn: "Yemen Mobile (Y)",
-    nameAr: "يمن موبايل",
-    typeEn: "Telecommunications",
-    typeAr: "اتصالات",
-    sectorEn: "Telecommunications",
-    sectorAr: "الاتصالات",
-    foundedYear: 2004,
-    headquarters: "Sana'a",
-    employeesEn: "2,500+",
-    employeesAr: "2,500+",
-    revenueEn: "$300M (est.)",
-    revenueAr: "300 مليون دولار (تقدير)",
-    descriptionEn: "One of Yemen's major mobile network operators, providing GSM and 3G services. Operates primarily in northern Yemen with significant market share.",
-    descriptionAr: "أحد مشغلي شبكات الهاتف المحمول الرئيسيين في اليمن، يوفر خدمات GSM و3G. يعمل بشكل رئيسي في شمال اليمن مع حصة سوقية كبيرة.",
-    subsidiaries: [],
-    keyIndicators: [
-      { labelEn: "Subscribers", labelAr: "المشتركون", value: "5M+", confidence: "C" },
-      { labelEn: "Network Coverage", labelAr: "تغطية الشبكة", value: "~60% population", confidence: "C" },
-    ],
-    riskFactors: [
-      { en: "Infrastructure damage from airstrikes", ar: "أضرار البنية التحتية من الغارات الجوية", severity: "high" },
-      { en: "Fuel shortages affecting tower operations", ar: "نقص الوقود يؤثر على تشغيل الأبراج", severity: "medium" },
-    ],
-    timeline: [],
-    icon: Smartphone,
-    color: "bg-purple-100 text-purple-700",
-    featured: false
-  },
-  {
-    id: "safer-oil",
-    nameEn: "Safer Exploration & Production",
-    nameAr: "صافر للاستكشاف والإنتاج",
-    typeEn: "Oil & Gas",
-    typeAr: "النفط والغاز",
-    sectorEn: "Energy",
-    sectorAr: "الطاقة",
-    foundedYear: 1997,
-    headquarters: "Sana'a",
-    employeesEn: "1,000+",
-    employeesAr: "1,000+",
-    revenueEn: "Minimal (operations suspended)",
-    revenueAr: "الحد الأدنى (العمليات معلقة)",
-    descriptionEn: "Yemen's national oil company responsible for exploration and production. Operations largely suspended since 2015 due to conflict. The Safer FSO tanker remains a major environmental concern.",
-    descriptionAr: "شركة النفط الوطنية اليمنية المسؤولة عن الاستكشاف والإنتاج. العمليات معلقة إلى حد كبير منذ 2015 بسبب الصراع. تظل ناقلة صافر العائمة مصدر قلق بيئي كبير.",
-    subsidiaries: [],
-    keyIndicators: [
-      { labelEn: "Pre-war Production", labelAr: "الإنتاج قبل الحرب", value: "125,000 bpd", confidence: "A" },
-      { labelEn: "Current Production", labelAr: "الإنتاج الحالي", value: "<15,000 bpd", confidence: "C" },
-    ],
-    riskFactors: [
-      { en: "Safer FSO environmental disaster risk", ar: "خطر كارثة بيئية من ناقلة صافر العائمة", severity: "critical" },
-      { en: "Infrastructure damage and looting", ar: "أضرار البنية التحتية والنهب", severity: "high" },
-    ],
-    timeline: [],
-    icon: Fuel,
-    color: "bg-orange-100 text-orange-700",
-    featured: false
-  },
-];
+// Entity type icons mapping
+const entityTypeIcons: Record<string, typeof Building2> = {
+  central_bank: Building2,
+  government_ministry: Building2,
+  commercial_bank: Building2,
+  customs_authority: Building2,
+  tax_authority: Building2,
+  international_org: Globe,
+  ngo: Users,
+  company: Building2,
+};
 
-// Entity type filters
-const entityTypes = [
-  { value: "all", labelEn: "All Types", labelAr: "جميع الأنواع" },
-  { value: "conglomerate", labelEn: "Conglomerates", labelAr: "التكتلات" },
-  { value: "bank", labelEn: "Banks", labelAr: "البنوك" },
-  { value: "port", labelEn: "Ports & Logistics", labelAr: "الموانئ والخدمات اللوجستية" },
-  { value: "telecom", labelEn: "Telecommunications", labelAr: "الاتصالات" },
-  { value: "energy", labelEn: "Energy", labelAr: "الطاقة" },
-];
+// GAP Ticket Badge Component
+function GapTicketBadge({ gapId, titleEn, titleAr }: { gapId: string; titleEn: string; titleAr: string }) {
+  const { language } = useLanguage();
+  return (
+    <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-300 text-xs">
+      <AlertCircle className="h-3 w-3 mr-1" />
+      {language === "ar" ? "غير متوفر" : "Not available"} | {gapId}
+    </Badge>
+  );
+}
+
+// Empty State Component
+function EmptyState({ type }: { type: "no-data" | "no-claims" }) {
+  const { language } = useLanguage();
+  
+  if (type === "no-data") {
+    return (
+      <Card className="p-12 text-center">
+        <Database className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+        <h3 className="text-lg font-medium text-gray-600 mb-2">
+          {language === "ar" ? "لا توجد بيانات متاحة" : "No Data Available"}
+        </h3>
+        <p className="text-gray-500 text-sm">
+          {language === "ar" 
+            ? "لم يتم العثور على كيانات في قاعدة البيانات. يتم جمع البيانات من مصادر موثوقة."
+            : "No entities found in the database. Data is being collected from verified sources."}
+        </p>
+      </Card>
+    );
+  }
+  
+  return (
+    <div className="text-center py-4 text-gray-500 text-sm">
+      <AlertCircle className="h-4 w-4 inline mr-1" />
+      {language === "ar" ? "لا توجد مطالبات موثقة" : "No verified claims available"}
+    </div>
+  );
+}
 
 export default function Entities() {
   const { language } = useLanguage();
   const isArabic = language === "ar";
-  const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState("all");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [regimeFilter, setRegimeFilter] = useState<string>("all");
 
-  // Filter entities
-  const filteredEntities = entities.filter(entity => {
-    const matchesSearch = 
-      entity.nameEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      entity.nameAr.includes(searchQuery) ||
-      entity.sectorEn.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesType = selectedType === "all" || 
-      entity.typeEn.toLowerCase().includes(selectedType) ||
-      entity.sectorEn.toLowerCase().includes(selectedType);
-    
-    return matchesSearch && matchesType;
+  // Fetch entities from database with evidence-backed claims
+  const { data, isLoading, error } = trpc.entities.getWithClaims.useQuery({
+    search: searchQuery || undefined,
+    type: typeFilter !== "all" ? typeFilter : undefined,
+    regimeTag: regimeFilter !== "all" ? regimeFilter : undefined,
+    limit: 50,
   });
 
-  const featuredEntities = filteredEntities.filter(e => e.featured);
-  const otherEntities = filteredEntities.filter(e => !e.featured);
+  // Fetch entity types for filter
+  const { data: entityTypes } = trpc.entities.getTypes.useQuery();
+
+  const entities = data?.entities || [];
+  const gapTickets = data?.gapTickets || [];
+  const totalCount = data?.total || 0;
+
+  // Get unique regime tags from entities
+  const regimeTags = [...new Set(entities.map((e: any) => e.regimeTag).filter(Boolean))];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950" dir={isArabic ? "rtl" : "ltr"}>
-
-
-      {/* Header */}
-      <div className="bg-[#2e8b6e] text-white py-12">
-        <div className="container">
+    <div className={`min-h-screen bg-gray-50 p-6 ${isArabic ? "rtl" : "ltr"}`}>
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <Network className="h-10 w-10" />
-            <h1 className="text-3xl font-bold">
-              {isArabic ? "ملفات الكيانات" : "Entity Profiles"}
-            </h1>
+            <div className="p-3 bg-emerald-100 rounded-lg">
+              <Building2 className="h-8 w-8 text-emerald-700" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                {isArabic ? "دليل الكيانات" : "Entity Directory"}
+              </h1>
+              <p className="text-gray-600">
+                {isArabic 
+                  ? "قاعدة بيانات شاملة للمؤسسات والكيانات الاقتصادية في اليمن"
+                  : "Comprehensive database of economic institutions and entities in Yemen"}
+              </p>
+            </div>
           </div>
-          <p className="text-white/80 max-w-2xl">
-            {isArabic 
-              ? "استكشف الملفات الشاملة للكيانات الاقتصادية الرئيسية في اليمن، بما في ذلك التكتلات التجارية والبنوك المركزية والبنية التحتية الحيوية."
-              : "Explore comprehensive profiles of key economic entities in Yemen, including commercial conglomerates, central banks, and critical infrastructure."}
-          </p>
-        </div>
-      </div>
+          
+          {/* Data Source Notice */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+            <div className="flex items-start gap-3">
+              <Info className="h-5 w-5 text-blue-600 mt-0.5" />
+              <div>
+                <p className="text-sm text-blue-800 font-medium">
+                  {isArabic ? "مصدر البيانات" : "Data Source"}
+                </p>
+                <p className="text-sm text-blue-700">
+                  {isArabic 
+                    ? "جميع البيانات المعروضة مستمدة من قاعدة البيانات الموثقة. الأرقام والإحصائيات تتطلب حزمة أدلة للعرض."
+                    : "All displayed data is sourced from the verified database. Metrics require evidence packs to be displayed."}
+                </p>
+              </div>
+            </div>
+          </div>
 
-      {/* Search & Filters */}
-      <div className="container py-6">
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
+          {/* Stats Summary */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <Card className="p-4">
+              <div className="text-2xl font-bold text-emerald-700">{totalCount}</div>
+              <div className="text-sm text-gray-600">
+                {isArabic ? "إجمالي الكيانات" : "Total Entities"}
+              </div>
+            </Card>
+            <Card className="p-4">
+              <div className="text-2xl font-bold text-blue-700">
+                {entities.filter((e: any) => e.verifiedClaimsCount > 0).length}
+              </div>
+              <div className="text-sm text-gray-600">
+                {isArabic ? "مع بيانات موثقة" : "With Verified Data"}
+              </div>
+            </Card>
+            <Card className="p-4">
+              <div className="text-2xl font-bold text-amber-700">{gapTickets.length}</div>
+              <div className="text-sm text-gray-600">
+                {isArabic ? "فجوات بيانات" : "Data Gaps"}
+              </div>
+            </Card>
+            <Card className="p-4">
+              <div className="text-2xl font-bold text-purple-700">
+                {entityTypes?.length || 0}
+              </div>
+              <div className="text-sm text-gray-600">
+                {isArabic ? "أنواع الكيانات" : "Entity Types"}
+              </div>
+            </Card>
+          </div>
+        </div>
+
+        {/* Search and Filters */}
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
@@ -382,143 +188,204 @@ export default function Entities() {
               className="pl-10"
             />
           </div>
-          <Select value={selectedType} onValueChange={setSelectedType}>
-            <SelectTrigger className="w-full md:w-48">
+          
+          <Select value={typeFilter} onValueChange={setTypeFilter}>
+            <SelectTrigger className="w-[200px]">
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue placeholder={isArabic ? "نوع الكيان" : "Entity Type"} />
             </SelectTrigger>
             <SelectContent>
-              {entityTypes.map((type) => (
-                <SelectItem key={type.value} value={type.value}>
-                  {isArabic ? type.labelAr : type.labelEn}
+              <SelectItem value="all">{isArabic ? "جميع الأنواع" : "All Types"}</SelectItem>
+              {entityTypes?.map((type: any) => (
+                <SelectItem key={type.entityType} value={type.entityType}>
+                  {type.entityType.replace(/_/g, " ")} ({type.count})
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
+
+          <Select value={regimeFilter} onValueChange={setRegimeFilter}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder={isArabic ? "النظام" : "Regime"} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{isArabic ? "جميع الأنظمة" : "All Regimes"}</SelectItem>
+              <SelectItem value="aden_irg">{isArabic ? "عدن (IRG)" : "Aden (IRG)"}</SelectItem>
+              <SelectItem value="sanaa_defacto">{isArabic ? "صنعاء (DFA)" : "Sanaa (DFA)"}</SelectItem>
+              <SelectItem value="mixed">{isArabic ? "مختلط" : "Mixed"}</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        {/* Featured Entities */}
-        {featuredEntities.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-[#2e8b6e] dark:text-white mb-4">
-              {isArabic ? "الكيانات الرئيسية" : "Key Entities"}
-            </h2>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {featuredEntities.map((entity) => (
-                <Card key={entity.id} className="hover:shadow-lg transition-shadow cursor-pointer group">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className={`p-3 rounded-lg ${entity.color}`}>
-                        <entity.icon className="h-6 w-6" />
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <DataQualityBadge quality="verified" size="sm" />
-                        <Badge variant="outline">
-                          {isArabic ? entity.typeAr : entity.typeEn}
-                        </Badge>
-                      </div>
-                    </div>
-                    <CardTitle className="mt-4 group-hover:text-[#2e8b6e] transition-colors">
-                      {isArabic ? entity.nameAr : entity.nameEn}
-                    </CardTitle>
-                    <CardDescription>
-                      {isArabic ? entity.sectorAr : entity.sectorEn} • {entity.headquarters}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3 mb-4">
-                      {isArabic ? entity.descriptionAr : entity.descriptionEn}
-                    </p>
-                    
-                    {/* Key Indicators Preview */}
-                    <div className="space-y-2 mb-4">
-                      {entity.keyIndicators.slice(0, 2).map((indicator, idx) => (
-                        <div key={idx} className="flex items-center justify-between text-sm">
-                          <span className="text-gray-500">
-                            {isArabic ? indicator.labelAr : indicator.labelEn}
-                          </span>
-                          <span className="font-medium">{indicator.value}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Risk Factors Preview */}
-                    {entity.riskFactors.length > 0 && (
-                      <div className="flex items-center gap-2 text-sm text-amber-600 mb-4">
-                        <AlertTriangle className="h-4 w-4" />
-                        <span>{entity.riskFactors.length} {isArabic ? "عوامل خطر" : "risk factors"}</span>
-                      </div>
-                    )}
-
-                    <Link href={`/entities/${entity.id}`}>
-                      <Button variant="outline" className="w-full group-hover:bg-[#2e8b6e] group-hover:text-white transition-colors">
-                        {isArabic ? "عرض الملف الكامل" : "View Full Profile"}
-                        <ChevronRight className="h-4 w-4 ml-2" />
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+        {/* Loading State */}
+        {isLoading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Card key={i} className="p-6">
+                <Skeleton className="h-6 w-3/4 mb-4" />
+                <Skeleton className="h-4 w-1/2 mb-2" />
+                <Skeleton className="h-4 w-full mb-2" />
+                <Skeleton className="h-4 w-2/3" />
+              </Card>
+            ))}
           </div>
         )}
 
-        {/* Other Entities */}
-        {otherEntities.length > 0 && (
-          <div>
-            <h2 className="text-xl font-bold text-[#2e8b6e] dark:text-white mb-4">
-              {isArabic ? "كيانات أخرى" : "Other Entities"}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {otherEntities.map((entity) => (
-                <Card key={entity.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-3">
-                      <div className={`p-2 rounded-lg ${entity.color}`}>
-                        <entity.icon className="h-5 w-5" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-1">
-                          <h3 className="font-medium">
-                            {isArabic ? entity.nameAr : entity.nameEn}
-                          </h3>
-                          <DataQualityBadge quality="verified" size="sm" />
+        {/* Error State */}
+        {error && (
+          <Card className="p-12 text-center border-red-200 bg-red-50">
+            <AlertTriangle className="h-12 w-12 text-red-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-red-700 mb-2">
+              {isArabic ? "خطأ في تحميل البيانات" : "Error Loading Data"}
+            </h3>
+            <p className="text-red-600 text-sm">{error.message}</p>
+          </Card>
+        )}
+
+        {/* Empty State */}
+        {!isLoading && !error && entities.length === 0 && (
+          <EmptyState type="no-data" />
+        )}
+
+        {/* Entity Cards */}
+        {!isLoading && !error && entities.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {entities.map((entity: any) => {
+              const IconComponent = entityTypeIcons[entity.entityType] || Building2;
+              const hasVerifiedClaims = entity.verifiedClaimsCount > 0;
+              
+              return (
+                <Card key={entity.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-emerald-100 rounded-lg">
+                          <IconComponent className="h-5 w-5 text-emerald-700" />
                         </div>
-                        <p className="text-sm text-gray-500 mb-2">
-                          {isArabic ? entity.sectorAr : entity.sectorEn}
-                        </p>
-                        <Link href={`/entities/${entity.id}`}>
-                          <Button variant="ghost" size="sm" className="p-0 h-auto text-[#2e8b6e]">
-                            {isArabic ? "عرض الملف" : "View Profile"}
-                            <ChevronRight className="h-4 w-4 ml-1" />
-                          </Button>
-                        </Link>
+                        <div>
+                          <CardTitle className="text-lg">
+                            {isArabic ? entity.nameAr || entity.name : entity.name}
+                          </CardTitle>
+                          <CardDescription className="text-xs">
+                            {entity.entityType?.replace(/_/g, " ")}
+                          </CardDescription>
+                        </div>
                       </div>
+                      {entity.regimeTag && (
+                        <Badge variant="outline" className="text-xs">
+                          {entity.regimeTag === "aden_irg" ? "IRG" : 
+                           entity.regimeTag === "sanaa_defacto" ? "DFA" : "Mixed"}
+                        </Badge>
+                      )}
+                    </div>
+                  </CardHeader>
+                  
+                  <CardContent>
+                    {/* Description */}
+                    {entity.description && (
+                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                        {isArabic ? entity.descriptionAr || entity.description : entity.description}
+                      </p>
+                    )}
+                    
+                    {/* Verified Claims Section */}
+                    {hasVerifiedClaims ? (
+                      <div className="space-y-2 mb-4">
+                        <div className="text-xs font-medium text-gray-500 uppercase">
+                          {isArabic ? "بيانات موثقة" : "Verified Data"}
+                        </div>
+                        {entity.verifiedClaims?.slice(0, 3).map((claim: any) => (
+                          <div key={claim.id} className="flex items-center justify-between text-sm bg-gray-50 p-2 rounded">
+                            <span className="text-gray-700">{claim.claim_subject}</span>
+                            <span className="font-medium">{claim.claim_object}</span>
+                          </div>
+                        ))}
+                        {entity.verifiedClaims?.length > 3 && (
+                          <p className="text-xs text-gray-500">
+                            +{entity.verifiedClaims.length - 3} {isArabic ? "مطالبات أخرى" : "more claims"}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="mb-4">
+                        <GapTicketBadge 
+                          gapId={`GAP-ENTITY-${entity.id}`}
+                          titleEn={`Missing verified claims for ${entity.name}`}
+                          titleAr={`بيانات مفقودة لـ ${entity.nameAr || entity.name}`}
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Stats */}
+                    <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
+                      <span className="flex items-center gap-1">
+                        <FileText className="h-3 w-3" />
+                        {entity.timelineCount || 0} {isArabic ? "أحداث" : "events"}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Users className="h-3 w-3" />
+                        {entity.relationshipCount || 0} {isArabic ? "علاقات" : "relations"}
+                      </span>
+                    </div>
+                    
+                    {/* Actions */}
+                    <div className="flex gap-2">
+                      <Link href={`/entities/${entity.id}`}>
+                        <Button variant="outline" size="sm" className="flex-1">
+                          {isArabic ? "عرض الملف" : "View Profile"}
+                          <ChevronRight className="h-4 w-4 ml-1" />
+                        </Button>
+                      </Link>
+                      {entity.website && (
+                        <Button variant="ghost" size="sm" asChild>
+                          <a href={entity.website} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="h-4 w-4" />
+                          </a>
+                        </Button>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
+              );
+            })}
           </div>
+        )}
+
+        {/* GAP Tickets Summary */}
+        {gapTickets.length > 0 && (
+          <Card className="mt-8 border-amber-200 bg-amber-50">
+            <CardHeader>
+              <CardTitle className="text-amber-800 flex items-center gap-2">
+                <AlertCircle className="h-5 w-5" />
+                {isArabic ? "فجوات البيانات" : "Data Gaps"}
+              </CardTitle>
+              <CardDescription className="text-amber-700">
+                {isArabic 
+                  ? `${gapTickets.length} كيان بدون بيانات موثقة`
+                  : `${gapTickets.length} entities without verified data`}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                {gapTickets.slice(0, 9).map((gap: any) => (
+                  <div key={gap.gapId} className="text-sm text-amber-800 bg-white p-2 rounded border border-amber-200">
+                    <span className="font-mono text-xs text-amber-600">{gap.gapId}</span>
+                    <span className="mx-2">|</span>
+                    {isArabic ? gap.titleAr : gap.titleEn}
+                  </div>
+                ))}
+                {gapTickets.length > 9 && (
+                  <div className="text-sm text-amber-700 p-2">
+                    +{gapTickets.length - 9} {isArabic ? "فجوات أخرى" : "more gaps"}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         )}
 
         {/* Sources Used Panel */}
         <SourcesUsedPanel pageKey="entities" className="mt-8" />
-
-        {/* No Results */}
-        {filteredEntities.length === 0 && (
-          <Card className="p-12 text-center">
-            <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-600 mb-2">
-              {isArabic ? "لم يتم العثور على كيانات" : "No entities found"}
-            </h3>
-            <p className="text-gray-500">
-              {isArabic 
-                ? "جرب تعديل معايير البحث أو الفلتر"
-                : "Try adjusting your search or filter criteria"}
-            </p>
-          </Card>
-        )}
       </div>
     </div>
   );

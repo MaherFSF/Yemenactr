@@ -9504,3 +9504,45 @@ Based on review of master design documents and data source register:
 - T3: 18 (Media Sources)
 - UNKNOWN: 119 (40.8% - TARGET MET)
 
+
+
+### Phase 77: PROMPT 5.1/6 (P0 PATCH) - Zero-Fake UI for /entities + /corporate-registry (February 1, 2026)
+
+**HARD FAIL RULES:**
+- R1: NO STATIC FACTS IN PUBLIC UI (no hardcoded employees/revenue/market share)
+- R2: EVIDENCE PACK REQUIRED (any KPI must include evidencePackId)
+- R3: SAFE FALLBACK (show empty states + GAP tickets if no data)
+- R4: RELEASE GATE MUST BLOCK STATIC UI
+
+**A) Audit & File Targets:**
+- [ ] Audit Entities.tsx for static arrays and "est." patterns
+- [ ] Audit CorporateRegistry.tsx for static KPIs and trends
+- [ ] Audit any entity profile pages for static content
+- [ ] Document all forbidden patterns found
+
+**B) /entities - Replace Static Data:**
+- [ ] Delete static entities[] array
+- [ ] Replace with DB-driven entity load via tRPC
+- [ ] Pull metrics only from entity_claims with evidence_pack_id
+- [ ] Show "Not available | GAP-ID" for missing data
+- [ ] Make SourcesUsedPanel populate from query evidence sources
+
+**C) /corporate-registry - Make It Real:**
+- [ ] Remove hardcoded registry KPI values
+- [ ] Replace with DB-driven registry metrics
+- [ ] Remove fabricated registrationTrends arrays
+- [ ] Replace sector/regional distribution with DB data or GAP tickets
+- [ ] Major companies section must be evidence-backed
+
+**D) Release Gate - NO_STATIC_PUBLIC_KPIS:**
+- [ ] Add gate to scan frontend files for forbidden tokens
+- [ ] Fail on "est.", "~", "$", hardcoded numeric arrays
+- [ ] Integrate into release-gate.mjs
+
+**E) Testing:**
+- [ ] Unit tests for empty DB rendering
+- [ ] Verify no "est." appears in UI
+- [ ] Verify EvidenceDrawer opens for displayed numbers
+- [ ] Run pnpm test
+- [ ] Run node scripts/release-gate.mjs
+

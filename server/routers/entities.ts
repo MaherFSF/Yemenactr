@@ -9,15 +9,36 @@ import { router, publicProcedure, protectedProcedure } from "../_core/trpc";
 import { getDb } from "../db";
 
 // Helper function for raw SQL queries with parameters
-async function rawQuery(query: string, params: any[] = []): Promise<any[]> {
-  const db = await getDb();
-  if (!db) return [];
-  const connection = (db as any).$client;
-  if (connection && connection.execute) {
-    const [rows] = await connection.execute(query, params);
-    return rows || [];
+import mysql from 'mysql2/promise';
+
+let _rawConn: mysql.Connection | null = null;
+
+async function getRawConnection(): Promise<mysql.Connection | null> {
+  if (!_rawConn && process.env.DATABASE_URL) {
+    try {
+      _rawConn = await mysql.createConnection(process.env.DATABASE_URL);
+    } catch (error) {
+      console.warn('[rawQuery] Failed to create connection:', error);
+      return null;
+    }
   }
-  return [];
+  return _rawConn;
+}
+
+async function rawQuery(sql: string, params: any[] = []): Promise<any[]> {
+  const conn = await getRawConnection();
+  if (!conn) {
+    console.warn('[rawQuery] No connection available');
+    return [];
+  }
+  try {
+    // Use query() instead of execute() for LIMIT/OFFSET compatibility
+    const [rows] = await conn.query(sql, params);
+    return (rows as any[]) || [];
+  } catch (error) {
+    console.error('[rawQuery] Query failed:', error);
+    return [];
+  }
 }
 
 export const entitiesRouter = router({
@@ -60,9 +81,9 @@ export const entitiesRouter = router({
       }
       
       sql += " ORDER BY e.name LIMIT ? OFFSET ?";
-      params.push(input.limit, input.offset);
+      params.push(Number(input.limit), Number(input.offset));
       
-      const [rows] = await rawQuery(sql, params) as any[];
+      const rows = await rawQuery(sql, params);
       return rows || [];
     }),
   
@@ -76,7 +97,7 @@ export const entitiesRouter = router({
       if (!db) return null;
       
       // Get entity
-      const [entityRows] = await rawQuery(
+      const entityRows = await rawQuery(
         "SELECT * FROM entities WHERE id = ?",
         [input.id]
       ) as any[];
@@ -88,19 +109,19 @@ export const entitiesRouter = router({
       const entity = entityRows[0];
       
       // Get aliases
-      const [aliases] = await rawQuery(
+      const aliases = await rawQuery(
         "SELECT * FROM entity_alias WHERE entityId = ?",
         [input.id]
       ) as any[];
       
       // Get external IDs
-      const [externalIds] = await rawQuery(
+      const externalIds = await rawQuery(
         "SELECT * FROM entity_external_id WHERE entityId = ?",
         [input.id]
       ) as any[];
       
       // Get relationships
-      const [relationships] = await rawQuery(
+      const relationships = await rawQuery(
         `SELECT el.*, e.name as targetName, e.nameAr as targetNameAr
          FROM entity_links el
          JOIN entities e ON el.targetEntityId = e.id
@@ -109,13 +130,13 @@ export const entitiesRouter = router({
       ) as any[];
       
       // Get timeline
-      const [timeline] = await rawQuery(
+      const timeline = await rawQuery(
         "SELECT * FROM entity_timeline WHERE entityId = ? ORDER BY eventDate DESC",
         [input.id]
       ) as any[];
       
       // Get assertions
-      const [assertions] = await rawQuery(
+      const assertions = await rawQuery(
         "SELECT * FROM entity_assertion WHERE entityId = ? AND status = 'active'",
         [input.id]
       ) as any[];
@@ -157,12 +178,12 @@ export const entitiesRouter = router({
     const db = await getDb();
     if (!db) return [];
     
-    const [rows] = await rawQuery(
+    const rows = await rawQuery(
       `SELECT DISTINCT entityType, COUNT(*) as count 
        FROM entities 
        GROUP BY entityType 
        ORDER BY count DESC`
-    ) as any[];
+    );
     
     return rows || [];
   }),
@@ -201,7 +222,7 @@ export const entitiesRouter = router({
       sql += " ORDER BY eventDate DESC LIMIT ?";
       params.push(input.limit);
       
-      const [rows] = await rawQuery(sql, params) as any[];
+      const rows = await rawQuery(sql, params);
       return rows || [];
     }),
   
@@ -248,7 +269,7 @@ export const entitiesRouter = router({
         params.push(input.entityId, input.entityId, input.entityId);
       }
       
-      const [rows] = await rawQuery(sql, params) as any[];
+      const rows = await rawQuery(sql, params);
       return rows || [];
     }),
   
@@ -273,10 +294,107 @@ export const entitiesRouter = router({
       sql += " ORDER BY createdAt DESC LIMIT ?";
       params.push(input.limit);
       
-      const [rows] = await rawQuery(sql, params) as any[];
+      const rows = await rawQuery(sql, params);
       return rows || [];
     }),
   
+  // Get entities with verified claims (evidence-backed data only)
+  getWithClaims: publicProcedure
+    .input(z.object({
+      search: z.string().optional(),
+      type: z.string().optional(),
+      regimeTag: z.string().optional(),
+      limit: z.number().default(50),
+      offset: z.number().default(0),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return { entities: [], total: 0, gapTickets: [] };
+      
+      // Get entities
+      let sql = `
+        SELECT e.*, 
+               (SELECT COUNT(*) FROM entity_timeline WHERE entityId = e.id) as timelineCount,
+               (SELECT COUNT(*) FROM entity_links WHERE sourceEntityId = e.id OR targetEntityId = e.id) as relationshipCount,
+               (SELECT COUNT(*) FROM entity_claims WHERE entity_id = e.id AND status = 'verified') as verifiedClaimsCount
+        FROM entities e
+        WHERE 1=1
+      `;
+      const params: any[] = [];
+      
+      if (input.search) {
+        sql += " AND (e.name LIKE ? OR e.nameAr LIKE ?)";
+        params.push(`%${input.search}%`, `%${input.search}%`);
+      }
+      
+      if (input.type) {
+        sql += " AND e.entityType = ?";
+        params.push(input.type);
+      }
+      
+      if (input.regimeTag) {
+        sql += " AND e.regimeTag = ?";
+        params.push(input.regimeTag);
+      }
+      
+      sql += " ORDER BY e.name LIMIT ? OFFSET ?";
+      params.push(Number(input.limit), Number(input.offset));
+      
+      const rows = await rawQuery(sql, params) as any[];
+      
+      // Get total count
+      let countSql = "SELECT COUNT(*) as total FROM entities WHERE 1=1";
+      const countParams: any[] = [];
+      if (input.search) {
+        countSql += " AND (name LIKE ? OR nameAr LIKE ?)";
+        countParams.push(`%${input.search}%`, `%${input.search}%`);
+      }
+      if (input.type) {
+        countSql += " AND entityType = ?";
+        countParams.push(input.type);
+      }
+      if (input.regimeTag) {
+        countSql += " AND regimeTag = ?";
+        countParams.push(input.regimeTag);
+      }
+      const countResult = await rawQuery(countSql, countParams);
+      const total = countResult[0]?.total || 0;
+      
+      // Get verified claims for each entity
+      const entitiesWithClaims = await Promise.all(
+        (rows || []).map(async (entity: any) => {
+          const claims = await rawQuery(
+            `SELECT * FROM entity_claims 
+             WHERE entity_id = ? AND status = 'verified' AND primary_evidence_id IS NOT NULL`,
+            [entity.id]
+          );
+          return {
+            ...entity,
+            verifiedClaims: claims || [],
+          };
+        })
+      );
+      
+      // Generate GAP tickets for entities without claims
+      const gapTickets = entitiesWithClaims
+        .filter((e: any) => e.verifiedClaimsCount === 0)
+        .map((e: any) => ({
+          gapId: `GAP-ENTITY-${e.id}`,
+          entityId: e.id,
+          entityName: e.name,
+          titleEn: `Missing verified claims for ${e.name}`,
+          titleAr: `بيانات مفقودة لـ ${e.nameAr || e.name}`,
+          severity: 'medium',
+          status: 'open',
+        }));
+      
+      return {
+        entities: entitiesWithClaims,
+        total,
+        gapTickets,
+      };
+    }),
+
   // Resolve a resolution case
   resolveCase: protectedProcedure
     .input(z.object({

@@ -114,6 +114,55 @@ async function runReleaseGate() {
   console.log(`   ${gate9Pass ? '✅' : '❌'} v2.5 columns: ${gate9Pass ? 'All present' : `Missing: ${missingCols.join(', ')}`}`);
   results.push({ gate: 'v2.5 Schema', value: gate9Pass ? 'Present' : `Missing: ${missingCols.join(', ')}`, expected: 'All v2.5 columns', pass: gate9Pass });
   
+  // Gate 10: NO_STATIC_PUBLIC_KPIS - Scan frontend files for forbidden static patterns
+  console.log('🔍 Gate 10: NO_STATIC_PUBLIC_KPIS');
+  let gate10Pass = true;
+  const forbiddenPatterns = [
+    { pattern: /"\$[0-9]+\.?[0-9]*[BMK]?\+?\s*\(est\.\)"/g, desc: 'Estimated dollar values' },
+    { pattern: /"~[0-9]+/g, desc: 'Approximate values with ~' },
+    { pattern: /"[0-9]+,?[0-9]*\+"/g, desc: 'Values with + suffix' },
+    { pattern: /const\s+(entities|registrationStats|sectorDistribution|majorCompanies|regionalDistribution|registrationTrends)\s*=\s*\[/g, desc: 'Static data arrays' },
+    { pattern: /employees:\s*"~[0-9]+/g, desc: 'Static employee counts' },
+    { pattern: /value:\s*"[0-9]+%"/g, desc: 'Static percentage values' },
+  ];
+  
+  const filesToScan = [
+    'client/src/pages/Entities.tsx',
+    'client/src/pages/CorporateRegistry.tsx',
+  ];
+  
+  const fs = await import('fs/promises');
+  const path = await import('path');
+  const projectRoot = process.cwd();
+  const violations = [];
+  
+  for (const file of filesToScan) {
+    try {
+      const filePath = path.join(projectRoot, file);
+      const content = await fs.readFile(filePath, 'utf-8');
+      
+      for (const { pattern, desc } of forbiddenPatterns) {
+        const matches = content.match(pattern);
+        if (matches && matches.length > 0) {
+          violations.push({ file, pattern: desc, matches: matches.slice(0, 3) });
+          gate10Pass = false;
+        }
+      }
+    } catch (err) {
+      // File doesn't exist or can't be read - skip
+    }
+  }
+  
+  if (gate10Pass) {
+    console.log('   ✅ No static KPIs found in public UI pages');
+  } else {
+    console.log('   ❌ Found static KPIs in public UI pages:');
+    violations.forEach(v => {
+      console.log(`      - ${v.file}: ${v.pattern} (${v.matches.join(', ')})`);
+    });
+  }
+  results.push({ gate: 'NO_STATIC_PUBLIC_KPIS', value: violations.length === 0 ? 'Clean' : `${violations.length} violations`, expected: 'No static KPIs', pass: gate10Pass });
+
   // Get additional stats
   const [statusDist] = await conn.execute('SELECT status, COUNT(*) as count FROM source_registry GROUP BY status');
   stats.statusDistribution = statusDist.reduce((acc, s) => { acc[s.status] = s.count; return acc; }, {});
