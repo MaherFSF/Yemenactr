@@ -1,0 +1,26 @@
+# CODEOWNERS for YETO - Yemen Economic Transparency Observatory
+# These owners will be requested for review when someone opens a pull request
+
+# Default owners for everything in the repo
+* @MaherFSF
+
+# Core application code
+/server/ @MaherFSF
+/client/ @MaherFSF
+/drizzle/ @MaherFSF
+
+# Infrastructure and CI/CD
+/.github/ @MaherFSF
+/docker-compose*.yml @MaherFSF
+/scripts/ @MaherFSF
+
+# Documentation
+/docs/ @MaherFSF
+README.md @MaherFSF
+
+# Database schema changes require explicit review
+/drizzle/schema.ts @MaherFSF
+
+# Security-sensitive files
+SECURITY.md @MaherFSF
+/server/_core/ @MaherFSF

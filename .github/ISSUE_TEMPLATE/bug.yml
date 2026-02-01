@@ -1,0 +1,111 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior in YETO
+title: "[Bug]: "
+labels: ["bug", "triage"]
+assignees:
+  - MaherFSF
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+        Please provide as much detail as possible to help us investigate.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: Describe the bug...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: Describe what you expected...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: page
+    attributes:
+      label: Affected Page/Feature
+      description: Which page or feature is affected?
+      options:
+        - Home/Landing Page
+        - Entity Directory (/entities)
+        - Corporate Registry (/corporate-registry)
+        - Banking & Finance Sector
+        - Trade & Commerce Sector
+        - Source Registry (/admin/source-registry)
+        - Bulk Classification (/admin/bulk-classification)
+        - Dashboard
+        - AI Assistant
+        - API
+        - Other (specify in description)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this bug?
+      options:
+        - Critical (app crash, data loss)
+        - High (feature broken, no workaround)
+        - Medium (feature broken, workaround exists)
+        - Low (cosmetic, minor inconvenience)
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem.
+      placeholder: Drag and drop images here...
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Please provide your environment details
+      placeholder: |
+        - Browser: Chrome 120
+        - OS: Windows 11
+        - Language: English/Arabic
+      render: markdown
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console Logs
+      description: If applicable, paste any relevant console errors
+      render: shell
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched for existing issues before creating this one
+          required: true
+        - label: I have provided all requested information
+          required: true

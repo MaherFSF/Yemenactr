@@ -1,0 +1,87 @@
+name: ✨ Feature Request
+description: Suggest a new feature or enhancement for YETO
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+assignees:
+  - MaherFSF
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Please provide as much detail as possible.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Is your feature request related to a problem? Please describe.
+      placeholder: A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like
+      placeholder: A clear and concise description of what you want to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Describe any alternative solutions or features you've considered.
+      placeholder: Any workarounds or alternative approaches...
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: What area does this feature relate to?
+      options:
+        - Data/Indicators
+        - Entity Management
+        - Source Registry
+        - AI Assistant
+        - User Interface
+        - API/Integration
+        - Admin Tools
+        - Reporting/Export
+        - Performance
+        - Security
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Critical (blocking work)
+        - High (significantly improves workflow)
+        - Medium (nice to have)
+        - Low (minor improvement)
+    validations:
+      required: true
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups/Examples
+      description: If applicable, add mockups, wireframes, or examples from other products
+      placeholder: Drag and drop images here or describe the desired UI...
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched for existing feature requests before creating this one
+          required: true
+        - label: This feature aligns with YETO's mission of economic transparency
+          required: true
