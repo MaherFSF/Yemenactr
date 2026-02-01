@@ -107,9 +107,44 @@ export default function EvidencePackButton({
   const [isRequestingEvidence, setIsRequestingEvidence] = useState(false);
   const [gapTicketId, setGapTicketId] = useState<string | null>(null);
   
-  // TRUTH-NATIVE: No fabricated data fallback. If no data provided, show explicit "no evidence" state
-  const hasEvidence = !!providedData && providedData.sources && providedData.sources.length > 0;
   const requestedId = evidencePackId || packId || "unknown";
+  
+  // TRUTH-NATIVE: Fetch real evidence from database if evidencePackId is provided
+  const { data: dbEvidence, isLoading: isLoadingEvidence } = trpc.evidence.getBySubject.useQuery(
+    { subjectType: "claim", subjectId: requestedId },
+    { enabled: !!requestedId && requestedId !== "unknown" && !providedData }
+  );
+  
+  // Transform DB evidence to EvidencePackData format
+  const transformedEvidence: EvidencePackData | undefined = dbEvidence ? {
+    indicatorId: dbEvidence.subjectId,
+    indicatorNameEn: dbEvidence.subjectLabel || dbEvidence.subjectId,
+    indicatorNameAr: dbEvidence.subjectLabel || dbEvidence.subjectId,
+    value: "-",
+    unit: "",
+    timestamp: dbEvidence.createdAt?.toISOString() || new Date().toISOString(),
+    regime: dbEvidence.regimeTags?.includes("aden_irg") ? "aden" : dbEvidence.regimeTags?.includes("sanaa_defacto") ? "sanaa" : "both",
+    geography: dbEvidence.geoScope,
+    confidence: dbEvidence.confidenceGrade as "A" | "B" | "C" | "D",
+    sources: (dbEvidence.citations || []).map((c: any, idx: number) => ({
+      id: String(c.sourceId || idx),
+      name: c.title,
+      type: "official" as const,
+      url: c.url,
+      date: c.retrievalDate,
+      license: c.licenseFlag,
+      quality: dbEvidence.confidenceGrade as "A" | "B" | "C" | "D"
+    })),
+    methodology: dbEvidence.confidenceExplanation,
+    caveats: dbEvidence.whatWouldChange || [],
+    lastVerified: dbEvidence.updatedAt?.toISOString()
+  } : undefined;
+  
+  // Use provided data first, then transformed DB evidence
+  const effectiveData = providedData || transformedEvidence;
+  
+  // TRUTH-NATIVE: No fabricated data fallback. If no data provided, show explicit "no evidence" state
+  const hasEvidence = !!effectiveData && effectiveData.sources && effectiveData.sources.length > 0;
 
   // tRPC mutation for creating GAP tickets
   const createGapTicketMutation = trpc.system.createGapTicket?.useMutation?.({
@@ -191,11 +226,11 @@ export default function EvidencePackButton({
   };
 
   const copyToClipboard = () => {
-    if (!hasEvidence || !providedData) {
+    if (!hasEvidence || !effectiveData) {
       toast.error(isArabic ? "لا توجد أدلة للنسخ" : "No evidence to copy");
       return;
     }
-    const citation = `${providedData.indicatorNameEn}: ${providedData.value} ${providedData.unit} (${new Date(providedData.timestamp).toLocaleDateString()}). Source: YETO Platform. Confidence: ${providedData.confidence}. Sources: ${providedData.sources.map(s => s.name).join(", ")}.`;
+    const citation = `${effectiveData.indicatorNameEn}: ${effectiveData.value} ${effectiveData.unit} (${new Date(effectiveData.timestamp).toLocaleDateString()}). Source: YETO Platform. Confidence: ${effectiveData.confidence}. Sources: ${effectiveData.sources.map(s => s.name).join(", ")}.`;
     navigator.clipboard.writeText(citation);
     toast.success(isArabic ? "تم نسخ الاقتباس" : "Citation copied to clipboard");
   };
@@ -243,9 +278,9 @@ export default function EvidencePackButton({
           <Badge variant="outline" className={`cursor-pointer ${hasEvidence ? 'hover:bg-blue-50' : 'hover:bg-amber-50 border-amber-300'} gap-1 ${className || ''}`}>
             <FileText className="h-3 w-3" />
             {isArabic ? "أدلة" : "Evidence"}
-            {hasEvidence && showConfidence && providedData && (
-              <span className={`ml-1 px-1 rounded text-xs ${getConfidenceColor(providedData.confidence)}`}>
-                {providedData.confidence}
+            {hasEvidence && showConfidence && effectiveData && (
+              <span className={`ml-1 px-1 rounded text-xs ${getConfidenceColor(effectiveData.confidence)}`}>
+                {effectiveData.confidence}
               </span>
             )}
             {!hasEvidence && (
@@ -260,9 +295,9 @@ export default function EvidencePackButton({
           <Button variant="outline" size={size} className={`gap-1 ${!hasEvidence ? 'border-amber-300 text-amber-700' : ''} ${className || ''}`}>
             <FileText className="h-4 w-4" />
             {isArabic ? "كيف نعرف هذا؟" : "How do we know this?"}
-            {hasEvidence && showConfidence && providedData && (
-              <Badge className={`ml-1 ${getConfidenceColor(providedData.confidence)}`}>
-                {providedData.confidence}
+            {hasEvidence && showConfidence && effectiveData && (
+              <Badge className={`ml-1 ${getConfidenceColor(effectiveData.confidence)}`}>
+                {effectiveData.confidence}
               </Badge>
             )}
             {!hasEvidence && (
@@ -427,7 +462,7 @@ export default function EvidencePackButton({
         </DialogHeader>
 
         {/* TRUTH-NATIVE: Show either real evidence or explicit no-evidence state */}
-        {hasEvidence && providedData ? (
+        {hasEvidence && effectiveData ? (
           <Tabs defaultValue="overview" className="mt-4">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="overview">{isArabic ? "نظرة عامة" : "Overview"}</TabsTrigger>
@@ -444,14 +479,14 @@ export default function EvidencePackButton({
                   {isArabic ? "المؤشر" : "Indicator"}
                 </div>
                 <div className="text-lg font-semibold mb-2">
-                  {isArabic ? providedData.indicatorNameAr : providedData.indicatorNameEn}
+                  {isArabic ? effectiveData.indicatorNameAr : effectiveData.indicatorNameEn}
                 </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl font-bold text-[#2e8b6e]">
-                    {providedData.value}
+                    {effectiveData.value}
                   </span>
                   <span className="text-gray-500">
-                    {isArabic ? providedData.unitAr || providedData.unit : providedData.unit}
+                    {isArabic ? effectiveData.unitAr || effectiveData.unit : effectiveData.unit}
                   </span>
                 </div>
               </div>
@@ -467,10 +502,10 @@ export default function EvidencePackButton({
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge className={getConfidenceColor(providedData.confidence)}>
-                      {providedData.confidence}
+                    <Badge className={getConfidenceColor(effectiveData.confidence)}>
+                      {effectiveData.confidence}
                     </Badge>
-                    <span className="text-sm">{getConfidenceLabel(providedData.confidence)}</span>
+                    <span className="text-sm">{getConfidenceLabel(effectiveData.confidence)}</span>
                   </div>
                 </div>
 
@@ -483,7 +518,7 @@ export default function EvidencePackButton({
                     </span>
                   </div>
                   <div className="text-sm font-medium">
-                    {new Date(providedData.timestamp).toLocaleDateString(isArabic ? 'ar-YE' : 'en-US', {
+                    {new Date(effectiveData.timestamp).toLocaleDateString(isArabic ? 'ar-YE' : 'en-US', {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric'
@@ -492,15 +527,15 @@ export default function EvidencePackButton({
                 </div>
 
                 {/* Regime */}
-                {providedData.regime && (
+                {effectiveData.regime && (
                   <div className="p-3 bg-gray-50 rounded-lg">
                     <div className="text-sm text-gray-500 mb-1">
                       {isArabic ? "النظام" : "Regime"}
                     </div>
                     <Badge variant="outline">
-                      {providedData.regime === 'aden' 
+                      {effectiveData.regime === 'aden' 
                         ? (isArabic ? "عدن (IRG)" : "Aden (IRG)")
-                        : providedData.regime === 'sanaa'
+                        : effectiveData.regime === 'sanaa'
                         ? (isArabic ? "صنعاء (DFA)" : "Sana'a (DFA)")
                         : (isArabic ? "كلاهما" : "Both")}
                     </Badge>
@@ -508,20 +543,20 @@ export default function EvidencePackButton({
                 )}
 
                 {/* Geography */}
-                {providedData.geography && (
+                {effectiveData.geography && (
                   <div className="p-3 bg-gray-50 rounded-lg">
                     <div className="text-sm text-gray-500 mb-1">
                       {isArabic ? "النطاق الجغرافي" : "Geography"}
                     </div>
                     <span className="text-sm font-medium">
-                      {isArabic ? providedData.geographyAr || providedData.geography : providedData.geography}
+                      {isArabic ? effectiveData.geographyAr || effectiveData.geography : effectiveData.geography}
                     </span>
                   </div>
                 )}
               </div>
 
               {/* Caveats */}
-              {providedData.caveats && providedData.caveats.length > 0 && (
+              {effectiveData.caveats && effectiveData.caveats.length > 0 && (
                 <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
                     <AlertTriangle className="h-4 w-4 text-yellow-600" />
@@ -530,7 +565,7 @@ export default function EvidencePackButton({
                     </span>
                   </div>
                   <ul className="text-sm text-yellow-700 space-y-1">
-                    {(isArabic ? providedData.caveatsAr || providedData.caveats : providedData.caveats).map((caveat, i) => (
+                    {(isArabic ? effectiveData.caveatsAr || effectiveData.caveats : effectiveData.caveats).map((caveat, i) => (
                       <li key={i} className="flex items-start gap-2">
                         <span>•</span>
                         <span>{caveat}</span>
@@ -561,10 +596,10 @@ export default function EvidencePackButton({
             <TabsContent value="sources" className="space-y-3 mt-4">
               <div className="text-sm text-gray-500 mb-2">
                 {isArabic 
-                  ? `${providedData.sources.length} مصادر تم التحقق منها`
-                  : `${providedData.sources.length} verified sources`}
+                  ? `${effectiveData.sources.length} مصادر تم التحقق منها`
+                  : `${effectiveData.sources.length} verified sources`}
               </div>
-              {providedData.sources.map((source, index) => (
+              {effectiveData.sources.map((source, index) => (
                 <div key={source.id || index} className="p-3 bg-gray-50 rounded-lg border">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -615,14 +650,14 @@ export default function EvidencePackButton({
 
             {/* Methodology Tab */}
             <TabsContent value="methodology" className="space-y-4 mt-4">
-              {providedData.methodology ? (
+              {effectiveData.methodology ? (
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <h4 className="font-medium mb-2 flex items-center gap-2">
                     <Info className="h-4 w-4" />
                     {isArabic ? "المنهجية" : "Methodology"}
                   </h4>
                   <p className="text-sm text-gray-600">
-                    {isArabic ? providedData.methodologyAr || providedData.methodology : providedData.methodology}
+                    {isArabic ? effectiveData.methodologyAr || effectiveData.methodology : effectiveData.methodology}
                   </p>
                 </div>
               ) : (
@@ -661,12 +696,12 @@ export default function EvidencePackButton({
 
             {/* History Tab */}
             <TabsContent value="history" className="space-y-4 mt-4">
-              {providedData.vintages && providedData.vintages.length > 0 ? (
+              {effectiveData.vintages && effectiveData.vintages.length > 0 ? (
                 <div className="space-y-3">
                   <div className="text-sm text-gray-500">
                     {isArabic ? "سجل التحديثات (ماذا كان معروفاً متى)" : "Update history (what was known when)"}
                   </div>
-                  {providedData.vintages.map((vintage, index) => (
+                  {effectiveData.vintages.map((vintage, index) => (
                     <div key={index} className="p-3 bg-gray-50 rounded-lg border flex items-center justify-between">
                       <div>
                         <div className="flex items-center gap-2">
@@ -694,21 +729,21 @@ export default function EvidencePackButton({
               {/* Verification Info */}
               <div className="p-3 border rounded-lg">
                 <div className="grid grid-cols-2 gap-4 text-sm">
-                  {providedData.lastVerified && (
+                  {effectiveData.lastVerified && (
                     <div>
                       <span className="text-gray-500">{isArabic ? "آخر تحقق:" : "Last verified:"}</span>
                       <div className="flex items-center gap-1 mt-1">
                         <CheckCircle className="h-4 w-4 text-green-500" />
-                        {new Date(providedData.lastVerified).toLocaleDateString(isArabic ? 'ar-YE' : 'en-US')}
+                        {new Date(effectiveData.lastVerified).toLocaleDateString(isArabic ? 'ar-YE' : 'en-US')}
                       </div>
                     </div>
                   )}
-                  {providedData.nextUpdate && (
+                  {effectiveData.nextUpdate && (
                     <div>
                       <span className="text-gray-500">{isArabic ? "التحديث القادم:" : "Next update:"}</span>
                       <div className="flex items-center gap-1 mt-1">
                         <Clock className="h-4 w-4 text-blue-500" />
-                        {new Date(providedData.nextUpdate).toLocaleDateString(isArabic ? 'ar-YE' : 'en-US')}
+                        {new Date(effectiveData.nextUpdate).toLocaleDateString(isArabic ? 'ar-YE' : 'en-US')}
                       </div>
                     </div>
                   )}
