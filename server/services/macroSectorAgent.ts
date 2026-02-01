@@ -18,6 +18,8 @@ import {
   libraryDocuments,
   evidencePacks,
   economicEvents,
+  dataUpdates,
+  entities,
 } from "../../drizzle/schema";
 import { eq, and, desc, gte, lte, sql, inArray } from "drizzle-orm";
 import { invokeLLM } from "../_core/llm";
@@ -120,7 +122,7 @@ interface LinkedDocument {
 }
 
 interface MacroBrief {
-  type: 'daily_digest' | 'weekly_public' | 'weekly_vip';
+  type: 'public' | 'vip';
   generatedAt: string;
   period: { start: string; end: string };
   summaryEn: string;
@@ -390,16 +392,19 @@ async function identifyMacroGaps(kpis: MacroKpi[]): Promise<MacroGap[]> {
 
 async function fetchLinkedEntities(): Promise<LinkedEntity[]> {
   try {
-    const entities = await db.query.entities.findMany({
-      where: sql`JSON_CONTAINS(${db.query.entities.columns.sectorTags}, '"macro"')`,
-      limit: 10
-    });
+    const entityResults = await db
+      .select()
+      .from(entities)
+      .where(
+        sql`${entities.entityType} IN ('central_bank', 'government_ministry', 'customs_authority', 'tax_authority')`
+      )
+      .limit(10);
     
-    return entities.map((e: any) => ({
+    return entityResults.map((e) => ({
       id: e.id,
-      name: e.name,
-      nameAr: e.nameAr || e.name,
-      type: e.entityType,
+      name: e.name || '',
+      nameAr: e.nameAr || e.name || '',
+      type: e.entityType || 'other',
       relevance: 'Macro sector stakeholder'
     }));
   } catch (error) {
@@ -445,11 +450,40 @@ async function storeContextPack(pack: MacroContextPack): Promise<void> {
     // Also store in database
     await db.insert(sectorContextPacks).values({
       sectorCode: 'macro',
-      generatedAt: new Date(pack.generatedAt),
-      dateRangeStart: new Date(pack.dateRange.start),
-      dateRangeEnd: new Date(pack.dateRange.end),
-      packData: pack,
-      status: 'active'
+      packDate: new Date(pack.generatedAt),
+      keyIndicators: pack.kpis.map(k => ({
+        indicatorCode: k.code,
+        nameEn: k.titleEn,
+        nameAr: k.titleAr,
+        currentValue: k.value || 0,
+        previousValue: k.delta ? (k.value || 0) - k.delta : undefined,
+        changePercent: k.delta,
+        confidence: k.confidence,
+        sourceId: 0,
+        lastUpdated: k.lastUpdated
+      })),
+      topDocuments: pack.linkedDocuments.map(d => ({
+        documentId: d.id,
+        titleEn: d.title,
+        titleAr: d.titleAr,
+        sourceId: 0,
+        publishDate: d.date
+      })),
+      contradictions: pack.contradictions.map(c => ({
+        indicatorCode: c.indicatorCode,
+        sources: c.sources.map(s => s.name),
+        descriptionEn: c.reason || `Contradiction in ${c.indicatorNameEn}`,
+        descriptionAr: c.reasonAr || `تناقض في ${c.indicatorNameAr}`
+      })),
+      gaps: pack.gaps.map(g => ({
+        gapType: g.type,
+        descriptionEn: g.description,
+        descriptionAr: g.descriptionAr,
+        ticketId: g.ticketId
+      })),
+      gapCount: pack.gaps.length,
+      contradictionCount: pack.contradictions.length,
+      generatedAt: new Date(pack.generatedAt)
     });
   } catch (error) {
     console.error('Error storing context pack:', error);
@@ -511,7 +545,8 @@ Format: {"summaryEn": "...", "summaryAr": "..."}`;
       }
     });
     
-    summary = JSON.parse(response.choices[0].message.content || '{}');
+    const content = response.choices[0].message.content;
+    summary = JSON.parse(typeof content === 'string' ? content : '{}');
   } catch (error) {
     console.error('Error generating digest summary:', error);
     summary = {
@@ -521,7 +556,7 @@ Format: {"summaryEn": "...", "summaryAr": "..."}`;
   }
   
   const digest: MacroBrief = {
-    type: 'daily_digest',
+    type: 'public', // Daily digest is public type
     generatedAt: now.toISOString(),
     period: {
       start: yesterday.toISOString(),
@@ -671,7 +706,8 @@ Format as JSON with summaryEn, summaryAr, keyFindings array, and recommendations
       }
     });
     
-    briefContent = JSON.parse(response.choices[0].message.content || '{}');
+    const briefContentStr = response.choices[0].message.content;
+    briefContent = JSON.parse(typeof briefContentStr === 'string' ? briefContentStr : '{}');
   } catch (error) {
     console.error('Error generating weekly brief:', error);
     briefContent = {
@@ -683,7 +719,7 @@ Format as JSON with summaryEn, summaryAr, keyFindings array, and recommendations
   }
   
   const brief: MacroBrief = {
-    type: isVip ? 'weekly_vip' : 'weekly_public',
+    type: isVip ? 'vip' : 'public',
     generatedAt: now.toISOString(),
     period: {
       start: weekAgo.toISOString(),
@@ -718,13 +754,14 @@ async function storeBrief(brief: MacroBrief): Promise<void> {
     await db.insert(sectorBriefs).values({
       sectorCode: 'macro',
       briefType: brief.type,
-      generatedAt: new Date(brief.generatedAt),
-      periodStart: new Date(brief.period.start),
-      periodEnd: new Date(brief.period.end),
+      weekStart: new Date(brief.period.start),
+      weekEnd: new Date(brief.period.end),
+      titleEn: `Macro Brief - ${brief.period.start}`,
+      titleAr: `ملخص الاقتصاد الكلي - ${brief.period.start}`,
       summaryEn: brief.summaryEn,
       summaryAr: brief.summaryAr,
-      briefData: brief,
-      status: 'published'
+      status: 'published',
+      publishedAt: new Date(brief.generatedAt)
     });
   } catch (error) {
     console.error('Error storing brief:', error);
@@ -776,7 +813,7 @@ async function checkFreshnessSLA(): Promise<void> {
         if (daysSince > maxDays) {
           await createAlert({
             sectorCode: 'macro',
-            alertType: 'freshness_sla_breach',
+            alertType: 'staleness',
             severity: daysSince > maxDays * 1.5 ? 'critical' : 'warning',
             title: `${code} data is ${daysSince} days old (SLA: ${maxDays} days)`,
             titleAr: `بيانات ${code} عمرها ${daysSince} يوم (الحد: ${maxDays} يوم)`,
@@ -807,7 +844,7 @@ async function checkMacroStressThreshold(): Promise<void> {
 
 async function createAlert(alert: {
   sectorCode: string;
-  alertType: string;
+  alertType: 'threshold_breach' | 'staleness' | 'contradiction_detected' | 'significant_change' | 'data_gap' | 'source_update';
   severity: 'critical' | 'warning' | 'info';
   title: string;
   titleAr: string;
@@ -818,7 +855,7 @@ async function createAlert(alert: {
       sectorCode: alert.sectorCode,
       alertType: alert.alertType,
       severity: alert.severity,
-      title: alert.title,
+      titleEn: alert.title,
       titleAr: alert.titleAr,
       indicatorCode: alert.indicatorCode,
       triggeredAt: new Date(),

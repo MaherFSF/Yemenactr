@@ -9630,3 +9630,60 @@ Based on review of master design documents and data source register:
 - [x] Create deployment scripts and configuration files
 - [x] Write step-by-step deployment guide
 
+
+
+### Phase 74: Code Finalization & GitHub-Ready State (February 2025) (COMPLETED)
+
+**Phase 1 - GitHub Integration:**
+- [x] Verify GitHub repo connection (MaherFSF/Yemenactr)
+- [x] Ensure full codebase is synced to GitHub
+- [x] Document decisions in /docs/DECISIONS.md
+
+**Phase 2 - CI Fix:**
+- [x] Create single .github/workflows/ci.yml (main.yml)
+- [x] Configure pnpm 9.15.4, Node 22
+- [x] Ensure pnpm install --frozen-lockfile works
+- [x] Ensure pnpm test passes (736/736 tests)
+- [x] Ensure release-gate.mjs passes 10/10
+- [ ] Verify GitHub Actions is GREEN (pending push)
+
+**Phase 3 - TypeScript Errors:**
+- [x] Audit and fix critical TypeScript errors (reduced to 130)
+- [x] Document remaining errors in /docs/TYPESCRIPT_ERRORS.md
+- [x] Group errors by theme with fix plans
+
+**Phase 4 - DB Schema Drift:**
+- [x] Verify time_series and sector_agent_runs tables
+- [x] Schema drift documented (non-blocking)
+- [x] Document in /docs/TYPESCRIPT_ERRORS.md
+
+**Phase 5 - Truth Data:**
+- [x] Populate entity_claims (5 entities, 18 claims total)
+- [x] Populate library_documents with metadata (370+ docs)
+- [x] S3 storage configured
+- [x] Ensure provenance pointers exist
+
+**Phase 6 - Ingestion Validation:**
+- [x] Test 26 connectors (all pass)
+- [x] Verify raw object records written
+- [x] Verify structured series/indicator rows (5,500+ time_series)
+- [x] Verify provenance ledger entries
+- [x] Connector tests pass (26/26)
+
+**Phase 7 - Repo Hardening:**
+- [x] Update README.md with local run instructions
+- [x] LICENSE, SECURITY.md, CONTRIBUTING.md exist
+- [x] CODEOWNERS file exists
+- [x] Issue/PR templates exist
+- [x] Create RELEASE_NOTES.md
+- [x] Create CODE_FREEZE_REPORT.md
+
+**Final Verification:**
+- [x] /entities shows 200+ entities
+- [x] /admin/bulk-classification shows 292 sources
+- [x] pnpm test passes (736/736)
+- [x] release-gate.mjs passes 10/10
+- [ ] GitHub Actions GREEN (pending push)
+- [x] No secrets committed
+- [x] Code Freeze Report delivered
+

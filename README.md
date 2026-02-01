@@ -426,20 +426,21 @@ node scripts/release-gate.mjs
 | Gate | Threshold | Current |
 |------|-----------|---------|
 | Source Registry Count | ≥ 250 | ✅ 292 |
-| Active Sources | ≥ 150 | ✅ 207 |
+| Active Sources | ≥ 150 | ✅ 234 |
 | Sector Codebook | = 16 | ✅ 16 |
-| Unknown Tier % | ≤ 70% | ✅ 57.2% |
+| Unknown Tier % | ≤ 70% | ✅ 40.8% |
 | Mapped Sources % | ≥ 50% | ✅ 100% |
 | No Duplicate IDs | = 0 | ✅ 0 |
 | Required Fields | = 0 nulls | ✅ 0 |
 | v2.5 Schema | All present | ✅ Yes |
+| NO_STATIC_PUBLIC_KPIS | Clean | ✅ Clean |
 
 ### Source Registry v2.5 Statistics
 
 | Category | Distribution |
 |----------|--------------|
-| **Tier** | T1: 95, T2: 13, T3: 17, UNKNOWN: 167 |
-| **Status** | ACTIVE: 207, PENDING_REVIEW: 68, NEEDS_KEY: 17 |
+| **Tier** | T1: 117, T2: 22, T0: 16, T3: 18, UNKNOWN: 119 |
+| **Status** | ACTIVE: 234, PENDING_REVIEW: 41, NEEDS_KEY: 17 |
 | **Source Type** | DATA: 246, RESEARCH: 23, MEDIA: 10, COMPLIANCE: 7, ACADEMIA: 6 |
 | **Sectors** | 16 sectors in codebook |
 
