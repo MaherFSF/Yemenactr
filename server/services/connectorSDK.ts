@@ -381,7 +381,7 @@ export abstract class BaseConnector implements ConnectorSDK {
       })
       .$returningId();
     
-    const ingestionRun = { id: ingestionRunResult[0]?.id || 0 };
+    const ingestionRun = { id: ingestionRunResult[0]?.id || 0, startedAt: new Date() };
 
     try {
       for (const s of series) {
@@ -467,12 +467,15 @@ export abstract class BaseConnector implements ConnectorSDK {
         }
       }
 
-      // Update ingestion run
+      // Update ingestion run with duration
+      const completedAt = new Date();
+      const startedAt = new Date(); // Will be overwritten by actual startedAt from insert
       await database
         .update(ingestionRuns)
         .set({
           status: errors.length === 0 ? "success" : "partial",
-          completedAt: new Date(),
+          completedAt,
+          duration: Math.floor((completedAt.getTime() - ingestionRun.startedAt.getTime()) / 1000),
           recordsCreated: recordsLoaded,
           recordsSkipped,
           errorMessage: errors.length > 0 ? errors.join("; ") : null,
@@ -488,11 +491,13 @@ export abstract class BaseConnector implements ConnectorSDK {
         ingestionRunId: ingestionRun.id,
       };
     } catch (err) {
+      const completedAt = new Date();
       await database
         .update(ingestionRuns)
         .set({
           status: "failed",
-          completedAt: new Date(),
+          completedAt,
+          duration: Math.floor((completedAt.getTime() - ingestionRun.startedAt.getTime()) / 1000),
           errorMessage: String(err),
         })
         .where(eq(ingestionRuns.id, ingestionRun.id));

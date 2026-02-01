@@ -12,6 +12,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { CronJob } from 'cron';
+import { getDb } from '../db';
+import { ingestionRuns } from '../../drizzle/schema';
+import { eq, lt, and, sql } from 'drizzle-orm';
 
 interface ScheduledSource {
   sourceId: string;
@@ -39,6 +42,9 @@ class IngestionScheduler {
    */
   async initialize(): Promise<void> {
     console.log('🚀 Initializing Ingestion Scheduler...\n');
+
+    // Start cleanup job for stuck runs
+    this.startCleanupJob();
 
     try {
       const registry = this.loadRegistry();
@@ -320,6 +326,77 @@ class IngestionScheduler {
     } catch (error) {
       console.error(`Failed to resume ${sourceId}:`, error);
       return false;
+    }
+  }
+
+  /**
+   * Cleanup stuck ingestion runs (running > 60 minutes)
+   * Runs every 15 minutes
+   */
+  private startCleanupJob(): void {
+    const cleanupJob = new CronJob(
+      '0 */15 * * * *', // Every 15 minutes
+      async () => {
+        try {
+          await this.cleanupStuckRuns();
+        } catch (error) {
+          console.error('[Scheduler] Cleanup job failed:', error);
+        }
+      },
+      null,
+      true,
+      'UTC'
+    );
+    console.log('🧹 Started cleanup job for stuck ingestion runs (every 15 minutes)');
+  }
+
+  /**
+   * Mark stuck runs as failed
+   */
+  async cleanupStuckRuns(): Promise<number> {
+    try {
+      const db = await getDb();
+      const sixtyMinutesAgo = new Date(Date.now() - 60 * 60 * 1000);
+      
+      // Find stuck runs
+      const stuckRuns = await db
+        .select({ id: ingestionRuns.id, connectorName: ingestionRuns.connectorName, startedAt: ingestionRuns.startedAt })
+        .from(ingestionRuns)
+        .where(
+          and(
+            eq(ingestionRuns.status, 'running'),
+            lt(ingestionRuns.startedAt, sixtyMinutesAgo)
+          )
+        );
+
+      if (stuckRuns.length === 0) {
+        return 0;
+      }
+
+      console.log(`[Scheduler] Found ${stuckRuns.length} stuck ingestion runs, marking as failed...`);
+
+      // Update stuck runs to failed
+      for (const run of stuckRuns) {
+        const completedAt = new Date();
+        const duration = Math.floor((completedAt.getTime() - run.startedAt.getTime()) / 1000);
+        
+        await db
+          .update(ingestionRuns)
+          .set({
+            status: 'failed',
+            completedAt,
+            duration,
+            errorMessage: `Timeout cleanup - run was stuck for ${Math.floor(duration / 60)} minutes`,
+          })
+          .where(eq(ingestionRuns.id, run.id));
+        
+        console.log(`[Scheduler] Marked run ${run.id} (${run.connectorName}) as failed`);
+      }
+
+      return stuckRuns.length;
+    } catch (error) {
+      console.error('[Scheduler] Failed to cleanup stuck runs:', error);
+      return 0;
     }
   }
 

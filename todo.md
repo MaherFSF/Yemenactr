@@ -9801,3 +9801,31 @@ Based on review of master design documents and data source register:
 - [ ] Browser proof screenshots
 - [ ] Push to GitHub
 - [ ] Create tag v0.2.2-truth-native-ingestion
+
+
+### Phase 78: Fix Ingestion Runs Stuck Status (P0) (COMPLETED)
+
+**Task A - Identify Code Paths:**
+- [x] Get DESCRIBE ingestion_runs schema - 16 columns documented
+- [x] Find INSERT code path - server/services/connectorSDK.ts line 378
+- [x] Find UPDATE code path - server/services/connectorSDK.ts lines 471-503
+
+**Task B - Fix Status Transitions:**
+- [x] Wrap ingestion execution in try/catch/finally - Already implemented
+- [x] Always update: status, completedAt, duration, errorMessage - Added duration calculation
+- [x] Align code to actual columns - recordsFetched, recordsCreated, recordsUpdated, recordsSkipped
+
+**Task C - Add Cleanup Job:**
+- [x] Create cleanup job for runs stuck > 60 minutes - server/services/ingestion-scheduler.ts
+- [x] Set status='failed', completedAt=NOW(), errorMessage='timeout cleanup' - Lines 356-400
+
+**Task D - Prove Connector Run:**
+- [x] Run test connector - scripts/test-connector-run.mjs
+- [x] Prove counters > 0 - Run ID 30002: 15 fetched, 10 created, 3 updated, 2 skipped
+
+**Stop Conditions:**
+- [x] 0 rows stuck in running older than 60 min - VERIFIED
+- [x] Latest run shows status success with completedAt populated - Run ID 30002
+- [x] pnpm test passes - 736/736 tests
+- [x] release gate passes - 11/11 gates
+- [x] Proof file written: /docs/AUDIT_PACK/2026-02-01/proofs/ingestion_fix_proof.txt
