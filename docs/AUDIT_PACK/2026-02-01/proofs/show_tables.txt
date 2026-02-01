@@ -1,248 +1,245 @@
-SHOW TABLES OUTPUT
-Timestamp: 2026-02-01T16:59:54.332Z
-==================
-1. __drizzle_migrations
-2. access_needed_items
-3. admin_audit_log
-4. admin_email_outbox
-5. admin_incidents
-6. admin_outbox
-7. agent_tasks
-8. ai_projections
-9. ai_query_logs
-10. alerts
-11. annotation_exports
-12. annotation_mentions
-13. annotation_upvotes
-14. api_access_logs
-15. api_registration_instructions
-16. audit_logs
-17. audit_trail
-18. auto_brief_instances
-19. auto_brief_subscriptions
-20. auto_brief_templates
-21. autopilot_events
-22. autopilot_settings
-23. backfill_checkpoints
-24. backfill_requests
-25. bank_historical_metrics
-26. banking_sector_metrics
-27. cby_directives
-28. chart_overlays
-29. claim_confidence_scores
-30. claim_evidence_links
-31. claim_sets
-32. claims
-33. cockpit_snapshots
-34. commercial_banks
-35. commercial_entities
-36. compliance_disputes
-37. confidence_ratings
-38. conflicts
-39. connector_thresholds
-40. context_packs
-41. corrections
-42. coverage_cells
-43. coverage_items
-44. credibility_metrics
-45. data_annotations
-46. data_contracts
-47. data_contradictions
-48. data_gap_tickets
-49. data_sources
-50. data_updates
-51. data_vintages
-52. dataset_cards
-53. dataset_versions
-54. datasets
-55. decision_follow_ups
-56. decision_journal
-57. decision_journal_entries
-58. decision_outcomes
-59. documents
-60. drift_metrics
-61. economic_events
-62. email_notification_queue
-63. email_outbox
-64. email_subscriptions
-65. entities
-66. entity_alias
-67. entity_aliases
-68. entity_artifact_link
-69. entity_assertion
-70. entity_claims
-71. entity_disclosure_checklist
-72. entity_documents
-73. entity_evidence_packs
-74. entity_external_id
-75. entity_facilities
-76. entity_facts
-77. entity_links
-78. entity_matches
-79. entity_resolution_case
-80. entity_right_to_reply
-81. entity_spine
-82. entity_timeline
-83. entity_timeline_events
-84. eval_runs
-85. event_indicator_links
-86. evidence_datasets
-87. evidence_documents
-88. evidence_excerpts
-89. evidence_items
-90. evidence_observations
-91. evidence_packs
-92. evidence_sets
-93. evidence_sources
-94. evidence_store
-95. executive_dashboard_widgets
-96. executive_profiles
-97. export_manifests
-98. fix_tickets
-99. fx_gap_tickets
-100. fx_rates
-101. fx_source_registry
-102. gap_tickets
-103. generated_reports
-104. generated_reports_new
-105. geospatial_data
-106. glossary_terms
-107. glossary_versions
-108. governance_policies
-109. graph_health_metrics
-110. graph_review_queue
-111. historical_snapshots
-112. images
-113. indicators
-114. ingestion_runs
-115. ingestion_work_queue
-116. insight_miner_proposals
-117. institutional_subscribers
-118. integrity_reports
-119. key_events
-120. knowledge_graph_links
-121. library_documents
-122. link_rule_runs
-123. link_rules
-124. methodology_notes
-125. microfinance_institutions
-126. moderation_queue
-127. nightly_job_runs
-128. notification_preferences
-129. notification_preferences_enhanced
-130. organizations
-131. page_build_runs
-132. partner_contributions
-133. partner_organizations
-134. partner_submissions
-135. partnership_access_requests
-136. partnership_requests
-137. phone_verifications
-138. policy_event_spine
-139. prompt_versions
-140. provenance_ledger
-141. provenance_ledger_full
-142. provenance_log
-143. public_changelog
-144. publication_authors
-145. publication_changelog
-146. publication_drafts
-147. publication_evidence_bundles
-148. publication_log
-149. publication_metrics
-150. publication_runs
-151. publication_spine
-152. publication_templates
-153. publish_runs
-154. qa_runs
-155. raw_objects
-156. reading_list_items
-157. registry_import_diff
-158. registry_lint_results
-159. registry_sector_map
-160. regulations
-161. related_items_cache
-162. release_gate_checks
-163. release_gate_runs
-164. reliability_runs
-165. reliability_tests
-166. report_archive
-167. report_distribution_log_new
-168. report_instances
-169. report_schedule_new
-170. report_subscribers_new
-171. report_templates
-172. report_templates_new
-173. report_trend_analysis
-174. report_version_changes
-175. research_authors
-176. research_completeness_audit
-177. research_ingestion_sources
-178. research_organizations
-179. research_publications
-180. role_lens_configs
-181. sanctions_designations
-182. sanctions_entries
-183. sanctions_lists
-184. saved_reports
-185. saved_searches
-186. scheduled_report_deliveries
-187. scheduler_jobs
-188. scheduler_run_history
-189. sector_agent_runs
-190. sector_alerts
-191. sector_briefs
-192. sector_codebook
-193. sector_context_packs
-194. sector_definitions
-195. sector_faqs
-196. sector_kpis
-197. sector_mechanisms
-198. sector_release_gates
-199. sector_spine
-200. sector_watchlist_items
-201. sent_emails
-202. session_tokens
-203. sms_alert_preferences
-204. sms_delivery_log
-205. source_contacts
-206. source_credentials
-207. source_discovery_queue
-208. source_endpoints
-209. source_feed_matrix
-210. source_products
-211. source_products_v2
-212. source_registry
-213. source_tier_audit_log
-214. source_year_coverage
-215. sources
-216. stakeholders
-217. story_mode_narratives
-218. submission_validations
-219. subscriptions
-220. time_series
-221. time_series_data
-222. time_spine_day
-223. timeline_evidence_packs
-224. topic_alerts
-225. translation_records
-226. tribunal_runs
-227. user_bookmarks
-228. user_reading_lists
-229. user_watchlist
-230. users
-231. verification_queue
-232. vip_briefs
-233. vip_cockpit_drivers
-234. vip_cockpit_options
-235. vip_cockpit_signals
-236. vip_role_profiles
-237. vip_user_assignments
-238. vip_watchlist_items
-239. visual_suggestions
-240. visualization_specs
-241. webhook_delivery_logs
-242. webhook_event_types
-243. webhooks
-
-Total tables: 243
+=== SHOW TABLES ===
+Timestamp: 2026-02-01T18:30:24.916Z
+__drizzle_migrations
+access_needed_items
+admin_audit_log
+admin_email_outbox
+admin_incidents
+admin_outbox
+agent_tasks
+ai_projections
+ai_query_logs
+alerts
+annotation_exports
+annotation_mentions
+annotation_upvotes
+api_access_logs
+api_registration_instructions
+audit_logs
+audit_trail
+auto_brief_instances
+auto_brief_subscriptions
+auto_brief_templates
+autopilot_events
+autopilot_settings
+backfill_checkpoints
+backfill_requests
+bank_historical_metrics
+banking_sector_metrics
+cby_directives
+chart_overlays
+claim_confidence_scores
+claim_evidence_links
+claim_sets
+claims
+cockpit_snapshots
+commercial_banks
+commercial_entities
+compliance_disputes
+confidence_ratings
+conflicts
+connector_thresholds
+context_packs
+corrections
+coverage_cells
+coverage_items
+credibility_metrics
+data_annotations
+data_contracts
+data_contradictions
+data_gap_tickets
+data_sources
+data_updates
+data_vintages
+dataset_cards
+dataset_versions
+datasets
+decision_follow_ups
+decision_journal
+decision_journal_entries
+decision_outcomes
+documents
+drift_metrics
+economic_events
+email_notification_queue
+email_outbox
+email_subscriptions
+entities
+entity_alias
+entity_aliases
+entity_artifact_link
+entity_assertion
+entity_claims
+entity_disclosure_checklist
+entity_documents
+entity_evidence_packs
+entity_external_id
+entity_facilities
+entity_facts
+entity_links
+entity_matches
+entity_resolution_case
+entity_right_to_reply
+entity_spine
+entity_timeline
+entity_timeline_events
+eval_runs
+event_indicator_links
+evidence_datasets
+evidence_documents
+evidence_excerpts
+evidence_items
+evidence_observations
+evidence_packs
+evidence_sets
+evidence_sources
+evidence_store
+executive_dashboard_widgets
+executive_profiles
+export_manifests
+fix_tickets
+fx_gap_tickets
+fx_rates
+fx_source_registry
+gap_tickets
+generated_reports
+generated_reports_new
+geospatial_data
+glossary_terms
+glossary_versions
+governance_policies
+graph_health_metrics
+graph_review_queue
+historical_snapshots
+images
+indicators
+ingestion_runs
+ingestion_work_queue
+insight_miner_proposals
+institutional_subscribers
+integrity_reports
+key_events
+knowledge_graph_links
+library_documents
+link_rule_runs
+link_rules
+methodology_notes
+microfinance_institutions
+moderation_queue
+nightly_job_runs
+notification_preferences
+notification_preferences_enhanced
+organizations
+page_build_runs
+partner_contributions
+partner_organizations
+partner_submissions
+partnership_access_requests
+partnership_requests
+phone_verifications
+policy_event_spine
+prompt_versions
+provenance_ledger
+provenance_ledger_full
+provenance_log
+public_changelog
+publication_authors
+publication_changelog
+publication_drafts
+publication_evidence_bundles
+publication_log
+publication_metrics
+publication_runs
+publication_spine
+publication_templates
+publish_runs
+qa_runs
+raw_objects
+reading_list_items
+registry_import_diff
+registry_lint_results
+registry_sector_map
+regulations
+related_items_cache
+release_gate_checks
+release_gate_runs
+reliability_runs
+reliability_tests
+report_archive
+report_distribution_log_new
+report_instances
+report_schedule_new
+report_subscribers_new
+report_templates
+report_templates_new
+report_trend_analysis
+report_version_changes
+research_authors
+research_completeness_audit
+research_ingestion_sources
+research_organizations
+research_publications
+role_lens_configs
+sanctions_designations
+sanctions_entries
+sanctions_lists
+saved_reports
+saved_searches
+scheduled_report_deliveries
+scheduler_jobs
+scheduler_run_history
+sector_agent_runs
+sector_alerts
+sector_briefs
+sector_codebook
+sector_context_packs
+sector_definitions
+sector_faqs
+sector_kpis
+sector_mechanisms
+sector_release_gates
+sector_spine
+sector_watchlist_items
+sent_emails
+session_tokens
+sms_alert_preferences
+sms_delivery_log
+source_contacts
+source_credentials
+source_discovery_queue
+source_endpoints
+source_feed_matrix
+source_products
+source_products_v2
+source_registry
+source_tier_audit_log
+source_year_coverage
+sources
+stakeholders
+story_mode_narratives
+submission_validations
+subscriptions
+time_series
+time_series_data
+time_spine_day
+timeline_evidence_packs
+topic_alerts
+translation_records
+tribunal_runs
+user_bookmarks
+user_reading_lists
+user_watchlist
+users
+verification_queue
+vip_briefs
+vip_cockpit_drivers
+vip_cockpit_options
+vip_cockpit_signals
+vip_role_profiles
+vip_user_assignments
+vip_watchlist_items
+visual_suggestions
+visualization_specs
+webhook_delivery_logs
+webhook_event_types
+webhooks

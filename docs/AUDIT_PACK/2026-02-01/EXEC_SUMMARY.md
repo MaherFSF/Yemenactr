@@ -12,8 +12,8 @@
 | Metric | Value | Status |
 |--------|-------|--------|
 | **Unit Tests** | 736/736 passing | ✅ GREEN |
-| **Release Gate** | 10/10 passing | ✅ GREEN |
-| **TypeScript Errors** | 130 (non-blocking) | ⚠️ YELLOW |
+| **Release Gate** | 11/11 passing | ✅ GREEN |
+| **TypeScript Errors** | 142 (non-blocking) | ⚠️ YELLOW |
 | **Database Tables** | 243 total | ✅ GREEN |
 | **Critical Tables Populated** | 16/23 | ⚠️ YELLOW |
 | **Evidence System** | 0% operational | ❌ RED |
@@ -36,9 +36,9 @@
 
 ### What's Broken ❌
 
-1. **Evidence System** - `evidence_packs` empty, Evidence Drawer shows mock data
+1. **Evidence System** - `evidence_packs` empty, Evidence Drawer shows "No evidence available" (mock removed ✅)
 2. **Ingestion Pipeline** - All 37 runs stuck at "running" with 0 records
-3. **Entity Directory** - `/en/entities` returns 404
+3. **Entity Directory** - `/entities` works ✅, but `/en/entities` returns 404
 4. **Gap Detection** - `gap_tickets` empty, system not running
 5. **Sector Agents** - `sector_briefs` and `sector_alerts` empty
 6. **Schema Drift** - 130 TypeScript errors from DB/code mismatch
@@ -88,7 +88,7 @@
 3. Fix ingestion run completion logic
 
 ### Short-term (Week 1)
-4. Resolve schema drift (update drizzle/schema.ts)
+4. Resolve schema drift (142 TypeScript errors from DB/code mismatch)
 5. Populate entity_claims for all 79 entities
 6. Enable gap detection agent
 

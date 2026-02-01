@@ -1,0 +1,49 @@
+=== DESCRIBE ingestion_runs ===
+id | int(11) | NO | PRI
+sourceId | int(11) | NO | MUL
+connectorName | varchar(100) | NO | MUL
+startedAt | timestamp | NO | MUL
+completedAt | timestamp | YES | 
+duration | int(11) | YES | 
+status | enum('running','success','partial','failed') | NO | MUL
+recordsFetched | int(11) | NO | 
+recordsCreated | int(11) | NO | 
+recordsUpdated | int(11) | NO | 
+recordsSkipped | int(11) | NO | 
+claimsCreated | int(11) | NO | 
+errorMessage | text | YES | 
+errorDetails | json | YES | 
+coverageCellsUpdated | int(11) | NO | 
+createdAt | timestamp | NO | 
+
+=== STUCK INGESTION RUNS (status=running) ===
+/home/ubuntu/yeto-platform/node_modules/.pnpm/mysql2@3.15.1/node_modules/mysql2/lib/promise/connection.js:29
+    const localErr = new Error();
+                     ^
+
+Error: Unknown column 'connector_name' in 'field list'
+    at PromiseConnection.query (/home/ubuntu/yeto-platform/node_modules/.pnpm/mysql2@3.15.1/node_modules/mysql2/lib/promise/connection.js:29:22)
+    at main ([eval]:12:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  code: 'ER_BAD_FIELD_ERROR',
+  errno: 1054,
+  sql: 'SELECT id, connector_name, status, started_at, completed_at FROM ingestion_runs WHERE status = "running" ORDER BY id DESC LIMIT 10',
+  sqlState: '42S22',
+  sqlMessage: "Unknown column 'connector_name' in 'field list'"
+}
+
+Node.js v22.13.0
+=== STUCK INGESTION RUNS (status=running) ===
+{"id":37,"connectorName":"SOURCE_2","status":"running","startedAt":"2026-01-28T01:12:45.000Z","completedAt":null}
+{"id":36,"connectorName":"SOURCE_1","status":"running","startedAt":"2026-01-28T01:12:44.000Z","completedAt":null}
+{"id":35,"connectorName":"SOURCE_2","status":"running","startedAt":"2026-01-28T01:12:43.000Z","completedAt":null}
+{"id":34,"connectorName":"SOURCE_1","status":"running","startedAt":"2026-01-28T01:12:42.000Z","completedAt":null}
+{"id":33,"connectorName":"SOURCE_1","status":"running","startedAt":"2026-01-28T01:12:41.000Z","completedAt":null}
+{"id":32,"connectorName":"SOURCE_1","status":"running","startedAt":"2026-01-28T01:12:40.000Z","completedAt":null}
+{"id":31,"connectorName":"MOCK_SOURCE","status":"running","startedAt":"2026-01-28T01:12:39.000Z","completedAt":null}
+{"id":30,"connectorName":"MOCK_SOURCE","status":"running","startedAt":"2026-01-28T01:12:38.000Z","completedAt":null}
+{"id":29,"connectorName":"SOURCE_2","status":"running","startedAt":"2026-01-28T01:10:09.000Z","completedAt":null}
+{"id":28,"connectorName":"SOURCE_1","status":"running","startedAt":"2026-01-28T01:10:07.000Z","completedAt":null}
+
+=== TOTAL STUCK RUNS ===
+Count: 37

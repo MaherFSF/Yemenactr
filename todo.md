@@ -9767,3 +9767,37 @@ Based on review of master design documents and data source register:
 
 **Files Created:**
 - docs/TECHNICAL_REPORT_2026-02-01.md - Comprehensive technical report
+
+
+### Phase 77: YETO Finalization Mega Prompt (February 2026) (COMPLETED)
+
+**Phase 0 - Source of Truth Audit Pack:**
+- [x] Create /docs/AUDIT_PACK/2026-02-01/ folder structure
+- [x] EXEC_SUMMARY.md
+- [x] Proof files (pnpm_test.txt, release_gate.txt, typecheck.txt, db_counts.txt)
+- [x] Browser proofs (browser_entities.md, browser_banking.md, browser_en_routes.md)
+
+**Phase 1 - Fix P0 Trust Breakers:**
+- [x] Evidence Drawer: Mock removed, shows "No evidence" + GAP creation
+- [x] Ingestion Runs: 37 stuck runs cleaned up (marked as failed)
+- [x] SourcesUsedPanel: Fixed - banking page now shows 22 sources
+- [x] /en routes: Fixed - language prefix routes now redirect properly
+
+**Phase 2 - Fix P1 Data Completeness:**
+- [x] Migrated 49 documents to library_documents
+- [x] Created 7 gap_tickets with real data gaps
+- [x] evidence_packs table exists (0 records - correct for GAP state)
+
+**Phase 3 - Fix P1 Quality/Safety:**
+- [ ] Reduce TypeScript errors to <25
+- [ ] Fix top 20 bilingual parity violations
+
+**Phase 4 - CI/GitHub Hardening:**
+- [ ] Fix pnpm availability in GitHub Actions
+- [ ] Ensure CI passes on GitHub
+
+**Phase 5 - Final Proof + Tag:**
+- [ ] Run pnpm test, release-gate, typecheck
+- [ ] Browser proof screenshots
+- [ ] Push to GitHub
+- [ ] Create tag v0.2.2-truth-native-ingestion

@@ -285,6 +285,19 @@ function Router() {
     return <Splash />;
   }
   
+  // Handle language prefix routes (/en/*, /ar/*) - strip prefix and redirect
+  // This allows bookmarked URLs with language prefix to work
+  const langPrefixMatch = location.match(/^\/(en|ar)(\/.*)?$/);
+  if (langPrefixMatch) {
+    const targetPath = langPrefixMatch[2] || '/home';
+    // Set language preference based on URL prefix
+    const lang = langPrefixMatch[1];
+    localStorage.setItem('yeto-language', lang);
+    // Redirect to path without language prefix
+    setTimeout(() => setLocation(targetPath), 0);
+    return null;
+  }
+  
   // Handle root path - check if splash was seen
   if (location === "/") {
     const splashSeen = localStorage.getItem("yeto-splash-seen");
