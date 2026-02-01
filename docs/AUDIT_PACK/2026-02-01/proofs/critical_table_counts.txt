@@ -1,0 +1,26 @@
+CRITICAL TABLE ROW COUNTS
+Timestamp: 2026-02-01T17:00:04.455Z
+==========================
+entities: 79
+source_registry: 292
+sources: 307
+time_series: 6699
+time_series_data: 173
+economic_events: 237
+documents: 61
+library_documents: 0
+raw_objects: 0
+entity_claims: 18
+gap_tickets: 0
+data_gap_tickets: 0
+evidence_packs: 0
+evidence_store: 0
+commercial_banks: 39
+research_publications: 370
+indicators: 165
+sector_codebook: 16
+ingestion_runs: 37
+scheduler_jobs: 36
+users: 6
+sector_alerts: 0
+sector_briefs: 0

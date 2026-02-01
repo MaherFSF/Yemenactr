@@ -1,0 +1,20 @@
+TABLE ROW COUNTS:
+=================
+entities: 79
+sources: 307
+time_series: 6699
+library_documents: 0
+economic_events: 237
+entity_claims: 18
+evidence_packs: 0
+gap_tickets: 0
+raw_objects: 0
+scheduler_jobs: 36
+ingestion_runs: 37
+sector_alerts: 0
+sector_briefs: 0
+commercial_banks: 39
+users: 6
+vip_role_profiles: 5
+data_contracts: 8
+partner_submissions: 0
