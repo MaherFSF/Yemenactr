@@ -1,0 +1,32 @@
+
+> yeto-platform@1.0.0 test /home/ubuntu/yeto-platform
+> vitest run server/evidence-rule.test.ts
+
+
+ RUN  v2.1.9 /home/ubuntu/yeto-platform
+
+stdout | server/evidence-rule.test.ts > Evidence Rule Compliance > should not have duplicate evidence packs for the same indicator+regime
+Note: Found multiple evidence packs for same subjectId (may be valid): [
+  { subjectId: 'BANKING_bank_deposits_unknown', count: 4 },
+  { subjectId: 'BANKING_cby_foreign_assets_unknown', count: 4 },
+  { subjectId: 'BANKING_credit_to_private_sector_unknown', count: 4 },
+  { subjectId: 'BANKING_money_supply_m1_unknown', count: 7 },
+  { subjectId: 'BANKING_money_supply_m2_unknown', count: 4 },
+  { subjectId: 'BASKET_COST_FOOD_mixed', count: 2 },
+  { subjectId: 'CONFLICT_gdp_growth_rate_mixed', count: 2 },
+  { subjectId: 'CONFLICT_gdp_growth_rate_projection_mixed', count: 2 },
+  {
+    subjectId: 'CONFLICT_yemeni_rial_to_usd_exchange_rate_aden_market_aden_irg',
+    count: 2
+  },
+  { subjectId: 'EMPLOYMENT_AGRICULTURE_mixed', count: 2 }
+]
+
+ ✓ server/evidence-rule.test.ts (3 tests) 2594ms
+   ✓ Evidence Rule Compliance > should have evidence_pack for every Dashboard KPI that displays a grade 2168ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  07:33:37
+   Duration  3.49s (transform 364ms, setup 0ms, collect 668ms, tests 2.59s, environment 0ms, prepare 72ms)
+

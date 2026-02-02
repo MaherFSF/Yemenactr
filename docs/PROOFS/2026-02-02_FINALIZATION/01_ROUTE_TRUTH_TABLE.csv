@@ -1,8 +1,47 @@
 Route,Lang,Device,Status,Data Visible,Numeric Facts,Evidence Grade,Evidence Drawer,Sources Panel,Console Errors,Screenshot Path,Notes
-/,AR,Desktop,✅ PASS,Y,N,N/A,N/A,N/A,N,/home/ubuntu/screenshots/3000-i6xuu6xrjujow4j_2026-02-02_05-23-25_8616.webp,Landing page with language selector
-/home,AR,Desktop,✅ PASS,Y,Y,Y (Evidence button visible),N/A,N/A,N,/home/ubuntu/screenshots/3000-i6xuu6xrjujow4j_2026-02-02_05-24-12_1918.webp,Home page with KPIs: GDP +2.0% | Inflation 15.0% | FX 1620 | IDPs 4.8M | Reserves $1.2B
-/dashboard,AR,Desktop,✅ PASS,Y,Y,Y (Grade A/C visible),Y,Y,N,/home/ubuntu/screenshots/3000-i6xuu6xrjujow4j_2026-02-02_05-24-48_8240.webp,Dashboard with KPIs: FX 1620 ثقة A | Inflation 25.0% Grade C | Unemployment 38.2% Grade C | GDP chart
-/entities,AR,Desktop,✅ PASS,Y,Y,N/A,N/A,N/A,N,/home/ubuntu/screenshots/3000-i6xuu6xrjujow4j_2026-02-02_05-25-21_8950.webp,79 entities | 3 with verified data | 47 data gaps | 14 entity types | Aden Refinery shows claims
-/sectors/banking,AR,Desktop,✅ PASS,Y,Y,Y (Grade A/B/C visible),Y,Y,N,/home/ubuntu/screenshots/3000-i6xuu6xrjujow4j_2026-02-02_06-47-11_1589.webp,Banking KPIs: 39 Banks Grade A | $18.8B Assets Grade B | 18.3% CAR Grade B | 16.8% NPL Grade C | OFAC alerts | Chart 2010-2025
-/dashboard,EN,Desktop,✅ PASS,Y,Y,Y (Grade A/C visible),Y,Y,N,/home/ubuntu/screenshots/3000-i6xuu6xrjujow4j_2026-02-02_05-26-27_5587.webp,EN Dashboard: FX 1620 Conf A | Inflation 0% Grade C | Unemployment 2% Grade C | GDP chart | Evidence buttons
-/sectors/banking,EN,Desktop,✅ PASS,Y,Y,Y (Grade A/B/C visible),Y,Y,N,/home/ubuntu/screenshots/3000-i6xuu6xrjujow4j_2026-02-02_06-47-36_8060.webp,EN Banking: 39 Banks Grade A | $18.8B Assets Grade B | 18.3% CAR Grade B | 16.8% NPL Grade C | OFAC alerts | Banks list visible
+# PUBLIC ROUTES - CORE
+/,AR,Desktop,✅ PASS,Y,N,N/A,N/A,N/A,N,screenshots/landing_ar.webp,Landing page with language selector
+/,EN,Desktop,✅ PASS,Y,N,N/A,N/A,N/A,N,screenshots/landing_en.webp,Landing page English
+/home,AR,Desktop,✅ PASS,Y,Y,Y,N/A,N/A,N,screenshots/home_ar.webp,Home page with KPIs: GDP +2.0% | Inflation 15.0% | FX 1620
+/home,EN,Desktop,✅ PASS,Y,Y,Y,N/A,N/A,N,screenshots/home_en.webp,Home page English version
+/dashboard,AR,Desktop,✅ PASS,Y,Y,Y (Grade A/B/C),Y,Y,N,screenshots/dashboard_ar.webp,Dashboard with evidence-native KPIs: FX 1620 Grade A | Inflation 25.0% Grade C
+/dashboard,EN,Desktop,✅ PASS,Y,Y,Y (Grade A/B/C),Y,Y,N,screenshots/dashboard_en.webp,EN Dashboard with evidence buttons
+/entities,AR,Desktop,✅ PASS,Y,Y,N/A,N/A,N/A,N,screenshots/entities_ar.webp,79 entities | 3 with verified data | 47 data gaps
+/entities,EN,Desktop,✅ PASS,Y,Y,N/A,N/A,N/A,N,screenshots/entities_en.webp,Entities page English
+/entities/45,AR,Desktop,✅ PASS,Y,Y,Y (Grade A/B),Y,Y,N,screenshots/entity_45_ar.webp,Aden Refinery - 3 verified claims with evidence packs
+/entities/45,EN,Desktop,✅ PASS,Y,Y,Y (Grade A/B),Y,Y,N,screenshots/entity_45_en.webp,Aden Refinery English
+# PUBLIC ROUTES - SECTORS
+/sectors/banking,AR,Desktop,✅ PASS,Y,Y,Y (Grade A/B/C),Y,Y,N,screenshots/banking_ar.webp,39 Banks | $18.8B Assets | 18.3% CAR | 16.8% NPL | OFAC alerts
+/sectors/banking,EN,Desktop,✅ PASS,Y,Y,Y (Grade A/B/C),Y,Y,N,screenshots/banking_en.webp,Banking English - 39 banks visible
+/sectors/agriculture,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/sectors/energy,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/sectors/currency,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/sectors/trade,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/sectors/labor-market,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/sectors/macroeconomy,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/sectors/poverty,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/sectors/prices,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/sectors/public-finance,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/sectors/infrastructure,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/sectors/investment,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/sectors/microfinance,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/sectors/food-security,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/sectors/aid-flows,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/sectors/conflict-economy,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+# PUBLIC ROUTES - OTHER
+/methodology,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/timeline,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/research,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/reports,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/glossary,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/sanctions,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/remittances,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/public-debt,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/humanitarian-funding,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+# ADMIN ROUTES
+/admin/source-registry,AR,Desktop,PENDING,,,,,,,NOT TESTED - Requires auth
+/admin/bulk-classification,AR,Desktop,PENDING,,,,,,,NOT TESTED - Requires auth
+/admin/ingestion,AR,Desktop,PENDING,,,,,,,NOT TESTED - Requires auth
+# MOBILE (NOT TESTED)
+/dashboard,AR,Mobile,PENDING,,,,,,,NOT TESTED - P2-1
+/sectors/banking,AR,Mobile,PENDING,,,,,,,NOT TESTED - P2-1

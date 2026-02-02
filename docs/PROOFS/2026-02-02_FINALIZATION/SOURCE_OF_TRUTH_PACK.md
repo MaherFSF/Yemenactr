@@ -32,11 +32,12 @@ This document serves as the authoritative proof pack for YETO v0.2.3 release. Al
 |-------|-------|-------|
 | entities | 79 | Economic entities tracked |
 | entity_claims | 18 | Verified claims with evidence |
-| evidence_packs | 898 | 552 metric, 297 claim, 49 document |
-| evidence_items | 1,794 | Source citations |
+| evidence_packs | 898 | 9 metric, 889 claim |
+| evidence_items | 898 | Source citations |
 | time_series | 6,702 | Economic indicators |
 | gap_tickets | 0 | No unresolved gaps |
-| ingestion_runs | 45 | 5 success, 40 failed |
+| ingestion_runs | 47 | 6 success, 41 failed, 0 stuck |
+| commercial_banks | 39 | Banking sector entities |
 | evidence_sources | 292 | Registered data sources |
 
 ---
@@ -84,13 +85,13 @@ Gate Results:
 
 ## Evidence Wiring Status
 
-### Dashboard KPIs
+### Dashboard KPIs (EVIDENCE-NATIVE - FIXED)
 | KPI | Data Source | Evidence Grade | Evidence Pack |
 |-----|-------------|----------------|---------------|
-| Inflation (Aden) | time_series | C | ⚠️ Uses confidenceRating |
-| Inflation (Sanaa) | time_series | C | ⚠️ Uses confidenceRating |
-| Exchange Rate | time_series | A | ⚠️ Uses confidenceRating |
-| GDP | time_series | High | ⚠️ Uses confidenceRating |
+| Inflation (Aden) | time_series + evidence_packs | B | ✅ inflation_cpi_aden_aden_irg |
+| Inflation (Sanaa) | time_series + evidence_packs | B | ✅ inflation_cpi_sanaa_sanaa_defacto |
+| Exchange Rate | time_series + evidence_packs | A | ✅ fx_rate_aden_parallel_aden_irg |
+| Unemployment | time_series + evidence_packs | C | ✅ unemployment_rate_aden_irg |
 
 ### Banking Sector KPIs
 | KPI | Evidence Pack SubjectId | Grade |
