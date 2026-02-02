@@ -14,24 +14,31 @@ jobs:
   test-and-gate:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    defaults:
-      run:
-        shell: bash
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 1) Setup Node (no pnpm caching yet)
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: "pnpm"
 
+      # 2) Ensure pnpm exists on PATH (corepack)
       - name: Enable pnpm via Corepack
+        shell: bash
         run: |
           corepack enable
           corepack prepare pnpm@9.15.4 --activate
           pnpm --version
+
+      # 3) Now that pnpm exists, enable pnpm caching safely
+      - name: Setup Node cache (pnpm)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
 
       - name: Install deps
         run: pnpm install --frozen-lockfile
