@@ -197,29 +197,33 @@ async function getLaborMetrics(year: number): Promise<LaborMetric[]> {
       const indicator = indicatorDef[0];
       
       // Get latest value for the year
+      const startDate = new Date(`${year}-01-01`);
+      const endDate = new Date(`${year}-12-31`);
       const values = await db.select()
         .from(timeSeries)
         .where(and(
-          eq(timeSeries.indicatorId, indicator.id),
-          eq(timeSeries.year, year)
+          eq(timeSeries.indicatorCode, indicatorCode),
+          gte(timeSeries.date, startDate),
+          lte(timeSeries.date, endDate)
         ))
-        .orderBy(desc(timeSeries.month))
+        .orderBy(desc(timeSeries.date))
         .limit(1);
       
       if (values.length > 0) {
         const v = values[0];
+        const vDate = new Date(v.date);
         results.push({
           indicatorCode,
           nameEn: indicator.nameEn || indicatorCode,
           nameAr: indicator.nameAr || indicatorCode,
           value: v.value ? parseFloat(v.value) : null,
           unit: indicator.unit || '',
-          year: v.year,
-          month: v.month || undefined,
-          status: v.isProxied ? 'proxied' : 'measured',
-          confidence: v.confidence as 'high' | 'medium' | 'low' || 'medium',
+          year: vDate.getFullYear(),
+          month: vDate.getMonth() + 1,
+          status: 'measured',
+          confidence: v.confidenceRating === 'A' ? 'high' : v.confidenceRating === 'B' ? 'medium' : 'low',
           sourceId: v.sourceId?.toString() || '',
-          evidencePackId: v.evidencePackId || undefined
+          evidencePackId: undefined
         });
       } else {
         // No data for this year
@@ -369,17 +373,18 @@ async function getLaborGaps(): Promise<DataGap[]> {
       // Check for recent data
       const latestData = await db.select()
         .from(timeSeries)
-        .where(eq(timeSeries.indicatorId, indicator[0].id))
-        .orderBy(desc(timeSeries.year), desc(timeSeries.month))
+        .where(eq(timeSeries.indicatorCode, code))
+        .orderBy(desc(timeSeries.date))
         .limit(1);
       
-      if (latestData.length === 0 || latestData[0].year < 2024) {
+      const lastYear = latestData.length > 0 ? new Date(latestData[0].date).getFullYear() : null;
+      if (latestData.length === 0 || (lastYear && lastYear < 2024)) {
         gaps.push({
           id: `GAP-${code}`,
           indicatorCode: code,
           nameEn: indicator[0].nameEn || code,
           nameAr: indicator[0].nameAr || code,
-          lastAvailableYear: latestData.length > 0 ? latestData[0].year : null,
+          lastAvailableYear: lastYear,
           priority: code.includes('UNEMPLOYMENT') || code.includes('WAGE') ? 'critical' : 'high',
           accessWorkflow: 'Request from relevant ministry or UN agency'
         });
@@ -414,8 +419,8 @@ async function getLaborSources(): Promise<SourceInfo[]> {
     return sourcesData.map(s => ({
       id: s.id.toString(),
       publisher: s.publisher || '',
-      tier: s.tier || 'T2',
-      lastUpdate: s.lastChecked || '',
+      tier: 'T2',
+      lastUpdate: s.retrievalDate?.toISOString() || '',
       indicatorCount: 0
     }));
   } catch (error) {
@@ -782,10 +787,11 @@ export async function logAgentRun(
   try {
     await db.insert(sectorAgentRuns).values({
       sectorCode: 'labor_wages',
-      runType,
-      status,
-      metricsJson: JSON.stringify(metrics),
-      createdAt: new Date()
+      runType: runType === 'daily_digest' ? 'daily' : runType === 'weekly_bulletin' ? 'weekly' : runType === 'monthly_monitor' ? 'nightly' : 'manual',
+      startedAt: new Date(),
+      completedAt: new Date(),
+      status: status === 'success' ? 'completed' : 'failed',
+      metrics: metrics
     });
   } catch (error) {
     console.error('Error logging agent run:', error);

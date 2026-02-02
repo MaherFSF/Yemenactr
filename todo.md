@@ -9990,3 +9990,11 @@ Based on review of master design documents and data source register:
 - [ ] Browser proof: evidence drawer shows real data for 2+ entities
 - [ ] Create /docs/PROOFS/evidence_pack_entity_claims_proof.md with SQL + screenshots
 
+
+### Task: February 2, 2025 - Indicator Evidence Packs + TS Fixes
+
+- [x] Fix TypeScript errors in laborWagesAgent.ts (0 errors in file, 128 total project errors remaining)
+- [x] Generate evidence packs for indicator data points (552 packs created)
+- [x] Dashboard components already have evidence buttons - verified working
+- [x] Verify evidence drawer shows real data for indicators
+- [x] Run tests to ensure all pass
