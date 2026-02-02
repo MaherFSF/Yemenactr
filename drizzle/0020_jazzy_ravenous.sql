@@ -117,7 +117,6 @@ ALTER TABLE `update_notifications` ADD CONSTRAINT `update_notifications_targetUs
 ALTER TABLE `update_signals` ADD CONSTRAINT `update_signals_updateItemId_update_items_id_fk` FOREIGN KEY (`updateItemId`) REFERENCES `update_items`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `update_signals` ADD CONSTRAINT `update_signals_evidencePackId_evidence_packs_id_fk` FOREIGN KEY (`evidencePackId`) REFERENCES `evidence_packs`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX `evidence_update_item_idx` ON `update_evidence_bundles` (`updateItemId`);--> statement-breakpoint
-CREATE INDEX `update_source_url_idx` ON `update_items` (`sourceUrl`);--> statement-breakpoint
 CREATE INDEX `update_status_idx` ON `update_items` (`status`);--> statement-breakpoint
 CREATE INDEX `update_published_at_idx` ON `update_items` (`publishedAt`);--> statement-breakpoint
 CREATE INDEX `update_source_id_idx` ON `update_items` (`sourceId`);--> statement-breakpoint

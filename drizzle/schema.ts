@@ -6042,7 +6042,6 @@ export const updateItems = mysqlTable("update_items", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => ({
   contentHashIdx: uniqueIndex("update_content_hash_idx").on(table.contentHash),
-  sourceUrlIdx: index("update_source_url_idx").on(table.sourceUrl),
   statusIdx: index("update_status_idx").on(table.status),
   publishedAtIdx: index("update_published_at_idx").on(table.publishedAt),
   sourceIdIdx: index("update_source_id_idx").on(table.sourceId),
