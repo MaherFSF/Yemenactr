@@ -46,7 +46,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      -       # 1) Setup Node WITHOUT cache first (pnpm doesn't exist yet)
       - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # 2) Enable pnpm via Corepack BEFORE any caching
+      - name: Enable pnpm via Corepack
+        shell: bash
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm --version
+
+      # 3) Now that pnpm exists, setup caching
+      - name: Setup pnpm cache
         uses: actions/setup-node@v4
         with:
           node-version: "22"
