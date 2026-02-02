@@ -294,12 +294,21 @@ export default function Entities() {
                         <div className="text-xs font-medium text-gray-500 uppercase">
                           {isArabic ? "بيانات موثقة" : "Verified Data"}
                         </div>
-                        {entity.verifiedClaims?.slice(0, 3).map((claim: any) => (
-                          <div key={claim.id} className="flex items-center justify-between text-sm bg-gray-50 p-2 rounded">
-                            <span className="text-gray-700">{claim.claim_subject}</span>
-                            <span className="font-medium">{claim.claim_object}</span>
-                          </div>
-                        ))}
+                        {entity.verifiedClaims?.slice(0, 3).map((claim: any) => {
+                          // Handle JSON objects in claim_subject and claim_object
+                          const subjectText = typeof claim.claim_subject === 'object' 
+                            ? (claim.claim_subject?.event || claim.claim_subject?.metric || JSON.stringify(claim.claim_subject))
+                            : claim.claim_subject;
+                          const objectText = typeof claim.claim_object === 'object'
+                            ? (claim.claim_object?.value || claim.claim_object?.name || JSON.stringify(claim.claim_object))
+                            : claim.claim_object;
+                          return (
+                            <div key={claim.id} className="flex items-center justify-between text-sm bg-gray-50 p-2 rounded">
+                              <span className="text-gray-700">{subjectText}</span>
+                              <span className="font-medium">{objectText}</span>
+                            </div>
+                          );
+                        })}
                         {entity.verifiedClaims?.length > 3 && (
                           <p className="text-xs text-gray-500">
                             +{entity.verifiedClaims.length - 3} {isArabic ? "مطالبات أخرى" : "more claims"}
