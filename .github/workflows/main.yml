@@ -46,7 +46,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      -       # 1) Setup Node WITHOUT cache first (pnpm doesn't exist yet)
+      # 1) Setup Node WITHOUT cache first (pnpm doesn't exist yet)
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -67,13 +67,6 @@ jobs:
           node-version: "22"
           cache: "pnpm"
           cache-dependency-path: "**/pnpm-lock.yaml"
-
-      - name: Enable pnpm via Corepack
-        shell: bash
-        run: |
-          corepack enable
-          corepack prepare pnpm@9.15.4 --activate
-          pnpm --version
 
       - name: Install deps
         run: pnpm install --frozen-lockfile
