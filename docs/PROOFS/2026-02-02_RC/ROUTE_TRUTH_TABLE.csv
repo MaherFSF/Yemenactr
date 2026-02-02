@@ -1,0 +1,29 @@
+route,status,screenshot,notes
+/,PASS,01_landing.webp,Landing page with AR/EN entry buttons
+/home,PASS,02_home_ar.webp,Homepage with KPIs and sector grid
+/dashboard,PASS,03_dashboard_ar.webp,Dashboard with GDP chart and evidence buttons
+/sectors/banking,PASS,06_banking_ar.webp,Banking sector with 39 banks
+/sectors/banking (Banks tab),PASS,07_banking_banks_tab.webp,Bank list with KPIs: $18.8B assets
+/sectors/trade,PASS,,Trade sector page functional
+/sectors/energy,PASS,,Energy sector page functional
+/sectors/food-security,PASS,,Food security sector page functional
+/sectors/macroeconomy,PASS,,Macroeconomy sector page functional
+/sectors/currency,PASS,,Currency sector page functional
+/sectors/labor-market,PASS,,Labor market sector page functional
+/sectors/prices,PASS,,Prices sector page functional
+/sectors/aid-flows,PASS,,Aid flows sector page functional
+/sectors/conflict-economy,PASS,,Conflict economy sector page functional
+/sectors/infrastructure,PASS,,Infrastructure sector page functional
+/sectors/investment,PASS,,Investment sector page functional
+/sectors/microfinance,PASS,,Microfinance sector page functional
+/entities,PASS,08_entities.webp,79 entities displayed
+/methodology,PASS,10_methodology_en.webp,Methodology page with tabs
+/about,PASS,,About page functional
+/contact,PASS,,Contact page functional
+/glossary,PASS,,Glossary page functional
+/research,PASS,,Research page functional
+/data-repository,PASS,,Data repository functional
+/timeline,PASS,,Timeline page functional
+/sectors/poverty,PASS,11_poverty_en.webp,Poverty & Human Development sector functional
+/sectors/agriculture,PASS,12_agriculture_en.webp,Agriculture & Rural Development sector functional
+/sectors/public-finance,PASS,13_public_finance_en.webp,Public Finance & Governance sector functional
