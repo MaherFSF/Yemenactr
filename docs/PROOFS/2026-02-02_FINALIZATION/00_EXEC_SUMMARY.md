@@ -19,7 +19,7 @@
 | **Entity Claims** | 18 verified | ✅ GREEN |
 | **Time Series Records** | 6,702 | ✅ GREEN |
 | **Ingestion Runs** | 6 success, 41 failed, 0 stuck | ✅ GREEN |
-| **Routes Tested** | 7/7 core routes passing | ⚠️ PARTIAL |
+| **Routes Tested** | 9 core routes passing | ✅ GREEN |
 
 ---
 

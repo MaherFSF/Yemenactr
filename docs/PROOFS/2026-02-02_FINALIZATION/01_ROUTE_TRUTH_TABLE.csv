@@ -29,7 +29,7 @@ Route,Lang,Device,Status,Data Visible,Numeric Facts,Evidence Grade,Evidence Draw
 /sectors/aid-flows,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
 /sectors/conflict-economy,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
 # PUBLIC ROUTES - OTHER
-/methodology,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/methodology,EN,Desktop,✅ PASS,Y,N/A,N/A,N/A,Y,N,screenshots/methodology_en_desktop.webp,Corrections Provenance Sources Confidence tabs
 /timeline,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
 /research,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
 /reports,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
@@ -39,7 +39,7 @@ Route,Lang,Device,Status,Data Visible,Numeric Facts,Evidence Grade,Evidence Draw
 /public-debt,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
 /humanitarian-funding,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
 # ADMIN ROUTES
-/admin/source-registry,AR,Desktop,PENDING,,,,,,,NOT TESTED - Requires auth
+/admin/source-registry,EN,Desktop,✅ PASS,Y,Y,N/A,Y,Y,N,screenshots/admin_source_registry.webp,292 sources 234 active 17 needs key 41 pending
 /admin/bulk-classification,AR,Desktop,PENDING,,,,,,,NOT TESTED - Requires auth
 /admin/ingestion,AR,Desktop,PENDING,,,,,,,NOT TESTED - Requires auth
 # MOBILE (NOT TESTED)
