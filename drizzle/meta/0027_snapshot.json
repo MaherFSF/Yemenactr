@@ -15116,8 +15116,8 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "literature_gap_tickets_resolvedDocumentId_library_documents_id_fk": {
-          "name": "literature_gap_tickets_resolvedDocumentId_library_documents_id_fk",
+        "lgt_doc_fk": {
+          "name": "lgt_doc_fk",
           "tableFrom": "literature_gap_tickets",
           "tableTo": "library_documents",
           "columnsFrom": [
@@ -32580,8 +32580,8 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "insight_miner_proposals_incorporatedInReportId_report_instances_id_fk": {
-          "name": "insight_miner_proposals_incorporatedInReportId_report_instances_id_fk",
+        "imp_report_fk": {
+          "name": "imp_report_fk",
           "tableFrom": "insight_miner_proposals",
           "tableTo": "report_instances",
           "columnsFrom": [
