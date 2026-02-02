@@ -9998,3 +9998,34 @@ Based on review of master design documents and data source register:
 - [x] Dashboard components already have evidence buttons - verified working
 - [x] Verify evidence drawer shows real data for indicators
 - [x] Run tests to ensure all pass
+
+
+### Task: February 2, 2025 - TypeScript Fixes + Evidence Pack Generation (COMPLETED)
+
+**1) TypeScript Error Fixes:**
+- [x] Fix laborWagesAgent.ts errors (sources.lastChecked, timeSeries columns)
+- [x] Fix bulkClassification.ts errors (DB null checks, QueryResult types)
+- [x] Fix EvidencePackButton.test.tsx errors (missing @testing-library/jest-dom)
+- [x] Fix autoEnrichmentEngine.ts errors (timeSeries schema, libraryDocuments)
+- [x] Fix UNAgenciesConnector.ts errors (timeSeries insert schema)
+- [x] Fix knowledgeGraphService.ts errors (JSON type casting, insertId)
+- [x] Fix laborAlerts.ts errors (alerts table columns)
+- [x] Total: Reduced from 128 to 70 errors (45% reduction)
+
+**2) Comprehensive Evidence Pack Generation:**
+- [x] Generate evidence packs for metrics (552 packs)
+- [x] Generate evidence packs for claims (297 packs)
+- [x] Generate evidence packs for documents (49 packs)
+- [x] Total: 898 evidence packs following DQAF/SDMX standards
+
+**3) Verification:**
+- [x] All 736 tests pass
+- [x] Browser verification: evidence drawer shows real data
+- [x] SQL verification: evidence pack counts confirmed
+- [x] Created proof documentation: /docs/PROOFS/typescript_fixes_and_evidence_packs_proof.md
+
+**Stop Conditions Met:**
+- [x] TypeScript errors reduced by 45% (128 → 70)
+- [x] 898 evidence packs generated
+- [x] All tests pass (736/736)
+- [x] Evidence drawer shows real data in browser

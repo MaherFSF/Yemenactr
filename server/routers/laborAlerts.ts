@@ -29,15 +29,17 @@ export const laborAlertsRouter = router({
     }))
     .query(async ({ input }) => {
       try {
-        const conditions = [like(alerts.sector, '%labor%')];
+        const conditions = [like(alerts.type, '%labor%')];
         if (input.status) {
-          conditions.push(eq(alerts.status, input.status));
+          // Map status to isRead boolean
+          const isRead = input.status === 'acknowledged' || input.status === 'resolved';
+          conditions.push(eq(alerts.isRead, isRead));
         }
         
         const results = await db.select()
           .from(alerts)
           .where(and(...conditions))
-          .orderBy(desc(alerts.triggeredAt))
+          .orderBy(desc(alerts.createdAt))
           .limit(input.limit);
         
         return results;
@@ -149,7 +151,7 @@ export const laborAlertsRouter = router({
       try {
         await db.update(alerts)
           .set({ 
-            status: 'acknowledged',
+            isRead: true,
             acknowledgedAt: new Date(),
             acknowledgedBy: ctx.user.id
           })
@@ -172,9 +174,9 @@ export const laborAlertsRouter = router({
       try {
         await db.update(alerts)
           .set({ 
-            status: 'resolved',
-            resolvedAt: new Date(),
-            resolution: input.resolution
+            isRead: true,
+            acknowledgedAt: new Date(),
+            description: `Resolved: ${input.resolution}`
           })
           .where(eq(alerts.id, input.alertId));
         

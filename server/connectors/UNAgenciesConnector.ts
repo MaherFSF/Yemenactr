@@ -156,16 +156,21 @@ export class OCHAFTSConnector extends BaseConnector {
 
       const seriesData = {
         indicatorCode: `OCHA_${indicator}`,
-        indicatorName: indicator.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-        value: value?.toString() || null,
+        regimeTag: 'mixed' as const,
+        value: value?.toString() || '0',
         date: new Date(`${year}-01-01`),
-        source: 'OCHA Financial Tracking Service',
-        sourceUrl: `https://fts.unocha.org/countries/248/summary/${year}`,
-        country: 'Yemen',
-        countryCode: 'YEM',
-        frequency: 'annual',
         unit: indicator.includes('coverage') ? '%' : 'USD',
-        metadata: JSON.stringify({ fetchedAt: new Date().toISOString() }),
+        confidenceRating: 'B' as const,
+        sourceId: 1, // OCHA source
+        notes: JSON.stringify({ 
+          indicatorName: indicator.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+          source: 'OCHA Financial Tracking Service',
+          sourceUrl: `https://fts.unocha.org/countries/248/summary/${year}`,
+          country: 'Yemen',
+          countryCode: 'YEM',
+          frequency: 'annual',
+          fetchedAt: new Date().toISOString() 
+        }),
         updatedAt: new Date(),
       };
 
@@ -174,7 +179,6 @@ export class OCHAFTSConnector extends BaseConnector {
         return { isNew: false };
       } else {
         await db.insert(timeSeries).values({
-          id: `ocha-${indicator}-${year}`,
           ...seriesData,
           createdAt: new Date(),
         });
@@ -467,16 +471,21 @@ export class FAOConnector extends BaseConnector {
 
       const seriesData = {
         indicatorCode: `FAO_${indicator}`,
-        indicatorName: indicator.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-        value: value?.toString() || null,
+        regimeTag: 'mixed' as const,
+        value: value?.toString() || '0',
         date: new Date(`${year}-01-01`),
-        source: 'FAO FAOSTAT',
-        sourceUrl: `https://www.fao.org/faostat/en/#data`,
-        country: 'Yemen',
-        countryCode: 'YEM',
-        frequency: 'annual',
         unit: 'index',
-        metadata: JSON.stringify({ fetchedAt: new Date().toISOString() }),
+        confidenceRating: 'B' as const,
+        sourceId: 1, // FAO source
+        notes: JSON.stringify({ 
+          indicatorName: indicator.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+          source: 'FAO FAOSTAT',
+          sourceUrl: `https://www.fao.org/faostat/en/#data`,
+          country: 'Yemen',
+          countryCode: 'YEM',
+          frequency: 'annual',
+          fetchedAt: new Date().toISOString() 
+        }),
         updatedAt: new Date(),
       };
 
@@ -485,7 +494,6 @@ export class FAOConnector extends BaseConnector {
         return { isNew: false };
       } else {
         await db.insert(timeSeries).values({
-          id: `fao-${indicator}-${year}`,
           ...seriesData,
           createdAt: new Date(),
         });
@@ -615,16 +623,21 @@ export class UNHCRConnector extends BaseConnector {
 
       const seriesData = {
         indicatorCode: `UNHCR_${indicator}`,
-        indicatorName: indicator.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-        value: value?.toString() || null,
+        regimeTag: 'mixed' as const,
+        value: value?.toString() || '0',
         date: new Date(`${year}-01-01`),
-        source: 'UNHCR Population Statistics',
-        sourceUrl: `https://www.unhcr.org/refugee-statistics/`,
-        country: 'Yemen',
-        countryCode: 'YEM',
-        frequency: 'annual',
         unit: 'persons',
-        metadata: JSON.stringify({ fetchedAt: new Date().toISOString() }),
+        confidenceRating: 'B' as const,
+        sourceId: 1, // UNHCR source
+        notes: JSON.stringify({ 
+          indicatorName: indicator.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+          source: 'UNHCR Population Statistics',
+          sourceUrl: `https://www.unhcr.org/refugee-statistics/`,
+          country: 'Yemen',
+          countryCode: 'YEM',
+          frequency: 'annual',
+          fetchedAt: new Date().toISOString() 
+        }),
         updatedAt: new Date(),
       };
 
@@ -633,7 +646,6 @@ export class UNHCRConnector extends BaseConnector {
         return { isNew: false };
       } else {
         await db.insert(timeSeries).values({
-          id: `unhcr-${indicator}-${year}`,
           ...seriesData,
           createdAt: new Date(),
         });

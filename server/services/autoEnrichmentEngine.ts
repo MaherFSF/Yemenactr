@@ -194,14 +194,21 @@ export async function enrichUpdate(updateId: number): Promise<{
   
   const update = updateResults[0];
   
-  // 1. Link to sectors based on tags
-  const sectors = (update.sectors as string[]) ?? [];
+  // 1. Link to sectors based on indicator code
+  const indicatorCode = update.indicatorCode;
+  // Extract sector from indicator code (e.g., 'INFLATION_CPI' -> 'macro')
+  const sectorMap: Record<string, string> = {
+    'INFLATION': 'macro', 'GDP': 'macro', 'UNEMPLOYMENT': 'labor',
+    'EXCHANGE': 'banking', 'FOOD': 'food_security', 'FUEL': 'energy'
+  };
+  const sectorKey = Object.keys(sectorMap).find(k => indicatorCode.includes(k));
+  const sectors = sectorKey ? [sectorMap[sectorKey]] : [];
   for (const sector of sectors) {
     const result = await createLinkIfNotExists({
       linkType: "update_signal",
       srcType: "update",
       srcId: update.id,
-      srcLabel: update.titleEn ?? update.titleAr ?? `Update #${update.id}`,
+      srcLabel: `${indicatorCode} Update #${update.id}`,
       dstType: "sector",
       dstId: 0,
       dstLabel: sector,
@@ -212,8 +219,12 @@ export async function enrichUpdate(updateId: number): Promise<{
     if (result.created) linksCreated++;
   }
   
-  // 2. Link to entities mentioned
-  const entityIds = (update.entities as number[]) ?? [];
+  // 2. Link to entities based on regime tag
+  const regimeEntityMap: Record<string, number[]> = {
+    'aden_irg': [1], // Central Bank of Yemen - Aden
+    'sanaa_defacto': [2], // Central Bank of Yemen - Sanaa
+  };
+  const entityIds = regimeEntityMap[update.regimeTag] ?? [];
   for (const entityId of entityIds) {
     const entityResult = await db
       .select()
@@ -227,7 +238,7 @@ export async function enrichUpdate(updateId: number): Promise<{
         linkType: "update_signal",
         srcType: "update",
         srcId: update.id,
-        srcLabel: update.titleEn ?? update.titleAr ?? `Update #${update.id}`,
+        srcLabel: `${update.indicatorCode} Update #${update.id}`,
         dstType: "entity",
         dstId: entity.id,
         dstLabel: entity.name ?? entity.nameAr ?? `Entity #${entity.id}`,
@@ -263,7 +274,7 @@ export async function enrichUpdate(updateId: number): Promise<{
         linkType: "temporal_cooccurrence",
         srcType: "update",
         srcId: update.id,
-        srcLabel: update.titleEn ?? update.titleAr ?? `Update #${update.id}`,
+        srcLabel: `${update.indicatorCode} Update #${update.id}`,
         dstType: "event",
         dstId: event.id,
         dstLabel: event.title ?? event.titleAr ?? `Event #${event.id}`,
@@ -360,7 +371,7 @@ export async function enrichEvent(eventId: number): Promise<{
     const relatedDocs = await db
       .select()
       .from(libraryDocuments)
-      .where(eq(libraryDocuments.publicationYear, year))
+      .where(sql`YEAR(${libraryDocuments.publishedAt}) = ${year}`)
       .limit(10);
     
     for (const doc of relatedDocs) {

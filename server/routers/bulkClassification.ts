@@ -13,6 +13,7 @@ export const bulkClassificationRouter = router({
   getClassificationPreview: protectedProcedure
     .query(async ({ ctx }) => {
       const db = ctx.db;
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
       
       // Get UNKNOWN tier sources
       const unknownSources = await db.query(`
@@ -25,7 +26,7 @@ export const bulkClassificationRouter = router({
       `);
       
       // Classify each source
-      const results = unknownSources[0].map((source: any) => {
+      const results = (unknownSources[0] as any[]).map((source: any) => {
         const classification = classifySource({
           sourceId: source.sourceId,
           name: source.name,
@@ -79,6 +80,7 @@ export const bulkClassificationRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       const db = ctx.db;
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
       const userId = ctx.user?.id || 'system';
       
       // Get sources to classify
@@ -177,7 +179,7 @@ export const bulkClassificationRouter = router({
       return {
         applied,
         skipped,
-        total: sources.length,
+        total: (sources as any[]).length,
         results
       };
     }),
@@ -190,6 +192,7 @@ export const bulkClassificationRouter = router({
     }))
     .query(async ({ ctx, input }) => {
       const db = ctx.db;
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
       const offset = (input.page - 1) * input.limit;
       
       // Get total count
@@ -233,6 +236,7 @@ export const bulkClassificationRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       const db = ctx.db;
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
       const userId = ctx.user?.id || 'system';
       
       // Build update query
@@ -278,6 +282,7 @@ export const bulkClassificationRouter = router({
   getTierStats: protectedProcedure
     .query(async ({ ctx }) => {
       const db = ctx.db;
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
       
       const [tierDist] = await db.query(`
         SELECT tier, COUNT(*) as count 
@@ -319,6 +324,7 @@ export const bulkClassificationRouter = router({
     }))
     .mutation(async ({ ctx, input }) => {
       const db = ctx.db;
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
       
       // Get previous tier
       const [source] = await db.query(`

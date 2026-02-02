@@ -146,7 +146,7 @@ export async function createLink(input: CreateLinkInput): Promise<number> {
   await invalidateCache(input.srcType, input.srcId);
   await invalidateCache(input.dstType, input.dstId);
   
-  return result.insertId;
+  return Number((result as any)[0]?.insertId ?? (result as any).insertId ?? 0);
 }
 
 /**
@@ -397,10 +397,10 @@ async function getCachedRelatedItems(
   
   const entry = cached[0];
   return {
-    documents: (entry.relatedDocuments as RelatedItem[]) ?? [],
-    entities: (entry.relatedEntities as RelatedItem[]) ?? [],
-    datasets: (entry.relatedDatasets as RelatedItem[]) ?? [],
-    events: (entry.relatedEvents as RelatedItem[]) ?? [],
+    documents: (entry.relatedDocuments as unknown as RelatedItem[]) ?? [],
+    entities: (entry.relatedEntities as unknown as RelatedItem[]) ?? [],
+    datasets: (entry.relatedDatasets as unknown as RelatedItem[]) ?? [],
+    events: (entry.relatedEvents as unknown as RelatedItem[]) ?? [],
     contradictions: (entry.contradictions as RelatedItemsResult["contradictions"]) ?? [],
   };
 }
@@ -424,11 +424,11 @@ async function cacheRelatedItems(
   await db.insert(relatedItemsCache).values({
     sourceType,
     sourceId,
-    relatedDocuments: result.documents,
-    relatedEntities: result.entities,
-    relatedDatasets: result.datasets,
-    relatedEvents: result.events,
-    contradictions: result.contradictions,
+    relatedDocuments: result.documents as any,
+    relatedEntities: result.entities as any,
+    relatedDatasets: result.datasets as any,
+    relatedEvents: result.events as any,
+    contradictions: result.contradictions as any,
     expiresAt,
     isValid: true,
   });
@@ -485,9 +485,9 @@ export async function createLinkRule(input: {
     nameAr: input.nameAr,
     descriptionEn: input.descriptionEn,
     descriptionAr: input.descriptionAr,
-    inputTypes: input.inputTypes,
-    matchLogic: input.matchLogic,
-    minEvidenceRequirements: input.minEvidenceRequirements,
+    inputTypes: input.inputTypes as any,
+    matchLogic: input.matchLogic as any,
+    minEvidenceRequirements: input.minEvidenceRequirements as any,
     outputLinkType: input.outputLinkType,
     strengthFormula: input.strengthFormula ?? "0.5",
     isPublicSafe: input.isPublicSafe ?? false,
@@ -496,7 +496,7 @@ export async function createLinkRule(input: {
     createdBy: input.createdBy,
   });
   
-  return result.insertId;
+  return Number((result as any)[0]?.insertId ?? (result as any).insertId ?? 0);
 }
 
 /**
@@ -533,7 +533,7 @@ export async function runLinkRule(
     triggeredByUser,
   });
   
-  const runId = runResult.insertId;
+  const runId = Number((runResult as any)[0]?.insertId ?? (runResult as any).insertId ?? 0);
   
   let linksCreated = 0;
   let linksSuggested = 0;
@@ -880,7 +880,7 @@ export async function calculateGraphHealthMetrics(): Promise<typeof graphHealthM
   // Count orphan events
   const totalEventsResult = await db
     .select({ count: sql<number>`COUNT(*)` })
-    .from(timelineEvents);
+    .from(economicEvents);
   const linkedEventsResult = await db
     .select({ count: sql<number>`COUNT(DISTINCT ${knowledgeGraphLinks.srcId})` })
     .from(knowledgeGraphLinks)
@@ -931,7 +931,7 @@ export async function calculateGraphHealthMetrics(): Promise<typeof graphHealthM
   const metrics = await db
     .select()
     .from(graphHealthMetrics)
-    .where(eq(graphHealthMetrics.id, result.insertId))
+    .where(eq(graphHealthMetrics.id, Number((result as any)[0]?.insertId ?? (result as any).insertId ?? 0)))
     .limit(1);
   
   return metrics[0];
