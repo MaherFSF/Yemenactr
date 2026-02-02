@@ -107,7 +107,8 @@ export const sectorKpiRouter = router({
       asOfDate: z.string().optional(),
     }).optional())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
       
       // Define macro indicators to fetch
       const macroIndicators = [
@@ -156,7 +157,8 @@ export const sectorKpiRouter = router({
       startYear: z.number().default(2010),
     }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
       const data = await getHistoricalData(db, input.indicator, input.startYear);
       return { data, indicator: input.indicator };
     }),
@@ -167,7 +169,8 @@ export const sectorKpiRouter = router({
       asOfDate: z.string().optional(),
     }).optional())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
       
       const bankingIndicators = [
         { code: "FI.RES.TOTL.CD", name: "CBY Reserves", nameAr: "احتياطيات البنك المركزي", unit: "$", format: "B" },
@@ -213,7 +216,8 @@ export const sectorKpiRouter = router({
       asOfDate: z.string().optional(),
     }).optional())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
       
       const tradeIndicators = [
         { code: "NE.EXP.GNFS.CD", name: "Exports", nameAr: "الصادرات", unit: "$", format: "B" },
@@ -261,7 +265,8 @@ export const sectorKpiRouter = router({
       asOfDate: z.string().optional(),
     }).optional())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
       
       const humanitarianIndicators = [
         { code: "SM.POP.REFG", name: "Refugees", nameAr: "اللاجئون", unit: "", format: "M" },
@@ -309,7 +314,8 @@ export const sectorKpiRouter = router({
       asOfDate: z.string().optional(),
     }).optional())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
       
       const pricesIndicators = [
         { code: "FP.CPI.TOTL.ZG", name: "CPI Inflation", nameAr: "تضخم المستهلك", unit: "%", format: "pct" },
@@ -355,7 +361,8 @@ export const sectorKpiRouter = router({
       asOfDate: z.string().optional(),
     }).optional())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
       
       const energyIndicators = [
         { code: "EG.USE.PCAP.KG.OE", name: "Energy Use", nameAr: "استخدام الطاقة", unit: "kg oil eq", format: "num" },
@@ -401,7 +408,8 @@ export const sectorKpiRouter = router({
       asOfDate: z.string().optional(),
     }).optional())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
       
       const foodSecurityIndicators = [
         { code: "SN.ITK.DEFC.ZS", name: "Undernourishment", nameAr: "نقص التغذية", unit: "%", format: "pct" },
@@ -447,7 +455,8 @@ export const sectorKpiRouter = router({
       asOfDate: z.string().optional(),
     }).optional())
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
       
       const laborIndicators = [
         { code: "SL.UEM.TOTL.ZS", name: "Unemployment", nameAr: "البطالة", unit: "%", format: "pct" },
@@ -493,7 +502,8 @@ export const sectorKpiRouter = router({
       endYear: z.number().optional(),
     }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
       const endYear = input.endYear || new Date().getFullYear();
       
       const chartData = await Promise.all(
