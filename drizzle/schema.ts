@@ -1229,7 +1229,6 @@ export const researchPublications = mysqlTable("research_publications", {
   isPeerReviewedIdx: index("is_peer_reviewed_idx").on(table.isPeerReviewed),
   hasDatasetIdx: index("has_dataset_idx").on(table.hasDataset),
   languageIdx: index("language_idx").on(table.language),
-  orgFk: foreignKey({ columns: [table.organizationId], foreignColumns: [researchOrganizations.id], name: "res_pub_org_fk" }),
 }));
 
 export type ResearchPublication = typeof researchPublications.$inferSelect;
@@ -1337,8 +1336,6 @@ export const researchCompletenessAudit = mysqlTable("research_completeness_audit
   yearIdx: index("year_idx").on(table.year),
   organizationIdx: index("organization_idx").on(table.organizationId),
   isFoundIdx: index("is_found_idx").on(table.isFound),
-  orgFk: foreignKey({ columns: [table.organizationId], foreignColumns: [researchOrganizations.id], name: "rca_org_fk" }),
-  pubFk: foreignKey({ columns: [table.publicationId], foreignColumns: [researchPublications.id], name: "rca_pub_fk" }),
 }));
 
 export type ResearchCompletenessAudit = typeof researchCompletenessAudit.$inferSelect;
@@ -1364,7 +1361,6 @@ export const researchIngestionSources = mysqlTable("research_ingestion_sources",
   nameIdx: index("name_idx").on(table.name),
   sourceTypeIdx: index("source_type_idx").on(table.sourceType),
   isActiveIdx: index("is_active_idx").on(table.isActive),
-  orgFk: foreignKey({ columns: [table.organizationId], foreignColumns: [researchOrganizations.id], name: "ris_org_fk" }),
 }));
 
 export type ResearchIngestionSource = typeof researchIngestionSources.$inferSelect;

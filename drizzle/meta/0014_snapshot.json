@@ -9719,8 +9719,8 @@
         }
       },
       "foreignKeys": {
-        "rca_org_fk": {
-          "name": "rca_org_fk",
+        "research_completeness_audit_organizationId_research_organizations_id_fk": {
+          "name": "research_completeness_audit_organizationId_research_organizations_id_fk",
           "tableFrom": "research_completeness_audit",
           "tableTo": "research_organizations",
           "columnsFrom": [
@@ -9888,8 +9888,8 @@
         }
       },
       "foreignKeys": {
-        "ris_org_fk": {
-          "name": "ris_org_fk",
+        "research_ingestion_sources_organizationId_research_organizations_id_fk": {
+          "name": "research_ingestion_sources_organizationId_research_organizations_id_fk",
           "tableFrom": "research_ingestion_sources",
           "tableTo": "research_organizations",
           "columnsFrom": [
@@ -10475,8 +10475,8 @@
         }
       },
       "foreignKeys": {
-        "res_pub_org_fk": {
-          "name": "res_pub_org_fk",
+        "research_publications_organizationId_research_organizations_id_fk": {
+          "name": "research_publications_organizationId_research_organizations_id_fk",
           "tableFrom": "research_publications",
           "tableTo": "research_organizations",
           "columnsFrom": [
@@ -14708,8 +14708,8 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "imp_report_fk": {
-          "name": "imp_report_fk",
+        "insight_miner_proposals_incorporatedInReportId_report_instances_id_fk": {
+          "name": "insight_miner_proposals_incorporatedInReportId_report_instances_id_fk",
           "tableFrom": "insight_miner_proposals",
           "tableTo": "report_instances",
           "columnsFrom": [
