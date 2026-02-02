@@ -10,28 +10,49 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test-and-gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
+
+    # Provide a DB for DB-backed tests (MySQL-compatible).
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: yeto_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=20
 
     env:
+      # Adjust if your code expects a different format.
+      DATABASE_URL: mysql://root:root@127.0.0.1:3306/yeto_test
+
+      # Make CI deterministic
       CI: "true"
       NODE_ENV: "test"
-      # Helps reduce random node memory issues on CI
-      NODE_OPTIONS: "--max_old_space_size=4096"
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 1) Setup Node (NO pnpm cache yet)
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: "**/pnpm-lock.yaml"
 
-      # 2) Ensure pnpm exists (corepack)
       - name: Enable pnpm via Corepack
         shell: bash
         run: |
@@ -39,39 +60,39 @@ jobs:
           corepack prepare pnpm@9.15.4 --activate
           pnpm --version
 
-      # 3) Now enable pnpm caching safely
-      - name: Setup Node cache (pnpm)
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: "pnpm"
-
       - name: Install deps
         run: pnpm install --frozen-lockfile
 
-      # 4) Run unit tests (verbose) + retry once if flaky
+      # Optional but strongly recommended if your tests rely on schema existing.
+      # If your repo uses a different DB command, replace this with the correct one.
+      - name: Apply DB schema (drizzle)
+        shell: bash
+        run: |
+          if pnpm -s run | grep -q "db:push"; then
+            pnpm db:push
+          elif pnpm -s run | grep -q "db:migrate"; then
+            pnpm db:migrate
+          else
+            echo "No db:push or db:migrate script found; skipping schema apply."
+          fi
+
+      # Run tests with one retry and capture logs to help diagnose flakes.
       - name: Unit tests (with retry + log)
         shell: bash
         run: |
           set -o pipefail
-          echo "== Run #1 =="
-          pnpm test -- --reporter=verbose 2>&1 | tee vitest.log || true
-          if grep -q "FAIL" vitest.log; then
-            echo "== Run #2 (retry) =="
-            pnpm test -- --reporter=verbose 2>&1 | tee vitest_retry.log
-          else
-            echo "No FAIL detected in first run output."
-          fi
+          mkdir -p artifacts
+          (pnpm test 2>&1 | tee artifacts/test.log) || (
+            echo "First test run failed; retrying once..." | tee -a artifacts/test.log
+            pnpm test 2>&1 | tee -a artifacts/test.log
+          )
 
-      # Always upload logs so we can diagnose quickly
-      - name: Upload test logs
+      - name: Upload test logs (always)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-logs
-          path: |
-            vitest.log
-            vitest_retry.log
+          path: artifacts/test.log
 
       - name: Release gate
         run: node scripts/release-gate.mjs
