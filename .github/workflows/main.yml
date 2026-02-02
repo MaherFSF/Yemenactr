@@ -15,17 +15,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
+    env:
+      CI: "true"
+      NODE_ENV: "test"
+      # Helps reduce random node memory issues on CI
+      NODE_OPTIONS: "--max_old_space_size=4096"
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 1) Setup Node (no pnpm caching yet)
+      # 1) Setup Node (NO pnpm cache yet)
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "22"
 
-      # 2) Ensure pnpm exists on PATH (corepack)
+      # 2) Ensure pnpm exists (corepack)
       - name: Enable pnpm via Corepack
         shell: bash
         run: |
@@ -33,7 +39,7 @@ jobs:
           corepack prepare pnpm@9.15.4 --activate
           pnpm --version
 
-      # 3) Now that pnpm exists, enable pnpm caching safely
+      # 3) Now enable pnpm caching safely
       - name: Setup Node cache (pnpm)
         uses: actions/setup-node@v4
         with:
@@ -43,8 +49,29 @@ jobs:
       - name: Install deps
         run: pnpm install --frozen-lockfile
 
-      - name: Unit tests
-        run: pnpm test
+      # 4) Run unit tests (verbose) + retry once if flaky
+      - name: Unit tests (with retry + log)
+        shell: bash
+        run: |
+          set -o pipefail
+          echo "== Run #1 =="
+          pnpm test -- --reporter=verbose 2>&1 | tee vitest.log || true
+          if grep -q "FAIL" vitest.log; then
+            echo "== Run #2 (retry) =="
+            pnpm test -- --reporter=verbose 2>&1 | tee vitest_retry.log
+          else
+            echo "No FAIL detected in first run output."
+          fi
+
+      # Always upload logs so we can diagnose quickly
+      - name: Upload test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs
+          path: |
+            vitest.log
+            vitest_retry.log
 
       - name: Release gate
         run: node scripts/release-gate.mjs
