@@ -37,7 +37,6 @@ jobs:
     env:
       # Adjust if your code expects a different format.
       DATABASE_URL: mysql://root:root@127.0.0.1:3306/yeto_test
-
       # Make CI deterministic
       CI: "true"
       NODE_ENV: "test"
