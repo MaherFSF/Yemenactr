@@ -67,27 +67,31 @@ export default function Dashboard() {
   ];
 
   // Quick Stats matching mockup
+  // EVIDENCE-NATIVE: Quick Stats linked to real evidence_pack subjectIds
   const quickStats = [
     {
       labelEn: "Annual Inflation Rate (Aden)",
       labelAr: "معدل التضخم السنوي (عدن)",
       value: "25.0%",
       trend: "up",
-      sparkline: [15, 18, 20, 22, 24, 25]
+      sparkline: [15, 18, 20, 22, 24, 25],
+      evidenceSubjectId: "inflation_cpi_aden_aden_irg"
     },
     {
       labelEn: "Annual Inflation Rate (Sana'a)",
       labelAr: "معدل التضخم السنوي (صنعاء)",
       value: "18.3%",
       trend: "up",
-      sparkline: [12, 14, 15, 16, 17, 18.3]
+      sparkline: [12, 14, 15, 16, 17, 18.3],
+      evidenceSubjectId: "inflation_cpi_sanaa_sanaa_defacto"
     },
     {
       labelEn: "Unemployment Rate",
       labelAr: "نسبة البطالة",
       value: "38.2%",
       trend: "warning",
-      sparkline: [30, 32, 34, 35, 37, 38.2]
+      sparkline: [30, 32, 34, 35, 37, 38.2],
+      evidenceSubjectId: "unemployment_rate_mixed"
     },
   ];
 
@@ -327,26 +331,12 @@ export default function Dashboard() {
                       <MiniSparkline data={stat.sparkline} color={stat.trend === "warning" ? "#F59E0B" : "#EF4444"} />
                     </div>
                     <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                      {/* EVIDENCE-NATIVE: Fetch real evidence from DB */}
                       <EvidencePackButton 
-                        data={{
-                          indicatorId: `stat-${index}`,
-                          indicatorNameEn: stat.labelEn,
-                          indicatorNameAr: stat.labelAr,
-                          value: stat.value,
-                          unit: "",
-                          timestamp: new Date().toISOString(),
-                          confidence: "C",
-                          sources: [
-                            {
-                              id: "1",
-                              name: "Sample Data Source",
-                              nameAr: "مصدر بيانات عينة",
-                              type: "estimate",
-                              date: "2026-01-10",
-                              quality: "C"
-                            }
-                          ]
-                        }}
+                        subjectType="metric"
+                        subjectId={stat.evidenceSubjectId}
+                        indicatorName={stat.labelEn}
+                        indicatorNameAr={stat.labelAr}
                         variant="link"
                         size="sm"
                       />

@@ -1,0 +1,29 @@
+=== SCREENSHOT LOG ===
+Timestamp: 2026-02-02T11:34:24Z
+
+1. Dashboard AR (Desktop)
+   Path: /home/ubuntu/screenshots/3000-i6xuu6xrjujow4j_2026-02-02_06-34-24_2822.webp
+   Status: ✅ PASS
+   Notes: Shows Quick Stats with Grade C badges (Inflation Aden 25.0%, Inflation Sanaa 18.3%, Unemployment 38.2%)
+   ISSUE: Grades shown but need to verify evidence_pack_id linkage
+
+2. Dashboard AR - Evidence Drawer (Inflation Aden)
+   Path: /home/ubuntu/screenshots/3000-i6xuu6xrjujow4j_2026-02-02_06-34-56_8021.webp
+   Status: ✅ PASS
+   Notes: Evidence Pack drawer opens showing:
+   - Indicator: Annual Inflation Rate (Aden)
+   - Value: 25.0%
+   - Confidence: C (Estimated)
+   - Data Date: February 2, 2026
+   - Tabs: Overview, Sources, Methodology, History
+   CRITICAL: Drawer shows content but need to verify this is from real evidence_pack, not mock
+
+3. Dashboard AR - Evidence Drawer Sources Tab
+   Path: /home/ubuntu/screenshots/3000-i6xuu6xrjujow4j_2026-02-02_06-35-24_7115.webp
+   Status: ⚠️ WARNING - MOCK DATA DETECTED
+   Notes: Sources tab shows:
+   - "1 verified sources"
+   - "Sample Data Source" - Estimate - Grade C
+   - Published: 2026-01-10
+   CRITICAL ISSUE: "Sample Data Source" is mock/placeholder data, NOT real evidence_pack content
+   This violates S1 requirement: grades shown without real evidence_pack_id
