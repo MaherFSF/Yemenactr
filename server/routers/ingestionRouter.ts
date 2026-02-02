@@ -24,7 +24,7 @@ export const ingestionRouter = router({
     const connectors = ConnectorRegistry.getAll();
     const results = [];
 
-    for (const name of connectors) {
+    for (const name of Array.from(connectors.keys())) {
       const connector = ConnectorRegistry.get(name);
       if (connector) {
         results.push({

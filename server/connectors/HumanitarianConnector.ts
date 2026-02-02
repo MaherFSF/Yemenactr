@@ -564,40 +564,27 @@ export class HDXConnector extends BaseConnector {
       const existing = await db
         .select()
         .from(libraryDocuments)
-        .where(eq(libraryDocuments.externalId, `hdx-${dataset.id}`))
+        .where(eq(libraryDocuments.docId, `hdx-${dataset.id}`))
         .limit(1);
 
       const docData = {
-        externalId: `hdx-${dataset.id}`,
-        title: dataset.title || 'Untitled Dataset',
+        docId: `hdx-${dataset.id}`,
+        titleEn: dataset.title || 'Untitled Dataset',
         titleAr: null,
-        publisher: dataset.organization?.title || 'HDX',
-        publicationDate: new Date(dataset.metadata_created),
-        docType: 'Dataset',
-        sourceUrl: `https://data.humdata.org/dataset/${dataset.name}`,
-        pdfUrl: null,
-        sectors: JSON.stringify(dataset.groups?.map((g: any) => g.title) || []),
-        entities: JSON.stringify([dataset.organization?.title].filter(Boolean)),
-        licenseFlag: dataset.license_id || 'unknown',
-        status: 'published',
-        metadata: JSON.stringify({
-          hdxId: dataset.id,
-          resourcesCount: dataset.num_resources,
-          tags: dataset.tags?.map((t: any) => t.name) || [],
-          fetchedAt: new Date().toISOString(),
-        }),
-        updatedAt: new Date(),
+        publisherName: dataset.organization?.title || 'HDX',
+        publishedAt: new Date(dataset.metadata_created),
+        retrievedAt: new Date(),
+        docType: 'report' as const,
+        canonicalUrl: `https://data.humdata.org/dataset/${dataset.name}`,
+        licenseFlag: 'unknown_requires_review' as const,
+        languageOriginal: 'en' as const,
       };
 
       if (existing.length > 0) {
         await db.update(libraryDocuments).set(docData).where(eq(libraryDocuments.id, existing[0].id));
         return { isNew: false };
       } else {
-        await db.insert(libraryDocuments).values({
-          id: `hdx-${dataset.id.substring(0, 20)}`,
-          ...docData,
-          createdAt: new Date(),
-        });
+        await db.insert(libraryDocuments).values(docData);
         return { isNew: true };
       }
     } catch (error) {

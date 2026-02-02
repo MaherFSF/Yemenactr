@@ -282,7 +282,7 @@ export class ConnectorRegistry {
   static async testAll(): Promise<Map<string, boolean>> {
     const results = new Map<string, boolean>();
     
-    for (const [name, connector] of this.connectors) {
+    for (const [name, connector] of Array.from(this.connectors)) {
       try {
         const isConnected = await connector.testConnection();
         results.set(name, isConnected);

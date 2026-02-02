@@ -209,16 +209,19 @@ export class IMFConnector extends BaseConnector {
 
       const seriesData = {
         indicatorCode: `IMF_${indicatorCode}`,
-        indicatorName,
-        value: value?.toString() || null,
+        regimeTag: 'unknown' as const,
+        value: value?.toString() || '0',
         date: new Date(`${year}-01-01`),
-        source: 'IMF World Economic Outlook',
-        sourceUrl: `https://www.imf.org/external/datamapper/${indicatorCode}@WEO/YEM`,
-        country: 'Yemen',
-        countryCode: 'YEM',
-        frequency: 'annual',
         unit: this.getIndicatorUnit(indicatorCode),
-        metadata: JSON.stringify({
+        confidenceRating: 'A' as const,
+        sourceId: 2, // IMF source ID
+        notes: JSON.stringify({
+          indicatorName,
+          source: 'IMF World Economic Outlook',
+          sourceUrl: `https://www.imf.org/external/datamapper/${indicatorCode}@WEO/YEM`,
+          country: 'Yemen',
+          countryCode: 'YEM',
+          frequency: 'annual',
           fetchedAt: new Date().toISOString(),
           apiVersion: 'v1',
         }),
@@ -233,7 +236,6 @@ export class IMFConnector extends BaseConnector {
         return { isNew: false };
       } else {
         await db.insert(timeSeries).values({
-          id: `imf-${indicatorCode}-${year}`,
           ...seriesData,
           createdAt: new Date(),
         });

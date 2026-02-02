@@ -356,6 +356,7 @@ class IngestionScheduler {
   async cleanupStuckRuns(): Promise<number> {
     try {
       const db = await getDb();
+      if (!db) return 0;
       const sixtyMinutesAgo = new Date(Date.now() - 60 * 60 * 1000);
       
       // Find stuck runs

@@ -9,6 +9,7 @@
  */
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -46,7 +47,7 @@ import {
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "@/hooks/useToast";
+// toast imported from sonner above
 import {
   Network,
   Settings,
@@ -308,19 +309,18 @@ function OverviewSkeleton() {
 function RulesTab() {
   const { language } = useLanguage();
   const isRTL = language === "ar";
-  const { toast } = useToast();
+  // Using toast from sonner
   
   const { data: rules, isLoading, refetch } = trpc.graph.getRules.useQuery();
   const toggleRule = trpc.graph.toggleRule.useMutation({
     onSuccess: () => {
       refetch();
-      toast({ title: isRTL ? "تم تحديث القاعدة" : "Rule updated" });
+      toast.success(isRTL ? "تم تحديث القاعدة" : "Rule updated");
     },
   });
   const runRule = trpc.graph.runRule.useMutation({
     onSuccess: (result) => {
-      toast({
-        title: isRTL ? "تم تشغيل القاعدة" : "Rule executed",
+      toast.success(isRTL ? "تم تشغيل القاعدة" : "Rule executed", {
         description: `${result.linksCreated} created, ${result.linksSuggested} suggested`,
       });
     },
@@ -328,7 +328,7 @@ function RulesTab() {
   const seedRules = trpc.graph.seedDefaultRules.useMutation({
     onSuccess: () => {
       refetch();
-      toast({ title: isRTL ? "تم إنشاء القواعد الافتراضية" : "Default rules seeded" });
+      toast.success(isRTL ? "تم إنشاء القواعد الافتراضية" : "Default rules seeded");
     },
   });
   
@@ -413,20 +413,20 @@ function RulesTab() {
 function ReviewTab() {
   const { language } = useLanguage();
   const isRTL = language === "ar";
-  const { toast } = useToast();
+  // Using toast from sonner
   const [reviewNotes, setReviewNotes] = useState("");
   
   const { data: reviews, isLoading, refetch } = trpc.graph.getPendingReviews.useQuery({});
   const approveReview = trpc.graph.approveReview.useMutation({
     onSuccess: () => {
       refetch();
-      toast({ title: isRTL ? "تمت الموافقة" : "Approved" });
+      toast.success(isRTL ? "تمت الموافقة" : "Approved");
     },
   });
   const rejectReview = trpc.graph.rejectReview.useMutation({
     onSuccess: () => {
       refetch();
-      toast({ title: isRTL ? "تم الرفض" : "Rejected" });
+      toast.success(isRTL ? "تم الرفض" : "Rejected");
     },
   });
   
@@ -513,12 +513,11 @@ function ReviewTab() {
 function EnrichmentTab() {
   const { language } = useLanguage();
   const isRTL = language === "ar";
-  const { toast } = useToast();
+  // Using toast from sonner
   
   const runBatchEnrichment = trpc.graph.runBatchEnrichment.useMutation({
     onSuccess: (result) => {
-      toast({
-        title: isRTL ? "اكتمل الإثراء" : "Enrichment complete",
+      toast.success(isRTL ? "اكتمل الإثراء" : "Enrichment complete", {
         description: `${result.totalLinksCreated} links created, ${result.totalLinksSuggested} suggested`,
       });
     },
@@ -580,13 +579,13 @@ function EnrichmentTab() {
 function HealthTab() {
   const { language } = useLanguage();
   const isRTL = language === "ar";
-  const { toast } = useToast();
+  // Using toast from sonner
   
   const { data: metrics, isLoading, refetch } = trpc.graph.getHealthMetrics.useQuery();
   const calculateMetrics = trpc.graph.calculateHealthMetrics.useMutation({
     onSuccess: () => {
       refetch();
-      toast({ title: isRTL ? "تم تحديث المقاييس" : "Metrics updated" });
+      toast.success(isRTL ? "تم تحديث المقاييس" : "Metrics updated");
     },
   });
   

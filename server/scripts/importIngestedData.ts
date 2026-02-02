@@ -201,32 +201,44 @@ export async function importAllIngestedData(): Promise<{
 
           try {
             // Insert or update time series data
-            await db.insert(timeSeries).values({
-              indicatorCode: mapping.code,
-              date: new Date(year, 0, 1), // January 1st of the year
-              value: numericValue,
-              unit: mapping.unit,
-              source: sourceName,
-              geography: 'Yemen',
-              metadata: JSON.stringify({
-                originalValue: value,
-                sector: mapping.sector,
-                importedAt: new Date().toISOString(),
-                dataFile: fileKey,
-              }),
-            }).onConflictDoUpdate({
-              target: [timeSeries.indicatorCode, timeSeries.date, timeSeries.geography],
-              set: {
-                value: numericValue,
-                source: sourceName,
-                metadata: JSON.stringify({
+            // Check if record exists first
+            const existing = await db.select().from(timeSeries)
+              .where(and(
+                eq(timeSeries.indicatorCode, mapping.code),
+                eq(timeSeries.date, new Date(year, 0, 1)),
+                eq(timeSeries.regimeTag, 'mixed')
+              ))
+              .limit(1);
+            
+            if (existing.length === 0) {
+              await db.insert(timeSeries).values({
+                indicatorCode: mapping.code,
+                date: new Date(year, 0, 1), // January 1st of the year
+                value: String(numericValue),
+                unit: mapping.unit,
+                regimeTag: 'mixed',
+                confidenceRating: 'C',
+                sourceId: 1, // Default source
+                notes: JSON.stringify({
                   originalValue: value,
                   sector: mapping.sector,
-                  updatedAt: new Date().toISOString(),
+                  importedAt: new Date().toISOString(),
                   dataFile: fileKey,
                 }),
-              },
-            });
+              });
+            } else {
+              await db.update(timeSeries)
+                .set({
+                  value: String(numericValue),
+                  notes: JSON.stringify({
+                    originalValue: value,
+                    sector: mapping.sector,
+                    updatedAt: new Date().toISOString(),
+                    dataFile: fileKey,
+                  }),
+                })
+                .where(eq(timeSeries.id, existing[0].id));
+            }
 
             stats.totalRecords++;
             stats.bySource[sourceName] = (stats.bySource[sourceName] || 0) + 1;

@@ -76,7 +76,7 @@ interface RelatedItemsData {
 
 interface RelatedInsightsPanelProps {
   sourceType: "entity" | "document" | "series" | "event" | "sector" | "indicator" | "update";
-  sourceId: number;
+  sourceId: number | string;
   sourceLabel?: string;
   showDocuments?: boolean;
   showEntities?: boolean;
@@ -104,7 +104,7 @@ export function RelatedInsightsPanel({
   
   const { data, isLoading, error } = trpc.graph.getRelatedItems.useQuery({
     sourceType,
-    sourceId,
+    sourceId: typeof sourceId === 'string' ? parseInt(sourceId, 10) || 0 : sourceId,
     maxItems,
   });
   

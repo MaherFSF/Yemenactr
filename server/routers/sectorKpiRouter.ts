@@ -519,14 +519,15 @@ export const sectorKpiRouter = router({
       limit: z.number().default(5),
     }))
     .query(async ({ input }) => {
-      const db = getDb();
+      const db = await getDb();
+      if (!db) return { updates: [] };
       
       // Try to get updates from economic_events table
       const events = await db
         .select()
         .from(economicEvents)
         .where(like(economicEvents.category, `%${input.sector}%`))
-        .orderBy(desc(economicEvents.date))
+        .orderBy(desc(economicEvents.eventDate))
         .limit(input.limit);
       
       return {

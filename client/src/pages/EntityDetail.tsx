@@ -511,7 +511,7 @@ export default function EntityDetail() {
           <TabsContent value="related">
             <RelatedInsightsPanel
               sourceType="entity"
-              sourceId={parseInt(id || '0')}
+              sourceId={parseInt(entityId || '0')}
               sourceLabel={language === "ar" ? entity.nameAr : entity.nameEn}
               showDocuments={true}
               showEntities={true}

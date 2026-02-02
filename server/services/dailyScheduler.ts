@@ -8,7 +8,7 @@ import { schedulerJobs, schedulerRunHistory } from "../../drizzle/schema";
 import { eq, desc, and, lte } from "drizzle-orm";
 
 // Import all connectors
-import { fetchWorldBankData } from "../connectors/worldBankConnector";
+import { fetchWorldBankData } from "../connectors/WorldBankConnector";
 import { fetchOchaFtsData } from "../connectors/ochaFtsConnector";
 import { fetchHdxData } from "../connectors/hdxCkanConnector";
 import { fetchSanctionsData } from "../connectors/sanctionsConnector";

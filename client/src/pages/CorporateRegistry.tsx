@@ -88,9 +88,9 @@ export default function CorporateRegistry() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Fetch registry metrics from database
-  const { data: metricsData, isLoading: metricsLoading } = trpc.series.getByIndicator.useQuery({
+  const { data: metricsData, isLoading: metricsLoading } = trpc.timeSeries.getByIndicator.useQuery({
     indicatorCode: "CORP_REG_TOTAL",
-    limit: 1
+    regimeTag: "aden_irg"
   });
 
   // Fetch companies from entities table
@@ -100,9 +100,9 @@ export default function CorporateRegistry() {
   });
 
   // Fetch time series data for registration trends
-  const { data: trendsData, isLoading: trendsLoading } = trpc.series.getByIndicator.useQuery({
+  const { data: trendsData, isLoading: trendsLoading } = trpc.timeSeries.getByIndicator.useQuery({
     indicatorCode: "CORP_REG_NEW",
-    limit: 20
+    regimeTag: "aden_irg"
   });
 
   const companies = companiesData?.entities || [];
@@ -173,9 +173,9 @@ export default function CorporateRegistry() {
               <EvidenceKpiCard
                 label={isArabic ? "إجمالي الشركات المسجلة" : "Total Registered Businesses"}
                 value={hasRealMetrics ? metricsData[0]?.value : undefined}
-                evidencePackId={hasRealMetrics ? metricsData[0]?.evidencePackId : undefined}
-                source={hasRealMetrics ? metricsData[0]?.sourceName : undefined}
-                date={hasRealMetrics ? metricsData[0]?.periodEnd?.split('-')[0] : undefined}
+                evidencePackId={hasRealMetrics ? String(metricsData[0]?.id) : undefined}
+                source={hasRealMetrics ? `Source #${metricsData[0]?.sourceId}` : undefined}
+                date={hasRealMetrics ? metricsData[0]?.date?.toISOString().split('-')[0] : undefined}
                 gapId="GAP-CORP-001"
               />
               <EvidenceKpiCard
@@ -242,7 +242,7 @@ export default function CorporateRegistry() {
                     </BarChart>
                   </ResponsiveContainer>
                   <Badge variant="outline" className="mt-2 text-xs bg-emerald-50 text-emerald-700">
-                    {isArabic ? "موثق" : "Verified"} | {trendsData[0]?.evidencePackId || "DB-SERIES"}
+                    {isArabic ? "موثق" : "Verified"} | {trendsData[0]?.id || "DB-SERIES"}
                   </Badge>
                 </div>
               ) : (
@@ -390,7 +390,9 @@ export default function CorporateRegistry() {
         </section>
 
         {/* Sources Used Panel */}
-        <SourcesUsedPanel pageKey="corporate-registry" className="mt-8" />
+        <div className="mt-8">
+          <SourcesUsedPanel pageKey="corporate-registry" />
+        </div>
       </div>
     </div>
   );

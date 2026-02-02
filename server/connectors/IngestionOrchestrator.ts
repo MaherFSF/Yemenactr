@@ -72,7 +72,7 @@ export class IngestionOrchestrator {
     }
 
     this.isRunning = true;
-    const availableConnectors = connectors || ConnectorRegistry.getAll();
+    const availableConnectors = connectors || Array.from(ConnectorRegistry.getAll().keys());
     
     // Create jobs for each connector and year
     const jobs: IngestionJob[] = [];
@@ -144,7 +144,7 @@ export class IngestionOrchestrator {
    * Run ingestion for a specific year across all connectors
    */
   async runYearIngestion(year: number, connectors?: string[]): Promise<IngestionResult[]> {
-    const availableConnectors = connectors || ConnectorRegistry.getAll();
+    const availableConnectors = connectors || Array.from(ConnectorRegistry.getAll().keys());
     const results: IngestionResult[] = [];
 
     for (const connectorName of availableConnectors) {
@@ -178,7 +178,7 @@ export class IngestionOrchestrator {
    * Run ingestion for a specific month across all connectors
    */
   async runMonthIngestion(year: number, month: number, connectors?: string[]): Promise<IngestionResult[]> {
-    const availableConnectors = connectors || ConnectorRegistry.getAll();
+    const availableConnectors = connectors || Array.from(ConnectorRegistry.getAll().keys());
     const results: IngestionResult[] = [];
 
     for (const connectorName of availableConnectors) {
@@ -325,7 +325,7 @@ export class IngestionOrchestrator {
     const results: Record<string, boolean> = {};
     const connectors = ConnectorRegistry.getAll();
 
-    for (const connectorName of connectors) {
+    for (const connectorName of Array.from(connectors.keys())) {
       try {
         const connector = ConnectorRegistry.get(connectorName);
         if (connector) {

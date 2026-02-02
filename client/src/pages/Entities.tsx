@@ -104,7 +104,7 @@ export default function Entities() {
   const totalCount = data?.total || 0;
 
   // Get unique regime tags from entities
-  const regimeTags = [...new Set(entities.map((e: any) => e.regimeTag).filter(Boolean))];
+  const regimeTags = Array.from(new Set(entities.map((e: any) => e.regimeTag).filter(Boolean)));
 
   return (
     <div className={`min-h-screen bg-gray-50 p-6 ${isArabic ? "rtl" : "ltr"}`}>
@@ -385,7 +385,9 @@ export default function Entities() {
         )}
 
         {/* Sources Used Panel */}
-        <SourcesUsedPanel pageKey="entities" className="mt-8" />
+        <div className="mt-8">
+          <SourcesUsedPanel pageKey="entities" />
+        </div>
       </div>
     </div>
   );

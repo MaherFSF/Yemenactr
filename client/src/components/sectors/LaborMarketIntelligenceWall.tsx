@@ -496,9 +496,8 @@ function ConnectedIntelligencePanel({ isArabic }: { isArabic: boolean }) {
       <CardContent>
         <RelatedInsightsPanel
           sourceType="sector"
-          sourceId="labor"
+          sourceId={3}
           maxItems={12}
-          showExplanations={true}
         />
       </CardContent>
     </Card>

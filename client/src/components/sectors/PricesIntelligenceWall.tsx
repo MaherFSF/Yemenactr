@@ -204,7 +204,7 @@ function PriceKPIsPanel({ isArabic, kpis, regime }: {
         <Card key={kpi.id} className="relative">
           {kpi.hasContradiction && (
             <div className="absolute top-2 right-2">
-              <ContradictionBadge size="sm" />
+              <Badge variant="destructive" className="text-xs">!</Badge>
             </div>
           )}
           <CardContent className="pt-4">
@@ -227,7 +227,7 @@ function PriceKPIsPanel({ isArabic, kpis, regime }: {
             <div className="flex items-center justify-between mt-2 pt-2 border-t">
               <SourceBadge tier="T1" sourceName={kpi.source} />
               {kpi.evidencePackId && (
-                <EvidencePackButton packId={kpi.evidencePackId} size="sm" />
+                <EvidencePackButton packId={String(kpi.evidencePackId)} size="sm" />
               )}
             </div>
           </CardContent>
@@ -487,7 +487,8 @@ export default function PricesIntelligenceWall({
   regime = 'both',
   isVip = false,
 }: PricesIntelligenceWallProps) {
-  const { isArabic } = useLanguage();
+  const { language } = useLanguage();
+  const isArabic = language === 'ar';
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [activeTab, setActiveTab] = useState('overview');
 

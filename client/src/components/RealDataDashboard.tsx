@@ -94,7 +94,7 @@ function KeyIndicatorsSection() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {data?.indicators.map((indicator) => (
+        {data?.indicators.map((indicator: { code: string; name: string; value: number | null; unit: string; confidence: 'A' | 'B' | 'C' | 'D'; date: string; source: string }) => (
           <Card key={indicator.code} className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
@@ -109,7 +109,7 @@ function KeyIndicatorsSection() {
             <CardContent>
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl font-bold">
-                  {formatIndicatorValue(indicator.value, indicator.unit)}
+                  {formatIndicatorValue(indicator.value ?? 0, indicator.unit)}
                 </span>
               </div>
               <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
@@ -130,7 +130,7 @@ function KeyIndicatorsSection() {
 
 function ReliefWebReportsSection() {
   const [searchQuery, setSearchQuery] = useState('');
-  const { data, isLoading, error } = useReliefWebReports(searchQuery || undefined, 10);
+  const { data, isLoading, error } = useReliefWebReports();
   const { t, language } = useLanguage();
   const isRTL = language === 'ar';
 

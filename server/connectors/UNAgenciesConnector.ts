@@ -324,21 +324,23 @@ export class WFPConnector extends BaseConnector {
 
       const seriesData = {
         indicatorCode: indicator,
-        indicatorName: `WFP Price: ${price.commodity || 'Unknown'}`,
-        value: price.price?.toString() || null,
+        regimeTag: 'mixed' as const,
+        value: price.price?.toString() || '0',
         date: new Date(dateStr),
-        source: 'WFP VAM Food Prices',
-        sourceUrl: 'https://dataviz.vam.wfp.org/',
-        country: 'Yemen',
-        countryCode: 'YEM',
-        frequency: 'monthly',
         unit: price.currency || 'YER',
-        metadata: JSON.stringify({
+        confidenceRating: 'B' as const,
+        sourceId: 1, // Default source
+        notes: JSON.stringify({
+          indicatorName: `WFP Price: ${price.commodity || 'Unknown'}`,
+          source: 'WFP VAM Food Prices',
+          sourceUrl: 'https://dataviz.vam.wfp.org/',
+          country: 'Yemen',
+          countryCode: 'YEM',
+          frequency: 'monthly',
           market: price.market,
-          unit: price.unit,
+          originalUnit: price.unit,
           fetchedAt: new Date().toISOString(),
         }),
-        updatedAt: new Date(),
       };
 
       if (existing.length > 0) {
@@ -346,9 +348,7 @@ export class WFPConnector extends BaseConnector {
         return { isNew: false };
       } else {
         await db.insert(timeSeries).values({
-          id: `wfp-${indicator}-${year}-${month}`,
           ...seriesData,
-          createdAt: new Date(),
         });
         return { isNew: true };
       }

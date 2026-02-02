@@ -1292,15 +1292,15 @@ Answer the user's question based on this research. Be specific and cite sources 
         const defaultStats: ConnectorStats = { record_count: 0, latest_year: null, last_fetch: null };
         
         // Get 'other' stats for connectors without specific prefixes
-        const otherStats: ConnectorStats = countsMap.get('other') || defaultStats;
+        const otherStats: ConnectorStats = (countsMap.get('other') as ConnectorStats | undefined) || defaultStats;
         const otherCount = Number(otherStats.record_count) || 0;
         
         // Distribute 'other' records to relevant connectors (CBY gets inflation/fx data)
-        const cbyStats: ConnectorStats = countsMap.get('cby') || defaultStats;
+        const cbyStats: ConnectorStats = (countsMap.get('cby') as ConnectorStats | undefined) || defaultStats;
         const cbyTotalCount = Number(cbyStats.record_count) + Math.floor(otherCount * 0.3);
 
         const connectors = connectorDefs.map(conn => {
-          let stats: ConnectorStats = countsMap.get(conn.id) || defaultStats;
+          let stats: ConnectorStats = (countsMap.get(conn.id) as ConnectorStats | undefined) || defaultStats;
           let recordCount = Number(stats.record_count) || 0;
           
           // CBY gets additional records from 'other' category
@@ -1323,7 +1323,7 @@ Answer the user's question based on this research. Be specific and cite sources 
             lastFetch: stats.last_fetch ? new Date(stats.last_fetch).toISOString() : null,
             recordCount: recordCount,
             latestYear: stats.latest_year,
-            errorMessage: status === "error" ? "API returned non-array data" : 
+            errorMessage: (status as string) === "error" ? "API returned non-array data" : 
                           status === "auth_required" ? "API key required" :
                           status === "unavailable" ? "No public API available" : null,
             apiUrl: conn.apiUrl,

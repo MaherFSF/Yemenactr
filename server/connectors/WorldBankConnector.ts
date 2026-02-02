@@ -284,16 +284,19 @@ export class WorldBankConnector extends BaseConnector {
 
       const seriesData = {
         indicatorCode,
-        indicatorName,
-        value: data.value?.toString() || null,
+        regimeTag: 'unknown' as const,
+        value: data.value?.toString() || '0',
         date: new Date(`${year}-01-01`),
-        source: 'World Bank WDI',
-        sourceUrl: `https://data.worldbank.org/indicator/${indicatorCode}?locations=YE`,
-        country: 'Yemen',
-        countryCode: 'YEM',
-        frequency: 'annual',
         unit: this.getIndicatorUnit(indicatorCode),
-        metadata: JSON.stringify({
+        confidenceRating: 'A' as const,
+        sourceId: 1, // World Bank source ID
+        notes: JSON.stringify({
+          indicatorName,
+          source: 'World Bank WDI',
+          sourceUrl: `https://data.worldbank.org/indicator/${indicatorCode}?locations=YE`,
+          country: 'Yemen',
+          countryCode: 'YEM',
+          frequency: 'annual',
           originalDate: data.date,
           fetchedAt: new Date().toISOString(),
           apiVersion: 'v2',
@@ -309,7 +312,6 @@ export class WorldBankConnector extends BaseConnector {
         return { isNew: false };
       } else {
         await db.insert(timeSeries).values({
-          id: `wb-${indicatorCode}-${year}`,
           ...seriesData,
           createdAt: new Date(),
         });
@@ -443,3 +445,21 @@ const worldBankConnector = new WorldBankConnector();
 ConnectorRegistry.register('WorldBank', worldBankConnector);
 
 export { worldBankConnector };
+
+// Export helper function for scheduler
+export async function fetchWorldBankData(startYear: number, endYear: number) {
+  try {
+    const result = await worldBankConnector.ingestYear(startYear);
+    return {
+      success: true,
+      recordsIngested: result.recordsIngested,
+      errors: result.errors || [],
+    };
+  } catch (error) {
+    return {
+      success: false,
+      recordsIngested: 0,
+      errors: [error instanceof Error ? error.message : 'Unknown error'],
+    };
+  }
+}

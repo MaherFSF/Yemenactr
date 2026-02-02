@@ -1165,7 +1165,7 @@ export class UCDPConnector implements DataConnector {
 // ============================================
 
 // Import new connectors
-import imfConnector from "./imfConnector";
+import { imfConnector } from "./IMFConnector";
 import faoConnector from "./faoConnector";
 import acledConnector from "./acledConnector";
 import iomDtmConnector from "./iomDtmConnector";
@@ -1467,11 +1467,16 @@ export async function runAllConnectors(): Promise<{
     console.log(`[Ingestion] Running connector: ${connector.name}`);
     
     try {
-      let result: { success: boolean; recordsProcessed: number; errors: string[] };
+      let result: { success: boolean; recordsProcessed: number; errors: string[] } | null = null;
       
       switch (connector.id) {
         case "imf-data":
-          result = await imfConnector.ingestIMFData();
+          const imfResult = await imfConnector.ingestYear(new Date().getFullYear());
+          result = {
+            success: imfResult.success,
+            recordsProcessed: imfResult.recordsIngested + imfResult.recordsUpdated,
+            errors: imfResult.errors,
+          };
           break;
         case "fao-stat":
           result = await faoConnector.ingestFAOData();

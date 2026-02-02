@@ -16,7 +16,7 @@ import {
   ENHANCED_CONNECTOR_REGISTRY,
   type EnhancedConnectorInfo 
 } from "../connectors";
-import imfConnector from "../connectors/imfConnector";
+import { imfConnector } from "../connectors/IMFConnector";
 import faoConnector from "../connectors/faoConnector";
 import acledConnector from "../connectors/acledConnector";
 import iomDtmConnector from "../connectors/iomDtmConnector";
@@ -266,9 +266,9 @@ class IngestionScheduler {
       // Run the appropriate connector
       switch (job.connectorId) {
         case "imf-data":
-          const imfResult = await imfConnector.ingestIMFData();
+          const imfResult = await imfConnector.ingestYear(new Date().getFullYear());
           success = imfResult.success;
-          recordsProcessed = imfResult.recordsProcessed;
+          recordsProcessed = imfResult.recordsIngested + imfResult.recordsUpdated;
           errors = imfResult.errors;
           break;
           

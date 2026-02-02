@@ -758,9 +758,8 @@ function ConnectedIntelligencePanel({ isArabic, sectorCode }: {
       <CardContent>
         <RelatedInsightsPanel
           sourceType="sector"
-          sourceId={sectorCode}
+          sourceId={4}
           maxItems={12}
-          showExplanations={true}
         />
       </CardContent>
     </Card>

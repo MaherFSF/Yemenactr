@@ -7761,7 +7761,7 @@ export const rawObjects = mysqlTable("raw_objects", {
 }, (table) => ({
   sourceIdx: index("raw_source_idx").on(table.sourceRegistryId),
   sha256Idx: index("raw_sha256_idx").on(table.sha256),
-  urlIdx: index("raw_url_idx").on(table.canonicalUrl(255)),
+  // urlIdx: index("raw_url_idx").on(table.canonicalUrl), // text columns cannot be indexed directly in MySQL
   retrievalIdx: index("raw_retrieval_idx").on(table.retrievalTs),
 }));
 

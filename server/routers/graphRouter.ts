@@ -518,7 +518,7 @@ export const graphRouter = router({
         isPublished: false,
       });
       
-      return { success: true, storyId, id: result.insertId };
+      return { success: true, storyId, id: storyId };
     }),
   
   /**

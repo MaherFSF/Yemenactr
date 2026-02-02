@@ -71,7 +71,7 @@ export interface EvidencePackData {
 
 interface EvidencePackButtonProps {
   data?: EvidencePackData;
-  evidencePackId?: string;
+  evidencePackId?: string | number;
   packId?: string; // alias for evidencePackId
   subjectType?: string; // For fetching evidence by subject
   subjectId?: string; // For fetching evidence by subject
@@ -117,7 +117,7 @@ export default function EvidencePackButton({
   
   // TRUTH-NATIVE: Fetch real evidence from database if evidencePackId is provided
   const { data: dbEvidence, isLoading: isLoadingEvidence } = trpc.evidence.getBySubject.useQuery(
-    { subjectType: querySubjectType, subjectId: requestedId },
+    { subjectType: querySubjectType, subjectId: String(requestedId) },
     { enabled: !!requestedId && requestedId !== "unknown" && !providedData }
   );
   
@@ -184,7 +184,7 @@ export default function EvidencePackButton({
           descriptionEn: `Evidence pack requested but not found. Pack ID: ${requestedId}`,
           descriptionAr: `حزمة الأدلة المطلوبة غير موجودة. معرف الحزمة: ${requestedId}`,
           sectorCode: sectorCode,
-          indicatorCode: requestedId
+          indicatorCode: String(requestedId)
         });
       } catch {
         // Fallback handled in onError

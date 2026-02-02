@@ -224,7 +224,7 @@ export default function BulkClassification() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-red-600">
-              {stats?.tierDistribution?.find((t: any) => t.tier === 'UNKNOWN')?.count || 0}
+              {(stats?.tierDistribution as any[] | undefined)?.find((t: any) => t.tier === 'UNKNOWN')?.count || 0}
             </div>
           </CardContent>
         </Card>
@@ -253,7 +253,7 @@ export default function BulkClassification() {
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
             {['T0', 'T1', 'T2', 'T3', 'T4', 'UNKNOWN'].map(tier => {
-              const count = stats?.tierDistribution?.find((t: any) => t.tier === tier)?.count || 0;
+              const count = (stats?.tierDistribution as any[] | undefined)?.find((t: any) => t.tier === tier)?.count || 0;
               const pct = stats?.total ? ((count / stats.total) * 100).toFixed(1) : '0';
               return (
                 <div key={tier} className="text-center p-4 rounded-lg bg-muted/50">
@@ -425,7 +425,7 @@ export default function BulkClassification() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {reviewQueue?.sources?.map((source: any) => (
+                  {(reviewQueue?.sources as any[] | undefined)?.map((source: any) => (
                     <TableRow key={source.id}>
                       <TableCell>
                         <div className="font-medium">{source.name}</div>
