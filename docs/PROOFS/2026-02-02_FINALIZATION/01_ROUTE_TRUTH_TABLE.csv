@@ -10,38 +10,40 @@ Route,Lang,Device,Status,Data Visible,Numeric Facts,Evidence Grade,Evidence Draw
 /entities,EN,Desktop,✅ PASS,Y,Y,N/A,N/A,N/A,N,screenshots/entities_en.webp,Entities page English
 /entities/45,AR,Desktop,✅ PASS,Y,Y,Y (Grade A/B),Y,Y,N,screenshots/entity_45_ar.webp,Aden Refinery - 3 verified claims with evidence packs
 /entities/45,EN,Desktop,✅ PASS,Y,Y,Y (Grade A/B),Y,Y,N,screenshots/entity_45_en.webp,Aden Refinery English
-# PUBLIC ROUTES - SECTORS
+# PUBLIC ROUTES - SECTORS (16 SECTORS TESTED)
 /sectors/banking,AR,Desktop,✅ PASS,Y,Y,Y (Grade A/B/C),Y,Y,N,screenshots/banking_ar.webp,39 Banks | $18.8B Assets | 18.3% CAR | 16.8% NPL | OFAC alerts
 /sectors/banking,EN,Desktop,✅ PASS,Y,Y,Y (Grade A/B/C),Y,Y,N,screenshots/banking_en.webp,Banking English - 39 banks visible
-/sectors/agriculture,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/sectors/energy,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/sectors/currency,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/sectors/trade,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/sectors/labor-market,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/sectors/macroeconomy,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/sectors/poverty,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/sectors/prices,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/sectors/public-finance,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/sectors/infrastructure,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/sectors/investment,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/sectors/microfinance,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/sectors/food-security,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/sectors/aid-flows,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/sectors/conflict-economy,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/sectors/agriculture,AR,Desktop,✅ PASS,Y,Y,Y (Grade A/B),N/A,Y,N,screenshots/sectors_agriculture_ar_desktop.webp,GDP ~15% | Employment >50% | Food imports 268K MT | FAO/WB/ACAPS sources
+/sectors/energy,AR,Desktop,✅ PASS,Y,Y,Y (Grade A/B/C),N/A,Y,N,screenshots/sectors_energy_ar_desktop.webp,Electricity ~30% | Fuel 3.7M MT | Diesel YER/L 870-1050 | Red Sea crisis alert
+/sectors/currency,AR,Desktop,✅ PASS,Y,Y,Y (Grade A/B),Y,Y,N,screenshots/sectors_currency_ar_desktop.webp,Official 1620 | Parallel Aden 1650 | Sana'a 530 | Gap 268% | Dual currency warning
+/sectors/trade,AR,Desktop,✅ PASS,Y,Y,Y (Grade B),N/A,Y,N,screenshots/sectors_trade_ar_desktop.webp,Trade balance data with imports/exports
+/sectors/labor-market,AR,Desktop,✅ PASS,Y,Y,Y (Grade B/C),N/A,Y,N,screenshots/sectors_labor_ar_desktop.webp,Unemployment 35% | Youth unemployment >50%
+/sectors/macroeconomy,AR,Desktop,✅ PASS,Y,Y,Y (Grade A/B/C),Y,Y,N,screenshots/sectors_macro_ar_desktop.webp,GDP growth | Inflation | Fiscal data
+/sectors/poverty,AR,Desktop,✅ PASS,Y,Y,Y (Grade B),N/A,Y,N,screenshots/sectors_poverty_ar_desktop.webp,Poverty rate 80% | HDI 0.424
+/sectors/prices,AR,Desktop,✅ PASS,Y,Y,Y (Grade A/B),N/A,Y,N,screenshots/sectors_prices_ar_desktop.webp,CPI and commodity prices
+/sectors/public-finance,AR,Desktop,✅ PASS,Y,Y,Y (Grade B/C),N/A,Y,N,screenshots/sectors_publicfinance_ar_desktop.webp,Government revenue and expenditure
+/sectors/infrastructure,AR,Desktop,✅ PASS,Y,Y,Y (Grade C),N/A,Y,N,screenshots/sectors_infrastructure_ar_desktop.webp,Infrastructure damage and reconstruction
+/sectors/investment,AR,Desktop,✅ PASS,Y,Y,Y (Grade C),N/A,Y,N,screenshots/sectors_investment_ar_desktop.webp,FDI and investment climate
+/sectors/microfinance,AR,Desktop,✅ PASS,Y,Y,Y (Grade B),N/A,Y,N,screenshots/sectors_microfinance_ar_desktop.webp,Microfinance institutions data
+/sectors/food-security,AR,Desktop,✅ PASS,Y,Y,Y (Grade A/B),Y,Y,N,screenshots/sectors_foodsecurity_ar_desktop.webp,IPC phases | Food imports | WFP data
+/sectors/aid-flows,AR,Desktop,✅ PASS,Y,Y,Y (Grade A/B),N/A,Y,N,screenshots/sectors_aidflows_ar_desktop.webp,Humanitarian funding flows | OCHA data
+/sectors/conflict-economy,AR,Desktop,✅ PASS,Y,Y,Y (Grade B/C),N/A,Y,N,screenshots/sectors_conflict_ar_desktop.webp,War economy indicators
 # PUBLIC ROUTES - OTHER
 /methodology,EN,Desktop,✅ PASS,Y,N/A,N/A,N/A,Y,N,screenshots/methodology_en_desktop.webp,Corrections Provenance Sources Confidence tabs
-/timeline,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/research,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/reports,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/glossary,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/sanctions,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/remittances,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/public-debt,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
-/humanitarian-funding,AR,Desktop,PENDING,,,,,,,NOT TESTED - P1-4
+/timeline,AR,Desktop,✅ PASS,Y,Y,N/A,N/A,Y,N,screenshots/timeline_ar_desktop.webp,100 economic events 2010-2026 | 53 critical | Interactive timeline
+/research,AR,Desktop,✅ PASS,Y,Y,Y (Grade B),N/A,Y,N,screenshots/research_ar_desktop.webp,370 documents | 64 reports | 47 sources | 16 years | WFP/CBY/YETO
+/reports,AR,Desktop,✅ PASS,Y,Y,N/A,N/A,Y,N,screenshots/reports_ar_desktop.webp,Report generation and download
+/glossary,AR,Desktop,✅ PASS,Y,N/A,N/A,N/A,N/A,N,screenshots/glossary_ar_desktop.webp,Economic terminology definitions
+/sanctions,AR,Desktop,✅ PASS,Y,Y,Y (Grade A),N/A,Y,N,screenshots/sanctions_ar_desktop.webp,OFAC/UN sanctions data
+/remittances,AR,Desktop,✅ PASS,Y,Y,Y (Grade B),N/A,Y,N,screenshots/remittances_ar_desktop.webp,Remittance flows data
+/public-debt,AR,Desktop,✅ PASS,Y,Y,Y (Grade B/C),N/A,Y,N,screenshots/publicdebt_ar_desktop.webp,Government debt data
+/humanitarian-funding,AR,Desktop,✅ PASS,Y,Y,Y (Grade A),N/A,Y,N,screenshots/humanitarian_ar_desktop.webp,OCHA FTS funding data
 # ADMIN ROUTES
 /admin/source-registry,EN,Desktop,✅ PASS,Y,Y,N/A,Y,Y,N,screenshots/admin_source_registry.webp,292 sources 234 active 17 needs key 41 pending
-/admin/bulk-classification,AR,Desktop,PENDING,,,,,,,NOT TESTED - Requires auth
-/admin/ingestion,AR,Desktop,PENDING,,,,,,,NOT TESTED - Requires auth
-# MOBILE (NOT TESTED)
-/dashboard,AR,Mobile,PENDING,,,,,,,NOT TESTED - P2-1
-/sectors/banking,AR,Mobile,PENDING,,,,,,,NOT TESTED - P2-1
+/admin/bulk-classification,EN,Desktop,✅ PASS,Y,Y,N/A,N/A,Y,N,screenshots/admin_bulk_classification_en_desktop.webp,292 sources | 119 unknown tier | 117 review queue | Classification engine
+/admin/ingestion,EN,Desktop,✅ PASS,Y,N,N/A,N/A,N/A,N,screenshots/admin_ingestion_en_desktop.webp,Ingestion dashboard with T1-T4 tier filters | Data gaps section
+/admin/users,EN,Desktop,NOT PRESENT,N/A,N/A,N/A,N/A,N/A,N/A,N/A,Route does not exist - user management via Manus OAuth
+/admin/subscriptions,EN,Desktop,NOT PRESENT,N/A,N/A,N/A,N/A,N/A,N/A,N/A,Route does not exist - subscriptions at /pricing
+# MOBILE (REPRESENTATIVE SAMPLE)
+/dashboard,AR,Mobile,✅ PASS,Y,Y,Y,Y,Y,N,screenshots/dashboard_ar_mobile.webp,Responsive layout verified
+/sectors/banking,AR,Mobile,✅ PASS,Y,Y,Y,Y,Y,N,screenshots/banking_ar_mobile.webp,Mobile responsive verified
