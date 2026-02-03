@@ -78,25 +78,25 @@ async function seedCI() {
     console.log('📋 Seeding source_registry with classification data...');
     
     const tiers = ['T0', 'T1', 'T2', 'T3', 'T4'];
-    const sourceTypes = ['API', 'SCRAPE', 'MANUAL', 'PARTNER'];
+    const accessTypes = ['API', 'WEB', 'MANUAL', 'PARTNER'];
+    const statuses = ['ACTIVE', 'PENDING_REVIEW'];
     
     for (let i = 1; i <= 150; i++) {
       const tier = tiers[i % 5];
-      const sourceType = sourceTypes[i % 4];
+      const accessType = accessTypes[i % 4];
+      const status = statuses[i % 2];
       await connection.execute(
         `INSERT IGNORE INTO source_registry 
-         (sourceId, name, tier, sourceType, tierClassificationSuggested, tierClassificationReason, tierClassificationConfidence, requiresHumanReview, classificationMatchedRule) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         (sourceId, name, tier, accessType, status, description, confidenceRating) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
           `src_${i}`,
           `Test Source ${i}`,
           tier,
-          sourceType,
-          tier,
+          accessType,
+          status,
           `Auto-classified as ${tier} based on publisher type`,
-          0.85 + (Math.random() * 0.1),
-          i % 10 === 0 ? 1 : 0,
-          `rule_${tier.toLowerCase()}_default`
+          ['A', 'B', 'C', 'D'][i % 4]
         ]
       );
     }
