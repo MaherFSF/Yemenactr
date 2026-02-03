@@ -3956,8 +3956,8 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "research_completeness_audit_publicationId_research_publications_id_fk": {
-          "name": "research_completeness_audit_publicationId_research_publications_id_fk",
+        "rca_pub_fk": {
+          "name": "rca_pub_fk",
           "tableFrom": "research_completeness_audit",
           "tableTo": "research_publications",
           "columnsFrom": [

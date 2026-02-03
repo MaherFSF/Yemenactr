@@ -1229,6 +1229,7 @@ export const researchPublications = mysqlTable("research_publications", {
   isPeerReviewedIdx: index("is_peer_reviewed_idx").on(table.isPeerReviewed),
   hasDatasetIdx: index("has_dataset_idx").on(table.hasDataset),
   languageIdx: index("language_idx").on(table.language),
+  res_pub_org_fk: foreignKey({ name: "res_pub_org_fk", columns: [table.organizationId], foreignColumns: [researchOrganizations.id] }),
 }));
 
 export type ResearchPublication = typeof researchPublications.$inferSelect;
@@ -1336,6 +1337,8 @@ export const researchCompletenessAudit = mysqlTable("research_completeness_audit
   yearIdx: index("year_idx").on(table.year),
   organizationIdx: index("organization_idx").on(table.organizationId),
   isFoundIdx: index("is_found_idx").on(table.isFound),
+  rca_org_fk: foreignKey({ name: "rca_org_fk", columns: [table.organizationId], foreignColumns: [researchOrganizations.id] }),
+  rca_pub_fk: foreignKey({ name: "rca_pub_fk", columns: [table.publicationId], foreignColumns: [researchPublications.id] }),
 }));
 
 export type ResearchCompletenessAudit = typeof researchCompletenessAudit.$inferSelect;
@@ -1361,6 +1364,7 @@ export const researchIngestionSources = mysqlTable("research_ingestion_sources",
   nameIdx: index("name_idx").on(table.name),
   sourceTypeIdx: index("source_type_idx").on(table.sourceType),
   isActiveIdx: index("is_active_idx").on(table.isActive),
+  ris_org_fk: foreignKey({ name: "ris_org_fk", columns: [table.organizationId], foreignColumns: [researchOrganizations.id] }),
 }));
 
 export type ResearchIngestionSource = typeof researchIngestionSources.$inferSelect;
@@ -6038,6 +6042,7 @@ export const updateItems = mysqlTable("update_items", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => ({
   contentHashIdx: uniqueIndex("update_content_hash_idx").on(table.contentHash),
+  sourceUrlIdx: index("update_source_url_idx").on(table.sourceUrl),
   statusIdx: index("update_status_idx").on(table.status),
   publishedAtIdx: index("update_published_at_idx").on(table.publishedAt),
   sourceIdIdx: index("update_source_id_idx").on(table.sourceId),
@@ -6758,7 +6763,7 @@ export const literatureGapTickets = mysqlTable("literature_gap_tickets", {
   resolvedBy: int("resolvedBy").references(() => users.id),
   resolvedAt: timestamp("resolvedAt"),
   resolutionNotes: text("resolutionNotes"),
-  resolvedDocumentId: int("resolvedDocumentId").references(() => libraryDocuments.id),
+  resolvedDocumentId: int("resolvedDocumentId"),
   
   // Timestamps
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -6768,6 +6773,7 @@ export const literatureGapTickets = mysqlTable("literature_gap_tickets", {
   ticketIdIdx: uniqueIndex("lit_gap_ticket_id_idx").on(table.ticketId),
   statusIdx: index("lit_gap_status_idx").on(table.status),
   priorityIdx: index("lit_gap_priority_idx").on(table.priority),
+  lgt_doc_fk: foreignKey({ name: "lgt_doc_fk", columns: [table.resolvedDocumentId], foreignColumns: [libraryDocuments.id] }),
 }));
 export type LiteratureGapTicket = typeof literatureGapTickets.$inferSelect;
 export type InsertLiteratureGapTicket = typeof literatureGapTickets.$inferInsert;
@@ -7840,7 +7846,7 @@ export const partnershipAccessRequests = mysqlTable("partnership_access_requests
   requestId: varchar("requestId", { length: 50 }).notNull().unique(), // PAR-XXXX
   
   // Source reference
-  sourceRegistryId: int("sourceRegistryId").notNull().references(() => sourceRegistry.id),
+  sourceRegistryId: int("sourceRegistryId").notNull(),
   
   // Request details
   requestType: mysqlEnum("requestType", ["api_key", "data_sharing", "partnership", "license_clarification"]).notNull(),
@@ -7871,6 +7877,7 @@ export const partnershipAccessRequests = mysqlTable("partnership_access_requests
   requestIdIdx: index("par_request_id_idx").on(table.requestId),
   sourceIdx: index("par_source_idx").on(table.sourceRegistryId),
   statusIdx: index("par_status_idx").on(table.status),
+  par_src_reg_fk: foreignKey({ name: "par_src_reg_fk", columns: [table.sourceRegistryId], foreignColumns: [sourceRegistry.id] }),
 }));
 
 export type PartnershipAccessRequest = typeof partnershipAccessRequests.$inferSelect;
@@ -7946,3 +7953,75 @@ export const registryLintResults = mysqlTable("registry_lint_results", {
 
 export type RegistryLintResult = typeof registryLintResults.$inferSelect;
 export type InsertRegistryLintResult = typeof registryLintResults.$inferInsert;
+
+
+// ============================================================================
+// REPORT GENERATION SYSTEM (Missing tables from migrations)
+// ============================================================================
+
+// Report Instances - Generated report instances
+export const reportInstances = mysqlTable("report_instances", {
+  id: int("id").autoincrement().primaryKey(),
+  templateId: int("templateId").notNull().references(() => reportTemplates.id),
+  title: varchar("title", { length: 255 }).notNull(),
+  titleAr: varchar("titleAr", { length: 255 }),
+  reportingPeriod: varchar("reportingPeriod", { length: 100 }),
+  htmlContent: text("htmlContent"),
+  htmlContentAr: text("htmlContentAr"),
+  pdfFileKey: varchar("pdfFileKey", { length: 255 }),
+  pdfFileUrl: text("pdfFileUrl"),
+  pdfFileKeyAr: varchar("pdfFileKeyAr", { length: 255 }),
+  pdfFileUrlAr: text("pdfFileUrlAr"),
+  evidenceAppendix: json("evidenceAppendix").$type<Record<string, unknown>>(),
+  workflowStatus: mysqlEnum("workflowStatus", [
+    "draft", "under_review", "needs_edit", "pending_approval", "approved", "published", "archived"
+  ]).default("draft").notNull(),
+  draftedBy: int("draftedBy").references(() => users.id),
+  draftedAt: timestamp("draftedAt"),
+  reviewedBy: int("reviewedBy").references(() => users.id),
+  reviewedAt: timestamp("reviewedAt"),
+  reviewNotes: text("reviewNotes"),
+  editedBy: int("editedBy").references(() => users.id),
+  editedAt: timestamp("editedAt"),
+  approvedBy: int("approvedBy").references(() => users.id),
+  approvedAt: timestamp("approvedAt"),
+  publishedAt: timestamp("publishedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  template_idx: index("template_idx").on(table.templateId),
+  workflow_status_idx: index("workflow_status_idx").on(table.workflowStatus),
+  reporting_period_idx: index("reporting_period_idx").on(table.reportingPeriod),
+}));
+
+export type ReportInstance = typeof reportInstances.$inferSelect;
+export type InsertReportInstance = typeof reportInstances.$inferInsert;
+
+// Insight Miner Proposals - AI-generated insights for review
+export const insightMinerProposals = mysqlTable("insight_miner_proposals", {
+  id: int("id").autoincrement().primaryKey(),
+  headline: varchar("headline", { length: 255 }).notNull(),
+  headlineAr: varchar("headlineAr", { length: 255 }),
+  summary: text("summary").notNull(),
+  summaryAr: text("summaryAr"),
+  supportingIndicators: json("supportingIndicators").$type<number[]>(),
+  supportingEvents: json("supportingEvents").$type<number[]>(),
+  supportingSources: json("supportingSources").$type<number[]>(),
+  confidenceScore: decimal("confidenceScore", { precision: 5, scale: 2 }),
+  category: mysqlEnum("category", [
+    "trend_alert", "anomaly_detection", "correlation_discovery", "forecast_update", "risk_signal"
+  ]).notNull(),
+  status: mysqlEnum("status", ["pending_review", "approved", "rejected", "incorporated"]).default("pending_review").notNull(),
+  reviewedBy: int("reviewedBy").references(() => users.id),
+  reviewedAt: timestamp("reviewedAt"),
+  reviewNotes: text("reviewNotes"),
+  incorporatedInReportId: int("incorporatedInReportId"),
+  generatedAt: timestamp("generatedAt").defaultNow().notNull(),
+}, (table) => ({
+  status_idx: index("status_idx").on(table.status),
+  category_idx: index("category_idx").on(table.category),
+  imp_report_fk: foreignKey({ name: "imp_report_fk", columns: [table.incorporatedInReportId], foreignColumns: [reportInstances.id] }),
+}));
+
+export type InsightMinerProposal = typeof insightMinerProposals.$inferSelect;
+export type InsertInsightMinerProposal = typeof insightMinerProposals.$inferInsert;

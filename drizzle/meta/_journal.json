@@ -190,20 +190,6 @@
       "when": 1770003258858,
       "tag": "0026_dark_frank_castle",
       "breakpoints": true
-    },
-    {
-      "idx": 27,
-      "version": "5",
-      "when": 1770076171381,
-      "tag": "0027_messy_colleen_wing",
-      "breakpoints": true
-    },
-    {
-      "idx": 28,
-      "version": "5",
-      "when": 1770076604368,
-      "tag": "0028_gray_toxin",
-      "breakpoints": true
     }
   ]
 }

@@ -17106,8 +17106,8 @@
         }
       },
       "foreignKeys": {
-        "partnership_access_requests_sourceRegistryId_source_registry_id_fk": {
-          "name": "partnership_access_requests_sourceRegistryId_source_registry_id_fk",
+        "par_src_reg_fk": {
+          "name": "par_src_reg_fk",
           "tableFrom": "partnership_access_requests",
           "tableTo": "source_registry",
           "columnsFrom": [
@@ -21763,8 +21763,8 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "research_completeness_audit_publicationId_research_publications_id_fk": {
-          "name": "research_completeness_audit_publicationId_research_publications_id_fk",
+        "rca_pub_fk": {
+          "name": "rca_pub_fk",
           "tableFrom": "research_completeness_audit",
           "tableTo": "research_publications",
           "columnsFrom": [
