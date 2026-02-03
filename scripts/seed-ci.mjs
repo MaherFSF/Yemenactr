@@ -226,7 +226,7 @@ async function seedCI() {
       await connection.execute(
         `INSERT IGNORE INTO evidence_packs 
          (subjectId, subjectType, subjectLabel, citations, regimeTags, geoScope, 
-          dqafIntegrity, dqafMethodology, dqafAccuracy, dqafServiceability, dqafAccessibility) 
+          dqafIntegrity, dqafMethodology, dqafAccuracyReliability, dqafServiceability, dqafAccessibility) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           subjectId,
