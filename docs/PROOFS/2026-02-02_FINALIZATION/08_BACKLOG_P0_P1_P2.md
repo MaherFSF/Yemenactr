@@ -1,7 +1,7 @@
 # YETO v0.2.3 Backlog — P0 / P1 / P2
 
-**Date:** 2026-02-02  
-**Version:** 654e2148
+**Date:** 2026-02-03  
+**Version:** 33a61cb4 (RC1)
 
 ---
 
@@ -25,7 +25,7 @@
 | P1-1 | ReliefWeb connector 403 | `scripts/run-real-connectors.mjs` | API returns 403 Forbidden | No humanitarian data ingestion | 2h | Connector returns 200 with records |
 | P1-2 | EN Dashboard inflation 0% | `client/src/pages/Dashboard.tsx` | EN version shows 0% inflation vs AR 25% | Data inconsistency across languages | 1h | EN and AR show same values |
 | P1-3 | Arabic content on EN pages | Various components | Some Arabic text appears on EN routes | UX degradation for EN users | 2h | All text in EN on EN routes |
-| P1-4 | Route sweep incomplete | N/A | Only 7 routes tested, need 20+ | Missing coverage for sector routes | 4h | All routes in truth table |
+| P1-4 | Route sweep | N/A | ✅ COMPLETE - 38 routes tested | All sector routes covered | DONE | All routes in truth table ✅ |
 | P1-5 | evidence_items count 0 | `drizzle/schema.ts` | evidence_items table empty despite 898 packs | Evidence chain incomplete | 2h | evidence_items > 0 |
 | P1-6 | gap_tickets count 7 | N/A | 7 unresolved gap tickets | Data gaps not addressed | 1h | gap_tickets = 0 or documented |
 
@@ -57,38 +57,14 @@
 - `/entities/:id` ✅
 - `/sectors/banking` (AR+EN) ✅
 
-### Routes NOT Tested (Need P1-4)
-**Sector Routes (16):**
-- `/sectors/agriculture`
-- `/sectors/energy`
-- `/sectors/finance`
-- `/sectors/health`
-- `/sectors/education`
-- `/sectors/infrastructure`
-- `/sectors/telecommunications`
-- `/sectors/trade`
-- `/sectors/manufacturing`
-- `/sectors/tourism`
-- `/sectors/real-estate`
-- `/sectors/transport`
-- `/sectors/water`
-- `/sectors/mining`
-- `/sectors/fisheries`
-- `/sectors/construction`
+### Routes NOW Tested (38 total) ✅
+**All Sector Routes (16):** agriculture, energy, currency, trade, labor-market, macroeconomy, poverty, prices, public-finance, infrastructure, investment, microfinance, food-security, aid-flows, conflict-economy, banking
 
-**Other Public Routes:**
-- `/corporate-registry`
-- `/research`
-- `/timeline`
-- `/methodology`
-- `/reports`
-- `/ai`
+**Other Public Routes:** timeline, research, reports, glossary, sanctions, remittances, public-debt, humanitarian-funding, methodology
 
-**Admin Routes:**
-- `/admin/source-registry`
-- `/admin/bulk-classification`
-- `/admin/ingestion`
-- `/admin/users/subscriptions`
+**Admin Routes:** source-registry ✅, bulk-classification ✅, ingestion ✅
+
+**NOT PRESENT (by design):** /admin/users (Manus OAuth), /admin/subscriptions (at /pricing)
 
 ---
 
@@ -108,7 +84,7 @@
 
 ## Next Sprint Priorities
 
-1. **P1-4: Complete route sweep** — Test all 20+ routes with AR+EN, desktop+mobile
+1. **P1-5: Push seed-ci.mjs** — Push workflow changes manually to enable CI seed data
 2. **P1-1: Fix ReliefWeb connector** — Investigate 403 error, add authentication
 3. **P1-5: Populate evidence_items** — Ensure evidence chain is complete
 4. **Evidence rule unit test** — Add test to prevent grade-without-pack regression

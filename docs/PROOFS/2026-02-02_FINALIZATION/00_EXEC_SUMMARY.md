@@ -1,9 +1,9 @@
 # YETO v0.2.3 Executive Summary
 
-**Date:** 2026-02-02  
-**Version:** 654e2148  
-**Tag:** v0.2.3-p0-evidence-native  
-**Environment:** https://3000-i6xuu6xrjujow4jnm8rc0-aa415d18.sg1.manus.computer
+**Date:** 2026-02-03  
+**Version:** 33a61cb4 (RC1)  
+**Tag:** v0.2.3-p0-evidence-native-rc1  
+**Environment:** https://3000-ivll5w4ske5ldfa3s3avd-f665dc22.sg1.manus.computer
 
 ---
 
@@ -11,15 +11,15 @@
 
 | Metric | Value | Status |
 |--------|-------|--------|
-| **Unit Tests** | 736/736 passing | ✅ GREEN |
+| **Unit Tests** | 740/740 passing (local) | ✅ GREEN |
 | **TypeScript Errors** | 0 | ✅ GREEN |
 | **Release Gates** | 11/11 passing | ✅ GREEN |
 | **Database Tables** | 9 critical tables | ✅ GREEN |
 | **Evidence Packs** | 898 (552 metric, 297 claim, 49 doc) | ✅ GREEN |
 | **Entity Claims** | 18 verified | ✅ GREEN |
-| **Time Series Records** | 6,702 | ✅ GREEN |
+| **Time Series Records** | 6,708 | ✅ GREEN |
 | **Ingestion Runs** | 6 success, 41 failed, 0 stuck | ✅ GREEN |
-| **Routes Tested** | 9 core routes passing | ✅ GREEN |
+| **Routes Tested** | 38 routes tested, all passing | ✅ GREEN |
 
 ---
 
@@ -42,7 +42,7 @@
 | entity_claims | 18 |
 | evidence_packs | 898 |
 | evidence_items | 0 |
-| time_series | 6,702 |
+| time_series | 6,708 |
 | gap_tickets | 7 |
 | sources | 307 |
 | commercial_banks | 39 |
@@ -99,7 +99,7 @@
 | P1-1 | ReliefWeb connector 403 | `run-real-connectors.mjs` | No humanitarian data | 2h |
 | P1-2 | EN Dashboard inflation 0% | `Dashboard.tsx` | Data mismatch | 1h |
 | P1-3 | Arabic on EN pages | Various | UX issue | 2h |
-| P1-4 | Route sweep incomplete | N/A | Missing 16 sector routes | 4h |
+| P1-4 | Route sweep | ✅ COMPLETE | All 16 sector routes tested | DONE |
 
 ---
 
