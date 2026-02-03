@@ -148,27 +148,26 @@ async function seedCI() {
     // ========================================================================
     console.log('📄 Seeding research_publications...');
     
-    const pubTypes = ['report', 'article', 'brief', 'analysis', 'dataset'];
-    const sectors = ['macro', 'currency', 'trade', 'banking', 'humanitarian', 'food_security'];
+    const pubTypes = ['research_paper', 'working_paper', 'policy_brief', 'technical_note', 'case_study'];
+    const researchCategories = ['macroeconomic_analysis', 'banking_sector', 'monetary_policy', 'fiscal_policy', 'trade_external', 'humanitarian_finance'];
     
     for (let i = 1; i <= 120; i++) {
       const pubType = pubTypes[i % 5];
-      const sector = sectors[i % 6];
+      const researchCategory = researchCategories[i % 6];
       const year = 2018 + (i % 7);
       
       await connection.execute(
         `INSERT IGNORE INTO research_publications 
-         (title, titleAr, publicationType, sector, publishDate, sourceId, url, abstract) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+         (title, titleAr, publicationType, researchCategory, publicationYear, sourceUrl, abstract) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
           `Yemen Economic Analysis Report ${i}`,
           `تقرير تحليل اقتصادي يمني ${i}`,
           pubType,
-          sector,
-          `${year}-${String((i % 12) + 1).padStart(2, '0')}-01`,
-          (i % 7) + 1,
+          researchCategory,
+          year,
           `https://example.org/publications/${i}`,
-          `Analysis of Yemen economic conditions in ${year} focusing on ${sector} sector.`
+          `Analysis of Yemen economic conditions in ${year} focusing on ${researchCategory}.`
         ]
       );
     }
@@ -222,23 +221,20 @@ async function seedCI() {
     
     for (const kpi of dashboardKPIs) {
       const subjectId = `${kpi.code}_${kpi.regime}`;
+      const geoScope = kpi.regime === 'mixed' ? 'National' : kpi.regime === 'aden_irg' ? 'Southern Yemen' : 'Northern Yemen';
       
       await connection.execute(
         `INSERT IGNORE INTO evidence_packs 
-         (subjectId, subjectType, confidenceGrade, confidenceExplanation, regimeTag, 
-          citations, transforms, timeCoverage, geographicScope, dqafIntegrity, 
-          dqafMethodology, dqafAccuracy, dqafServiceability, dqafAccessibility) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         (subjectId, subjectType, subjectLabel, citations, regimeTags, geoScope, 
+          dqafIntegrity, dqafMethodology, dqafAccuracy, dqafServiceability, dqafAccessibility) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           subjectId,
           'metric',
-          'B',
-          `Evidence pack for ${kpi.code} with moderate confidence based on available sources.`,
-          kpi.regime,
-          JSON.stringify([{ source: 'World Bank', url: 'https://data.worldbank.org', page: 1 }]),
-          JSON.stringify([{ type: 'aggregation', description: 'Monthly average' }]),
-          JSON.stringify({ start: '2020-01-01', end: '2024-12-31' }),
-          kpi.regime === 'mixed' ? 'National' : kpi.regime === 'aden_irg' ? 'Southern Yemen' : 'Northern Yemen',
+          `Evidence pack for ${kpi.code}`,
+          JSON.stringify([{ sourceId: 1, title: 'World Bank Data', publisher: 'World Bank', url: 'https://data.worldbank.org', retrievalDate: '2024-01-15', licenseFlag: 'CC-BY-4.0' }]),
+          JSON.stringify([kpi.regime]),
+          geoScope,
           'pass',
           'pass',
           'needs_review',
