@@ -84,8 +84,8 @@ jobs:
             echo "No db:push or db:migrate script found; skipping schema apply."
           fi
 
-      # Seed the database with test data required for CI tests
-      - name: Seed CI database
+      # Seed the database with test data for CI
+      - name: Seed CI test data
         shell: bash
         run: node scripts/seed-ci.mjs
 
