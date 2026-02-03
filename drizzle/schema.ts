@@ -7461,6 +7461,13 @@ export const sourceRegistry = mysqlTable("source_registry", {
   sectorsFed: json("sectorsFed").$type<string[]>(), // List of sector codes this source feeds
   pagesFed: json("pagesFed").$type<string[]>(), // List of page/module names this source feeds
   
+  // Bulk Classification (AI-assisted tier suggestions)
+  tierClassificationSuggested: mysqlEnum("tierClassificationSuggested", ["T0", "T1", "T2", "T3", "T4", "UNKNOWN"]),
+  tierClassificationReason: text("tierClassificationReason"),
+  tierClassificationConfidence: decimal("tierClassificationConfidence", { precision: 5, scale: 4 }), // 0.0000 to 1.0000
+  requiresHumanReview: boolean("requiresHumanReview").default(true).notNull(),
+  classificationMatchedRule: varchar("classificationMatchedRule", { length: 255 }),
+  
   // Flags
   isPrimary: boolean("isPrimary").default(false).notNull(),
   isProxy: boolean("isProxy").default(false).notNull(),
