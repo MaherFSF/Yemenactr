@@ -1,30 +1,108 @@
 # YETO Platform - Blockers & Missing Components
 
 **Generated:** 2026-02-04  
+**Updated:** 2026-02-04 (CI failure analysis added)  
 **Purpose:** Track missing components that block development/deployment  
-**Status:** 🔴 2 Blockers Identified
+**Status:** 🔴 3 Critical Blockers (1 Resolved, 2 Active)
+
+---
+
+## Summary
+
+- **Total Blockers:** 3 critical
+- **Active:** 2 (Database schema, ACLED API key)
+- **Resolved:** 1 (.env.example created)
+- **CI Status:** ❌ Failing (6/11 release gates failing)
+- **PR Merge Status:** 🔴 Blocked until database schema is fixed
 
 ---
 
 ## Critical Blockers
 
-### 🔴 BLOCKER 1: Missing `.env.example` File
+### 🔴 BLOCKER 1: Database Schema Missing v2.5 Columns
 
-**Impact:** High  
-**Affects:** New engineers, deployment, CI/CD  
-**Detected In:** Root directory scan (no `.env*` files found)
+**Impact:** Critical - CI/CD Pipeline Failing  
+**Affects:** All deployments, release gate, data integrity  
+**Detected In:** CI test-and-gate job #62555852725
 
 **Problem:**
-- No `.env.example` template file exists
-- New engineers don't know which environment variables to set
-- Deployment teams lack configuration reference
-- CI/CD pipelines need manual configuration
+- Database schema is missing required v2.5 columns
+- Release gate failing: 6/11 gates failing
+- CI cannot complete successfully
+- Blocks all merges to main branch
 
 **Evidence:**
 ```bash
-# Glob search for .env files
+# CI Error (from test-and-gate job)
+Release Gate Error: Unknown column 'sourceType' in 'field list'
+
+❌ Gate 1: Source Registry Count - 150 (min: 250)
+❌ Gate 2: Active Sources - 75 (min: 150)
+❌ Gate 3: Sector Codebook - 0 (expected: 16)
+❌ Gate 5: Sector Mappings - 0.0% (min: 50%)
+❌ Gate 8: S3 Storage - Missing credentials
+❌ Gate 9: v2.5 Schema Columns - Missing: sourceType, licenseState, 
+           needsClassification, reliabilityScore, evidencePackFlag
+```
+
+**Missing Columns in `sources_registry` table:**
+- `sourceType`
+- `licenseState`
+- `needsClassification`
+- `reliabilityScore`
+- `evidencePackFlag`
+
+**Root Cause:**
+- Schema migration not applied to test database
+- CI database initialization missing v2.5 schema updates
+- Possible migration file missing or not executed
+
+**Recommended Action:**
+1. **Check migration files:** Review `/drizzle/*.sql` for v2.5 column additions
+2. **Update schema:** Add missing columns to `/drizzle/schema-source-registry.ts`
+3. **Create migration:** Run `pnpm run db:push` to generate migration
+4. **Update CI:** Ensure GitHub Actions runs migrations before release-gate
+5. **Seed data:** Populate source registry to meet minimum counts (250 sources, 16 sectors)
+
+**Priority:** 🔴 Critical (blocks all PRs)  
+**Effort:** High (2-4 hours: schema update + migration + CI fix + data seeding)  
+**Owner:** Database Team / DevOps
+
+**Related Files:**
+- Schema: `/drizzle/schema-source-registry.ts`
+- Release gate: `/scripts/release-gate.mjs`
+- CI workflow: `/.github/workflows/*.yml`
+- Migrations: `/drizzle/*.sql`
+
+---
+
+### 🔴 BLOCKER 2: Missing `.env.example` File
+
+**Impact:** High  
+**Affects:** New engineers, deployment, CI/CD  
+**Detected In:** Root directory scan (no `.env*` files found)  
+**Status:** ✅ **RESOLVED** - `.env.example` created in this PR
+
+**Problem:**
+- No `.env.example` template file existed
+- New engineers didn't know which environment variables to set
+- Deployment teams lacked configuration reference
+- CI/CD pipelines needed manual configuration
+
+**Evidence:**
+```bash
+# Glob search for .env files (before fix)
 Result: 0 files found
 ```
+
+**Resolution:**
+Created comprehensive `.env.example` file with:
+- All 30+ environment variables documented
+- Required vs optional categorization
+- Development and production examples
+- Inline documentation and usage instructions
+- Connector status and API key requirements
+- Troubleshooting tips
 
 **Required Variables:** See [ENV_VARS.md](./ENV_VARS.md) for complete list
 
@@ -33,101 +111,16 @@ Result: 0 files found
 - `JWT_SECRET`
 - `NODE_ENV`
 
-**Recommended Action:**
-Create `.env.example` file in repository root with template values:
-
-```bash
-# .env.example
-# YETO Platform - Environment Variables Template
-# Copy this file to .env and fill in your values
-
-# ============================================
-# REQUIRED - Core Application
-# ============================================
-DATABASE_URL=mysql://yeto:yeto_password@localhost:3306/yeto
-JWT_SECRET=CHANGE-THIS-TO-A-STRONG-RANDOM-STRING-64-CHARS
-NODE_ENV=development
-
-# ============================================
-# OPTIONAL - Server Configuration
-# ============================================
-PORT=3000
-
-# ============================================
-# OPTIONAL - OAuth & Authentication
-# ============================================
-# OAUTH_SERVER_URL=
-# OWNER_OPEN_ID=
-# VITE_APP_ID=
-
-# ============================================
-# OPTIONAL - AI / LLM Integration
-# ============================================
-# AI_API_KEY=
-# AI_API_URL=https://api.openai.com/v1
-# AI_MODEL=gpt-4o
-# AI_EMBED_MODEL=text-embedding-3-small
-
-# ============================================
-# OPTIONAL - Storage (Choose one)
-# ============================================
-# Option A: Forge Proxy (Recommended)
-# BUILT_IN_FORGE_API_URL=
-# BUILT_IN_FORGE_API_KEY=
-
-# Option B: Direct S3 / MinIO
-# S3_ENDPOINT=http://localhost:9000
-# S3_ACCESS_KEY=minioadmin
-# S3_SECRET_KEY=minioadmin
-# S3_BUCKET=yeto-storage
-
-# ============================================
-# OPTIONAL - Cache / Redis
-# ============================================
-# REDIS_URL=redis://localhost:6379
-
-# ============================================
-# OPTIONAL - Search / OpenSearch
-# ============================================
-# OPENSEARCH_URL=http://localhost:9200
-
-# ============================================
-# OPTIONAL - Analytics
-# ============================================
-# VITE_ANALYTICS_ENDPOINT=
-# VITE_ANALYTICS_WEBSITE_ID=
-
-# ============================================
-# OPTIONAL - Data Connectors
-# ============================================
-# ACLED_API_KEY=  # Required if enabling ACLED connector
-# HDX_API_KEY=    # Optional for HDX HAPI
-
-# ============================================
-# NOTES
-# ============================================
-# 1. Copy this file: cp .env.example .env
-# 2. Fill in required variables (marked REQUIRED above)
-# 3. Configure optional services as needed
-# 4. Never commit .env to git (already in .gitignore)
-# 5. See docs/ENV_VARS.md for detailed documentation
-```
-
-**Priority:** 🔴 High  
-**Effort:** Low (5-10 minutes)  
-**Owner:** DevOps / Platform Team
-
 **Verification:**
 ```bash
-# After creating .env.example
+# After this PR merges
 cp .env.example .env
 # Edit .env with actual values
 pnpm run dev
-```
 
 ---
 
-### 🔴 BLOCKER 2: ACLED Connector API Key Required
+### 🔴 BLOCKER 3: ACLED Connector API Key Required
 
 **Impact:** Medium  
 **Affects:** Conflict data ingestion  
@@ -307,9 +300,16 @@ find server -name "*.test.ts" | wc -l
 
 Use this checklist to track blocker resolution:
 
-### Critical Items
-- [ ] Create `.env.example` file with all variables (BLOCKER 1)
-- [ ] Obtain ACLED API key OR document UCDP as primary conflict source (BLOCKER 2)
+### Critical Items (Blocking CI/CD)
+- [ ] **Fix database schema** - Add v2.5 columns to sources_registry table (BLOCKER 1)
+- [ ] **Update CI migrations** - Ensure migrations run before release-gate (BLOCKER 1)
+- [ ] **Seed source registry** - Add sources to meet minimum count of 250 (BLOCKER 1)
+- [ ] **Seed sector codebook** - Add 16 sector definitions (BLOCKER 1)
+- [ ] **Configure CI S3 credentials** - Add to GitHub Secrets (BLOCKER 1)
+- [x] **Create `.env.example`** - Done in this PR (BLOCKER 2 - RESOLVED)
+- [ ] **Obtain ACLED API key** OR document UCDP as primary conflict source (BLOCKER 3)
+
+### Important Items
 - [ ] Test full deployment with .env.example → .env workflow
 - [ ] Verify all required environment variables are documented
 
@@ -352,7 +352,15 @@ For questions about blockers:
 
 ## Changelog
 
-- **2026-02-04:** Initial blockers document created
+- **2026-02-04 (Update 2):** CI failure analysis and resolution
+  - Added BLOCKER 1: Database schema missing v2.5 columns (critical - blocks CI)
+  - Resolved BLOCKER 2: Created `.env.example` file
+  - Renumbered BLOCKER 3: ACLED API key (unchanged)
+  - Updated checklist with CI fix action items
+  - Analyzed failed CI run #62555852725
+  - Documented 6 failing release gates
+
+- **2026-02-04 (Update 1):** Initial blockers document created
   - Identified 2 critical blockers
   - Documented 2 minor issues
   - Confirmed 5 areas are complete and not blocking
