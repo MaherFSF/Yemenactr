@@ -1,0 +1,180 @@
+name: Deploy to AWS
+
+# Deploy to S3 and CloudFront after successful builds on main
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # Required for OIDC authentication if using AWS OIDC
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false # Don't cancel in-progress deployments
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    # Only deploy if tests pass
+    needs: [] # If integrating with main.yml, add: needs: [test-and-gate]
+
+    env:
+      CI: "true"
+      NODE_ENV: "production"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Setup Node and pnpm
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Enable pnpm via Corepack
+        shell: bash
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm --version
+
+      - name: Setup pnpm cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+          cache-dependency-path: "**/pnpm-lock.yaml"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Build the application
+      - name: Build application
+        shell: bash
+        run: |
+          if pnpm -s run | grep -q "^  build$"; then
+            echo "Running pnpm build..."
+            pnpm build
+          else
+            echo "ERROR: No build script found in package.json"
+            exit 1
+          fi
+
+      # Verify build output exists
+      - name: Verify build output
+        shell: bash
+        run: |
+          # Common build output directories
+          if [ -d "client/dist" ]; then
+            BUILD_DIR="client/dist"
+          elif [ -d "dist" ]; then
+            BUILD_DIR="dist"
+          elif [ -d "build" ]; then
+            BUILD_DIR="build"
+          else
+            echo "ERROR: Could not find build output directory"
+            echo "Checked: client/dist, dist, build"
+            exit 1
+          fi
+          echo "Found build directory: $BUILD_DIR"
+          echo "BUILD_DIR=$BUILD_DIR" >> $GITHUB_ENV
+          
+          # Verify directory is not empty
+          if [ -z "$(ls -A $BUILD_DIR)" ]; then
+            echo "ERROR: Build directory is empty"
+            exit 1
+          fi
+          
+          echo "Build verification successful"
+          ls -lh "$BUILD_DIR" | head -20
+
+      # Configure AWS credentials
+      # TODO: Add AWS secrets to GitHub repository settings:
+      #   - AWS_ACCESS_KEY_ID
+      #   - AWS_SECRET_ACCESS_KEY
+      #   - AWS_REGION (optional, defaults to us-east-1)
+      #   - S3_BUCKET_NAME (required)
+      #   - CLOUDFRONT_DISTRIBUTION_ID (optional, only if using CloudFront)
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+
+      # Sync to S3
+      - name: Sync to S3
+        shell: bash
+        run: |
+          if [ -z "${{ secrets.S3_BUCKET_NAME }}" ]; then
+            echo "ERROR: S3_BUCKET_NAME secret is not configured"
+            echo "Please add S3_BUCKET_NAME to GitHub repository secrets"
+            exit 1
+          fi
+          
+          echo "Syncing $BUILD_DIR to s3://${{ secrets.S3_BUCKET_NAME }}/"
+          
+          # Sync files to S3 with cache control headers
+          aws s3 sync "$BUILD_DIR" "s3://${{ secrets.S3_BUCKET_NAME }}/" \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "*.html" \
+            --exclude "*.json"
+          
+          # Upload HTML and JSON files with no-cache headers
+          aws s3 sync "$BUILD_DIR" "s3://${{ secrets.S3_BUCKET_NAME }}/" \
+            --cache-control "no-cache, no-store, must-revalidate" \
+            --exclude "*" \
+            --include "*.html" \
+            --include "*.json"
+          
+          echo "✓ S3 sync complete"
+
+      # Invalidate CloudFront (optional)
+      - name: Invalidate CloudFront
+        if: secrets.CLOUDFRONT_DISTRIBUTION_ID != ''
+        shell: bash
+        run: |
+          echo "Creating CloudFront invalidation for distribution: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}"
+          
+          INVALIDATION_ID=$(aws cloudfront create-invalidation \
+            --distribution-id "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" \
+            --paths "/*" \
+            --query 'Invalidation.Id' \
+            --output text)
+          
+          echo "Invalidation created: $INVALIDATION_ID"
+          echo "✓ CloudFront invalidation initiated"
+          
+          # Optional: Wait for invalidation to complete (can take 10-15 minutes)
+          # Uncomment if you want the workflow to wait
+          # echo "Waiting for invalidation to complete..."
+          # aws cloudfront wait invalidation-completed \
+          #   --distribution-id "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" \
+          #   --id "$INVALIDATION_ID"
+          # echo "✓ CloudFront invalidation completed"
+
+      # Deployment summary
+      - name: Deployment summary
+        if: success()
+        shell: bash
+        run: |
+          echo "=========================================="
+          echo "Deployment completed successfully!"
+          echo "=========================================="
+          echo ""
+          echo "S3 Bucket: s3://${{ secrets.S3_BUCKET_NAME }}/"
+          echo "Build directory: $BUILD_DIR"
+          echo "Region: ${{ secrets.AWS_REGION || 'us-east-1' }}"
+          if [ -n "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" ]; then
+            echo "CloudFront: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}"
+          fi
+          echo ""
+          echo "Commit: ${{ github.sha }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "=========================================="

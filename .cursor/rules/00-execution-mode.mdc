@@ -1,0 +1,11 @@
+---
+description: Non-negotiable execution mode for Cursor Agent (no drift, phased PRs).
+alwaysApply: true
+---
+# Execution mode
+
+- Work in **small PR-sized slices**. One objective per PR.
+- **Do not refactor unrelated code.**
+- If blocked, create a GAP ticket in `docs/GAP_TICKETS.md` and log a decision in `docs/DECISIONS.md`.
+- Only ask the operator for confirmation if an action is **irreversible** or needs **privileged secrets**.
+- Every PR must include: Summary, Verification steps, Risks/Rollback.
