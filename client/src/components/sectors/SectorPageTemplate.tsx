@@ -38,6 +38,7 @@ import { SectorWatchlist } from "./SectorWatchlist";
 import { SectorFaqSection } from "./SectorFaqSection";
 import { RelatedInsightsPanel } from "@/components/RelatedInsights";
 import { SourcesUsedPanel } from "@/components/SourcesUsedPanel";
+import { SectorAgentPanel } from "./SectorAgentPanel";
 import { Network } from "lucide-react";
 
 interface SectorPageTemplateProps {
@@ -174,6 +175,9 @@ export function SectorPageTemplate({ sectorCode }: SectorPageTemplateProps) {
 
       {/* Main content */}
       <div className="container py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Content Area */}
+          <div className="lg:col-span-2">
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-flex">
             <TabsTrigger value="overview">
@@ -451,6 +455,17 @@ export function SectorPageTemplate({ sectorCode }: SectorPageTemplateProps) {
             />
           </TabsContent>
         </Tabs>
+          </div>
+
+          {/* Sidebar with Sector Agent */}
+          <div className="lg:col-span-1">
+            <SectorAgentPanel
+              sectorCode={sectorCode}
+              sectorName={isArabic ? definition.nameAr : definition.nameEn}
+              regime={regime}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
