@@ -1,0 +1,8 @@
+rule,severity,expected_behavior
+src_id unique,ERROR,Block import if duplicates
+name_en present,ERROR,Block import if missing
+url or (access_method_norm in MANUAL/PARTNER) allowed,WARN,Manual/partner sources may be url-less
+tier present,WARN,"If blank, requires classification"
+status in enum,ERROR,Normalize before import
+update_frequency_norm in enum,WARN,Non-mappable -> IRREGULAR
+cadence_lag_tolerance numeric days,WARN,Non-parsable -> blank
