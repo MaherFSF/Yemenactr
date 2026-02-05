@@ -1,0 +1,54 @@
+# Split-System Enforcement (Yemen Context)
+
+## L3 — Split-system enforcement
+
+**ABSOLUTE RULE:** Never merge Aden/IRG and Sana'a/DFA indicators.
+
+## Context
+
+Yemen has two parallel governing authorities:
+- **IRG** (Internationally Recognized Government) based in Aden
+- **DFA** (De Facto Authority) based in Sana'a
+
+These publish separate, incompatible data series. Merging them produces meaningless results.
+
+## Implementation requirements
+
+### Database schema
+- Use `regime_tag` field everywhere: `"IRG"`, `"DFA"`, `"NATIONWIDE"`, or `null`
+- Never aggregate across different regime_tag values
+- Support "Comparison Mode" in UI for side-by-side viewing
+
+### API & queries
+- All data queries must filter by regime_tag
+- Time series must maintain regime_tag separation
+- Aggregations must respect regime boundaries
+
+### UI enforcement
+- Show regime indicator in all data visualizations
+- Provide regime filter/selector
+- Warn users when comparing cross-regime data
+- Support "Comparison Mode" for intentional side-by-side analysis
+
+## Examples
+
+**WRONG:**
+```typescript
+// This merges incompatible series
+const gdp = await getTotalGDP({ country: "Yemen" })
+```
+
+**CORRECT:**
+```typescript
+// Keeps regimes separate
+const gdpIRG = await getGDP({ country: "Yemen", regimeTag: "IRG" })
+const gdpDFA = await getGDP({ country: "Yemen", regimeTag: "DFA" })
+```
+
+## Enforcement
+
+When working on Yemen data:
+1. Always check if regime_tag applies
+2. Never write queries that merge across regimes
+3. Test with both IRG and DFA data
+4. Verify UI shows regime context

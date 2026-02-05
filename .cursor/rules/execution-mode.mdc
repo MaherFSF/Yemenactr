@@ -1,0 +1,117 @@
+# Cursor Agent Execution Mode
+
+## Purpose
+
+This rule file defines how Cursor Agent should behave when working on the Yemenactr repository. This ensures disciplined, production-grade engineering practices.
+
+## Zero-drift rule
+
+**Cursor Agent must behave like a disciplined engineering team, not a chat.**
+
+### NO DRIFT means:
+- Do not rewrite the stack
+- Do not re-architect unrelated components
+- Do not refactor for style preferences
+- Stick to the task at hand
+- Make surgical changes, not sweeping rewrites
+
+### When to refactor
+Only refactor if:
+1. Required for the current task
+2. Fixes a bug or violation of laws
+3. Explicitly requested
+4. Documented in PR description
+
+## No-questions default (with safety valve)
+
+**Default:** Do not ask the operator questions.
+
+### If blocked or uncertain:
+1. Create a gap ticket in `docs/GAP_TICKETS.md`
+2. Proceed with the safest compliant default
+3. Log the decision in `docs/DECISIONS.md`
+
+### Safety valve
+Cursor **may** ask for confirmation only if:
+- Action is **irreversible** (destructive migration, deleting data)
+- Requires **privileged secrets** (API keys, credentials)
+- Multiple equally-valid approaches with significant tradeoffs
+
+## GitHub workflow discipline
+
+### Branch rules
+- Every Cursor run happens on a **new branch**
+- Branch naming:
+  - `fix/description-YYYY-MM-DD`
+  - `feat/description`
+  - `chore/description`
+  - `docs/description`
+
+### PR requirements
+Every PR must include:
+1. **Summary** (what changed)
+2. **Evidence** (how you verified it works)
+3. **Risk/rollback notes**
+4. **Follow-ups** (if any)
+
+### Commit discipline
+- Small, focused commits
+- Clear commit messages
+- Each commit should be reviewable
+- Use conventional commit format:
+  - `feat: description`
+  - `fix: description`
+  - `chore: description`
+  - `docs: description`
+
+## Phase discipline
+
+Work proceeds in phases. Each phase:
+1. Has clear deliverables
+2. Ends with a mergeable PR
+3. Has a STOP gate (acceptance criteria)
+4. Must pass before next phase starts
+
+Do not mix phases. Complete current phase before starting next.
+
+## File organization rules
+
+### Documentation
+- Technical docs go in `docs/`
+- API docs in `docs/API_REFERENCE.md`
+- Architecture decisions in `docs/DECISIONS.md`
+- Gap tickets in `docs/GAP_TICKETS.md`
+- Release gates in `docs/RELEASE_GATES.md`
+
+### Code
+- Server code in `server/`
+- Client code in `client/`
+- Shared code in `shared/`
+- Agent definitions in `agentos/`
+- Scripts in `scripts/`
+
+### Data
+- Source registry in `data/registry/` or `data/source_registry/`
+- Documentation in `data/*.md`
+
+## Error handling
+
+When CI fails:
+1. Read the error message carefully
+2. Fix the root cause (not symptoms)
+3. Re-run CI
+4. Do not skip or disable checks
+
+When tests fail:
+1. Understand why the test is failing
+2. Fix the code (not the test) unless test is wrong
+3. If test is wrong, document why in commit message
+
+## Response format
+
+When reporting work:
+1. State what was done
+2. Show evidence (file paths, line numbers)
+3. Note any decisions or tradeoffs
+4. Flag any risks or follow-ups
+5. Confirm gate status (if applicable)

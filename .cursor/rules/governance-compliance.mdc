@@ -1,0 +1,54 @@
+# Governance & Compliance Laws
+
+## L5 — Licensing & access compliance
+
+**ABSOLUTE RULE:** Do **not** bypass paywalls, logins, robots, ToS.
+
+### Implementation
+- If a source needs partnership/API keys: create a gap ticket + admin outbox entry
+- Mark sources with access requirements in `source_registry` table
+- Track access permissions in metadata
+- Never scrape restricted content
+- Honor robots.txt
+- Respect rate limits
+
+## L6 — Do-no-harm, privacy, neutrality
+
+### Privacy & safety
+- **No PII** (Personally Identifiable Information)
+- No operationally harmful details (e.g., location of critical infrastructure)
+- No information that could enable harm
+
+### Language neutrality
+- Use neutral, objective language
+- No political advocacy
+- No sanction-evasion guidance
+- Present data from all parties without editorial bias
+
+### Conflict context
+Yemen is in active conflict. Data platform must:
+- Serve humanitarian/policy needs
+- Avoid becoming tool for one party
+- Maintain credibility through neutrality
+
+## L9 — GitHub + CI are the release gate
+
+**ABSOLUTE RULE:** No merge to `main` if CI is red.
+
+### Enforcement
+- All PRs must pass CI checks
+- Required checks:
+  - Lint (ESLint)
+  - Typecheck (TypeScript)
+  - Tests (if present)
+  - Build succeeds
+- Bugbot review before merge
+- Release gate admin page shows status
+
+### Breaking the rule
+Only break this rule if:
+1. CI infrastructure itself is broken (not the code)
+2. Emergency security patch
+3. Documented in commit message with explanation
+
+In all cases, create follow-up ticket to fix properly.

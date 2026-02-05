@@ -1,0 +1,42 @@
+# Evidence & Provenance Laws
+
+## L1 — Evidence-only / zero fabrication
+
+**ABSOLUTE RULE:** No number, chart point, recommendation, or alert may be displayed unless it has:
+- a provenance chain; and
+- a "Show Evidence" path.
+
+If missing evidence: show a **Gap Card** and create a gap ticket in `docs/GAP_TICKETS.md`.
+
+**Never fabricate:**
+- Demo numbers
+- Placeholder metrics
+- Mock data
+- Estimated values without source attribution
+
+## L2 — Provenance chain is mandatory
+
+Every observation must trace:
+```
+observation → series → dataset_version → ingestion_run → raw_object → source_id
+```
+
+**Implementation requirements:**
+- Every database observation must have `evidencePackId`
+- Evidence packs must expose the full chain
+- "Show Evidence" UI must be available for every displayed metric
+
+## L4 — Quality & uncertainty disclosure
+
+- Display uncertainty/quality **only** if derived from metadata or explicit source publication
+- Never invent confidence intervals
+- Never apply subjective quality assessments
+- If source provides quality metadata, preserve it exactly
+
+## Enforcement
+
+When working on any feature that displays data:
+1. Verify provenance chain exists
+2. Verify "Show Evidence" path works
+3. If data missing, create Gap Card instead
+4. Log decision in `docs/DECISIONS.md` if making judgment call
