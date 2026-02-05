@@ -1,0 +1,11 @@
+---
+description: Licensing compliance, privacy, and neutrality guardrails.
+alwaysApply: true
+---
+# Licensing, safety, neutrality
+
+- Do not bypass paywalls/logins/robots/ToS.
+- If a source requires partnership/API keys: create a GAP ticket; do not “scrape anyway”.
+- No PII.
+- No sanction evasion guidance.
+- Use neutral language; do not assert allegations as facts.

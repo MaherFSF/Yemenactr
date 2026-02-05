@@ -1,0 +1,8 @@
+---
+description: Release-gate mindset: tests, E2E, and admin PASS/FAIL gates.
+---
+# Tests & release gates
+
+- Any change that affects data, auth, or exports must include tests.
+- Prefer Playwright for critical user journeys.
+- Keep `/admin/release-gate` truthful: it must reflect real checks.

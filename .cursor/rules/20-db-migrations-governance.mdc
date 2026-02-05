@@ -1,0 +1,10 @@
+---
+description: Governance-safe database migrations (additive, forward-compatible, no destructive changes).
+---
+# DB migrations (governance-safe)
+
+- **Additive only**: add columns/tables/indexes.
+- Do not drop/rename existing columns.
+- Do not overwrite historical rows.
+- Defaults only if legally and logically safe; otherwise NULL + documented rationale.
+- Backfills must be deterministic; if not safe, keep NULL and log the policy.
