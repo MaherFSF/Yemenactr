@@ -1,0 +1,294 @@
+src_id,source_name,S01,S02,S03,S04,S05,S06,S07,S08,S09,S10,S11,S12,S13,S14,S15,S16
+SRC-001,World Bank Macro PovcalNet,●,○,○,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-002,World Bank International Debt Stati,●,○,○,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-003,World Bank Global Economic Monitor ,●,○,○,○,○,●,○,○,○,○,○,○,○,○,◐,○
+SRC-004,IMF World Economic Outlook (WEO),●,○,○,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-005,IMF Fiscal Monitor,◐,○,○,○,●,○,○,○,○,○,○,○,○,○,◐,○
+SRC-006,Arab Monetary Fund (AMF),●,○,●,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-007,UN ESCWA (Arab Countries Macro Data,●,○,○,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-008,Trading Economics,●,○,○,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-009,Yemen Central Statistical Office (C,●,○,○,○,○,○,○,○,○,○,●,○,○,○,◐,○
+SRC-010,UN Population Division World Popula,◐,○,○,○,○,○,○,○,○,○,●,○,○,○,◐,○
+SRC-011,UN Human Development Reports,◐,○,○,○,○,○,○,○,○,○,●,○,○,○,◐,○
+SRC-012,World Bank Doing Business (archived,◐,○,○,○,○,○,○,○,○,○,○,○,○,●,◐,○
+SRC-013,World Bank Enterprise Surveys 2010 ,◐,○,○,○,○,○,○,○,○,○,○,○,○,●,◐,○
+SRC-014,UN Global SDG Indicators Database,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-015,University of Sheffield Night‑Time ,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-016,World Food Programme VAM Commodity ,◐,●,○,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-017,FAO Food Price Monitoring Bulletins,◐,●,○,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-018,SEMC (Yemen Studies & Economic Medi,◐,●,○,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-019,FEWS NET Monthly Price Bulletins,◐,●,○,○,○,○,○,○,○,●,○,●,○,○,◐,○
+SRC-020,Integrated Food Security Phase Clas,◐,●,○,○,○,○,○,○,○,●,○,●,○,○,◐,○
+SRC-021,UNICEF Multiple Indicator Cluster S,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-022,World Health Organization Global He,◐,●,○,○,○,○,○,○,○,○,●,○,○,○,◐,○
+SRC-023,Central Bank of Yemen FX Auction Ar,◐,○,●,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-024,IMF Direction of Trade Statistics (,◐,○,●,○,○,●,○,○,○,○,○,○,○,○,◐,○
+SRC-025,Bank for International Settlements ,◐,○,●,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-026,International Finance Corporation (,◐,○,○,●,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-027,Arab Trade Financing Program (ATFP),◐,○,○,●,○,●,○,○,○,○,○,○,○,○,◐,○
+SRC-028,World Bank Enterprise Finance Gap D,◐,○,○,●,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-029,FinDev Gateway,◐,○,○,●,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-030,FATF (Financial Action Task Force) ,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-031,MENA Financial Inclusion Dashboard ,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-032,Payment Rail Maps (GSMA & UNCDF),●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-033,Sana’a Center Budget/Banking Analys,◐,○,○,●,●,○,○,○,○,○,○,○,○,○,◐,○
+SRC-034,Transparency International Corrupti,◐,○,○,○,●,○,○,○,○,○,○,○,○,○,◐,○
+SRC-035,World Bank BOOST Public Finance Dat,◐,○,○,●,●,○,○,○,○,○,○,○,○,○,◐,○
+SRC-036,Open Budget Survey (International B,◐,○,○,○,●,○,○,○,○,○,○,○,○,○,◐,○
+SRC-037,OECD International Development Stat,◐,○,○,○,●,●,○,○,●,○,○,○,○,○,◐,○
+SRC-038,UN General Assembly Resolutions & S,◐,○,○,○,○,○,○,○,○,○,○,●,○,○,◐,○
+SRC-039,Yemen Port Authority & UNVIM Import,◐,○,○,○,○,●,○,○,○,○,○,○,○,○,◐,○
+SRC-040,International Budget Partnership – ,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-041,Tax Justice Network Financial Secre,◐,○,○,●,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-042,United Nations Panel of Experts on ,◐,○,○,○,○,○,○,○,○,○,○,●,○,○,◐,○
+SRC-043,World Trade Organization (WTO) Tari,◐,○,○,○,○,●,○,○,○,○,○,○,○,○,◐,○
+SRC-044,UN Liner Shipping Connectivity Inde,◐,○,○,○,○,●,○,○,○,○,○,○,●,○,◐,○
+SRC-045,UN Vehicle Registration Data (if av,◐,○,○,○,○,●,○,○,○,○,○,○,○,○,◐,○
+SRC-046,World Bank Logistics Performance In,◐,○,○,○,○,●,○,○,○,○,○,○,○,○,◐,○
+SRC-047,Economic Research Forum (ERF) Trade,◐,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-048,ICCIA (Islamic Chamber of Commerce ,◐,○,○,○,○,●,○,○,○,○,○,○,○,●,◐,○
+SRC-049,US Energy Information Administratio,◐,○,○,○,○,○,●,○,○,○,○,○,○,○,◐,○
+SRC-050,BP Statistical Review of World Ener,◐,○,○,○,○,○,●,○,○,○,○,○,○,○,◐,○
+SRC-051,OPEC Annual Statistical Bulletin,◐,○,○,○,○,○,●,○,○,○,○,○,○,○,◐,○
+SRC-052,ICE Brent Crude Price,◐,●,○,○,○,○,●,○,○,○,○,○,○,○,◐,○
+SRC-053,UN DP Partnership for Renewable Ene,◐,○,○,○,○,○,●,○,○,○,○,○,○,○,◐,○
+SRC-054,University of Maryland Integrated P,◐,○,○,○,○,○,●,○,○,○,○,○,○,○,◐,○
+SRC-055,World Bank Jobs Diagnostic for Yeme,◐,○,○,○,○,○,○,●,○,○,○,○,○,○,◐,○
+SRC-056,UNDP Yemen Economic Resilience & Li,◐,○,○,○,○,○,○,●,○,○,○,○,○,○,◐,○
+SRC-057,ILO Regional Office Studies,◐,○,○,○,○,○,○,●,○,○,○,○,○,○,◐,○
+SRC-058,GSMA Mobile Gender Gap Report,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-059,UNFPA Youth & NEET Studies,◐,○,○,○,○,○,○,●,○,○,○,○,○,○,◐,○
+SRC-060,The World Bank Global Wage Database,◐,○,○,○,○,○,○,●,○,○,○,○,○,○,◐,○
+SRC-061,AidData (William & Mary),◐,○,○,○,○,○,○,○,●,○,○,○,○,○,◐,○
+SRC-062,World Bank Projects & Operations AP,◐,○,○,○,○,○,○,○,●,○,○,○,○,○,◐,○
+SRC-063,IFAD (International Fund for Agricu,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-064,Islamic Development Bank (IsDB) Pro,◐,○,○,○,○,○,○,○,●,○,○,○,○,○,◐,○
+SRC-065,USAID (US Agency for International ,◐,○,○,○,○,○,○,○,●,○,○,○,○,○,◐,○
+SRC-066,EU ECHO Humanitarian Aid,◐,○,○,○,○,○,○,○,●,○,○,○,○,○,◐,○
+SRC-067,King Salman Humanitarian Aid and Re,◐,○,○,○,○,○,○,○,●,○,○,○,○,○,◐,○
+SRC-068,Emirates Red Crescent & Other UAE E,◐,○,○,○,○,○,○,○,●,○,○,○,○,○,◐,○
+SRC-069,Qatar Charity & Qatar Development F,◐,○,○,○,○,○,○,○,●,○,○,○,○,○,◐,○
+SRC-070,China International Development Coo,◐,○,○,○,○,○,○,○,●,○,○,○,●,○,◐,○
+SRC-071,KfW & GIZ Yemen programmes,◐,○,○,○,○,○,○,○,●,○,○,○,○,○,◐,○
+SRC-072,Japan International Cooperation Age,◐,○,○,○,○,○,○,○,●,○,○,○,○,○,◐,○
+SRC-073,World Food Programme Project Pipeli,◐,●,○,○,○,○,○,○,●,○,○,○,○,○,◐,○
+SRC-074,OCHA 3W (“Who Does What Where”) Dat,◐,○,○,○,○,○,○,○,●,○,○,○,○,○,◐,○
+SRC-075,FAO AQUASTAT,◐,○,○,○,○,○,○,○,○,○,○,○,●,○,◐,○
+SRC-076,FSIS (Food Security Information Sys,◐,●,○,○,○,○,○,○,○,●,○,●,○,○,◐,○
+SRC-077,Yemen Desert Locust Control Program,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-078,International Fertilizer Associatio,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-079,Agricultural Market Information Sys,◐,●,○,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-080,U.S. Department of Agriculture (USD,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-081,UNICEF Yemen Education Cluster Repo,◐,○,○,○,○,○,○,○,○,○,●,○,○,○,◐,○
+SRC-082,WHO/UNICEF Joint Monitoring Program,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-083,UN Women Gender Equality Measuremen,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-084,Yemen Humanitarian Needs Overview (,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-085,The World Bank High Frequency Phone,◐,○,○,○,○,○,○,○,○,○,●,○,○,○,◐,○
+SRC-086,Gallup World Poll (Yemen),●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-087,GDELT Project (Global Database of E,◐,○,○,○,○,○,○,○,○,○,○,●,○,○,◐,○
+SRC-088,Global Terrorism Database (GTD),●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-089,Stockholm International Peace Resea,◐,○,○,○,○,●,○,○,○,○,○,●,○,○,◐,○
+SRC-090,Armed Conflict Survey (IISS),◐,○,○,○,○,○,○,○,○,○,○,●,○,○,●,○
+SRC-091,International Crisis Group (ICG) Re,◐,○,○,○,○,○,○,○,○,○,○,●,○,○,◐,○
+SRC-092,World Peace Foundation “Political E,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-093,Conflict Research Programme (LSE),●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-094,OpenStreetMap (OSM) Yemen Infrastru,◐,○,○,○,○,○,○,○,○,○,○,○,●,○,◐,○
+SRC-095,Yemen Infrastructure Damage Databas,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-096,UNOPS Projects & Infrastructure Reg,◐,○,○,○,○,○,○,○,●,○,○,○,●,○,◐,○
+SRC-097,World Bank Infrastructure Projects,◐,○,○,○,○,○,○,○,○,○,○,○,●,○,◐,○
+SRC-098,Humanitarian Logistics Cluster (Spe,◐,○,○,○,○,○,○,○,○,○,○,○,●,○,◐,○
+SRC-099,UNCTAD World Investment Report,◐,○,○,○,○,○,○,○,○,○,○,○,○,●,◐,○
+SRC-100,Yemen General Investment Authority ,◐,○,○,○,○,○,○,○,○,○,○,○,○,●,◐,○
+SRC-101,International Finance Corporation (,◐,○,○,○,○,○,○,○,○,○,○,○,○,●,●,○
+SRC-102,ACAPS Yemen Analysis Hub (YETI),◐,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-103,Sana’a Center for Strategic Studies,◐,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-104,Rethinking Yemen’s Economy Initiati,◐,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-105,World Bank Yemen Economic Monitor,◐,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-106,Chatham House Middle East & North A,◐,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-107,Oxford Institute for Energy Studies,◐,○,○,○,○,○,●,○,○,○,○,○,○,○,●,○
+SRC-108,Atlantic Council’s Resilience Centr,◐,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-109,Carnegie Middle East Center,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-110,"World Bank’s Fragility, Conflict & ",●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-111,Reuters Yemen Economic News,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-112,Al Jazeera Economy & Business (Yeme,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-113,Bloomberg Middle East,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-114,Asharq Al‑Awsat & The National (UAE,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-115,Saba News Agency (Aden & Sana’a),●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-116,Middle East Eye & Yemen Press,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-117,NASA MODIS Vegetation Indices (NDVI,◐,○,○,○,○,○,○,○,○,○,○,○,○,○,◐,●
+SRC-118,CAMS (Copernicus Atmosphere Monitor,◐,○,○,○,○,○,○,○,○,○,●,○,○,○,◐,○
+SRC-119,GHSL Global Human Settlement Layer,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-120,SMAP (Soil Moisture Active Passive),◐,○,○,○,○,○,○,○,○,●,○,○,●,○,◐,○
+SRC-121,NOAA Integrated Surface Database (I,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-122,Rainfall Estimation from Satellite ,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-123,World Bank Global Solar Atlas,◐,○,○,○,○,○,●,○,○,○,○,○,○,○,◐,○
+SRC-124,Oxford Economics Yemen Macro,●,○,○,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-125,Bloomberg Terminal,◐,○,●,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-126,Yemen Central Statistical Office Po,◐,○,○,○,○,○,○,○,○,○,●,○,○,○,◐,○
+SRC-127,Yemen Ministry of Industry & Trade,◐,●,○,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-128,Yemen Petroleum Company (YPC) Offic,◐,●,○,○,○,○,●,○,○,○,○,○,○,○,◐,○
+SRC-129,Government of Yemen (Aden) Fuel Pri,◐,●,○,○,○,○,●,○,○,○,○,○,○,○,◐,○
+SRC-130,Abdul Wahab Shukri FX Market Bullet,◐,○,●,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-131,Al Kuraimi Exchange Rate Feed,◐,○,●,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-132,Saraf Online App,◐,○,●,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-133,Central Bank of Yemen Sana’a Offici,◐,○,●,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-134,UN Commodity Trade Statistics (UNSD,◐,○,●,○,○,●,○,○,○,○,○,○,○,○,◐,○
+SRC-135,Association of Yemeni Banks (AYB),◐,○,○,●,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-136,Yemen Microfinance Network (YMN) Qu,◐,○,○,●,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-137,Al Kuraimi Islamic Bank Annual Repo,◐,○,○,●,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-138,Yemen Corporate Balance Sheets (Top,◐,○,○,○,○,○,○,○,○,○,○,○,○,●,◐,○
+SRC-139,Money Changers (Licensed and Unlice,◐,○,●,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-140,G7/G20 Aid Support Announcers,◐,○,○,○,○,○,○,○,●,○,○,○,○,○,◐,○
+SRC-141,Yemen Petroleum Company Fuel Subsid,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-142,Yemen Customs Authority (if availab,◐,○,○,○,●,○,○,○,○,○,○,○,○,○,◐,○
+SRC-143,Yemen Legislation Portal (Aden & Sa,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-144,Port of Aden & Port of Mukalla Thro,◐,○,○,○,○,●,○,○,○,○,○,○,○,○,◐,○
+SRC-145,Dubai Ports World (DP World) Trade ,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-146,Yemen Import & Export Licensing Dat,◐,○,○,○,○,●,○,○,○,○,○,○,○,○,◐,○
+SRC-147,SAECA (Yemen Supreme Authority for ,◐,○,○,○,○,●,○,○,○,○,○,○,○,○,◐,○
+SRC-148,Yemen Customs Tariff Schedule,◐,○,○,○,○,●,○,○,○,○,○,○,○,○,◐,○
+SRC-149,Yemen Ministry of Oil & Minerals / ,◐,○,○,○,○,○,●,○,○,○,○,○,○,○,◐,○
+SRC-150,Yemen Diesel & LPG Demand Reports (,◐,○,○,○,○,○,●,○,○,○,○,○,○,○,◐,○
+SRC-151,Yemen Gas Company (YGC) Circulars,◐,○,○,○,○,○,●,○,○,○,○,○,○,○,◐,○
+SRC-152,Yemen Ministry of Social Affairs an,◐,○,○,○,○,○,○,●,○,○,○,○,○,○,◐,○
+SRC-153,"Private sector surveys (e.g., Tadha",◐,○,○,○,○,○,○,●,○,○,○,○,○,○,◐,○
+SRC-154,FAO FAOSTAT Agricultural Commoditie,◐,○,○,○,○,○,○,○,○,●,○,○,○,○,◐,○
+SRC-155,Yemen Ministry of Agriculture & Irr,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-156,Crops and Livestock Integrated Surv,◐,○,○,○,○,○,○,○,○,●,○,○,○,○,◐,○
+SRC-157,UNHCR Population Statistics,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-158,International Organization for Migr,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-159,Janes Terrorism & Insurgency Centre,◐,○,○,○,○,○,○,○,○,○,○,●,○,○,◐,○
+SRC-160,United Nations Commodity Trade Stat,◐,○,○,○,○,●,○,○,○,○,○,●,○,○,◐,○
+SRC-161,UN Security Council Sanctions List,◐,○,○,○,○,○,○,○,○,○,○,●,○,○,◐,○
+SRC-162,U.S. OFAC Specially Designated Nati,◐,○,○,○,○,○,○,○,○,○,○,●,○,○,◐,○
+SRC-163,EU and UK Sanctions Lists,◐,○,○,○,○,○,○,○,○,○,○,●,○,○,◐,○
+SRC-164,Yemen Ministry of Interior & Minist,◐,○,○,○,○,●,○,○,○,○,○,●,○,○,◐,○
+SRC-165,Yemen Data Project (airstrike datab,◐,○,○,○,○,○,○,○,○,○,○,●,○,○,◐,○
+SRC-166,Yemen Telecom Companies Data (Yemen,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-167,Power grid restoration announcement,◐,○,○,○,○,○,●,○,○,○,○,○,●,○,◐,○
+SRC-168,Arab Businessmen Councils,◐,○,○,○,○,○,○,○,○,○,○,○,○,●,◐,○
+SRC-169,Yemen Export Promotion Centre (if r,◐,○,○,○,○,●,○,○,○,○,○,○,○,○,◐,○
+SRC-170,International Crisis Group,◐,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-171,Economic Intelligence Unit (EIU),◐,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-172,World Bank Open Data – Indicators A,●,○,○,○,●,○,○,○,○,○,○,○,○,○,◐,○
+SRC-173,"IMF Data (SDMX/IFS, Article IV)",●,○,○,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-174,UN Comtrade (Trade Statistics),◐,○,○,○,○,●,○,○,○,○,○,○,○,○,◐,○
+SRC-175,ILOSTAT (Labor & Employment),◐,○,○,○,○,○,○,●,○,○,○,○,○,○,◐,○
+SRC-176,UNOCHA Financial Tracking Service (,◐,○,○,○,○,○,○,○,●,○,○,○,○,○,◐,○
+SRC-177,IATI (International Aid Transparenc,◐,○,○,○,○,○,○,○,●,○,○,○,○,○,◐,○
+SRC-178,ReliefWeb API (Reports),◐,○,○,○,○,●,○,○,●,○,○,○,○,○,◐,○
+SRC-179,Population & Displacement (UNHCR/IO,◐,○,○,○,○,○,○,○,●,○,●,○,○,○,◐,○
+SRC-180,ACLED (Armed Conflict Location & Ev,◐,○,○,○,○,○,○,○,○,○,○,●,○,○,◐,○
+SRC-181,UCDP (Uppsala Conflict Data Program,◐,○,○,○,○,○,○,○,○,○,○,●,○,○,◐,○
+SRC-182,"Sanctions & Compliance Lists (UN, O",◐,○,○,○,○,○,○,○,○,○,○,●,○,○,◐,○
+SRC-183,UNCTADstat (Trade & Development),◐,○,○,○,○,●,○,○,○,○,○,○,○,○,◐,○
+SRC-184,FAO – FAOSTAT & Food Security,◐,●,○,○,○,○,○,○,○,●,○,○,○,○,◐,○
+SRC-185,UNDP/UNICEF/WFP/OCHA Public Data & ,◐,○,○,○,○,○,○,○,●,○,○,○,○,○,●,○
+SRC-186,WFP Yemen Market & Price Monitoring,◐,●,○,○,○,○,○,○,○,●,○,●,○,○,◐,○
+SRC-187,Fuel Price Bulletins & Partner Feed,◐,●,○,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-188,Yemen Data Project (Airstrikes),◐,○,○,○,○,○,○,○,○,○,○,●,○,○,◐,○
+SRC-189,Central Bank of Yemen – Aden & Sana,◐,○,●,○,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-190,Yemen Ministry of Finance / Ministr,◐,○,○,●,●,○,○,○,○,○,○,○,○,○,◐,○
+SRC-191,Social Fund for Development (SFD),◐,○,○,○,○,○,○,○,●,○,○,○,○,○,◐,○
+SRC-192,Yemen Microfinance Network (YMN),●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-193,Association of Yemeni Banks,◐,○,○,●,○,○,○,○,○,○,○,○,○,○,◐,○
+SRC-194,Private Sector & Chambers of Commer,◐,○,○,○,○,○,○,○,○,○,○,○,○,●,◐,○
+SRC-195,Remote Sensing (Night Lights – VIIR,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-196,ACAPS Yemen Analysis (YETI),◐,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-197,Rethinking Yemen’s Economy (RYE),◐,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-198,Prospects,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-199,Database,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-200,https://finDevgateway.org FATF (Fin,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-201,Partnership – Yemen,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-202,International Data,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-203,World Economic Outlook (WEO),●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-204,Fiscal Monitor,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-205,2 Population Projections,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-206,(archived),●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-207,Yemen,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-208,Night‐Time Lights Arabia,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-209,Market Bulletin,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-210,Rate Feed,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-211,Reports,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-212,(Top Enterprises),●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-213,Investments,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-214,Program (ATFP),●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-215,Finance Gap Database,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-216,https://www.gsma.com/mobilemoneymet,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-217,Announcers,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-218,Authority (if available),●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-219,"Mukalla Throughput 
+Licensing Data ",●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-220,Reports SRC-069 | Trade regulation ,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-221,Papers,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-222,Economic & Corporate Affairs),●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-223,Company,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-224,,●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-225,"yeto.causewaygrp.com,",●,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-0250,OCHA Country-Based Pooled Funds (CBPF) Data Portal – Yemen Humanitarian Fund,○,○,○,○,○,●,○,○,●,○,◐,○,◐,○,○,○
+SRC-0255,Copernicus Climate Data Store (CDS) / ERA5,○,○,○,○,○,○,○,○,○,●,○,○,○,○,●,●
+SRC-0249,UN CERF (Central Emergency Response Fund) – Yemen allocations,○,○,○,○,○,○,○,○,●,○,◐,○,○,○,○,○
+SRC-0243,IMF Data Portal (macro datasets landing),●,○,○,○,◐,●,○,○,○,○,○,○,◐,○,○,○
+SRC-0292,IMF Primary Commodity Prices Dataset,●,●,○,●,◐,○,●,○,○,○,○,○,○,○,○,○
+SRC-0244,IMF Direction of Trade Statistics (DOTS),●,○,○,○,◐,●,○,○,○,○,○,○,◐,○,●,○
+SRC-0245,IMF Government Finance Statistics (GFS),●,○,○,○,●,○,○,○,○,○,○,○,○,○,○,○
+SRC-0269,UNICEF Data – Yemen Country Profile,○,○,○,○,○,○,○,○,●,○,●,○,●,○,○,○
+SRC-0291,World Trade Organization (WTO) Data Portal,○,○,○,○,○,●,○,○,○,○,○,○,◐,○,○,●
+SRC-0251,UK FCDO Development Tracker (Yemen filter),○,○,○,○,○,●,○,○,●,○,◐,○,◐,○,○,●
+SRC-0256,NASA FIRMS (Active Fire Data),○,○,○,○,○,●,○,○,○,○,○,●,●,○,◐,●
+SRC-0273,FAO GIEWS FPMA (Food Prices and Analysis),○,●,○,○,○,○,○,○,○,●,○,○,○,○,●,○
+SRC-0236,Fund for Peace – Fragile States Index (FSI),○,○,○,○,●,●,○,○,○,○,●,●,◐,○,◐,○
+SRC-0239,"Women, Peace & Security (WPS) Index",○,○,○,○,●,●,○,○,○,○,●,●,◐,○,●,○
+SRC-0229,RePEc / IDEAS (Economics Working Papers & Articles),●,○,○,○,◐,○,○,○,○,○,○,○,○,○,●,○
+SRC-0235,World Bank Worldwide Governance Indicators (WGI),●,○,○,●,●,○,○,○,○,○,●,○,○,○,○,○
+SRC-0253,UNDP Open Aid / Transparency Portal,○,○,○,○,●,●,○,○,●,○,◐,○,◐,○,○,●
+SRC-0284,Sweden Openaid (Sida) – Yemen filter,●,○,○,●,○,●,○,○,●,○,◐,○,◐,○,○,○
+SRC-0226,OpenAlex (Scholarly Works & Institutions Metadata),●,●,○,○,○,○,○,○,●,○,◐,●,○,○,●,○
+SRC-0260,OpenCorporates (Secondary corporate registry cross-check),○,○,○,○,○,●,○,○,○,○,○,○,◐,●,○,●
+SRC-0268,OWASP Top 10 & ASVS (Web Application Security),○,○,○,○,●,○,○,○,○,○,○,●,○,○,◐,○
+SRC-0240,World Bank Poverty and Inequality Platform (PIP),●,○,○,●,○,○,○,○,○,○,○,○,○,○,○,○
+SRC-0272,UNESCO Institute for Statistics (UIS) Data,○,○,○,○,○,○,○,○,○,○,●,○,○,○,○,○
+SRC-0257,UNOSAT (UNITAR) – Yemen Damage Assessments,○,○,○,○,○,○,○,○,○,○,○,○,●,●,○,●
+SRC-0247,UN SDG Global Database (Yemen indicators),○,○,○,○,○,●,○,○,○,○,○,○,◐,○,●,○
+SRC-0231,UN System of National Accounts (SNA 2008 / Updates),●,○,○,○,●,○,○,○,○,○,○,○,○,○,○,○
+SRC-0283,Agence Française de Développement (AFD) – projects portal,●,○,○,●,○,●,○,○,●,○,◐,○,◐,○,○,○
+SRC-0261,BBC News – Yemen Topic Page (Events only),●,○,○,○,○,●,○,○,○,○,○,●,◐,○,●,○
+SRC-0280,German Federal Ministry for Economic Cooperation and Development (BMZ) – transparency/portal,●,○,○,●,●,●,○,○,●,○,◐,○,◐,○,○,○
+SRC-0227,Crossref (DOI & Citation Metadata),○,○,○,○,○,●,○,○,○,○,○,○,◐,○,●,○
+SRC-0246,IMF eLibrary (Country Reports & Working Papers),●,○,○,○,◐,●,○,○,○,○,○,○,◐,○,●,○
+SRC-0287,FAO AQUASTAT (Water Resources & Irrigation),○,○,○,○,○,○,○,○,○,●,○,○,●,○,●,●
+SRC-0274,FAO GIEWS Country Briefs – Yemen,○,○,○,○,○,●,○,○,○,●,○,●,◐,○,◐,○
+SRC-0264,FATF Recommendations (AML/CFT Standards),○,○,○,●,○,●,○,○,○,○,○,○,◐,●,○,○
+SRC-0281,GIZ Project Database / Yemen country activities,●,○,○,●,○,●,○,○,●,○,◐,○,◐,○,○,○
+SRC-0259,Global LEI Index (GLEIF) – Entity Identifier Cross-check,○,○,○,●,○,○,○,○,●,○,◐,○,○,●,○,○
+SRC-0238,Global Hunger Index (GHI),○,○,○,○,●,○,○,○,○,●,●,●,○,○,◐,○
+SRC-0266,FAIR Data Principles (GO FAIR),○,○,○,○,●,●,○,○,○,○,○,○,◐,○,○,●
+SRC-0286,IFAD (International Fund for Agricultural Development) – Yemen portfolio,●,○,○,●,○,●,○,○,●,○,◐,○,◐,○,○,○
+SRC-0263,IFRS Standards (Financial Reporting / IFRS Foundation),○,○,○,●,○,●,○,○,○,○,○,○,◐,●,●,○
+SRC-0234,IMF Monetary and Financial Statistics Manual & Compilation Guide (MFSMCG),●,○,●,●,◐,○,○,○,○,○,○,○,○,○,○,○
+SRC-0265,IMF Data Quality Assessment Framework (DQAF),●,○,○,○,●,○,○,○,○,○,○,○,○,●,○,○
+SRC-0233,IMF Balance of Payments and IIP Manual (BPM6),●,○,●,●,◐,●,○,○,○,○,○,○,○,○,○,○
+SRC-0232,IMF Government Finance Statistics Manual (GFSM 2014),●,○,○,○,●,○,○,○,○,○,○,○,○,○,○,○
+SRC-0262,INTOSAI – ISSAI (International Standards of Supreme Audit Institutions),○,○,○,○,●,●,○,○,○,○,○,○,◐,○,●,○
+SRC-0248,International Telecommunication Union (ITU) ICT Indicators,○,○,○,○,○,●,○,○,●,○,◐,○,●,●,●,○
+SRC-0279,Japan International Cooperation Agency (JICA) – Yemen country page,●,○,○,●,○,●,○,○,●,○,◐,○,◐,○,○,○
+SRC-0282,KfW Development Bank – projects and evaluations,●,○,○,●,○,●,○,○,●,○,◐,○,◐,○,○,○
+SRC-0278,Kuwait Fund for Arab Economic Development – projects database,●,○,○,●,○,●,○,○,●,○,◐,○,◐,○,○,○
+SRC-0258,MENAFATF – AML/CFT Mutual Evaluation & Typologies (Yemen relevant),○,○,○,●,○,●,○,○,○,○,○,●,◐,○,◐,○
+SRC-0276,UAE Ministry of Foreign Affairs – International Cooperation / Yemen assistance pages,●,○,○,●,○,●,○,○,●,○,◐,○,◐,○,○,○
+SRC-0289,Natural Earth (Basemap and Geo Boundaries),○,○,○,○,○,●,○,○,○,○,○,○,◐,○,○,●
+SRC-0285,Norad – Aid results and statistics (Yemen queries),●,○,○,●,○,●,○,○,●,○,◐,○,◐,○,○,○
+SRC-0290,OpenStreetMap (OSM) – Yemen POIs and Infrastructure (with caution),●,○,○,○,○,●,○,○,○,○,○,○,●,○,○,●
+SRC-0277,Qatar Fund for Development (QFFD) – Yemen,●,○,○,●,○,●,○,○,●,○,◐,○,◐,○,○,○
+SRC-0275,Saudi Development and Reconstruction Program for Yemen (SDRPY),●,○,○,●,○,●,○,○,●,○,◐,○,◐,○,○,○
+SRC-0228,Semantic Scholar (Research Search & Metadata),○,○,○,○,○,○,○,○,○,○,○,○,○,○,●,○
+SRC-0230,SSRN (Social Science Research Network) – Yemen/Economics Queries,●,○,○,○,○,○,○,○,●,○,●,●,○,○,●,○
+SRC-0254,International Trade Centre (ITC) Trade Map,○,○,○,○,○,●,○,○,○,○,○,○,○,○,○,●
+SRC-0271,UNFPA Data Portal,○,○,○,○,○,●,○,○,○,○,●,○,◐,○,●,○
+SRC-0252,USAspending.gov (Yemen-related aid queries),○,○,○,○,○,●,○,○,●,○,◐,○,◐,○,○,○
+SRC-0237,V-Dem (Varieties of Democracy) Dataset,○,○,○,○,●,○,○,○,○,○,●,○,○,○,●,○
+SRC-0267,WCAG 2.2 (Web Content Accessibility Guidelines),○,○,○,○,○,○,○,○,○,○,○,●,○,○,◐,○
+SRC-0270,WHO Global Health Observatory (GHO),○,○,○,○,○,●,○,○,●,○,●,●,◐,○,●,○
+SRC-0241,World Bank Global Findex Database,●,○,●,●,○,○,○,○,○,○,○,○,○,○,○,○
+SRC-0242,World Bank Commodity Markets (Pink Sheet),●,●,○,●,●,●,●,○,○,○,○,○,◐,○,○,○
+SRC-0288,WorldPop (High-resolution Population Estimates),○,○,○,○,○,○,○,○,○,○,●,○,○,○,○,●

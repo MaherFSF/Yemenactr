@@ -1,0 +1,7 @@
+field,allowed_values,importer_behavior
+tier,"T0,T1,T2,T3,T4,(blank=unknown)",blank becomes UNKNOWN; warnings if UNKNOWN
+status,"ACTIVE,NEEDS_KEY,PENDING_REVIEW,INACTIVE,DEPRECATED",unknown values become PENDING_REVIEW
+access_method_norm,"API,SDMX,RSS,WEB,PDF,CSV,XLSX,MANUAL,PARTNER,REMOTE_SENSING",unknown becomes WEB
+update_frequency_norm/cadence_norm,"REALTIME,DAILY,WEEKLY,MONTHLY,QUARTERLY,ANNUAL,IRREGULAR",unknown becomes IRREGULAR
+allowed_use (source_class),"DATA_GEOSPATIAL, DATA_NUMERIC, DOC_NARRATIVE, DOC_PDF, NEWS_MEDIA, REGISTRY, SANCTIONS_LIST",stored as JSON array [code]; UI/ingestion must use this for policy
+sector_weight_symbol,"●=primary, ◐=secondary, ○=none",only ● and ◐ become mappings

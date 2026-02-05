@@ -1,0 +1,27 @@
+excel_field,db_field,notes
+src_id,source_registry.sourceId,required unique
+name_en,source_registry.name,required
+name_ar,source_registry.altName,optional
+institution/domain,source_registry.publisher,best-effort
+url,source_registry.webUrl,normalized; blank allowed
+access_method_norm,source_registry.accessType,enum; primary method
+auth_required,source_registry.apiKeyRequired,Yes/No
+partnership_action_email,source_registry.apiKeyContact & partnershipContact,email
+tier,source_registry.tier,T0..T4 or unknown
+status,source_registry.status,ACTIVE/NEEDS_KEY/PENDING_REVIEW/...
+source_class,source_registry.allowedUse,Normalized allowedUse code (see ENUMS). Previous label preserved in source_class_label.
+update_frequency_norm / cadence_norm,source_registry.updateFrequency,normalized
+cadence_lag_tolerance,source_registry.freshnessSla,days integer
+geographic_coverage,source_registry.geographicScope,free text
+time_coverage_start/end,source_registry.historicalStart/End,year ints
+multilingual_required,source_registry.language,multi vs en
+notes,source_registry.description & notes,free text
+license,source_registry.license,SPDX/descriptor
+confidence_grade or reliability_score,source_registry.confidenceRating,A-D or numeric
+partnership_required,source_registry.needsPartnership,bool
+ingestion_method,source_registry.connectorType,string
+ingestion_owner_agent,source_registry.connectorOwner,string
+sector_category,source_registry.sectorsFed,json array (coarse)
+dashboard_modules_linked,source_registry.pagesFed,json array
+granularity_caveats,source_registry.limitations,free text
+origin,source_registry.registryType,master/derived/etc

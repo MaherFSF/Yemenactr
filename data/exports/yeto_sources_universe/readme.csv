@@ -1,0 +1,13 @@
+YETO Sources Universe Master — PRODUCTION READY v2.3 (Importer + Endpoints + Products)
+Generated: 2026-01-31 20:02 UTC
+""
+v2.3 adds two operational one-to-many sheets:
+"- SOURCE_ENDPOINTS: multiple endpoints per src_id (API bases, SDMX flows, RSS feeds, PDF directories)."
+- SOURCE_PRODUCTS: datasets/reports/newsfeeds per src_id; used to drive ingestion planning and UI linking.
+""
+Importer compatibility:
+"- Current importer ONLY consumes SECTOR_CODEBOOK_16, SOURCES_MASTER_EXT, SOURCE_SECTOR_MATRIX_292."
+- Manus should upgrade importer to also ingest SOURCE_ENDPOINTS and SOURCE_PRODUCTS into new tables.
+""
+Recommended file name for production:
+- YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx
