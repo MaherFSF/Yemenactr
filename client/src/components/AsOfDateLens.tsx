@@ -22,7 +22,7 @@ import {
   FastForward,
   Rewind,
 } from 'lucide-react';
-import { format, subDays, subMonths, subYears, addDays, isAfter, isBefore, startOfYear } from 'date-fns';
+import { format, subMonths, subYears, addDays, isAfter, isBefore } from 'date-fns';
 
 interface AsOfDateLensProps {
   selectedDate: Date;

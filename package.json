@@ -15,8 +15,9 @@
     "seed": "npx tsx server/seed.ts",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "lint": "tsc --noEmit",
-    "typecheck": "tsc --noEmit"
+    "lint": "eslint . --max-warnings 50",
+    "typecheck": "tsc --noEmit",
+    "registry:lint": "node scripts/registry-lint.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.693.0",

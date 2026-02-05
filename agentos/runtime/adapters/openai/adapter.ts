@@ -13,7 +13,6 @@ import type {
   EmbedResponse,
   RerankOptions,
   RerankResponse,
-  PROVIDER_ENV_VARS,
 } from '../interface';
 
 export class OpenAIAdapter implements ProviderAdapter {

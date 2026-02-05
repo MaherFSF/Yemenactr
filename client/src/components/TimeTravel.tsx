@@ -53,9 +53,10 @@ export function TimeTravel({
     const day = date.getDate();
     
     switch (granularity) {
-      case 'day':
+      case 'day': {
         const startDate = new Date(startYear, 0, 1);
         return Math.floor((date.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+      }
       case 'month':
         return (year - startYear) * 12 + month;
       case 'quarter':
@@ -70,17 +71,20 @@ export function TimeTravel({
   // Convert step index to date
   const stepToDate = useCallback((step: number): Date => {
     switch (granularity) {
-      case 'day':
+      case 'day': {
         const startDate = new Date(startYear, 0, 1);
         return new Date(startDate.getTime() + step * 24 * 60 * 60 * 1000);
-      case 'month':
+      }
+      case 'month': {
         const monthYear = startYear + Math.floor(step / 12);
         const monthIndex = step % 12;
         return new Date(monthYear, monthIndex, 1);
-      case 'quarter':
+      }
+      case 'quarter': {
         const qYear = startYear + Math.floor(step / 4);
         const qMonth = (step % 4) * 3;
         return new Date(qYear, qMonth, 1);
+      }
       case 'year':
         return new Date(startYear + step, 0, 1);
       default:
