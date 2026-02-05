@@ -93,6 +93,7 @@ import { ingestionRouter } from "./routers/ingestionRouter";
 import { laborAlertsRouter } from "./routers/laborAlerts";
 import { sourceRegistryRouter } from "./routers/sourceRegistry";
 import { sourceImportRouter } from "./routers/sourceImportRouter";
+import { canonicalRegistryRouter } from "./routers/canonicalRegistryRouter";
 import { feedMatrixRouter } from "./routers/feedMatrix";
 import { bulkClassificationRouter } from "./routers/bulkClassification";
 import { povertyHumandevRouter } from "./routers/povertyHumandev";
@@ -129,6 +130,7 @@ export const appRouter = router({
   laborAlerts: laborAlertsRouter,
   sourceRegistry: sourceRegistryRouter,
   sourceImport: sourceImportRouter,
+  canonicalRegistry: canonicalRegistryRouter,
   feedMatrix: feedMatrixRouter,
   bulkClassification: bulkClassificationRouter,
   
