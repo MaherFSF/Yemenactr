@@ -1,4 +1,4 @@
-import { ReactNode, ElementType, ComponentPropsWithoutRef } from 'react';
+import { ReactNode } from 'react';
 import { useScrollAnimation, animationVariants, AnimationVariant } from '@/hooks/useScrollAnimation';
 import { cn } from '@/lib/utils';
 
