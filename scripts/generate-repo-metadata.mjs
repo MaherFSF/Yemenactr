@@ -102,9 +102,9 @@ function parseCounts(line) {
 
 function parseTestSummary(output) {
   const lines = output.split('\n').map(line => line.trim()).filter(Boolean);
-  const testsLine = lines.find(line => line.startsWith('Tests:'));
-  const testFilesLine = lines.find(line => line.startsWith('Test Files:'));
-  const durationLine = lines.find(line => line.startsWith('Duration:'));
+  const testsLine = lines.find(line => /^Tests[:\s]/.test(line));
+  const testFilesLine = lines.find(line => /^Test Files[:\s]/.test(line));
+  const durationLine = lines.find(line => /^Duration[:\s]/.test(line));
 
   const tests = parseCounts(testsLine);
   const testFiles = parseCounts(testFilesLine);
@@ -274,7 +274,12 @@ async function main() {
   if (releaseGateRun.stdout && releaseGateRun.stdout.trim()) {
     try {
       const parsed = JSON.parse(releaseGateRun.stdout.trim());
-      const status = parsed.allPassed === true ? 'PASS' : parsed.allPassed === false ? 'FAIL' : 'UNKNOWN';
+      let status = 'UNKNOWN';
+      if (parsed?.allPassed === true) {
+        status = 'PASS';
+      } else if (parsed?.allPassed === false) {
+        status = 'FAIL';
+      }
       releaseGate = {
         status,
         command: releaseGateCommand,
@@ -282,9 +287,10 @@ async function main() {
         durationMs: releaseGateRun.durationMs,
       };
       if (status === 'UNKNOWN') {
+        const errorReason = parsed?.status === 'ERROR' && parsed?.error ? parsed.error : null;
         unknownNotes.push({
           metric: 'Release gate',
-          reason: 'Release gate JSON output missing allPassed status.',
+          reason: errorReason || 'Release gate JSON output missing allPassed status.',
           command: releaseGateCommand,
         });
       }
