@@ -3,7 +3,7 @@
  * 
  * CANONICAL TABLE: source_registry (sources table is deprecated/alias)
  * 
- * Imports the Master Source Registry from YETO_Sources_Universe_Master_PRODUCTION_READY_v2_0.xlsx
+ * Imports the Master Source Registry from YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx
  * with proper field mappings, P0/P1 lint enforcement, and full upsert logic.
  */
 
@@ -295,7 +295,7 @@ async function main() {
   console.log('╚══════════════════════════════════════════════════════════════╝\n');
   
   // Read the Excel workbook
-  const workbook = XLSX.readFile('./data/YETO_Sources_Universe_Master_PRODUCTION_READY_v2_0.xlsx');
+  const workbook = XLSX.readFile('./data/source_registry/YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx');
   console.log('✓ Loaded Excel workbook\n');
   
   // Connect to database

@@ -27,7 +27,7 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
-const EXCEL_PATH = path.join(__dirname, '../data/registry/YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx');
+const EXCEL_PATH = path.join(__dirname, '../data/source_registry/YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx');
 
 // Enum mappings from ENUMS sheet
 const TIER_ENUM = ['T0', 'T1', 'T2', 'T3', 'T4', 'UNKNOWN'];

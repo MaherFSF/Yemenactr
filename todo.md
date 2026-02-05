@@ -9104,7 +9104,7 @@ Based on review of master design documents and data source register:
 **Goal:** Implement the full "Source → Ingest → Evidence → Index → Reflect everywhere" loop
 
 **STEP 1: Import Master Source Registry**
-- [ ] Check for YETO_Sources_Universe_Master_PRODUCTION_READY_v2_0.xlsx
+- [x] Updated to YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx
 - [ ] Create source_registry database table with all required fields
 - [ ] Create registry_sector_map table for SOURCE_SECTOR_MATRIX_292
 - [ ] Create ingestion_runs table for tracking

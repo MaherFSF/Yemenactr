@@ -26,7 +26,7 @@ This contract is designed for:
 
 **Languages:** Arabic + English (Arabic is first‑class RTL, not a translation afterthought).
 
-**Key asset shipped with this pack:** `data/source_registry/YETO_Sources_Universe_Master_PRODUCTION_READY_v2_0.xlsx`
+**Key asset shipped with this pack:** `data/source_registry/YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx`
 
 ---
 

@@ -7703,7 +7703,7 @@ export type InsertDataUpdate = typeof dataUpdates.$inferInsert;
 
 
 // ============================================================================
-// SOURCE REGISTRY EXTENDED FIELDS (from YETO_Sources_Universe_Master_PRODUCTION_READY_v2_0.xlsx)
+// SOURCE REGISTRY EXTENDED FIELDS (from YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx)
 // ============================================================================
 
 // Registry Sector Map: Maps sources to 16 sectors with weight (primary/secondary)

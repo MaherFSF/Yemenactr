@@ -1,7 +1,7 @@
 /**
  * YETO Source Registry Importer
  * 
- * Imports the Master Source Registry from YETO_Sources_Universe_Master_PRODUCTION_READY_v2_0.xlsx
+ * Imports the Master Source Registry from YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx
  * into the database tables:
  * - source_registry (292 sources)
  * - registry_sector_map (source-sector mappings)
@@ -171,7 +171,7 @@ async function main() {
   console.log('=== YETO Source Registry Importer ===\n');
   
   // Read the Excel workbook
-  const workbook = XLSX.readFile('./data/YETO_Sources_Universe_Master_PRODUCTION_READY_v2_0.xlsx');
+  const workbook = XLSX.readFile('./data/source_registry/YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx');
   
   // Connect to database
   const connection = await mysql.createConnection(DATABASE_URL);

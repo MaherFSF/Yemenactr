@@ -1,6 +1,6 @@
 # /source-registry-import
 
-Import `data/source_registry/YETO_Sources_Universe_Master_PRODUCTION_READY_v2_0.xlsx` into the platform as the canonical Source Registry.
+Import `data/source_registry/YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx` into the platform as the canonical Source Registry.
 
 Requirements:
 - Create a DB table for sources (or update existing).
