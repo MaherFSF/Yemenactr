@@ -2570,6 +2570,96 @@ export type InsertFixTicket = typeof fixTickets.$inferInsert;
 // ============================================================================
 
 /**
+ * Ingestion Connectors - Registry-driven connector configurations
+ * Generated from source_registry entries
+ */
+export const ingestionConnectors = mysqlTable("ingestion_connectors", {
+  id: int("id").autoincrement().primaryKey(),
+  connectorId: varchar("connectorId", { length: 50 }).notNull().unique(), // CONN-XXX
+  
+  // Source reference
+  sourceRegistryId: int("sourceRegistryId").notNull().references(() => sourceRegistry.id),
+  
+  // Connector type (derived from access_method_norm)
+  connectorType: mysqlEnum("connectorType", [
+    "api_rest",
+    "api_sdmx",
+    "rss_feed",
+    "web_scrape",
+    "csv_download",
+    "pdf_download",
+    "manual_upload",
+    "partner_sftp",
+    "email_fetch"
+  ]).notNull(),
+  
+  // Configuration (JSON with connector-specific settings)
+  config: json("config").$type<{
+    url?: string;
+    apiKey?: string; // encrypted reference, not actual key
+    authMethod?: string;
+    headers?: Record<string, string>;
+    queryParams?: Record<string, string>;
+    parseRules?: Record<string, any>;
+    selectors?: Record<string, string>;
+    [key: string]: any;
+  }>().notNull(),
+  
+  // Schedule
+  cadence: mysqlEnum("cadence", [
+    "realtime",
+    "hourly",
+    "daily",
+    "weekly",
+    "monthly",
+    "quarterly",
+    "annual",
+    "irregular",
+    "manual"
+  ]).notNull(),
+  cadenceLagTolerance: int("cadenceLagTolerance").notNull(), // days
+  
+  // Licensing & compliance
+  licenseAllowsAutomation: boolean("licenseAllowsAutomation").default(true).notNull(),
+  requiresAuth: boolean("requiresAuth").default(false).notNull(),
+  requiresPartnership: boolean("requiresPartnership").default(false).notNull(),
+  evidenceRequired: boolean("evidenceRequired").default(true).notNull(),
+  
+  // Validation rules
+  validationSchema: json("validationSchema").$type<Record<string, any>>(),
+  
+  // Status
+  status: mysqlEnum("status", [
+    "active",
+    "paused",
+    "disabled",
+    "needs_config",
+    "needs_auth",
+    "blocked_license"
+  ]).default("needs_config").notNull(),
+  
+  // Last run tracking
+  lastRunId: int("lastRunId").references(() => ingestionRuns.id),
+  lastRunAt: timestamp("lastRunAt"),
+  lastSuccessAt: timestamp("lastSuccessAt"),
+  consecutiveFailures: int("consecutiveFailures").default(0).notNull(),
+  
+  // Metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  createdBy: int("createdBy").references(() => users.id),
+  updatedBy: int("updatedBy").references(() => users.id),
+}, (table) => ({
+  connectorIdIdx: uniqueIndex("connector_id_idx").on(table.connectorId),
+  sourceIdx: index("connector_source_idx").on(table.sourceRegistryId),
+  statusIdx: index("connector_status_idx").on(table.status),
+  typeIdx: index("connector_type_idx").on(table.connectorType),
+}));
+
+export type IngestionConnector = typeof ingestionConnectors.$inferSelect;
+export type InsertIngestionConnector = typeof ingestionConnectors.$inferInsert;
+
+/**
  * Ingestion Runs - Track data ingestion jobs
  */
 export const ingestionRuns = mysqlTable("ingestion_runs", {
