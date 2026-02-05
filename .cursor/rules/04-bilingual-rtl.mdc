@@ -1,0 +1,9 @@
+---
+description: EN/AR parity and RTL/LTR standards.
+alwaysApply: true
+---
+# Bilingual parity (EN + AR)
+
+- Any route, feature, tooltip, export must exist in EN and AR.
+- Arabic is true RTL (layout, charts, typography), not mirrored hacks.
+- Use a glossary-governed terminology map (no inconsistent translations).

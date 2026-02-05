@@ -1,0 +1,9 @@
+---
+description: Yemen dual-authority constraint (Aden/IRG vs Sana’a/DFA) must be enforced.
+alwaysApply: true
+---
+# Yemen split-system enforcement
+
+- Never merge datasets across Aden/IRG and Sana’a/DFA.
+- Use `regime_tag` in series/observations and in API responses.
+- UI must support side-by-side comparison when both exist.
