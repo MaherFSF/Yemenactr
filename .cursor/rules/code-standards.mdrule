@@ -1,0 +1,164 @@
+# Code Standards & Best Practices
+
+## TypeScript Standards
+1. **Strict Mode**: Always use strict TypeScript
+2. **No Implicit Any**: Every value must have an explicit type
+3. **Prefer Interfaces**: Use `interface` for object shapes, `type` for unions/intersections
+4. **Zod Schemas**: Define runtime validation schemas alongside types
+
+```typescript
+// Good
+interface User {
+  id: string;
+  name: string;
+  role: 'admin' | 'analyst' | 'viewer';
+}
+
+const userSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  role: z.enum(['admin', 'analyst', 'viewer']),
+});
+
+// Bad
+const user: any = getData();
+```
+
+## React Component Standards
+1. **Functional Components**: Use hooks, not class components
+2. **Type Props**: Always type component props
+3. **Named Exports**: Prefer named exports over default exports
+4. **Composition**: Break large components into smaller, reusable pieces
+
+```typescript
+// Good
+interface ButtonProps {
+  label: string;
+  onClick: () => void;
+  variant?: 'primary' | 'secondary';
+}
+
+export function Button({ label, onClick, variant = 'primary' }: ButtonProps) {
+  return <button onClick={onClick} className={variant}>{label}</button>;
+}
+
+// Bad
+export default function MyButton(props: any) { ... }
+```
+
+## API Design (tRPC)
+1. **Input Validation**: Use Zod schemas for all inputs
+2. **Error Handling**: Throw TRPCError with appropriate codes
+3. **Response Shape**: Return consistent data structures
+4. **Sector Organization**: Group routes by sector
+
+```typescript
+export const bankingRouter = router({
+  getBankList: publicProcedure
+    .input(z.object({ regionCode: z.string().optional() }))
+    .query(async ({ input, ctx }) => {
+      const banks = await ctx.db.query.banks.findMany({
+        where: input.regionCode 
+          ? eq(schema.banks.regionCode, input.regionCode)
+          : undefined,
+      });
+      return { banks };
+    }),
+});
+```
+
+## Database Conventions
+1. **Snake Case**: Use `snake_case` for DB columns
+2. **Timestamps**: Include `created_at`, `updated_at` on all tables
+3. **Source Tracking**: Reference source_id for data provenance
+4. **Nullable Fields**: Be explicit about nullable vs required
+
+```typescript
+export const banks = mysqlTable('banks', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  region_code: varchar('region_code', { length: 50 }),
+  source_id: int('source_id').references(() => sources.id),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
+});
+```
+
+## Error Handling
+1. **Use Custom Errors**: Extend from base error classes
+2. **Client Feedback**: Provide user-friendly error messages
+3. **Logging**: Log errors with context for debugging
+
+```typescript
+import { TRPCError } from '@trpc/server';
+
+// Server-side
+throw new TRPCError({
+  code: 'NOT_FOUND',
+  message: 'Bank not found',
+  cause: originalError,
+});
+
+// Client-side
+try {
+  await api.banking.getBankList.query();
+} catch (error) {
+  toast.error('Failed to load banks. Please try again.');
+  console.error('Banking query error:', error);
+}
+```
+
+## Testing Standards
+1. **Unit Tests**: Test business logic and utilities
+2. **Integration Tests**: Test API routes with test database
+3. **E2E Tests**: Critical user flows with Playwright
+4. **Coverage**: Aim for 70%+ on critical paths
+
+```typescript
+import { describe, it, expect } from 'vitest';
+
+describe('calculateExchangeRate', () => {
+  it('should calculate rate between currencies', () => {
+    const rate = calculateExchangeRate('USD', 'YER', 250);
+    expect(rate).toBe(250);
+  });
+  
+  it('should throw on invalid currency', () => {
+    expect(() => calculateExchangeRate('INVALID', 'YER', 250))
+      .toThrow('Invalid currency code');
+  });
+});
+```
+
+## File Organization
+```
+/workspace/
+├── .cursor/          # Cursor AI configuration
+├── agentos/          # AI agent definitions
+├── client/           # React frontend
+│   ├── src/
+│   │   ├── pages/    # Page components
+│   │   ├── components/ # Reusable UI
+│   │   └── lib/      # Client utilities
+├── server/           # Express + tRPC backend
+│   ├── routes/       # tRPC routers
+│   ├── db/           # Database access
+│   └── _core/        # Server core
+├── shared/           # Shared types/utils
+├── drizzle/          # DB migrations
+├── docs/             # Project documentation
+└── data/             # Data files & registry
+```
+
+## Commit Standards
+- **Conventional Commits**: Use prefixes (feat, fix, chore, docs, refactor)
+- **Descriptive**: Explain what and why, not just what
+- **Atomic**: One logical change per commit
+
+```
+feat: add banking sector exchange rate API
+fix: correct currency conversion calculation
+chore: update dependencies to latest versions
+docs: add deployment smoke check guide
+refactor: extract validation logic to shared utils
+```

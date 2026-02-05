@@ -1,0 +1,61 @@
+# YETO Platform - Core Project Rules
+
+## Project Identity
+- **Project**: Yemen Economic Tracker & Observatory (YETO)
+- **Purpose**: Real-time economic monitoring and analysis platform for Yemen
+- **Stack**: React 19, Express, tRPC, Drizzle ORM, MySQL, TypeScript, Vite
+- **Package Manager**: pnpm (via corepack)
+
+## Architecture Principles
+1. **Evidence-Based**: All data must be traceable to verified sources
+2. **Type Safety**: Strict TypeScript across client/server/shared
+3. **API-First**: tRPC for type-safe client-server communication
+4. **Data Integrity**: Single source of truth in database, cached wisely
+5. **Modular Design**: Clear separation between sectors, routes, and features
+
+## Critical Files & Conventions
+- **Database**: `drizzle/` for migrations, `server/db/schema.ts` for models
+- **API Routes**: `server/routes/` - each sector has its own route file
+- **Client Pages**: `client/src/pages/` - organized by sector
+- **Shared Types**: `shared/types.ts` for cross-boundary types
+- **Source Registry**: `data/registry/YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx`
+
+## Development Commands
+```bash
+pnpm install          # Install dependencies
+pnpm dev              # Start dev server (port 5000)
+pnpm build            # Build for production
+pnpm test             # Run vitest unit tests
+pnpm typecheck        # TypeScript type checking
+pnpm db:push          # Apply database migrations
+```
+
+## Code Quality Standards
+- **No `any` types** - use proper TypeScript types
+- **Zod validation** for all external inputs
+- **Error handling** - use custom error classes from `shared/_core/errors.ts`
+- **Testing** - vitest for unit tests, playwright for e2e
+- **Formatting** - prettier with project config
+
+## Sector-Based Organization
+YETO is organized into economic sectors:
+- Macroeconomy, Banking, Currency, Trade
+- Energy, Food Security, Labor, Poverty
+- Aid Flows, Health Services Access
+
+Each sector has:
+- Database schema
+- API routes (tRPC)
+- Client pages
+- Data sources metadata
+
+## Security & Secrets
+- Never commit credentials
+- Use environment variables for sensitive data
+- AWS credentials managed via GitHub Secrets (see docs/DEPLOYMENT_SECRETS.md)
+
+## Documentation
+- Architecture: `ARCHITECTURE.md`, `docs/ARCHITECTURE.md`
+- API Reference: `docs/API_REFERENCE.md`
+- Deployment: `docs/AWS_DEPLOYMENT_GUIDE.md`
+- Governance: `docs/GAP_TICKETS.md`, `docs/DECISIONS.md`, `docs/RELEASE_GATES.md`

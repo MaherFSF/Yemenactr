@@ -1,0 +1,108 @@
+# AI Assistant Guidelines for YETO
+
+## Context Awareness
+When working on this codebase, AI assistants should:
+
+1. **Understand the Mission**: YETO tracks Yemen's economy during conflict - data accuracy and source traceability are paramount
+2. **Respect Evidence Laws**: See `agentos/policies/EVIDENCE_LAWS.md` for data integrity rules
+3. **Follow Sector Model**: The platform is organized by economic sectors - maintain this structure
+4. **Check Existing Patterns**: Before suggesting new patterns, look for established conventions in the codebase
+
+## High-Value AI Tasks
+AI assistants excel at:
+- Writing boilerplate tRPC routes following sector patterns
+- Creating Zod validation schemas
+- Generating TypeScript types from database schemas
+- Writing unit tests for pure functions
+- Documenting API endpoints
+- Refactoring for type safety
+
+## Critical Verification Points
+Always verify these before committing code:
+1. **Type Safety**: Run `pnpm typecheck` - no TypeScript errors
+2. **Tests Pass**: Run `pnpm test` - all tests green
+3. **Source Attribution**: Data changes must reference source_id
+4. **No Secrets**: Check for exposed credentials or API keys
+5. **Migration Safety**: Database changes need proper migrations
+
+## Code Review Checklist
+When reviewing AI-generated code:
+- [ ] TypeScript types are explicit, no `any`
+- [ ] Inputs are validated with Zod schemas
+- [ ] Errors provide helpful user messages
+- [ ] Database queries use proper filters/indexes
+- [ ] Components follow established patterns
+- [ ] Tests cover happy path and error cases
+- [ ] Documentation updated if API changed
+
+## Data Integrity Rules
+**NEVER**:
+- Modify data without source attribution
+- Hard-code economic data (it belongs in the database)
+- Skip validation on external inputs
+- Commit placeholder/dummy data to production
+
+**ALWAYS**:
+- Reference source_id for data provenance
+- Use proper timestamps (created_at, updated_at)
+- Validate against source registry
+- Log data transformations for audit trail
+
+## Sector-Specific Considerations
+
+### Banking Sector
+- Bank data comes from CBY (Central Bank of Yemen)
+- Track both Aden and Sana'a authorities
+- License status is critical (licensed/suspended)
+
+### Currency Sector
+- Multiple exchange rate sources (official, parallel)
+- Track USD/YER, SAR/YER rates
+- Historical trends are important
+
+### Trade Sector
+- Import/export data from customs, UN COMTRADE
+- Port data (Aden, Hodeidah, Mukalla)
+- Trade partner analysis
+
+### Other Sectors
+- See sector-specific docs in `docs/` folder
+- Each has unique data sources and validation rules
+
+## Performance Guidelines
+- Use React.memo for expensive components
+- Implement pagination for large datasets (>100 rows)
+- Cache static data (source registry, sector metadata)
+- Use database indexes for frequent queries
+- Lazy load sector data on route navigation
+
+## Accessibility
+- All interactive elements must be keyboard accessible
+- Use semantic HTML (button, nav, main, article)
+- Provide ARIA labels for screen readers
+- Maintain 4.5:1 color contrast ratio
+- Test with keyboard-only navigation
+
+## Documentation Style
+When generating documentation:
+- Use clear, concise language
+- Include code examples
+- Explain "why" not just "what"
+- Link to related docs
+- Keep examples realistic (use actual YETO context)
+
+## Common Pitfalls to Avoid
+1. **Assuming Data Structure**: Always check current schema before writing queries
+2. **Ignoring Validation**: External data can be malformed - validate everything
+3. **Breaking Type Safety**: Don't use `as any` to bypass TypeScript
+4. **Skipping Tests**: Changes to business logic need test coverage
+5. **Over-Engineering**: Prefer simple, clear solutions over clever ones
+
+## When to Ask for Human Review
+Escalate to human developers when:
+- Changing database schema (migrations are risky)
+- Modifying authentication/authorization logic
+- Altering data validation rules
+- Making architectural decisions
+- Uncertain about economic data interpretation
+- Proposing removal of existing code without clear justification
