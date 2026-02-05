@@ -2,7 +2,7 @@
 
 This folder contains the authoritative Source Registry used by ingestion + governance.
 
-- **File:** `YETO_Sources_Universe_Master_PRODUCTION_READY_v2_0.xlsx`
+- **File:** `YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx`
 - **Source IDs:** `SRC-###`
 
 ## How to use
