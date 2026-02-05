@@ -96,6 +96,7 @@ import { feedMatrixRouter } from "./routers/feedMatrix";
 import { bulkClassificationRouter } from "./routers/bulkClassification";
 import { povertyHumandevRouter } from "./routers/povertyHumandev";
 import { methodologyDownloadsRouter } from "./routers/methodologyDownloads";
+import { numericBackfillRouter } from "./routers/numericBackfill.router";
 import { sql, desc, eq, like, or, and, inArray } from "drizzle-orm";
 
 export const appRouter = router({
@@ -129,6 +130,7 @@ export const appRouter = router({
   sourceRegistry: sourceRegistryRouter,
   feedMatrix: feedMatrixRouter,
   bulkClassification: bulkClassificationRouter,
+  numericBackfill: numericBackfillRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
