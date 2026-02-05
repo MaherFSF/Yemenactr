@@ -113,7 +113,23 @@ async function runReleaseGate() {
   const v25Cols = ['sourceType', 'licenseState', 'needsClassification', 'reliabilityScore', 'evidencePackFlag'];
   const missingCols = v25Cols.filter(c => !colNames.includes(c));
   const gate9Pass = missingCols.length === 0;
-  console.log(`   ${gate9Pass ? '✅' : '❌'} v2.5 columns: ${gate9Pass ? 'All present' : `Missing: ${missingCols.join(', ')}`}`);
+  
+  if (gate9Pass) {
+    console.log(`   ✅ v2.5 columns: All present`);
+  } else {
+    console.log(`   ❌ v2.5 columns: Missing columns detected`);
+    console.log(`      Missing: ${missingCols.join(', ')}`);
+    console.log('');
+    console.log('   📋 RESOLUTION STEPS:');
+    console.log('   1. Expected schema version: v2.5');
+    console.log('   2. Missing migration: 0028_add_v2_5_governance_columns.sql');
+    console.log('   3. Apply migration locally: pnpm db:push');
+    console.log('   4. Or run: npx drizzle-kit migrate');
+    console.log('   5. Documentation: docs/SCHEMA_V2_5_TRUTH_TABLE.md');
+    console.log('   6. Migration runbook: docs/MIGRATION_RUNBOOK.md');
+    console.log('');
+  }
+  
   results.push({ gate: 'v2.5 Schema', value: gate9Pass ? 'Present' : `Missing: ${missingCols.join(', ')}`, expected: 'All v2.5 columns', pass: gate9Pass });
   
   // Gate 10: NO_STATIC_PUBLIC_KPIS - Scan frontend files for forbidden static patterns
