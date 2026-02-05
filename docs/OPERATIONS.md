@@ -130,46 +130,138 @@ The following environment variables must be configured for YETO to operate corre
 #### Core Configuration
 
 ```bash
-# Database Connection
+# Database Connection (REQUIRED)
 DATABASE_URL="mysql://user:password@host:port/database?ssl=true"
+# Example: mysql://root:password@localhost:3306/yeto_platform
+# Required for: All database operations, schema migrations, data persistence
 
-# Authentication
+# Application Environment (REQUIRED)
+NODE_ENV="production"  # Values: development, test, production
+# Determines behavior of logging, error handling, and performance optimizations
+
+# Server Configuration
+PORT="3000"  # Default: 3000
+HOST="0.0.0.0"  # Default: 0.0.0.0 (all interfaces)
+
+# Authentication (REQUIRED)
 JWT_SECRET="your-secure-jwt-secret-min-32-chars"
-VITE_APP_ID="your-oauth-app-id"
-OAUTH_SERVER_URL="https://api.manus.im"
-VITE_OAUTH_PORTAL_URL="https://manus.im/oauth"
+# Must be at least 32 characters. Used for signing JWT tokens.
+# Generate with: openssl rand -base64 32
 
-# Owner Information
+VITE_APP_ID="your-oauth-app-id"
+# Manus OAuth application ID
+# Obtain from: https://manus.im/developer/apps
+
+OAUTH_SERVER_URL="https://api.manus.im"
+# Manus OAuth server endpoint
+
+VITE_OAUTH_PORTAL_URL="https://manus.im/oauth"
+# Manus OAuth portal for user authentication
+
+# Owner Information (REQUIRED)
 OWNER_OPEN_ID="owner-open-id"
+# Open ID of the platform owner/administrator
+# Used for administrative access and initial setup
+
 OWNER_NAME="Owner Name"
+# Display name for the platform owner
 ```
 
 #### Storage Configuration
 
 ```bash
-# S3-Compatible Storage
+# S3-Compatible Storage (REQUIRED for exports/evidence)
 S3_BUCKET="your-bucket-name"
+# S3 bucket name for storing exports, evidence packs, and large files
+# Example: yeto-platform-exports
+
 AWS_ACCESS_KEY_ID="your-access-key"
+# AWS access key with S3 read/write permissions
+
 AWS_SECRET_ACCESS_KEY="your-secret-key"
+# AWS secret access key
+
 AWS_REGION="us-east-1"
+# AWS region where S3 bucket is located
+# Example: us-east-1, eu-west-1, ap-southeast-1
+
+# S3 Endpoint (Optional - for S3-compatible services)
+S3_ENDPOINT="https://s3.amazonaws.com"
+# Override for S3-compatible services like MinIO, DigitalOcean Spaces
 ```
 
 #### AI Services
 
 ```bash
-# LLM Integration
+# LLM Integration (REQUIRED for AI Assistant)
 BUILT_IN_FORGE_API_URL="https://api.forge.manus.im"
+# Backend LLM API endpoint for server-side AI operations
+
 BUILT_IN_FORGE_API_KEY="your-forge-api-key"
+# Backend API key for LLM access
+# Obtain from: Manus Forge dashboard
+
 VITE_FRONTEND_FORGE_API_URL="https://api.forge.manus.im"
+# Frontend LLM API endpoint for client-side AI operations
+
 VITE_FRONTEND_FORGE_API_KEY="your-frontend-forge-key"
+# Frontend API key (can be same as backend or separate with limited permissions)
+
+# AI Model Configuration (Optional)
+AI_MODEL="gpt-4"  # Default model for AI operations
+AI_MAX_TOKENS="4096"  # Maximum tokens per request
+AI_TEMPERATURE="0.7"  # Response creativity (0.0-2.0)
 ```
 
 #### Analytics (Optional)
 
 ```bash
-# Analytics
+# Analytics Tracking
 VITE_ANALYTICS_ENDPOINT="https://analytics.example.com"
+# Analytics service endpoint (e.g., Plausible, Umami, Matomo)
+
 VITE_ANALYTICS_WEBSITE_ID="your-website-id"
+# Website ID in your analytics platform
+
+# Error Tracking (Optional)
+SENTRY_DSN="https://...@sentry.io/..."
+# Sentry DSN for error tracking and monitoring
+```
+
+#### Email Configuration (Optional)
+
+```bash
+# SMTP Configuration for notifications
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="587"
+SMTP_SECURE="false"  # true for 465, false for other ports
+SMTP_USER="your-email@example.com"
+SMTP_PASSWORD="your-app-password"
+SMTP_FROM="YETO Platform <noreply@yeto.org>"
+```
+
+#### Feature Flags (Optional)
+
+```bash
+# Feature toggles
+ENABLE_AI_ASSISTANT="true"  # Enable/disable AI Assistant
+ENABLE_EXPORTS="true"  # Enable/disable data exports
+ENABLE_PARTNER_PORTAL="true"  # Enable/disable partner contributions
+ENABLE_WEBHOOKS="true"  # Enable/disable webhook delivery
+ENABLE_ADMIN_PORTAL="true"  # Enable/disable admin dashboard
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS="900000"  # 15 minutes in ms
+RATE_LIMIT_MAX_REQUESTS="100"  # Max requests per window
+```
+
+#### Development Only
+
+```bash
+# Development tools (DO NOT use in production)
+DEBUG="*"  # Enable debug logging
+VITE_DEV_MODE="true"  # Show development banners
+SKIP_AUTH="false"  # NEVER enable in production
 ```
 
 ### Environment Validation
@@ -496,4 +588,228 @@ top -bn1 | head -20
 
 ---
 
-*Last Updated: January 28, 2026*
+## Safe Publish Runbook
+
+This section provides a step-by-step guide for safely publishing updates to production.
+
+### Pre-Publish Checklist
+
+Before initiating any production deployment, ensure all items are checked:
+
+- [ ] All CI checks passing on target branch
+- [ ] Release Gate (17 checks) passed
+- [ ] Registry lint clean
+- [ ] E2E tests passed in AR and EN
+- [ ] No critical errors in logs
+- [ ] Database migrations tested in staging
+- [ ] Rollback plan documented
+- [ ] Team notified of deployment window
+
+### Deployment Process
+
+#### Step 1: Pre-Deployment Verification
+
+```bash
+# Verify current branch
+git status
+git log -1
+
+# Run local checks
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm registry:lint
+
+# Run release gate
+node scripts/release-gate.mjs
+```
+
+#### Step 2: Database Backup
+
+```bash
+# Create backup before any schema changes
+mysqldump -h $DB_HOST -u $DB_USER -p$DB_PASSWORD $DB_NAME > backup_$(date +%Y%m%d_%H%M%S).sql
+
+# Upload to S3
+aws s3 cp backup_*.sql s3://$BACKUP_BUCKET/backups/pre-deploy/
+```
+
+#### Step 3: Run Database Migrations
+
+```bash
+# Review pending migrations
+pnpm drizzle-kit generate
+
+# Apply migrations
+pnpm db:push
+
+# Verify schema
+pnpm drizzle-kit introspect
+```
+
+#### Step 4: Build Production Assets
+
+```bash
+# Clean previous build
+rm -rf dist/
+
+# Build application
+pnpm build
+
+# Verify build output
+ls -la dist/
+```
+
+#### Step 5: Deploy to Production
+
+**Option A: Manus Platform**
+```bash
+# Save checkpoint
+webdev_save_checkpoint --tag "v1.6-pre-deploy"
+
+# Publish to production
+# 1. Open Manus Management UI
+# 2. Click "Publish" button
+# 3. Select production environment
+# 4. Confirm deployment
+```
+
+**Option B: Self-Hosted**
+```bash
+# Stop current process
+pm2 stop yeto
+
+# Pull latest code
+git pull origin main
+
+# Install dependencies
+pnpm install --frozen-lockfile
+
+# Build
+pnpm build
+
+# Start with new code
+pm2 start yeto
+pm2 save
+```
+
+#### Step 6: Post-Deployment Verification
+
+```bash
+# Check health endpoints
+curl https://your-domain.com/api/health
+curl https://your-domain.com/api/health/db
+
+# Verify critical pages
+curl -I https://your-domain.com/
+curl -I https://your-domain.com/dashboard
+curl -I https://your-domain.com/sectors/banking
+
+# Check logs for errors
+pm2 logs yeto --lines 50
+```
+
+#### Step 7: Smoke Testing
+
+Manually verify critical user journeys:
+
+1. **Homepage** - Load in AR and EN
+2. **Dashboard** - Check data loads correctly
+3. **Sector Pages** - Verify at least 3 sectors
+4. **Evidence Packs** - Test export functionality
+5. **AI Assistant** - Send test query
+6. **Authentication** - Test login/logout flow
+
+#### Step 8: Monitor for Issues
+
+```bash
+# Watch logs for 15 minutes post-deploy
+pm2 logs yeto --lines 100 --timestamp
+
+# Check error rates
+curl https://your-domain.com/api/admin/health/errors
+
+# Monitor database connections
+mysql -h $DB_HOST -u $DB_USER -p -e "SHOW PROCESSLIST"
+```
+
+### Rollback Procedure
+
+If critical issues are detected post-deployment:
+
+#### Immediate Rollback
+
+```bash
+# Stop application
+pm2 stop yeto
+
+# Revert to previous version
+git checkout <previous-commit-hash>
+
+# Rebuild
+pnpm install --frozen-lockfile
+pnpm build
+
+# Restart
+pm2 start yeto
+
+# Verify health
+curl https://your-domain.com/api/health
+```
+
+#### Database Rollback (if schema changed)
+
+```bash
+# Stop application
+pm2 stop yeto
+
+# Restore database from backup
+mysql -h $DB_HOST -u $DB_USER -p$DB_PASSWORD $DB_NAME < backup_YYYYMMDD_HHMMSS.sql
+
+# Revert code
+git checkout <previous-commit-hash>
+pnpm install --frozen-lockfile
+pnpm build
+
+# Restart
+pm2 start yeto
+```
+
+### Post-Rollback Actions
+
+1. Document the issue that caused rollback
+2. Create incident report
+3. Schedule post-mortem meeting
+4. Update deployment checklist if needed
+5. Fix issue in development branch
+6. Re-run full test suite before next attempt
+
+---
+
+## Release Gate Reference
+
+The Release Gate includes 17 critical checks that must pass before production deployment:
+
+| Gate | Description | Threshold |
+|------|-------------|-----------|
+| 1. Source Registry Count | Minimum sources in registry | ≥250 sources |
+| 2. Active Sources | Active data sources | ≥150 active |
+| 3. Sector Codebook | Sector definitions | ≥16 sectors |
+| 4. Tier Distribution | UNKNOWN tier percentage | ≤70% |
+| 5. Sector Mappings | Sources with sector tags | ≥50% |
+| 6. No Duplicate IDs | Unique source identifiers | 0 duplicates |
+| 7. Required Fields | No null required fields | 0 null names |
+| 8. S3 Storage Health | Storage configuration | Configured |
+| 9. v2.5 Schema | Database schema current | All columns |
+| 10. No Static KPIs | No hardcoded values in UI | 0 violations |
+| 11. No Mock Evidence | No mock data fallbacks | 0 mocks |
+| 12. Evidence Coverage | Public pages have evidence | ≥95% |
+| 13. AR/EN Parity | Bilingual support | Full parity |
+| 14. Exports Signed URL | Secure exports | Implemented |
+| 15. Contradiction Mode | Disagreement handling | Present |
+| 16. Coverage Map | Gap tracking | Present |
+| 17. Nightly Jobs | Scheduled maintenance | Configured |
+
+---
+
+*Last Updated: February 5, 2026*
