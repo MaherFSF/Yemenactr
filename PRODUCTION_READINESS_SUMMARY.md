@@ -1,4 +1,6 @@
 # YETO Platform - Production Readiness Summary
+
+**Last verified**: See [docs/REPO_METRICS.json](./docs/REPO_METRICS.json) (generated via `node scripts/generate-repo-metadata.mjs`)
 **Date:** January 15, 2026  
 **Status:** ✅ PRODUCTION READY FOR DEPLOYMENT
 

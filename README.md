@@ -11,17 +11,12 @@
 
 <p align="center">
   <a href="https://yeto.causewaygrp.com"><img src="https://img.shields.io/badge/🌐_Production-yeto.causewaygrp.com-107040?style=for-the-badge" alt="Production"></a>
-  <a href="https://yteocauseway.manus.space"><img src="https://img.shields.io/badge/🔬_Preview-manus.space-103050?style=for-the-badge" alt="Preview"></a>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript" alt="TypeScript">
   <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react" alt="React">
-  <img src="https://img.shields.io/badge/Tests-750%2B_Passing-brightgreen?style=flat-square" alt="Tests">
-  <img src="https://img.shields.io/badge/Data_Points-5%2C500%2B-blue?style=flat-square" alt="Data Points">
-  <img src="https://img.shields.io/badge/Sources-292_(234_Active)-orange?style=flat-square" alt="Sources">
-  <img src="https://img.shields.io/badge/Tier_Classification-59%25_Complete-blue?style=flat-square" alt="Tier Classification">
-  <img src="https://img.shields.io/badge/Release_Gate-✅_PASSING-brightgreen?style=flat-square" alt="Release Gate">
+  <img src="https://img.shields.io/badge/Repo_Metrics-Auto-blue?style=flat-square" alt="Repo Metrics">
   <img src="https://img.shields.io/badge/License-Proprietary-C0A030?style=flat-square" alt="License">
 </p>
 
@@ -32,8 +27,28 @@
   <a href="#-data-coverage">Data</a> •
   <a href="#-architecture">Architecture</a> •
   <a href="#-getting-started">Quick Start</a> •
+  <a href="#-repository-metrics-auto-generated">Repo Metrics</a> •
+  <a href="#-repository-governance">Governance</a> •
   <a href="#-documentation">Docs</a>
 </p>
+
+<!-- AUTO:REPO_METRICS_START -->
+## 📈 Repository Metrics (auto-generated)
+
+_Last generated: pending. Run `node scripts/generate-repo-metadata.mjs`._
+
+See [docs/REPO_METRICS.json](./docs/REPO_METRICS.json) for the canonical snapshot.
+
+| Metric | Value | Source |
+|--------|-------|--------|
+| Release gate | PENDING | `node scripts/release-gate.mjs --json` |
+| Tests | PENDING | `pnpm test` |
+| Connectors | PENDING | `server/connectors/*` |
+| tRPC routers | PENDING | `server/routers/*Router.*` |
+| DB tables | PENDING | `drizzle/**/*.ts` (`mysqlTable`) |
+| Client pages | PENDING | `client/src/pages/**` |
+
+<!-- AUTO:REPO_METRICS_END -->
 
 ---
 
@@ -45,10 +60,10 @@ Yemen represents one of the world's most complex economic environments:
 
 | Challenge | Reality |
 |-----------|---------|
-| **Split Monetary Authority** | Since August 2016, two Central Banks operate independently in Aden (IRG) and Sana'a (DFA), each with different exchange rates, monetary policies, and fiscal realities |
-| **Data Fragmentation** | Economic statistics are scattered across 292+ international sources, each with different methodologies, update frequencies, and political biases |
+| **Split Monetary Authority** | Two Central Banks operate independently in Aden (IRG) and Sana'a (DFA), each with different exchange rates, monetary policies, and fiscal realities |
+| **Data Fragmentation** | Economic statistics are scattered across a large and evolving set of international sources, each with different methodologies, update frequencies, and political biases |
 | **Information Warfare** | Conflicting narratives make it nearly impossible to establish ground truth |
-| **Humanitarian Crisis** | 21.6 million people need assistance, but aid allocation decisions rely on incomplete or outdated data |
+| **Humanitarian Crisis** | Millions of people need assistance, but aid allocation decisions rely on incomplete or outdated data |
 
 **YETO exists to solve this problem.**
 
@@ -66,7 +81,7 @@ YETO is not just a data portal—it is an **Economic Intelligence Platform** tha
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                          │
 │   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐                 │
-│   │   47+ Data  │───▶│  Ingestion  │───▶│  Provenance │                 │
+│   │  Data       │───▶│  Ingestion  │───▶│  Provenance │                 │
 │   │   Sources   │    │   Pipeline  │    │   Ledger    │                 │
 │   └─────────────┘    └─────────────┘    └─────────────┘                 │
 │                                                │                         │
@@ -92,7 +107,7 @@ YETO is not just a data portal—it is an **Economic Intelligence Platform** tha
 | **Evidence-Packed Data** | Every number links to its source, methodology, and confidence level | Provenance Ledger |
 | **Dual-Regime Tracking** | Separate tracking for Aden (IRG) and Sana'a (DFA) economies | Regime Tags |
 | **AI Economic Analyst** | "One Brain" intelligence system with zero-fabrication guarantee | LLM + RAG + Truth Layer |
-| **Real-Time Ingestion** | Automated data pipelines from 292 sources with freshness tracking | ETL Scheduler |
+| **Real-Time Ingestion** | Automated data pipelines from registered sources with freshness tracking | ETL Scheduler |
 | **Source Trust Hardening** | Deterministic tier classification (T0-T4) with allowedUse enforcement | Bulk Classification Engine |
 | **Transparency Panels** | "Sources Used" panels on every page showing evidence provenance | SourcesUsedPanel |
 | **Bilingual Interface** | Full Arabic (RTL) and English support | i18n Framework |
@@ -106,7 +121,7 @@ YETO's AI assistant operates under strict governance rules:
 2. **Confidence Scoring**: A-D grades with transparent methodology
 3. **Contradiction Detection**: Identifies discrepancies between sources
 4. **Data Gap Tickets**: Auto-creates tickets when data is missing
-5. **Role-Aware Intelligence**: 7 specialized modes for different user types
+5. **Role-Aware Intelligence**: Multiple specialized modes for different user types
 
 ---
 
@@ -136,7 +151,7 @@ YETO's AI assistant operates under strict governance rules:
 
 ## 📊 Data Coverage
 
-### Economic Sectors (15 Domains)
+### Economic Sectors
 
 <table>
 <tr>
@@ -173,8 +188,8 @@ YETO's AI assistant operates under strict governance rules:
 </tr>
 </table>
 
-| **Data Sources (225+ Integrated)**| Category | Sources | Update Frequency |
-|----------|---------|------------------|
+| **Data Sources (Registry)**| Category | Examples | Update Frequency |
+|----------|---------|----------|------------------|
 | **International Financial** | World Bank WDI, IMF WEO, IFS | Monthly/Quarterly |
 | **UN Agencies** | OCHA FTS, UNHCR, WFP, UNICEF, WHO | Weekly/Monthly |
 | **Humanitarian** | HDX, FEWS NET, IPC, ReliefWeb | Daily/Weekly |
@@ -186,12 +201,12 @@ YETO's AI assistant operates under strict governance rules:
 
 | Metric | Coverage |
 |--------|----------|
-| **Time Series** | 2010 → Present (15+ years, 5,513 data points) |
-| **Exchange Rates** | Daily granularity since 2016 split |
-| **Economic Events** | 83+ documented with indicator linkages |
-| **Research Library** | 370+ publications from 38 organizations |
-| **Sector Pages** | 16 sectors with Sources Used panels |
-| **Commercial Banks** | 31 banks with $18.7B total assets |
+| **Time Series** | Multi-year coverage with historical series |
+| **Exchange Rates** | Daily granularity since the currency split |
+| **Economic Events** | Curated timeline with indicator linkages |
+| **Research Library** | Curated publications from partner organizations |
+| **Sector Pages** | Sector dashboards with Sources Used panels |
+| **Commercial Banks** | Banking sector coverage with institution profiles |
 
 ---
 
@@ -205,11 +220,11 @@ Frontend                    Backend                     Data Layer
 React 19 + TypeScript       Express 4 + tRPC 11        TiDB (MySQL)
 Tailwind CSS 4              Node.js 22                 S3 Storage
 Recharts + D3.js            Drizzle ORM                Redis Cache
-Wouter (Routing)            Vitest (380+ tests)        
+Wouter (Routing)            Vitest (unit tests)        
 shadcn/ui Components        Playwright (E2E)           
 ```
 
-### Database Schema (81 Tables)
+### Database Schema (see repo metrics)
 
 ```
 Core Data                   Governance                  Operations
@@ -247,8 +262,8 @@ fx_rates                    fx_source_registry          fx_gap_tickets
 
 ```bash
 # Clone the repository
-git clone https://github.com/Causeway-banking-financial/yeto.git
-cd yeto
+git clone https://github.com/MaherFSF/Yemenactr.git
+cd Yemenactr
 
 # Install dependencies
 pnpm install
@@ -282,7 +297,7 @@ pnpm dev
 ```bash
 pnpm dev          # Start development server
 pnpm build        # Build for production
-pnpm test         # Run unit tests (432+ tests)
+pnpm test         # Run unit tests
 pnpm test:e2e     # Run E2E tests
 pnpm typecheck    # TypeScript type checking
 pnpm lint         # ESLint code linting
@@ -298,15 +313,15 @@ pnpm db:studio    # Open Drizzle Studio
 yeto/
 ├── client/                 # Frontend React application
 │   ├── src/
-│   │   ├── components/     # Reusable UI components (114)
-│   │   ├── pages/          # Page components (90)
+│   │   ├── components/     # Reusable UI components
+│   │   ├── pages/          # Page components
 │   │   ├── contexts/       # React contexts
 │   │   ├── hooks/          # Custom hooks
 │   │   └── lib/            # Utilities and tRPC client
 │   └── public/             # Static assets
 ├── server/                 # Backend Express + tRPC
-│   ├── routers/            # tRPC routers (14)
-│   ├── connectors/         # Data source connectors (26)
+│   ├── routers/            # tRPC routers
+│   ├── connectors/         # Data source connectors
 │   ├── services/           # Business logic services
 │   ├── governance/         # Truth layer and gates
 │   ├── hardening/          # Security and production readiness
@@ -314,7 +329,7 @@ yeto/
 │   └── _core/              # Framework infrastructure
 ├── drizzle/                # Database schema and migrations
 ├── shared/                 # Shared types and constants
-├── docs/                   # Documentation (70+ files)
+├── docs/                   # Documentation
 ├── scripts/                # Utility scripts
 └── e2e/                    # Playwright E2E tests
 ```
@@ -345,10 +360,24 @@ yeto/
 
 | Document | Description |
 |----------|-------------|
-| [**docs/DATA_SOURCE_REGISTER.md**](./docs/DATA_SOURCE_REGISTER.md) | All 47+ data sources |
+| [**docs/DATA_SOURCE_REGISTER.md**](./docs/DATA_SOURCE_REGISTER.md) | Data source registry |
 | [**docs/INVENTORY_RUNTIME_WIRING.md**](./docs/INVENTORY_RUNTIME_WIRING.md) | System wiring audit |
 | [**docs/SECURITY.md**](./docs/SECURITY.md) | Security policies and practices |
 | [**CONTRIBUTING.md**](./CONTRIBUTING.md) | Development guidelines |
+
+---
+
+## 🧭 Repository Governance
+
+- **PR-only workflow**: All changes must go through a pull request; no direct pushes to `main`.
+- **Branch protection required**: `main` must enforce required status checks and block force pushes.
+- **Release gates before deploy**: `node scripts/release-gate.mjs` must pass prior to deployment.
+
+---
+
+## 🧾 Legacy
+
+Originally scaffolded with Manus; now maintained with Cursor + GitHub Actions.
 
 ---
 
@@ -417,30 +446,18 @@ For licensing inquiries, contact: **legal@causewaygrp.com**
 
 ## 🚦 Release Gate
 
-Before any deployment, the platform must pass all 8 release gates:
+Before any deployment, the platform must pass all configured release gates:
 
 ```bash
 node scripts/release-gate.mjs
 ```
 
-| Gate | Threshold | Current |
-|------|-----------|---------|
-| Source Registry Count | ≥ 250 | ✅ 292 |
-| Active Sources | ≥ 150 | ✅ 234 |
-| Sector Codebook | = 16 | ✅ 16 |
-| Unknown Tier % | ≤ 70% | ✅ 40.8% |
-| Mapped Sources % | ≥ 50% | ✅ 100% |
-| No Duplicate IDs | = 0 | ✅ 0 |
-| Required Fields | = 0 nulls | ✅ 0 |
-| v2.5 Schema | All present | ✅ Yes |
-| NO_STATIC_PUBLIC_KPIS | Clean | ✅ Clean |
+For machine-readable output:
 
-### Source Registry v2.5 Statistics
+```bash
+node scripts/release-gate.mjs --json
+```
 
-| Category | Distribution |
-|----------|--------------|
-| **Tier** | T1: 117, T2: 22, T0: 16, T3: 18, UNKNOWN: 119 |
-| **Status** | ACTIVE: 234, PENDING_REVIEW: 41, NEEDS_KEY: 17 |
-| **Source Type** | DATA: 246, RESEARCH: 23, MEDIA: 10, COMPLIANCE: 7, ACADEMIA: 6 |
-| **Sectors** | 16 sectors in codebook |
+The latest recorded snapshot is stored in [docs/REPO_METRICS.json](./docs/REPO_METRICS.json).
+If the gate cannot run locally (missing DB credentials), see [docs/REPO_METADATA_NOTES.md](./docs/REPO_METADATA_NOTES.md).
 

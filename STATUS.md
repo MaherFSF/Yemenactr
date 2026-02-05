@@ -1,5 +1,7 @@
 # YETO Platform - Build Status
 
+**Last verified**: See [docs/REPO_METRICS.json](./docs/REPO_METRICS.json) (generated via `node scripts/generate-repo-metadata.mjs`)
+
 **Version**: v1.6.0  
 **Last Updated**: January 29, 2025 - 16:30 UTC  
 **Status**: OPERATIONAL - PROMPT 6/∞ COMPLETE
@@ -175,7 +177,7 @@
 - **Seeded**: ✅ Sample data loaded
 
 ### GitHub Repository
-- **URL**: https://github.com/MaherFSF/yeto-platform
+- **URL**: https://github.com/MaherFSF/Yemenactr
 - **Branch**: main
 - **Last Push**: December 28, 2024
 
