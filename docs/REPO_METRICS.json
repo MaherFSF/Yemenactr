@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-05T14:58:22.621Z",
+  "generatedAt": "2026-02-05T15:05:29.941Z",
   "repoCounts": {
     "connectors": 28,
     "trpcRouters": 17,
@@ -9,19 +9,31 @@
   "releaseGate": {
     "status": "UNKNOWN",
     "command": "node scripts/release-gate.mjs --json",
-    "output": null,
-    "durationMs": 33
+    "output": {
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'isServer')",
+      "completedAt": "2026-02-05T15:05:30.021Z"
+    },
+    "durationMs": 77
   },
   "tests": {
-    "status": "UNKNOWN",
+    "status": "FAIL",
     "command": "pnpm test",
     "summary": {
-      "testsLine": null,
-      "testFilesLine": null,
-      "durationLine": null,
-      "tests": {},
-      "testFiles": {}
+      "testsLine": "Tests  18 failed | 722 passed (740)",
+      "testFilesLine": "Test Files  2 failed | 33 passed (35)",
+      "durationLine": "Duration  4.11s (transform 1.42s, setup 0ms, collect 5.26s, tests 1.14s, environment 4ms, prepare 1.57s)",
+      "tests": {
+        "failed": 18,
+        "passed": 722,
+        "total": 740
+      },
+      "testFiles": {
+        "failed": 2,
+        "passed": 33,
+        "total": 35
+      }
     },
-    "durationMs": 1498
+    "durationMs": 4885
   }
 }

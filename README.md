@@ -35,14 +35,14 @@
 <!-- AUTO:REPO_METRICS_START -->
 ## 📈 Repository Metrics (auto-generated)
 
-_Last generated: 2026-02-05T14:58:22.621Z. Run `node scripts/generate-repo-metadata.mjs` to refresh._
+_Last generated: 2026-02-05T15:05:29.941Z. Run `node scripts/generate-repo-metadata.mjs` to refresh._
 
 See [docs/REPO_METRICS.json](./docs/REPO_METRICS.json) for the canonical snapshot.
 
 | Metric | Value | Source |
 |--------|-------|--------|
 | Release gate | UNKNOWN (see docs/REPO_METADATA_NOTES.md) | `node scripts/release-gate.mjs --json` |
-| Tests | UNKNOWN (see docs/REPO_METADATA_NOTES.md) | `pnpm test` |
+| Tests | 722 passed, 18 failed, 740 total | `pnpm test` |
 | Connectors | 28 | `server/connectors/*` |
 | tRPC routers | 17 | `server/routers/*Router.*` |
 | DB tables | 207 | `drizzle/**/*.ts` (`mysqlTable`) |

@@ -1,6 +1,6 @@
 # Repository Metadata Notes
 
-Generated: 2026-02-05T14:58:22.621Z
+Generated: 2026-02-05T15:05:29.941Z
 
 ## Source registry of truth
 
@@ -11,27 +11,5 @@ Generated: 2026-02-05T14:58:22.621Z
 
 ## Unknown metrics
 
-- Release gate: Command failed: node scripts/release-gate.mjs --json
-node:internal/modules/package_json_reader:314
-  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
-        ^
-
-Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'mysql2' imported from /workspace/scripts/release-gate.mjs
-    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
-    at packageResolve (node:internal/modules/esm/resolve:767:81)
-    at moduleResolve (node:internal/modules/esm/resolve:853:18)
-    at defaultResolve (node:internal/modules/esm/resolve:983:11)
-    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
-    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
-    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
-    at ModuleJob._link (node:internal/modules/esm/module_job:182:49) {
-  code: 'ERR_MODULE_NOT_FOUND'
-}
-
-Node.js v22.21.1
-
+- Release gate: Cannot read properties of undefined (reading 'isServer')
   - Command: `node scripts/release-gate.mjs --json`
-- Tests: Command failed: pnpm test
-sh: 1: vitest: not found
-
-  - Command: `pnpm test`
