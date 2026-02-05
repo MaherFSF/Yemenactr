@@ -7468,6 +7468,13 @@ export const sourceRegistry = mysqlTable("source_registry", {
   requiresHumanReview: boolean("requiresHumanReview").default(true).notNull(),
   classificationMatchedRule: varchar("classificationMatchedRule", { length: 255 }),
   
+  // v2.5 Governance Columns
+  sourceType: mysqlEnum("sourceType", ["DATA", "DOCUMENT", "API", "MEDIA", "RESEARCH", "OFFICIAL", "OTHER"]),
+  licenseState: mysqlEnum("licenseState", ["open", "known", "unknown", "restricted", "paywalled"]),
+  needsClassification: boolean("needsClassification"),
+  reliabilityScore: decimal("reliabilityScore", { precision: 5, scale: 2 }), // 0.00 to 100.00
+  evidencePackFlag: boolean("evidencePackFlag"),
+  
   // Flags
   isPrimary: boolean("isPrimary").default(false).notNull(),
   isProxy: boolean("isProxy").default(false).notNull(),
