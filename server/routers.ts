@@ -92,6 +92,7 @@ import { sectorKpiRouter } from "./routers/sectorKpiRouter";
 import { ingestionRouter } from "./routers/ingestionRouter";
 import { laborAlertsRouter } from "./routers/laborAlerts";
 import { sourceRegistryRouter } from "./routers/sourceRegistry";
+import { sourceImportRouter } from "./routers/sourceImportRouter";
 import { feedMatrixRouter } from "./routers/feedMatrix";
 import { bulkClassificationRouter } from "./routers/bulkClassification";
 import { povertyHumandevRouter } from "./routers/povertyHumandev";
@@ -127,6 +128,7 @@ export const appRouter = router({
   methodologyDownloads: methodologyDownloadsRouter,
   laborAlerts: laborAlertsRouter,
   sourceRegistry: sourceRegistryRouter,
+  sourceImport: sourceImportRouter,
   feedMatrix: feedMatrixRouter,
   bulkClassification: bulkClassificationRouter,
   
