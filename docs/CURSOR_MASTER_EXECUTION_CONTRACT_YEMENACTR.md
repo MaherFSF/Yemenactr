@@ -1,0 +1,266 @@
+# Yemenactr — Cursor Master Execution Contract (YETO Role‑Intelligence)
+
+**Ultimate objective:** make the Yemenactr repo ship a **production‑ready, decision‑grade YETO platform** that is:
+- **Evidence‑only** (no fabricated numbers, no “demo” metrics)
+- **Provenance‑complete** (every claim traces to a source + raw object)
+- **Bilingual EN + AR** with true RTL/LTR parity
+- **Split‑system safe** for Yemen (Aden/IRG vs Sana’a/DFA never merged)
+- **Governance‑safe** (licensing compliant, corrections log, neutral language)
+
+This contract is designed for:
+- **Cursor Agent (Sonnet 4.5)**
+- **Cursor Pro Plus**
+- **GitHub PR workflow + Bugbot pre‑merge review**
+
+---
+
+## 1) Project anchors
+
+**Repo (authoritative):** `MaherFSF/Yemenactr` (GitHub)
+
+**Production:** `https://yeto.causewaygrp.com`
+
+**Preview:** `https://d15ji3mnetzxh7.cloudfront.net/`
+
+**Time coverage:** `2010‑01‑01 → today`, daily spine + historical vintages where available.
+
+**Languages:** Arabic + English (Arabic is first‑class RTL, not a translation afterthought).
+
+**Key asset shipped with this pack:** `data/source_registry/YETO_Sources_Universe_Master_PRODUCTION_READY_v2_0.xlsx`
+
+---
+
+## 2) What “production‑ready” means for YETO
+
+Production‑ready here does **not** mean “it loads” or “it looks nice”. It means:
+
+### A) Trust & governance
+- Every number and claim is backed by **Evidence Packs**.
+- Evidence packs expose provenance: `source_id → raw_object → ingestion_run → dataset_version → observation`.
+- Yemen dual‑authority constraints are enforced everywhere via `regime_tag`.
+- Corrections and revisions are tracked (change log).
+- Licensing and access constraints are enforced (no ToS violations).
+
+### B) Reliability & ops
+- CI is green; no hidden “manual” steps.
+- The system has deterministic migrations and deterministic backfills.
+- A “Release Gate” admin page shows **PASS/FAIL** for every gate.
+
+### C) UX quality
+- EN/AR parity (routes, nav, tooltips, exports).
+- RTL typography works (charts, labels, tables).
+- Exports work and are evidence‑linked.
+
+---
+
+## 3) Execution mode
+
+### Zero‑drift rule
+Cursor Agent must behave like a disciplined engineering team, not a chat.
+
+**NO DRIFT:** do not rewrite the stack, re‑architect unrelated components, or refactor for style.
+
+### No‑questions default (with one safety valve)
+Default: **do not ask the operator questions.**
+If blocked or unknown:
+1) create a gap ticket in `docs/GAP_TICKETS.md`;
+2) proceed with the safest compliant default;
+3) log the decision in `docs/DECISIONS.md`.
+
+**Safety valve:** Cursor may ask for confirmation only if an action is **irreversible** (destructive migration, deleting data) or requires **privileged secrets**.
+
+---
+
+## 4) Non‑negotiable laws
+
+These rules are absolute. If any is violated, the build is considered broken.
+
+### L1 — Evidence‑only / zero fabrication
+- No number, chart point, recommendation, or alert may be displayed unless it has:
+  - a provenance chain; and
+  - a “Show Evidence” path.
+- If missing evidence: show a **Gap Card** and create a gap ticket.
+
+### L2 — Provenance chain is mandatory
+Every observation must trace:
+`observation → series → dataset_version → ingestion_run → raw_object → source_id`.
+
+### L3 — Split‑system enforcement
+- Never merge Aden/IRG and Sana’a/DFA indicators.
+- Use `regime_tag` everywhere and support “Comparison Mode”.
+
+### L4 — Quality & uncertainty disclosure
+- Display uncertainty/quality only if derived from metadata or explicit source publication.
+- Never invent confidence intervals.
+
+### L5 — Licensing & access compliance
+- Do **not** bypass paywalls, logins, robots, ToS.
+- If a source needs partnership/API keys: create a gap ticket + admin outbox entry.
+
+### L6 — Do‑no‑harm, privacy, neutrality
+- No PII.
+- No operationally harmful details.
+- Neutral language.
+- No sanction‑evasion guidance.
+
+### L7 — Bilingual parity
+- Every route/feature/export exists in EN and AR.
+- Arabic is RTL, glossary‑governed.
+
+### L8 — No fake UI / no placeholders
+- No hardcoded “demo numbers” anywhere.
+- If data missing: show Gap Card.
+
+### L9 — GitHub + CI are the release gate
+- No merge to `main` if CI is red.
+
+---
+
+## 5) GitHub workflow discipline
+
+### Branch rules
+- Every Cursor run happens on a **new branch**.
+- Prefer branch names:
+  - `fix/schema-v25-<date>`
+  - `feat/release-gate-admin`
+  - `feat/vip-rbac`
+  - `feat/evidence-drawer`
+
+### PR rules
+Every PR must include:
+- Summary (what changed)
+- Evidence (how you verified)
+- Risk/rollback notes
+- Follow-ups (if any)
+
+### Bugbot
+- Bugbot should review every PR before merge.
+- Do not enable “autofix” until after the repo stabilizes.
+
+---
+
+## 6) Core object model (must exist in code)
+
+- **Role**: RBAC identity controlling dashboard + agent persona.
+- **Module**: reusable dashboard block.
+- **Evidence Pack**: UI + machine‑readable artifact proving a claim.
+- **Alert**: structured event produced by rules/anomaly detection; never narrative‑only.
+- **Brief**: a professional report built from alerts + evidence packs.
+- **Confidence**: derived from metadata, not model vibes.
+
+---
+
+## 7) Phased delivery plan (STOP gates)
+
+Each phase must end with a PR. Each PR must be mergeable.
+
+### Phase 0 — Repo baseline + blockers map
+**Deliverables:**
+- `docs/ROUTE_INVENTORY.md` (initial pass/fail)
+- `docs/RELEASE_GATES.md` (gates defined)
+- `docs/BLOCKERS.md` updated
+
+**STOP gate:** a single source of truth exists for what is broken and why.
+
+### Phase 1 — Resolve schema/CI blockers (governance‑safe)
+**Deliverables:**
+- additive migrations
+- schema definitions updated
+- CI failure messages are actionable
+- docs: `docs/SCHEMA_V2_5.md` and `docs/MIGRATION_RUNBOOK.md`
+
+**STOP gate:** CI gates pass once migrations applied.
+
+### Phase 2 — Release Gate Admin + Playwright route inventory
+**Deliverables:**
+- `/admin/release-gate` page
+- Playwright critical journeys
+- CI artifact report (html)
+
+**STOP gate:** release gate shows meaningful PASS/FAIL with links to evidence.
+
+### Phase 3 — RBAC + VIP routing
+**Deliverables:**
+- typed roles
+- server‑side enforcement (tRPC/route middleware)
+- `/vip` router that sends each VIP to their dashboard
+
+**STOP gate:** cross‑role access is denied by server, not by UI.
+
+### Phase 4 — Dashboard module system + Evidence Drawer
+**Deliverables:**
+- reusable modules
+- “Show Evidence” drawer
+- evidence coverage meter
+
+**STOP gate:** at least 3 modules render real evidence packs in EN/AR.
+
+### Phase 5 — Role dashboards (minimum 5)
+- President
+- Finance Minister
+- CBY Governor
+- CBY Deputy Governor
+- Donor
+
+**STOP gate:** all five dashboards exist, evidence‑enabled, bilingual.
+
+### Phase 6 — Alerts + briefs (S3)
+**Deliverables:**
+- alert rules + events
+- brief generator
+- S3 signed URLs
+
+**STOP gate:** a test alert generates a brief and downloads.
+
+### Phase 7 — Evidence‑only assistant
+**Deliverables:**
+- evidence‑only retrieval
+- citation coverage gate
+- role agent registry
+
+**STOP gate:** 10 test questions answered with citations or “insufficient evidence”.
+
+### Phase 8 — Performance + accessibility + hardening
+**Deliverables:**
+- Lighthouse/perf targets
+- RTL/keyboard nav checks
+- final release gate PASS
+
+**STOP gate:** release gate PASS across all gates.
+
+---
+
+## 8) How to run Cursor “like a production team”
+
+### A) Use repo‑native rules
+Commit the `.cursor/rules/*.mdc` from this pack into the repo. They enforce the laws.
+
+### B) Use slash commands
+Commit `.cursor/commands/*.md` and run them by typing `/` in Cursor Agent.
+
+### C) Each run produces one PR
+- 1 objective
+- 1 PR
+- green CI
+
+---
+
+## 9) Current situation (based on your latest screenshots)
+
+- **BLOCKER 2 (.env.example) is resolved** (good).
+- **BLOCKER 1 (schema v2.5 missing columns) is the main remaining gate**.
+
+Next action: run the `/schema-v25-governance-safe` command and open the PR.
+
+---
+
+## 10) Done means “boring reliability”
+
+The platform is done when:
+- New data ingests safely with provenance.
+- Backfills are deterministic.
+- Corrections are logged.
+- VIP dashboards are gated correctly.
+- Every number has evidence.
+- CI + release gate make it impossible to ship garbage.
+
