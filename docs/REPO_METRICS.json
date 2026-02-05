@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2026-02-05T14:58:22.621Z",
+  "repoCounts": {
+    "connectors": 28,
+    "trpcRouters": 17,
+    "dbTables": 207,
+    "pages": 139
+  },
+  "releaseGate": {
+    "status": "UNKNOWN",
+    "command": "node scripts/release-gate.mjs --json",
+    "output": null,
+    "durationMs": 33
+  },
+  "tests": {
+    "status": "UNKNOWN",
+    "command": "pnpm test",
+    "summary": {
+      "testsLine": null,
+      "testFilesLine": null,
+      "durationLine": null,
+      "tests": {},
+      "testFiles": {}
+    },
+    "durationMs": 1498
+  }
+}
