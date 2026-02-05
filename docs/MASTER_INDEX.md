@@ -41,7 +41,10 @@ This is the canonical navigation map for all platform documentation.
 
 ### Data & Sources
 - [DATA_SOURCE_REGISTER.md](./DATA_SOURCE_REGISTER.md) - All data sources
+- [SOURCE_REGISTRY.md](../docs/SOURCE_REGISTRY.md) - Canonical source registry (292 sources)
 - [DATA_GOVERNANCE.md](./DATA_GOVERNANCE.md) - Data governance policies (planned)
+- **NEW**: [Canonical Registry Implementation](../SOURCE_UNIVERSE_STEP_REPORT.md) - Source universe & knowledge base
+- **NEW**: [Registry Release Gate](../ADMIN_RELEASE_GATE_UPDATE.md) - Production readiness checklist
 
 ### User Documentation
 - [USER_JOURNEYS.md](./USER_JOURNEYS.md) - User flow documentation

@@ -1,13 +1,30 @@
 # YETO Platform - Build Status
 
-**Version**: v1.6.0  
-**Last Updated**: January 29, 2025 - 16:30 UTC  
-**Status**: OPERATIONAL - PROMPT 6/∞ COMPLETE
-**Control Pack Tag**: v0.6-entity-intelligence
+**Version**: v1.7.0  
+**Last Updated**: February 5, 2026 - 00:45 UTC  
+**Status**: OPERATIONAL - CANONICAL REGISTRY COMPLETE
+**Control Pack Tag**: v0.7-canonical-registry
 
 ---
 
 ## Current Phase
+
+**Phase 71: Canonical Registry Brain + Zero Drift (Prompt 7/∞)** - Completed
+
+### Phase 71 Deliverables
+- Canonical source_registry enforced as THE single source of truth
+- Complete Excel importer for 5 sheets (SECTOR_CODEBOOK, SOURCES_MASTER, SECTOR_MATRIX, ENDPOINTS, PRODUCTS)
+- source_endpoints table: 1-to-many endpoint tracking per source
+- source_products table: 1-to-many product tracking per source
+- S3 signed URL service with license enforcement
+- Registry policy enforcer (allowedUse → ingestion pipes)
+- PIPE_REGISTRY_LINT validation (5 rules, CI integration)
+- Registry Diff UI showing add/edit/delete changes
+- Crash-safe work queue (ingestion_work_queue with pause/resume/retry)
+- 292 sources imported from YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx
+- 17 sectors in codebook with full mappings
+- 3 test suites: importer, policy enforcer, work queue
+- Documentation updates: MASTER_INDEX, STATUS, Release Gate
 
 **Phase 70: Stakeholder Intelligence Graph + Entity Memory (Prompt 6/∞)** - Completed
 
@@ -138,7 +155,14 @@
 | users | User accounts | ✅ |
 | indicators | Economic indicators | ✅ |
 | time_series_data | Historical values | ✅ |
-| sources | Data sources | ✅ |
+| **source_registry** | **CANONICAL sources (292)** | ✅ |
+| source_endpoints | Source endpoints (1-to-many) | ✅ |
+| source_products | Source products (1-to-many) | ✅ |
+| registry_sector_map | Source→Sector mappings | ✅ |
+| sector_codebook | 17 YETO sectors | ✅ |
+| registry_diff_log | Import change tracking | ✅ |
+| ingestion_work_queue | Crash-safe job queue | ✅ |
+| sources | Data sources (DEPRECATED) | ⚠️ |
 | events | Economic events | ✅ |
 | glossary_terms | Bilingual terms | ✅ |
 | stakeholders | Key entities | ✅ |
