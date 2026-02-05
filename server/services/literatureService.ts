@@ -168,9 +168,13 @@ export async function createDocument(input: LibraryDocumentInput): Promise<Libra
 }
 
 /**
- * Get document by ID
+ * Get document by ID with signed URL for access
  */
-export async function getDocumentById(id: number): Promise<LibraryDocument | null> {
+export async function getDocumentById(id: number, options?: {
+  includeSignedUrl?: boolean;
+  userId?: number;
+  userTier?: string;
+}): Promise<LibraryDocument | null> {
   const db = await getDb();
   if (!db) return null;
 
@@ -182,7 +186,26 @@ export async function getDocumentById(id: number): Promise<LibraryDocument | nul
     const rows = (result as any)[0] || [];
     if (rows.length === 0) return null;
 
-    return mapRowToDocument(rows[0]);
+    const doc = mapRowToDocument(rows[0]);
+
+    // Add signed URL if requested
+    if (options?.includeSignedUrl) {
+      const { generateDocumentSignedUrl } = await import('./s3SignedUrlService');
+      const signedUrlResult = await generateDocumentSignedUrl({
+        documentId: id,
+        userId: options.userId,
+        userSubscriptionTier: options.userTier as any,
+        purpose: 'view'
+      });
+
+      if ('url' in signedUrlResult) {
+        (doc as any).signedUrl = signedUrlResult.url;
+        (doc as any).licenseNotice = signedUrlResult.licenseNotice;
+        (doc as any).canDownload = signedUrlResult.canDownload;
+      }
+    }
+
+    return doc;
   } catch (error) {
     console.error('[LiteratureService] Failed to get document:', error);
     return null;
