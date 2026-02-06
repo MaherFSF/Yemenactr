@@ -17,9 +17,9 @@
 <p align="center">
   <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript" alt="TypeScript">
   <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react" alt="React">
-  <img src="https://img.shields.io/badge/Tests-750%2B_Passing-brightgreen?style=flat-square" alt="Tests">
-  <img src="https://img.shields.io/badge/Data_Points-5%2C500%2B-blue?style=flat-square" alt="Data Points">
-  <img src="https://img.shields.io/badge/Sources-292_(234_Active)-orange?style=flat-square" alt="Sources">
+  <img src="https://img.shields.io/badge/Tests-740%2B_Passing-brightgreen?style=flat-square" alt="Tests">
+  <img src="https://img.shields.io/badge/Data_Points-6%2C700%2B-blue?style=flat-square" alt="Data Points">
+  <img src="https://img.shields.io/badge/Sources-307_(234_Active)-orange?style=flat-square" alt="Sources">
   <img src="https://img.shields.io/badge/Tier_Classification-59%25_Complete-blue?style=flat-square" alt="Tier Classification">
   <img src="https://img.shields.io/badge/Release_Gate-✅_PASSING-brightgreen?style=flat-square" alt="Release Gate">
   <img src="https://img.shields.io/badge/License-Proprietary-C0A030?style=flat-square" alt="License">
@@ -232,6 +232,23 @@ fx_rates                    fx_source_registry          fx_gap_tickets
 | **AI Safety** | Truth Layer + Evidence Tribunal | Zero fabrication guarantee |
 | **Bilingual** | i18n with RTL support | Full Arabic experience |
 | **Export Pipeline** | CSV/JSON/XLSX/PDF with metadata | Data portability |
+
+---
+
+## 🧭 Release & Versioning
+
+We keep release manifests under `docs/releases/`:
+- **latest.md** — human-readable summary
+- **latest.json** — machine-readable manifest for audits and deployments
+- **vX.Y.Z/** — per-release snapshots with proof links
+
+Runtime versioning uses `npm_package_version`, so update `package.json` when you
+cut a release. Counts vary by environment; the release manifest is the canonical
+source of truth for the latest verified numbers.
+
+**Production verification:** sync `docs/releases/latest.json` to an S3 prefix
+(for example `s3://yeto-assets/releases/latest.json`) and expose it via
+CloudFront/ALB. ACM only handles TLS; the manifest provides the version.
 
 ---
 
