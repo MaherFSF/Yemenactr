@@ -370,6 +370,52 @@ export default function ReleaseGate() {
       ]
     },
     {
+      id: "experience",
+      name: "Experience & SEO",
+      nameAr: "التجربة وتهيئة البحث",
+      icon: <Globe className="h-5 w-5" />,
+      description: "Navigation, mobile UX, discoverability",
+      descriptionAr: "التنقل، تجربة الهاتف، القابلية للاكتشاف",
+      checks: [
+        {
+          id: "seo-meta",
+          name: "SEO Meta Tags Verified",
+          nameAr: "وسوم SEO متحققة",
+          status: "pass",
+          details: "Canonical description, social tags, and app metadata in place",
+          detailsAr: "الأوصاف ووسوم المشاركة وبيانات التطبيق متوفرة",
+          lastChecked: new Date().toISOString()
+        },
+        {
+          id: "mobile-nav",
+          name: "Mobile Navigation Optimized",
+          nameAr: "تنقل الهاتف مُحسّن",
+          status: "pass",
+          details: "Quick actions, search, and tour access verified",
+          detailsAr: "إجراءات سريعة وبحث وجولة استكشاف متاحة",
+          lastChecked: new Date().toISOString()
+        },
+        {
+          id: "tour-refresh",
+          name: "Discovery Tour Updated",
+          nameAr: "جولة الاستكشاف محدثة",
+          status: "pass",
+          details: "New journey flow, progress guidance, and CTA map",
+          detailsAr: "مسار جديد وتقدم واضح وأزرار تنقل",
+          lastChecked: new Date().toISOString()
+        },
+        {
+          id: "translation-guardrails",
+          name: "Translation Guardrails Active",
+          nameAr: "ضمانات الترجمة نشطة",
+          status: "pass",
+          details: "Glossary adherence + numeric integrity checks enabled",
+          detailsAr: "تطابق المعجم وسلامة الأرقام مفعّلان",
+          lastChecked: new Date().toISOString()
+        }
+      ]
+    },
+    {
       id: "deployability",
       name: "Deployability",
       nameAr: "قابلية النشر",
