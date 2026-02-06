@@ -803,10 +803,12 @@ Ask me any question about Yemen's economy and I'll provide a documented answer w
                           )}
                         </Badge>
                         <Badge variant="outline" className="gap-1">
-                          {translationResult?.numericIntegrityPass ? (
-                            <CheckCircle className="h-3 w-3 text-emerald-600" />
-                          ) : (
-                            <AlertCircle className="h-3 w-3 text-amber-600" />
+                          {translationResult && (
+                            translationResult.numericIntegrityPass ? (
+                              <CheckCircle className="h-3 w-3 text-emerald-600" />
+                            ) : (
+                              <AlertCircle className="h-3 w-3 text-amber-600" />
+                            )
                           )}
                           {language === "ar" ? "سلامة الأرقام" : "Numeric Integrity"}
                         </Badge>

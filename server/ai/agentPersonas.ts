@@ -401,12 +401,24 @@ export function selectAgentPersona(context: {
   const explicitlyEnglish = lowerQuery.includes('english') || lowerQuery.includes('إنجليزي') || lowerQuery.includes('انجليزي');
 
   if (wantsTranslation) {
-    if (hasArabicChars || explicitlyEnglish) {
-      return AGENT_PERSONAS.translation_ar_en;
-    }
-    if (explicitlyArabic) {
+    // Check for explicit direction indicators (target language)
+    const wantsEnglishOutput = lowerQuery.includes('to english') || lowerQuery.includes('into english');
+    const wantsArabicOutput = lowerQuery.includes('to arabic') || lowerQuery.includes('into arabic') || 
+                              lowerQuery.includes('إلى العربية') || lowerQuery.includes('للعربية');
+    
+    // Explicit target language takes precedence
+    if (wantsArabicOutput) {
       return AGENT_PERSONAS.translation_en_ar;
     }
+    if (wantsEnglishOutput) {
+      return AGENT_PERSONAS.translation_ar_en;
+    }
+    
+    // If query contains Arabic characters, user likely wants to translate FROM Arabic
+    if (hasArabicChars) {
+      return AGENT_PERSONAS.translation_ar_en;
+    }
+    
     return AGENT_PERSONAS.translation_agent;
   }
   if (lowerQuery.includes('sanction') || lowerQuery.includes('عقوب') || lowerQuery.includes('ofac')) {
