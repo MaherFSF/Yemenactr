@@ -296,15 +296,27 @@ function checkNumericIntegrity(
   translatedText: string
 ): Array<{ original: string; translated: string; location: string }> {
   const issues: Array<{ original: string; translated: string; location: string }> = [];
-  
-  // Extract all numbers from original text
-  const numberPattern = /[\d,]+\.?\d*/g;
+  const arabicDigitMap: Record<string, string> = {
+    '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+    '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9',
+    '۰': '0', '۱': '1', '۲': '2', '۳': '3', '۴': '4',
+    '۵': '5', '۶': '6', '۷': '7', '۸': '8', '۹': '9',
+  };
+
+  const normalizeNumber = (value: string) => {
+    const normalizedDigits = value.replace(/[٠-٩۰-۹]/g, (d) => arabicDigitMap[d] ?? d);
+    return normalizedDigits
+      .replace(/[٬,]/g, '')
+      .replace(/[٫]/g, '.')
+      .replace(/[−]/g, '-')
+      .replace(/\s/g, '');
+  };
+
+  // Extract all numbers (ASCII + Arabic-Indic digits)
+  const numberPattern = /[-−]?[0-9٠-٩۰-۹][0-9٠-٩۰-۹٬,٫\.]*/g;
   const originalNumbers = originalText.match(numberPattern) || [];
   const translatedNumbers = translatedText.match(numberPattern) || [];
 
-  // Normalize numbers for comparison
-  const normalizeNumber = (n: string) => n.replace(/,/g, '');
-  
   const originalNormalized = originalNumbers.map(normalizeNumber);
   const translatedNormalized = translatedNumbers.map(normalizeNumber);
 
