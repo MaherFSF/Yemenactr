@@ -324,7 +324,8 @@ aws s3 sync public/documents/ s3://$S3_BUCKET/documents/ --acl public-read
 
 # Upload brand assets
 aws s3 cp client/public/yeto-logo.png s3://$S3_BUCKET/images/brand/yeto-logo.png --acl public-read
-aws s3 cp client/public/causeway-logo.png s3://$S3_BUCKET/images/brand/causeway-logo.png --acl public-read
+aws s3 cp client/public/images/brand/causeway-logo-mark.svg s3://$S3_BUCKET/images/brand/causeway-logo-mark.svg --acl public-read
+aws s3 cp client/public/images/brand/causeway-logo-lockup.svg s3://$S3_BUCKET/images/brand/causeway-logo-lockup.svg --acl public-read
 ```
 
 ### 6.3 Update Application References

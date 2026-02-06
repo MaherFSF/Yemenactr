@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="200" viewBox="0 0 120 100" role="img" aria-labelledby="title desc">
+  <title>CauseWay logo mark</title>
+  <desc>CauseWay geometric icon in brand colors.</desc>
+  <path d="M8 10 L62 10 Q68 10 68 16 L68 28 L28 28 L28 72 L68 72 L68 84 Q68 90 62 90 L8 90 Q2 90 2 84 L2 16 Q2 10 8 10 Z" fill="#2e8b6e" />
+  <rect x="48" y="36" width="26" height="26" rx="4" fill="#6b8e6b" />
+  <rect x="82" y="10" width="26" height="26" rx="5" fill="#d4a528" />
+  <rect x="82" y="48" width="16" height="16" rx="8" fill="#2e8b6e" />
+</svg>
