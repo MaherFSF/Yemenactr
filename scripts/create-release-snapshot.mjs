@@ -24,7 +24,16 @@ if (fs.existsSync(targetDir)) {
 }
 
 fs.mkdirSync(targetDir, { recursive: true });
-fs.copyFileSync(latestPath, manifestPath);
+
+// Read latest.json, update version fields, then write to manifest
+const latestContent = JSON.parse(fs.readFileSync(latestPath, "utf8"));
+latestContent.platformVersion = version;
+latestContent.platformTag = version;
+fs.writeFileSync(
+  manifestPath,
+  JSON.stringify(latestContent, null, 2) + "\n",
+  "utf8"
+);
 
 const now = new Date().toISOString();
 const readme = `# Release ${version}

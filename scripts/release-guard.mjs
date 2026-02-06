@@ -13,7 +13,7 @@ const getDiff = () => {
   }
 };
 
-const pathExistsInBase = (path) => {
+const pathExistsInBase = path => {
   try {
     execSync(`git cat-file -e ${baseRef}:${path}`, { stdio: "ignore" });
     return true;
@@ -32,22 +32,31 @@ const violations = [];
 
 for (const line of diff.split("\n")) {
   if (!line.trim()) continue;
-  const parts = line.trim().split(/\s+/);
+  const parts = line.trim().split(/\t/);
   const status = parts[0];
-  const file = parts.slice(1).join(" ");
 
-  if (!file.startsWith("docs/releases/v")) continue;
+  // Handle rename (R) and copy (C) statuses which have two paths: old and new
+  // Status may include similarity percentage, e.g., R100, C085
+  const isRenameOrCopy = /^[RC]\d*$/.test(status);
+  const filesToCheck = isRenameOrCopy
+    ? [parts[1], parts[2]]
+    : [parts.slice(1).join("\t")];
 
-  const versionFolder = file.split("/").slice(0, 3).join("/");
-  const versionExists = pathExistsInBase(versionFolder);
+  for (const file of filesToCheck) {
+    if (!file || !file.startsWith("docs/releases/v")) continue;
 
-  if (versionExists) {
-    violations.push({ status, file, reason: "existing-release-modified" });
-    continue;
-  }
+    const versionFolder = file.split("/").slice(0, 3).join("/");
+    const versionExists = pathExistsInBase(versionFolder);
 
-  if (status !== "A") {
-    violations.push({ status, file, reason: "new-release-not-added" });
+    if (versionExists) {
+      violations.push({ status, file, reason: "existing-release-modified" });
+      continue;
+    }
+
+    // For renames/copies, new files in a new release folder are OK
+    if (status !== "A" && !isRenameOrCopy) {
+      violations.push({ status, file, reason: "new-release-not-added" });
+    }
   }
 }
 
