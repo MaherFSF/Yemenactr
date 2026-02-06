@@ -9,6 +9,11 @@ and easy to roll back.
 - `latest.md` — human-readable summary of the latest verified release.
 - `latest.json` — machine-readable release manifest (used by ops/CI).
 - `v0.2.3/` — per-release snapshot with manifest and proof links.
+ 
+## Guardrail
+
+Use `pnpm release:guard` to prevent edits to existing release folders. The
+guard fails if anything under `docs/releases/v*/` is modified.
 
 ## Versioning model (two tracks)
 

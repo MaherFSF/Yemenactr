@@ -65,6 +65,17 @@ aws s3 sync docs/releases/v0.2.3 \
   s3://yeto-backups/releases/v0.2.3
 ```
 
+### Step 6: Manus Intake Check (Ongoing)
+
+Periodically check for Manus-authored updates:
+
+```bash
+pnpm release:check-manus
+```
+
+If anything is worth adopting, create a **new** release snapshot and update
+`docs/releases/latest.json`. Do **not** modify old release folders.
+
 ---
 
 ## Detailed Deployment Process

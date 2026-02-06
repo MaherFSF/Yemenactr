@@ -16,7 +16,10 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "lint": "tsc --noEmit",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "release:guard": "node scripts/release-guard.mjs",
+    "release:check-manus": "node scripts/check-manus-updates.mjs",
+    "release:snapshot": "node scripts/create-release-snapshot.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.693.0",
