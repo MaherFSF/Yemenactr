@@ -62,7 +62,8 @@ All mockups downloaded from iCloud are stored in `/assets/mockups/external/iClou
 
 | Filename | Description | Location | License | Safe to Commit |
 |----------|-------------|----------|---------|----------------|
-| causeway_logo.svg | CauseWay logo | `/client/public/` | Proprietary | ✅ Yes (owned) |
+| causeway-logo-mark.svg | CauseWay logo mark | `/client/public/images/brand/` | Proprietary | ✅ Yes (owned) |
+| causeway-logo-lockup.svg | CauseWay bilingual lockup | `/client/public/images/brand/` | Proprietary | ✅ Yes (owned) |
 | yeto_logo.svg | YETO logo | `/client/public/` | Proprietary | ✅ Yes (owned) |
 
 ---
@@ -102,7 +103,8 @@ For critical files, checksums are recorded for integrity verification.
 
 | File | SHA-256 Checksum | Verified Date |
 |------|------------------|---------------|
-| causeway_logo.svg | (to be computed) | Pending |
+| causeway-logo-mark.svg | (to be computed) | Pending |
+| causeway-logo-lockup.svg | (to be computed) | Pending |
 | yeto_logo.svg | (to be computed) | Pending |
 | yemen_governorates.geojson | (to be computed) | Pending |
 

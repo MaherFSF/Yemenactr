@@ -265,7 +265,7 @@ export default function About() {
                 <div className="lg:w-1/3 bg-white p-8 flex items-center justify-center border-b lg:border-b-0 lg:border-r">
                   <a href="https://causewayfin-gbgfrjgy.manus.space" target="_blank" rel="noopener noreferrer">
                     <img 
-                      src="/images/causeway-logo.png" 
+                      src="/images/brand/causeway-logo-lockup.svg" 
                       alt="CauseWay - كوزواي" 
                       className="max-w-full h-auto max-h-48 object-contain hover:opacity-90 transition-opacity"
                     />

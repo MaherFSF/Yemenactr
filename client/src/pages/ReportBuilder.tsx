@@ -73,7 +73,7 @@ export default function ReportBuilder() {
     dateEnd: '2023-12-31',
     colorScheme: 'default',
     language: 'en',
-    logo: '/images/causeway-logo.png',
+    logo: '/images/brand/causeway-logo-mark.svg',
   });
   const [layoutSections, setLayoutSections] = useState<{ id: string; type: string; title: string }[]>([]);
 
@@ -284,7 +284,7 @@ export default function ReportBuilder() {
                       <Label>{language === 'ar' ? 'الشعار' : 'Logo'}</Label>
                       <div className="mt-2 p-4 border rounded-lg flex flex-col items-center gap-2 bg-white">
                         <div className="w-24 h-24 bg-gray-50 rounded-lg flex items-center justify-center">
-                          <img src="/images/causeway-logo.png" alt="YETO" className="w-16 h-16 object-contain" />
+                          <img src="/images/brand/causeway-logo-mark.svg" alt="CauseWay logo" className="w-16 h-16 object-contain" />
                         </div>
                         <span className="font-bold text-lg" style={{ color: YETO_COLORS.navy }}>YETO</span>
                         <Button variant="outline" size="sm" className="gap-2">

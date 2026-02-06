@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="client/public/yeto-logo.svg" alt="YETO Logo" width="120" height="120">
+  <img src="client/public/images/brand/causeway-logo-lockup.svg" alt="CauseWay logo" width="260">
 </p>
 
 <h1 align="center">YETO — Yemen Economic Transparency Observatory</h1>

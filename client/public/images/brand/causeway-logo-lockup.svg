@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="260" viewBox="0 0 420 260" role="img" aria-labelledby="title desc">
+  <title>CauseWay logo</title>
+  <desc>CauseWay bilingual lockup with icon and Arabic wordmark.</desc>
+  <g transform="translate(150 10)">
+    <path d="M8 10 L62 10 Q68 10 68 16 L68 28 L28 28 L28 72 L68 72 L68 84 Q68 90 62 90 L8 90 Q2 90 2 84 L2 16 Q2 10 8 10 Z" fill="#2e8b6e" />
+    <rect x="48" y="36" width="26" height="26" rx="4" fill="#6b8e6b" />
+    <rect x="82" y="10" width="26" height="26" rx="5" fill="#d4a528" />
+    <rect x="82" y="48" width="16" height="16" rx="8" fill="#2e8b6e" />
+  </g>
+  <text x="210" y="165" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="40" fill="#1f2d1d">
+    CauseWay
+  </text>
+  <text x="210" y="205" text-anchor="middle" font-family="'Noto Kufi Arabic', 'Amiri', serif" font-size="32" fill="#6b8e6b" direction="rtl">
+    CH2H'J
+  </text>
+</svg>
