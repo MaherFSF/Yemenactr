@@ -1,0 +1,74 @@
+{
+  "platformVersion": "v0.2.3-p0-evidence-native",
+  "platformTag": "v0.2.3-p0-evidence-native",
+  "platformCommit": "b922fa3",
+  "tagObject": "51579fb957e161eb956615c9c7a0966cddf5350f",
+  "tagger": {
+    "name": "Manus",
+    "email": "dev-agent@manus.ai",
+    "date": "2026-02-02T10:17:44-05:00"
+  },
+  "releaseType": "release-candidate",
+  "quality": {
+    "testsPassing": 740,
+    "typecheckErrors": 0,
+    "releaseGatesPassing": 11
+  },
+  "proofPacks": {
+    "execSummary": {
+      "source": "docs/PROOFS/2026-02-02_FINALIZATION/00_EXEC_SUMMARY.md",
+      "timestamp": "2026-02-02T12:28:09Z",
+      "counts": {
+        "entities": 79,
+        "entityClaims": 18,
+        "evidencePacks": 898,
+        "timeSeries": 6708,
+        "gapTickets": 7,
+        "sources": 307,
+        "commercialBanks": 39,
+        "ingestionRuns": 47
+      },
+      "evidencePacksByType": {
+        "metric": 552,
+        "claim": 297,
+        "document": 49
+      }
+    },
+    "sourceOfTruthPack": {
+      "source": "docs/PROOFS/2026-02-02_FINALIZATION/SOURCE_OF_TRUTH_PACK.md",
+      "timestamp": "2026-02-02T10:37:00Z",
+      "counts": {
+        "entities": 79,
+        "entityClaims": 18,
+        "evidencePacks": 898,
+        "evidenceItems": 898,
+        "timeSeries": 6702,
+        "gapTickets": 0,
+        "ingestionRuns": 47,
+        "commercialBanks": 39,
+        "evidenceSources": 292
+      },
+      "evidencePacksByType": {
+        "metric": 9,
+        "claim": 889
+      }
+    }
+  },
+  "livePreview": {
+    "url": "https://yteocauseway.manus.space",
+    "lastUpdated": "2026-02-06T19:40:13.134Z",
+    "stats": {
+      "totalIndicators": 398,
+      "totalSources": 307,
+      "totalDocuments": 69,
+      "totalEvents": 237,
+      "dataPointsCount": 6723,
+      "coverageStartYear": 1970,
+      "coverageEndYear": 2026
+    }
+  },
+  "notes": [
+    "Proof packs report different route counts and test totals. See docs/PROOFS/2026-02-02_FINALIZATION/RELEASE_PROOF_PACK.md vs docs/PROOFS/2026-02-02_RC/RC_PROOF_PACK.md.",
+    "Counts in exec summary and source-of-truth pack differ slightly; both are captured for audit traceability."
+  ]
+}
