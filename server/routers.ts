@@ -78,6 +78,8 @@ import { apiKeysRouter } from "./routers/apiKeysRouter";
 import { storageRouter } from "./routers/storageRouter";
 import { historicalRouter } from "./routers/historicalRouter";
 import { reportsRouter } from "./routers/reportsRouter";
+import * as translationService from "./services/translationService";
+import { buildPersonaSystemPrompt, selectAgentPersona } from "./ai/agentPersonas";
 import { evidenceRouter } from "./routers/evidence";
 import { bulkExportRouter } from "./routers/bulkExport";
 import { entitiesRouter } from "./routers/entities";
@@ -778,11 +780,22 @@ export const appRouter = router({
             start: z.string().optional(),
             end: z.string().optional(),
           }).optional(),
+          language: z.enum(["en", "ar"]).optional(),
+          page: z.string().optional(),
         }).optional(),
       }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        const responseLanguage = input.context?.language
+          ?? (/[\u0600-\u06FF]/.test(input.message) ? "ar" : "en");
+        const persona = selectAgentPersona({
+          page: input.context?.page,
+          userRole: (ctx.user as any)?.role,
+          subscriptionTier: (ctx.user as any)?.subscriptionTier,
+          query: input.message,
+        });
+
         // Build system prompt with Yemen economic context
-        const systemPrompt = `You are the YETO AI Assistant ("One Brain"), an expert economic analyst specializing in Yemen's economy since 2014. You have comprehensive knowledge of:
+        const basePrompt = `You are the YETO AI Assistant ("One Brain"), an expert economic analyst specializing in Yemen's economy since 2014. You have comprehensive knowledge of:
 
 **CURRENT DATE: January 14, 2026**
 
@@ -956,6 +969,8 @@ You are not just an information provider - you are a coach and strategic advisor
 
 Current context: ${input.context?.sector ? `Sector: ${input.context.sector}` : 'General'}, ${input.context?.regime ? `Focus: ${input.context.regime}` : 'Both authorities'}`;
 
+        const systemPrompt = buildPersonaSystemPrompt(persona, basePrompt, responseLanguage);
+
         // Build messages array
         const messages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
           { role: "system", content: systemPrompt },
@@ -1071,6 +1086,38 @@ Current context: ${input.context?.sector ? `Sector: ${input.context.sector}` : '
             timestamp: new Date().toISOString(),
           };
         }
+      }),
+
+    translate: protectedProcedure
+      .input(z.object({
+        text: z.string().min(1).max(5000),
+        sourceLang: z.enum(["en", "ar"]),
+        targetLang: z.enum(["en", "ar"]),
+        sector: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        if (input.sourceLang === input.targetLang) {
+          return {
+            translatedText: input.text,
+            glossaryAdherenceScore: 100,
+            numericIntegrityPass: true,
+            glossaryIssues: [],
+            numericIssues: [],
+            status: "no_op",
+          };
+        }
+
+        const result = await translationService.translateText(
+          input.text,
+          input.sourceLang,
+          input.targetLang,
+          input.sector
+        );
+
+        return {
+          ...result,
+          status: result.numericIntegrityPass && result.glossaryAdherenceScore >= 80 ? "ok" : "needs_review",
+        };
       }),
 
     askResearch: publicProcedure

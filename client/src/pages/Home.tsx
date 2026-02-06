@@ -29,7 +29,8 @@ import {
   Droplets,
   Coins,
   Package,
-  Compass
+  Compass,
+  Languages
 } from "lucide-react";
 import { Link } from "wouter";
 import DataQualityBadge from "@/components/DataQualityBadge";
@@ -214,6 +215,17 @@ export default function Home() {
       stats: "Evidence-backed",
       statsAr: "مدعوم بالأدلة",
       color: "from-[#d4a528] to-[#a88a1f]"
+    },
+    {
+      icon: Languages,
+      titleEn: "Bilingual Translation Agents",
+      titleAr: "وكلاء ترجمة ثنائية اللغة",
+      descEn: "Arabic-English translation with glossary enforcement and numeric integrity checks",
+      descAr: "ترجمة عربي-إنجليزي مع ضبط المعجم وفحص سلامة الأرقام",
+      href: "/ai-assistant",
+      stats: "Quality-gated",
+      statsAr: "بوابات جودة",
+      color: "from-[#234876] to-[#2e8b6e]"
     },
     {
       icon: FileText,

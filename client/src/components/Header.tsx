@@ -122,6 +122,12 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:bg-gray-950/95 dark:border-gray-800">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-white focus:px-3 focus:py-2 focus:text-sm focus:shadow"
+      >
+        {language === "ar" ? "تخطي إلى المحتوى" : "Skip to content"}
+      </a>
       <div className="container flex h-16 items-center justify-between">
         {/* Logo - CauseWay Exact Mockup: Icon on top, CauseWay below, كوزواي at bottom */}
         <Link href="/home" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
@@ -347,6 +353,50 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="lg:hidden border-t bg-white dark:bg-gray-950 max-h-[80vh] overflow-y-auto">
           <nav className="container flex flex-col py-4 gap-1">
+            <div className="px-4 pb-4">
+              <GlobalSearch />
+            </div>
+
+            <div className="px-4 pb-4 border-b">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                {language === "ar" ? "إجراءات سريعة" : "Quick Actions"}
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                <Link
+                  href="/ai-assistant"
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:text-[#2e8b6e] hover:bg-[#2e8b6e]/5 rounded-md transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Brain className="h-4 w-4" />
+                  {language === "ar" ? "المساعد الذكي" : "AI Assistant"}
+                </Link>
+                <Link
+                  href="/dashboard"
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:text-[#2e8b6e] hover:bg-[#2e8b6e]/5 rounded-md transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <BarChart3 className="h-4 w-4" />
+                  {language === "ar" ? "لوحة البيانات" : "Dashboard"}
+                </Link>
+                <Link
+                  href="/data-repository"
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:text-[#2e8b6e] hover:bg-[#2e8b6e]/5 rounded-md transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Database className="h-4 w-4" />
+                  {language === "ar" ? "مستودع البيانات" : "Data Repository"}
+                </Link>
+                <Link
+                  href="/research"
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:text-[#2e8b6e] hover:bg-[#2e8b6e]/5 rounded-md transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <BookOpen className="h-4 w-4" />
+                  {language === "ar" ? "الأبحاث" : "Research"}
+                </Link>
+              </div>
+            </div>
+
             <Link 
               href="/"
               className="block px-4 py-2 text-sm font-medium text-foreground/80 hover:text-[#2e8b6e] hover:bg-[#2e8b6e]/5 rounded-md transition-colors"
