@@ -40,6 +40,31 @@ pnpm tsx scripts/import-data-to-production.ts
 
 This imports all data into the production database.
 
+### Step 4: Publish Release Manifest (Required)
+
+Update the release manifest and publish it to S3 so production can expose a
+verifiable version:
+
+```bash
+aws s3 cp docs/releases/latest.json \
+  s3://yeto-assets/releases/latest.json
+```
+
+Then verify it is reachable via the production domain:
+
+```
+https://yeto.causewaygrp.com/releases/latest.json
+```
+
+### Step 5: Archive Release Bundle (Backup)
+
+Store the versioned release snapshot for rollback:
+
+```bash
+aws s3 sync docs/releases/v0.2.3 \
+  s3://yeto-backups/releases/v0.2.3
+```
+
 ---
 
 ## Detailed Deployment Process

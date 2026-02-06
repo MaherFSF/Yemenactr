@@ -108,6 +108,18 @@ aws s3api put-bucket-cors \
   --cors-configuration file://infra/aws/s3-cors.json
 ```
 
+### 5.1 Publish Release Manifest (Recommended)
+
+Publish the release manifest so production can expose a verifiable version:
+
+```bash
+# Suggested public path for the manifest
+aws s3 cp docs/releases/latest.json \
+  s3://yeto-assets/releases/latest.json
+```
+
+This manifest is served via CloudFront/ALB. ACM only handles TLS.
+
 ### 6. Create ElastiCache Redis
 
 ```bash

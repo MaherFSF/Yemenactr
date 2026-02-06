@@ -1,5 +1,8 @@
 # YETO Platform - Build Status
 
+> NOTE: This file is a historical snapshot (Jan 29, 2025).
+> For the current release manifest, see `docs/releases/latest.md`.
+
 **Version**: v1.6.0  
 **Last Updated**: January 29, 2025 - 16:30 UTC  
 **Status**: OPERATIONAL - PROMPT 6/∞ COMPLETE

@@ -199,6 +199,10 @@ S3 stores static assets, user uploads, and generated reports.
 | yeto-storage | User uploads, reports | Private (signed URLs) |
 | yeto-backups | Database backups | Private |
 
+**Release manifest:** publish `docs/releases/latest.json` to
+`s3://yeto-assets/releases/latest.json` so production can expose a verifiable
+version via CloudFront/ALB. ACM handles TLS only.
+
 ### 6. Amazon CloudFront
 
 CloudFront serves as the CDN, caching static assets and routing API requests to the ALB.
