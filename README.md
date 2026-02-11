@@ -461,6 +461,17 @@ server/connectors/index.ts
 | Services | `db.ts`, `accuracyChecker.ts`, etc. use `sources` | All use `sourceRegistry` |
 | Legacy tables | `sources`, `evidence_sources` actively used | Deprecated with `@deprecated` markers |
 
+### Phase 2: Clean Connector System (Feb 2026)
+
+| What | Before | After |
+|------|--------|-------|
+| Source arrays | 3 hardcoded arrays (9+13+8 entries) in `connectors/index.ts` | All from DB via async `getDataSources()` |
+| `DATA_SOURCES` | 9 hardcoded `DataSource` objects | Removed — use `getDataSources()` |
+| `ENHANCED_CONNECTOR_REGISTRY` | 13 hardcoded `EnhancedConnectorInfo` objects | Removed — use `getAllEnhancedConnectorStatuses()` |
+| `EXTENDED_CONNECTORS` | 8 hardcoded `DataSource` objects | Removed — merged into `getDataSources()` |
+| Helper functions | Sync reads from arrays | Async DB queries against `source_registry` |
+| Scheduler init | Sync iteration over hardcoded array in constructor | Async `initializeJobs()` loads from DB |
+
 ---
 
 ## 📖 Documentation

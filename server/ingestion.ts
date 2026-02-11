@@ -6,12 +6,12 @@
  * and stores in database with provenance tracking
  */
 
-import { 
-  WorldBankConnector, 
-  HDXConnector, 
-  OCHAFTSConnector, 
+import {
+  WorldBankConnector,
+  HDXConnector,
+  OCHAFTSConnector,
   ReliefWebConnector,
-  DATA_SOURCES,
+  getDataSources,
   type NormalizedSeries,
   type QAReport,
 } from './connectors';
@@ -445,10 +445,11 @@ export async function fetchReliefWebReports(query?: string, limit: number = 20) 
 }
 
 /**
- * Get data source status
+ * Get data source status from DB (source_registry)
  */
-export function getDataSourceStatus() {
-  return DATA_SOURCES.map(source => ({
+export async function getDataSourceStatus() {
+  const sources = await getDataSources();
+  return sources.map(source => ({
     ...source,
     lastRun: source.lastRun?.toISOString(),
     lastSuccess: source.lastSuccess?.toISOString(),

@@ -195,7 +195,7 @@ coverage:
 report-connectors:
 	@echo "📊 Connector Status Report"
 	@echo "========================="
-	@node -e "const c = require('./server/connectors'); console.log(JSON.stringify(c.ENHANCED_CONNECTOR_REGISTRY.map(x => ({id: x.id, name: x.name, status: x.status, priority: x.priority})), null, 2))"
+	@npx tsx -e "import { getAllEnhancedConnectorStatuses } from './server/connectors'; getAllEnhancedConnectorStatuses().then(cs => console.log(JSON.stringify(cs.map(x => ({id: x.id, name: x.name, status: x.status, priority: x.priority})), null, 2)))"
 
 # Show system health
 report-health:

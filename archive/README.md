@@ -50,6 +50,7 @@ Files that contained hardcoded source definitions duplicating the xlsx master.
 | `sourceRegistryImport.ts` | CSV-based source importer (225+) | CSV format replaced by xlsx |
 | `sources-registry.csv` | 225+ source rows in CSV | Replaced by xlsx master |
 | `sources-config.json` | 226 sources in JSON for connector registry | Replaced by DB-backed registry |
+| `hardcoded-connector-arrays.ts` | 3 hardcoded arrays (9+13+8 entries) from connectors/index.ts | Replaced by DB-backed async functions (Phase 2) |
 
 ## Source Data Architecture (After Phase 0 + Phase 1)
 
@@ -84,3 +85,19 @@ Previously, 3 separate tables served as "source" references:
 
 Phase 1 unified all 25 FK references to point to `source_registry.id`.
 Both `sources` and `evidence_sources` are now marked `@deprecated`.
+
+## Phase 2: Clean Connector System (Feb 2026)
+
+Removed 3 hardcoded source arrays from `server/connectors/index.ts`:
+
+| Array | Entries | What It Was | Replacement |
+|-------|---------|-------------|-------------|
+| `DATA_SOURCES` | 9 | Hardcoded source registry (id, name, url, cadence) | `getDataSources()` — async DB query |
+| `ENHANCED_CONNECTOR_REGISTRY` | 13 | Hardcoded connector metadata (name, nameAr, priority, dataTypes) | `getAllEnhancedConnectorStatuses()` — async DB query |
+| `EXTENDED_CONNECTORS` | 8 | Second hardcoded source list (UNHCR, WHO, UNICEF, etc.) | Merged into `getDataSources()` |
+
+All helper functions (`getAllConnectors`, `getActiveConnectorsSorted`, etc.) are now async
+and read from `source_registry` table instead of hardcoded arrays.
+
+Files updated: `server/connectors/index.ts`, `server/ingestion.ts`, `server/scheduler/ingestionScheduler.ts`,
+`server/connectors.test.ts`, `server/routers.ts`, `Makefile`.

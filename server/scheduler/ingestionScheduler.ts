@@ -10,11 +10,11 @@
  * - Comprehensive logging
  */
 
-import { 
-  runAllConnectors, 
+import {
+  runAllConnectors,
   getActiveConnectorsSorted,
-  ENHANCED_CONNECTOR_REGISTRY,
-  type EnhancedConnectorInfo 
+  getAllEnhancedConnectorStatuses,
+  type EnhancedConnectorInfo,
 } from "../connectors";
 import { imfConnector } from "../connectors/IMFConnector";
 import faoConnector from "../connectors/faoConnector";
@@ -169,16 +169,20 @@ class IngestionScheduler {
   private lastDayReset: number = new Date().getDate();
   
   constructor() {
-    this.initializeJobs();
+    // Jobs are initialized asynchronously via initializeJobs()
+    // Call start() or initializeJobs() after construction
   }
-  
+
   /**
-   * Initialize jobs from connector registry
+   * Initialize jobs from source_registry DB table.
+   * Must be called (and awaited) before start().
    */
-  private initializeJobs(): void {
-    for (const connector of ENHANCED_CONNECTOR_REGISTRY) {
+  async initializeJobs(): Promise<void> {
+    const connectors = await getAllEnhancedConnectorStatuses();
+
+    for (const connector of connectors) {
       const cronExpr = DEFAULT_SCHEDULES[connector.id] || "0 2 * * *";
-      
+
       this.jobs.set(connector.id, {
         id: `job-${connector.id}`,
         connectorId: connector.id,
@@ -192,25 +196,30 @@ class IngestionScheduler {
         priority: connector.priority,
       });
     }
-    
-    console.log(`[Scheduler] Initialized ${this.jobs.size} jobs`);
+
+    console.log(`[Scheduler] Initialized ${this.jobs.size} jobs from source_registry`);
   }
   
   /**
-   * Start the scheduler
+   * Start the scheduler (initializes jobs from DB if not yet done)
    */
-  start(): void {
+  async start(): Promise<void> {
     if (this.isRunning) {
       console.log("[Scheduler] Already running");
       return;
     }
-    
+
+    // Initialize jobs from DB if not yet done
+    if (this.jobs.size === 0) {
+      await this.initializeJobs();
+    }
+
     this.isRunning = true;
     this.startTime = new Date();
-    
+
     // Check every minute for jobs to run
     this.checkInterval = setInterval(() => this.checkAndRunJobs(), 60000);
-    
+
     console.log("[Scheduler] Started");
   }
   
@@ -487,8 +496,8 @@ export function getScheduler(): IngestionScheduler {
   return schedulerInstance;
 }
 
-export function startScheduler(): void {
-  getScheduler().start();
+export async function startScheduler(): Promise<void> {
+  await getScheduler().start();
 }
 
 export function stopScheduler(): void {
