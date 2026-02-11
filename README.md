@@ -66,7 +66,7 @@ YETO is not just a data portal—it is an **Economic Intelligence Platform** tha
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                          │
 │   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐                 │
-│   │   47+ Data  │───▶│  Ingestion  │───▶│  Provenance │                 │
+│   │   290+ Data  │───▶│  Ingestion  │───▶│  Provenance │                 │
 │   │   Sources   │    │   Pipeline  │    │   Ledger    │                 │
 │   └─────────────┘    └─────────────┘    └─────────────┘                 │
 │                                                │                         │
