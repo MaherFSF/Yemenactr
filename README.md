@@ -472,6 +472,16 @@ server/connectors/index.ts
 | Helper functions | Sync reads from arrays | Async DB queries against `source_registry` |
 | Scheduler init | Sync iteration over hardcoded array in constructor | Async `initializeJobs()` loads from DB |
 
+### Phase 3: Script Consolidation (Feb 2026)
+
+| What | Before | After |
+|------|--------|-------|
+| Total scripts | ~97 files (.ts + .mjs) in scripts/ + server/ | 64 active scripts (33 archived) |
+| Duplicate scripts | 15 scripts duplicating others | Archived, canonical versions identified |
+| One-off migrations | 6 UI/schema migration scripts | Archived (migrations complete) |
+| Diagnostic scripts | 8 tiny ad-hoc DB check scripts | Archived (use `validate.ts` instead) |
+| Server seed scripts | 4 .mjs duplicates in server/ | Archived (use `server/seed.ts` + `import-registry.ts`) |
+
 ---
 
 ## 📖 Documentation

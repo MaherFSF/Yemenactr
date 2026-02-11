@@ -101,3 +101,87 @@ and read from `source_registry` table instead of hardcoded arrays.
 
 Files updated: `server/connectors/index.ts`, `server/ingestion.ts`, `server/scheduler/ingestionScheduler.ts`,
 `server/connectors.test.ts`, `server/routers.ts`, `Makefile`.
+
+## Phase 3: Script Consolidation (Feb 2026)
+
+Archived 33 scripts that were duplicates, superseded versions, one-off migration tools,
+or tiny diagnostic utilities. Reduced scripts/ from ~97 to 64 active files.
+
+### deprecated-scripts/phase3-duplicates/ (15 scripts)
+
+Scripts superseded by a better or more comprehensive version.
+
+| File | Lines | Superseded By | Why Archived |
+|------|-------|---------------|-------------|
+| `ingest-labor-market-data.ts` | 722 | `ingest-labor-data.ts` | Duplicate labor data ingestion |
+| `populate-comprehensive-data.ts` | 374 | `populate-all-data.ts` | Subset of larger population script |
+| `seed-banks.mjs` | 405 | `seed-all-banks.ts` (1297 lines) | Smaller incomplete version |
+| `seed-data.mjs` | 569 | `seed-complete-database.ts` | Alternative seed, standardize on .ts |
+| `initialize-sources.mjs` | — | `initialize-sources-v2.mjs` | Old version, v2 is current |
+| `insert-2025-reports.mjs` | — | `insert-2025-reports-v2.mjs` | Old version, v2 is current |
+| `run-backfill.ts` | 88 | `comprehensive-backfill.mjs` | Less comprehensive backfill |
+| `run-new-connectors-backfill.ts` | 163 | `comprehensive-backfill.mjs` | Subset of comprehensive backfill |
+| `run-research-ingestion.ts` | 65 | `ingest-research-data.ts` | Thin wrapper, use full script |
+| `test-all-routes.ts` | 120 | `comprehensive-site-audit.ts` | Less complete route testing |
+| `test-connector-run.mjs` | 156 | `run-real-connectors.mjs` | Overlapping connector test |
+| `seed-cby-directives.mjs` | 140 | `seed-cby-directives.ts` | Duplicate .mjs version |
+| `sync-economic-events.ts` | 113 | N/A | One-off sync, not reusable |
+| `add-sources-all.mjs` | 77 | `bulk-add-sources.mjs` (182 lines) | Smaller incomplete version |
+| `create-banking-tables.mjs` | 244 | `seed-all-banks.ts` (1297 lines) | Subset of full banking seed |
+
+### deprecated-scripts/phase3-one-off-migrations/ (6 scripts)
+
+One-time UI/schema migration scripts. Work is done, no longer needed.
+
+| File | What It Did | Why Archived |
+|------|-------------|-------------|
+| `add-imports.mjs` | Added SourcesUsedPanel imports to sector pages | One-time migration complete |
+| `fix-closing-divs.mjs` | Fixed HTML closing divs in sector pages | One-time fix complete |
+| `add-classification-columns.mjs` | Added classification columns to schema | One-time schema migration |
+| `batch-update-sectors.ts` | Updated sector background configs | One-time UI migration |
+| `fix-all-sectors.mjs` | Bulk fix sector page structure | One-time fix complete |
+| `update-sector-backgrounds.ts` | Updated sector background images | One-time UI migration |
+
+### deprecated-scripts/phase3-diagnostics/ (8 scripts)
+
+Small diagnostic scripts. Functionality covered by `scripts/validate.ts` and
+`scripts/comprehensive-site-audit.ts`.
+
+| File | Lines | What It Did |
+|------|-------|-------------|
+| `check-columns.ts` | 10 | `SHOW COLUMNS` on single table |
+| `check-db-counts.ts` | 32 | Row counts on multiple tables |
+| `check-research-db.ts` | 55 | Research publication data checks |
+| `test-raw-query.mjs` | — | Test raw SQL execution |
+| `db-check.mjs` | — | Missing tables + row counts |
+| `verify-data-counts.mjs` | 88 | Data count expectations |
+| `full-audit.mjs` | 40 | Generic DB audit |
+| `check_entities.mjs` | 26 | Entity table query (was in project root) |
+
+### deprecated-scripts/phase3-server-seeds/ (4 scripts)
+
+Server-level seed scripts superseded by canonical `server/seed.ts` and `scripts/import-registry.ts`.
+
+| File | Lines | Why Archived |
+|------|-------|-------------|
+| `seed.mjs` | 521 | Use `server/seed.ts` (canonical TypeScript version) |
+| `seed-source-registry.mjs` | 445 | Use `scripts/import-registry.ts` |
+| `seed-source-metadata.mjs` | 401 | Functionality in `import-registry.ts` |
+| `seed-yemen-sources-comprehensive.mjs` | 1228 | Use `scripts/seed-expanded-sources.mjs` |
+
+### Canonical Scripts (Post Phase 3)
+
+After cleanup, these are the canonical scripts for key operations:
+
+| Operation | Canonical Script |
+|-----------|-----------------|
+| Import source registry from xlsx | `scripts/import-registry.ts` |
+| Seed fresh database | `server/seed.ts` + `scripts/seed-complete-database.ts` |
+| Seed banking data | `scripts/seed-all-banks.ts` |
+| Seed indicators | `scripts/seed-indicators.ts` |
+| Refresh live API data | `scripts/refresh-all-data.ts` |
+| Historical backfill | `scripts/comprehensive-backfill.mjs` |
+| Sector-specific ingestion | `scripts/ingest-{sector}-data.ts` |
+| Pre-deployment validation | `scripts/validate.ts` |
+| Release verification | `scripts/release-gate.mjs` |
+| CI/CD seed | `scripts/seed-ci.mjs` |
