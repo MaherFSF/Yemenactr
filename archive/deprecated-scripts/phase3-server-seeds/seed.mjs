@@ -48,6 +48,19 @@ async function seed() {
     }
     console.log(`  ✓ Seeded ${sourcesData.length} sources into source_registry`);
 
+    // Look up actual numeric IDs for the seeded sources
+    const sourceIdMap = {};
+    for (const source of sourcesData) {
+      const [rows] = await connection.execute(
+        'SELECT id FROM source_registry WHERE sourceId = ?',
+        [source.sourceId]
+      );
+      if (rows.length > 0) {
+        sourceIdMap[source.sourceId] = rows[0].id;
+      }
+    }
+    console.log(`  ✓ Resolved ${Object.keys(sourceIdMap).length} source IDs`);
+
     // ============================================================================
     // SEED INDICATORS
     // ============================================================================
@@ -201,7 +214,7 @@ async function seed() {
         date: new Date(data.date),
         value: data.value.toString(),
         confidenceRating: "A",
-        sourceId: 1,
+        sourceId: sourceIdMap["SEED-CBY-ADEN"],
       }).onDuplicateKeyUpdate({
         set: { value: data.value.toString() },
       });
@@ -230,7 +243,7 @@ async function seed() {
         date: new Date(data.date),
         value: data.value.toString(),
         confidenceRating: "B",
-        sourceId: 2,
+        sourceId: sourceIdMap["SEED-CBY-SANAA"],
       }).onDuplicateKeyUpdate({
         set: { value: data.value.toString() },
       });
@@ -259,7 +272,7 @@ async function seed() {
         date: new Date(data.date),
         value: data.value.toString(),
         confidenceRating: "A",
-        sourceId: 4,
+        sourceId: sourceIdMap["SEED-WFP"],
       }).onDuplicateKeyUpdate({
         set: { value: data.value.toString() },
       });
@@ -288,7 +301,7 @@ async function seed() {
         date: new Date(data.date),
         value: data.value.toString(),
         confidenceRating: "A",
-        sourceId: 4,
+        sourceId: sourceIdMap["SEED-WFP"],
       }).onDuplicateKeyUpdate({
         set: { value: data.value.toString() },
       });

@@ -205,17 +205,17 @@ async function main() {
   
   try {
     await db.insert(sourceRegistry).values({
-      id: sourceId,
+      sourceId: sourceId,
       name: 'Labor Market Composite',
-      nameAr: 'مصادر سوق العمل المركبة',
-      category: 'international_organization',
-      url: 'https://data.worldbank.org/indicator',
+      altName: 'مصادر سوق العمل المركبة',
+      webUrl: 'https://data.worldbank.org/indicator',
       description: 'Composite labor market data from World Bank, ILO, FRED, and UN agencies',
-      descriptionAr: 'بيانات سوق العمل المركبة من البنك الدولي ومنظمة العمل الدولية وFRED ووكالات الأمم المتحدة',
       tier: 'T1',
-      reliabilityScore: 80,
-      accessMethod: 'api',
-      updateFrequency: 'annual',
+      confidenceRating: 'B',
+      accessType: 'API',
+      updateFrequency: 'ANNUAL',
+      status: 'ACTIVE',
+      sectorCategory: 'labor_market',
     }).onDuplicateKeyUpdate({
       set: { updatedAt: new Date() }
     });

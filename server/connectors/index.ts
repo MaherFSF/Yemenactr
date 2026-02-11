@@ -1208,7 +1208,10 @@ function mapRowToEnhancedConnectorInfo(row: any): EnhancedConnectorInfo {
  */
 export async function getAllEnhancedConnectorStatuses(): Promise<EnhancedConnectorInfo[]> {
   const db = await getDb();
-  if (!db) return [];
+  if (!db) {
+    console.warn("[Connectors] WARNING: Database not available (DATABASE_URL may be unset or DB unreachable). Returning empty connector list.");
+    return [];
+  }
   const rows = await db.select().from(sourceRegistry);
   return rows.map(mapRowToEnhancedConnectorInfo);
 }
