@@ -14,7 +14,7 @@
  */
 
 import { getDb } from "../db";
-import { timeSeries, provenanceLog, sources } from "../../drizzle/schema";
+import { timeSeries, provenanceLog, sourceRegistry } from "../../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 
 // ============================================
@@ -251,17 +251,22 @@ export async function ingestWHOData(
   try {
     // Ensure WHO data source exists
     let sourceId: number;
-    const existingSources = await db.select().from(sources).where(eq(sources.publisher, "WHO")).limit(1);
-    
+    const existingSources = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, "WHO")).limit(1);
+
     if (existingSources.length > 0) {
       sourceId = existingSources[0].id;
     } else {
-      const [newSource] = await db.insert(sources).values({
-        publisher: "WHO",
-        url: "https://www.who.int/data/gho",
+      const [newSource] = await db.insert(sourceRegistry).values({
+        sourceId: "CONN-WHO",
+        name: "WHO",
+        publisher: "World Health Organization",
+        tier: "T1",
+        status: "ACTIVE",
+        accessType: "API",
+        updateFrequency: "ANNUAL",
+        webUrl: "https://www.who.int/data/gho",
         license: "CC BY-NC-SA 3.0 IGO",
-        retrievalDate: new Date(),
-        notes: "World Health Organization - Global Health Observatory",
+        description: "World Health Organization - Global Health Observatory",
       });
       sourceId = newSource.insertId;
     }

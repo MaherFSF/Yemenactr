@@ -4,7 +4,7 @@
  */
 
 import { getDb } from '../server/db';
-import { timeSeries, sources, indicators } from '../drizzle/schema';
+import { timeSeries, sourceRegistry, indicators } from '../drizzle/schema';
 import { eq, sql } from 'drizzle-orm';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -49,23 +49,23 @@ async function getOrCreateSource(db: any, publisher: string, url?: string): Prom
   }
 
   // Check if source exists
-  const existing = await db.select().from(sources).where(eq(sources.publisher, publisher)).limit(1);
-  
+  const existing = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, publisher)).limit(1);
+
   if (existing.length > 0) {
     sourceMapping[publisher] = existing[0].id;
     return existing[0].id;
   }
 
   // Create new source
-  const result = await db.insert(sources).values({
-    publisher,
+  const result = await db.insert(sourceRegistry).values({
+    name: publisher,
     url: url || null,
     license: 'unknown',
     retrievalDate: new Date(),
     notes: `Infrastructure data source - ${publisher}`
   });
 
-  const newSource = await db.select().from(sources).where(eq(sources.publisher, publisher)).limit(1);
+  const newSource = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, publisher)).limit(1);
   sourceMapping[publisher] = newSource[0].id;
   return newSource[0].id;
 }

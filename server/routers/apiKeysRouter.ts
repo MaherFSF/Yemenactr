@@ -6,11 +6,11 @@ import { z } from 'zod';
 import { adminProcedure, router } from '../_core/trpc';
 import { eq, and, desc } from 'drizzle-orm';
 import { getDb } from '../db';
-import { 
-  sourceCredentials, 
-  evidenceSources, 
-  sourceContacts, 
-  apiRegistrationInstructions 
+import {
+  sourceCredentials,
+  sourceRegistry,
+  sourceContacts,
+  apiRegistrationInstructions
 } from '../../drizzle/schema';
 
 export const apiKeysRouter = router({
@@ -26,7 +26,7 @@ export const apiKeysRouter = router({
         .select({
           id: sourceCredentials.id,
           sourceId: sourceCredentials.sourceId,
-          sourceName: evidenceSources.name,
+          sourceName: sourceRegistry.name,
           credentialType: sourceCredentials.credentialType,
           isActive: sourceCredentials.isActive,
           validationStatus: sourceCredentials.validationStatus,
@@ -40,7 +40,7 @@ export const apiKeysRouter = router({
           updatedAt: sourceCredentials.updatedAt,
         })
         .from(sourceCredentials)
-        .leftJoin(evidenceSources, eq(sourceCredentials.sourceId, evidenceSources.id))
+        .leftJoin(sourceRegistry, eq(sourceCredentials.sourceId, sourceRegistry.id))
         .orderBy(desc(sourceCredentials.createdAt));
 
       return creds;
@@ -57,17 +57,17 @@ export const apiKeysRouter = router({
       // Get all sources with instructions
       const sourcesWithInstructions = await db
         .select({
-          id: evidenceSources.id,
-          name: evidenceSources.name,
-          nameAr: evidenceSources.nameAr,
-          acronym: evidenceSources.acronym,
-          category: evidenceSources.category,
-          baseUrl: evidenceSources.baseUrl,
-          apiEndpoint: evidenceSources.apiEndpoint,
-          apiType: evidenceSources.apiType,
+          id: sourceRegistry.id,
+          name: sourceRegistry.name,
+          nameAr: sourceRegistry.altName,
+          acronym: sourceRegistry.sourceId,
+          category: sourceRegistry.sectorCategory,
+          baseUrl: sourceRegistry.webUrl,
+          apiEndpoint: sourceRegistry.apiUrl,
+          apiType: sourceRegistry.accessType,
         })
-        .from(evidenceSources)
-        .where(eq(evidenceSources.isWhitelisted, true));
+        .from(sourceRegistry)
+        .where(eq(sourceRegistry.status, 'ACTIVE'));
 
       // Get contacts and instructions for each source
       const result = await Promise.all(
@@ -112,8 +112,8 @@ export const apiKeysRouter = router({
 
       const source = await db
         .select()
-        .from(evidenceSources)
-        .where(eq(evidenceSources.id, input.sourceId))
+        .from(sourceRegistry)
+        .where(eq(sourceRegistry.id, input.sourceId))
         .limit(1);
 
       if (!source[0]) {
@@ -279,11 +279,11 @@ export const apiKeysRouter = router({
           apiKey: sourceCredentials.apiKey,
           username: sourceCredentials.username,
           password: sourceCredentials.password,
-          sourceName: evidenceSources.name,
-          apiEndpoint: evidenceSources.apiEndpoint,
+          sourceName: sourceRegistry.name,
+          apiEndpoint: sourceRegistry.apiUrl,
         })
         .from(sourceCredentials)
-        .leftJoin(evidenceSources, eq(sourceCredentials.sourceId, evidenceSources.id))
+        .leftJoin(sourceRegistry, eq(sourceCredentials.sourceId, sourceRegistry.id))
         .where(eq(sourceCredentials.id, input.credentialId))
         .limit(1);
 

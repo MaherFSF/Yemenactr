@@ -51,7 +51,7 @@ Files that contained hardcoded source definitions duplicating the xlsx master.
 | `sources-registry.csv` | 225+ source rows in CSV | Replaced by xlsx master |
 | `sources-config.json` | 226 sources in JSON for connector registry | Replaced by DB-backed registry |
 
-## Source Data Architecture (After Cleanup)
+## Source Data Architecture (After Phase 0 + Phase 1)
 
 ```
 SINGLE SOURCE OF TRUTH:
@@ -64,7 +64,23 @@ SINGLE SOURCE OF TRUTH:
   source_registry table  (292+ sources in MySQL/TiDB)
        │
        ├──▶ server/routers/sourceRegistry.ts  (tRPC API)
-       ├──▶ server/connectors/  (read config from DB)
+       ├──▶ server/connectors/  (read config from DB, query sourceRegistry)
        ├──▶ server/pipeline/  (read config from DB)
+       ├──▶ server/db.ts  (getSourceById, getAllSources → sourceRegistry)
+       ├──▶ server/seed.ts  (seeds into sourceRegistry with SEED-* IDs)
        └──▶ client/src/pages/  (display via tRPC)
+
+  DEPRECATED TABLES (Phase 1 — all FKs migrated):
+       sources (7 rows) ──── @deprecated, FKs → sourceRegistry
+       evidence_sources ──── @deprecated, FKs → sourceRegistry
 ```
+
+## Phase 1: Source Table Unification (Feb 2026)
+
+Previously, 3 separate tables served as "source" references:
+- `sources` (7 rows) — used by 20 FK columns across datasets, timeSeries, etc.
+- `evidence_sources` — used by 5 FK columns in evidence/truth layer
+- `source_registry` (292+ rows) — the canonical registry
+
+Phase 1 unified all 25 FK references to point to `source_registry.id`.
+Both `sources` and `evidence_sources` are now marked `@deprecated`.

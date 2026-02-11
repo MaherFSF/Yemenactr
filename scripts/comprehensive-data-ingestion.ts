@@ -15,7 +15,7 @@
  */
 
 import { getDb } from '../server/db';
-import { timeSeries, sources, indicators } from '../drizzle/schema';
+import { timeSeries, sourceRegistry, indicators } from '../drizzle/schema';
 import { eq, sql } from 'drizzle-orm';
 
 // ============================================================================
@@ -49,18 +49,18 @@ function delay(ms: number): Promise<void> {
 }
 
 async function ensureSource(db: any, name: string, url: string): Promise<number> {
-  const existing = await db.select().from(sources).where(eq(sources.publisher, name)).limit(1);
+  const existing = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, name)).limit(1);
   if (existing.length > 0) return existing[0].id;
-  
-  const result = await db.insert(sources).values({
-    publisher: name,
+
+  const result = await db.insert(sourceRegistry).values({
+    name: name,
     url,
     license: 'Open Data',
     retrievalDate: new Date(),
     notes: `Data source for ${name}`,
   });
-  
-  const newSource = await db.select().from(sources).where(eq(sources.publisher, name)).limit(1);
+
+  const newSource = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, name)).limit(1);
   return newSource[0].id;
 }
 

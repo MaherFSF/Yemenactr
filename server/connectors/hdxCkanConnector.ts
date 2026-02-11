@@ -10,7 +10,7 @@
  */
 
 import { getDb } from "../db";
-import { timeSeries, sources } from "../../drizzle/schema";
+import { timeSeries, sourceRegistry } from "../../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 
 // ============================================
@@ -75,22 +75,27 @@ function delay(ms: number): Promise<void> {
 async function ensureSource(): Promise<number> {
   const db = await getDb();
   if (!db) throw new Error('Database not available');
-  
-  const existing = await db.select().from(sources).where(eq(sources.publisher, SOURCE_NAME)).limit(1);
-  
+
+  const existing = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, SOURCE_NAME)).limit(1);
+
   if (existing.length > 0) {
     return existing[0].id;
   }
-  
-  await db.insert(sources).values({
-    publisher: SOURCE_NAME,
-    url: 'https://data.humdata.org/',
+
+  await db.insert(sourceRegistry).values({
+    sourceId: 'CONN-HDX',
+    name: SOURCE_NAME,
+    publisher: 'OCHA / HDX',
+    tier: 'T1',
+    status: 'ACTIVE',
+    accessType: 'API',
+    updateFrequency: 'DAILY',
+    webUrl: 'https://data.humdata.org/',
     license: 'Various (see individual datasets)',
-    retrievalDate: new Date(),
-    notes: 'Humanitarian Data Exchange - open platform for sharing humanitarian data including food prices, displacement, and population data',
+    description: 'Humanitarian Data Exchange - open platform for sharing humanitarian data including food prices, displacement, and population data',
   });
-  
-  const newSource = await db.select().from(sources).where(eq(sources.publisher, SOURCE_NAME)).limit(1);
+
+  const newSource = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, SOURCE_NAME)).limit(1);
   return newSource[0].id;
 }
 

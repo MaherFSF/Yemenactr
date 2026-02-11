@@ -12,10 +12,10 @@
 
 import { getDb } from "../db";
 import { 
-  updateItems, 
+  updateItems,
   updateEvidenceBundles,
   updateNotifications,
-  sources,
+  sourceRegistry,
   evidencePacks,
   dataContradictions
 } from "../../drizzle/schema";
@@ -213,10 +213,10 @@ async function runSourceGate(db: any, updateItem: any): Promise<GateResult> {
   
   // Check if source exists in registry
   const [source] = await db.select()
-    .from(sources)
-    .where(eq(sources.id, updateItem.sourceId))
+    .from(sourceRegistry)
+    .where(eq(sourceRegistry.id, updateItem.sourceId))
     .limit(1);
-  
+
   if (!source) {
     return {
       gate,
@@ -225,13 +225,13 @@ async function runSourceGate(db: any, updateItem: any): Promise<GateResult> {
       reason: "Source ID not found in registry",
     };
   }
-  
+
   return {
     gate,
     passed: true,
     score: 100,
-    reason: `Source verified: ${source.publisher}`,
-    details: { sourceId: source.id, publisher: source.publisher },
+    reason: `Source verified: ${source.name}`,
+    details: { sourceId: source.id, publisher: source.name },
   };
 }
 

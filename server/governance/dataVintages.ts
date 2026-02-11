@@ -9,7 +9,7 @@
  */
 
 import { getDb } from '../db';
-import { dataVintages, sources } from '../../drizzle/schema';
+import { dataVintages, sourceRegistry } from '../../drizzle/schema';
 import { eq, desc, and, gte, lte } from 'drizzle-orm';
 
 // Types for data vintages
@@ -89,8 +89,8 @@ export class DataVintagesService {
     // Get source name if applicable
     let sourceName: string | undefined;
     if (input.sourceId) {
-      const sourceResults = await db.select().from(sources).where(eq(sources.id, input.sourceId));
-      sourceName = sourceResults[0]?.publisher;
+      const sourceResults = await db.select().from(sourceRegistry).where(eq(sourceRegistry.id, input.sourceId));
+      sourceName = sourceResults[0]?.name;
     }
     
     return {
@@ -131,8 +131,8 @@ export class DataVintagesService {
     for (const row of results) {
       let sourceName: string | undefined;
       if (row.sourceId) {
-        const sourceResults = await db.select().from(sources).where(eq(sources.id, row.sourceId));
-        sourceName = sourceResults[0]?.publisher;
+        const sourceResults = await db.select().from(sourceRegistry).where(eq(sourceRegistry.id, row.sourceId));
+        sourceName = sourceResults[0]?.name;
       }
       
       vintages.push({
@@ -182,8 +182,8 @@ export class DataVintagesService {
     const row = results[0];
     let sourceName: string | undefined;
     if (row.sourceId) {
-      const sourceResults = await db.select().from(sources).where(eq(sources.id, row.sourceId));
-      sourceName = sourceResults[0]?.publisher;
+      const sourceResults = await db.select().from(sourceRegistry).where(eq(sourceRegistry.id, row.sourceId));
+      sourceName = sourceResults[0]?.name;
     }
     
     return {

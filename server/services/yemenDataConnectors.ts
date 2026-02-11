@@ -10,7 +10,7 @@
  */
 
 import { getDb } from '../db';
-import { sources, timeSeries, documents, economicEvents } from '../../drizzle/schema';
+import { sourceRegistry, timeSeries, documents, economicEvents } from '../../drizzle/schema';
 import { eq } from 'drizzle-orm';
 
 // ============================================================================
@@ -343,17 +343,17 @@ export async function syncYMNData(): Promise<{ inserted: number; errors: string[
   // Insert MFI sector statistics as time series
   try {
     // First ensure we have a source for YMN
-    const [existingSource] = await db.select().from(sources).where(eq(sources.publisher, 'Yemen Microfinance Network')).limit(1);
-    
+    const [existingSource] = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, 'Yemen Microfinance Network')).limit(1);
+
     let sourceId: number;
     if (existingSource) {
       sourceId = existingSource.id;
     } else {
-      const result = await db.insert(sources).values({
-        publisher: 'Yemen Microfinance Network',
-        url: 'https://www.yemennetwork.org',
+      const result = await db.insert(sourceRegistry).values({
+        sourceId: 'SRC-YMN',
+        name: 'Yemen Microfinance Network',
+        webUrl: 'https://www.yemennetwork.org',
         license: 'public',
-        retrievalDate: new Date(),
         notes: 'Yemen Microfinance Network - sector statistics and MFI data'
       });
       sourceId = Number(result[0].insertId);

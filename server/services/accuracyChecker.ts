@@ -11,7 +11,7 @@
  */
 
 import { getDb } from '../db';
-import { timeSeries, sources, indicators, economicEvents, documents } from '../../drizzle/schema';
+import { timeSeries, sourceRegistry, indicators, economicEvents, documents } from '../../drizzle/schema';
 import { eq, desc, gte, lte, and, sql, count, avg, min, max } from 'drizzle-orm';
 
 export type CheckStatus = 'pass' | 'warning' | 'fail' | 'skipped';
@@ -199,7 +199,7 @@ async function checkSourceReliability(db: any): Promise<AccuracyCheck> {
 
   try {
     // Count sources
-    const sourcesResult = await db.select({ count: count() }).from(sources);
+    const sourcesResult = await db.select({ count: count() }).from(sourceRegistry);
     const sourceCount = sourcesResult[0]?.count || 0;
 
     // Check confidence ratings distribution
@@ -624,7 +624,7 @@ async function getDataStats(db: any) {
   try {
     const recordCount = await db.select({ count: count() }).from(timeSeries);
     const indicatorCount = await db.selectDistinct({ code: timeSeries.indicatorCode }).from(timeSeries);
-    const sourceCount = await db.select({ count: count() }).from(sources);
+    const sourceCount = await db.select({ count: count() }).from(sourceRegistry);
     const dateRange = await db
       .select({
         minDate: min(timeSeries.date),

@@ -5,7 +5,7 @@
  */
 
 import { getDb } from '../server/db';
-import { timeSeries, indicators, sources } from '../drizzle/schema';
+import { timeSeries, indicators, sourceRegistry } from '../drizzle/schema';
 import { eq } from 'drizzle-orm';
 
 interface LaborDataPoint {
@@ -204,7 +204,7 @@ async function main() {
   const sourceId = 'labor_market_composite';
   
   try {
-    await db.insert(sources).values({
+    await db.insert(sourceRegistry).values({
       id: sourceId,
       name: 'Labor Market Composite',
       nameAr: 'مصادر سوق العمل المركبة',

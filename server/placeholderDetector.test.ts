@@ -10,13 +10,13 @@
 
 import { describe, it, expect } from 'vitest';
 import { getDb } from './db';
-import { 
-  timeSeries, 
-  researchPublications, 
+import {
+  timeSeries,
+  researchPublications,
   economicEvents,
   glossaryTerms,
   commercialBanks,
-  sources
+  sourceRegistry
 } from '../drizzle/schema';
 import { sql } from 'drizzle-orm';
 
@@ -268,21 +268,21 @@ describe('Evidence Pack Presence Check', () => {
     expect(percentage).toBe(100);
   });
 
-  it('should have valid sources in sources table', async () => {
+  it('should have valid sources in source_registry table', async () => {
     const db = await getDb();
     const records = await db.select({
-      publisher: sources.publisher,
-      url: sources.url,
-    }).from(sources).limit(100);
+      name: sourceRegistry.name,
+      webUrl: sourceRegistry.webUrl,
+    }).from(sourceRegistry).limit(100);
 
     for (const record of records) {
-      // Publisher should not be empty
-      expect(record.publisher).toBeTruthy();
-      expect(record.publisher.length).toBeGreaterThan(2);
+      // Name should not be empty
+      expect(record.name).toBeTruthy();
+      expect(record.name.length).toBeGreaterThan(2);
       
       // Check for placeholders
       for (const pattern of PLACEHOLDER_PATTERNS) {
-        expect(record.publisher).not.toMatch(pattern);
+        expect(record.name).not.toMatch(pattern);
       }
     }
   });

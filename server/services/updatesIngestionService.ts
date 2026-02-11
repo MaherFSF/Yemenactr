@@ -14,7 +14,7 @@ import {
   updateEvidenceBundles, 
   updateSignals,
   updateIngestionCheckpoints,
-  sources,
+  sourceRegistry,
   evidencePacks
 } from "../../drizzle/schema";
 import { eq, and, desc, sql } from "drizzle-orm";
@@ -404,9 +404,9 @@ export async function getApprovedUpdateSources() {
   const db = await getDb();
   if (!db) return [];
   
-  // Sources table doesn't have status field, get all sources
+  // sourceRegistry table - get all sources
   const approvedSources = await db.select()
-    .from(sources);
+    .from(sourceRegistry);
   
   return approvedSources;
 }
@@ -448,7 +448,7 @@ export async function runDailyUpdatesIngestion(): Promise<{
     // For now, we simulate the ingestion
     const sourceResult = {
       sourceId: source.id,
-      sourceName: source.publisher,
+      sourceName: source.name,
       ingested: 0,
       duplicates: 0,
       errors: 0,

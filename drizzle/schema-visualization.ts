@@ -9,7 +9,7 @@
  */
 
 import { mysqlTable, int, varchar, text, timestamp, json, boolean, mysqlEnum, decimal, index, unique } from "drizzle-orm/mysql-core";
-import { users, sources, indicators, economicEvents } from "./schema";
+import { users, sourceRegistry, indicators, economicEvents } from "./schema";
 
 // ============================================================================
 // VISUALIZATION ENGINE

@@ -1,6 +1,8 @@
 /**
- * YETO Database Seed Script
- * Seeds the database with sample Yemen economic data for demonstration
+ * YETO Database Seed Script (Legacy MJS version)
+ *
+ * @deprecated Use `npx tsx server/seed.ts` instead.
+ * This legacy .mjs seed uses schema.sourceRegistry (unified source table).
  * Run with: node server/seed.mjs
  */
 
@@ -27,87 +29,24 @@ async function seed() {
     // ============================================================================
     console.log("📚 Seeding sources...");
     
+    // Sources are now seeded into the canonical sourceRegistry table
     const sourcesData = [
-      {
-        nameEn: "Central Bank of Yemen - Aden",
-        nameAr: "البنك المركزي اليمني - عدن",
-        type: "government",
-        url: "https://cby-ye.com",
-        reliabilityScore: 85,
-        regimeAffiliation: "aden_irg",
-        isActive: true,
-      },
-      {
-        nameEn: "Central Bank of Yemen - Sana'a",
-        nameAr: "البنك المركزي اليمني - صنعاء",
-        type: "government",
-        url: null,
-        reliabilityScore: 70,
-        regimeAffiliation: "sanaa_defacto",
-        isActive: true,
-      },
-      {
-        nameEn: "World Bank",
-        nameAr: "البنك الدولي",
-        type: "international_org",
-        url: "https://www.worldbank.org/en/country/yemen",
-        reliabilityScore: 95,
-        regimeAffiliation: null,
-        isActive: true,
-      },
-      {
-        nameEn: "World Food Programme",
-        nameAr: "برنامج الغذاء العالمي",
-        type: "international_org",
-        url: "https://www.wfp.org/countries/yemen",
-        reliabilityScore: 95,
-        regimeAffiliation: null,
-        isActive: true,
-      },
-      {
-        nameEn: "IMF",
-        nameAr: "صندوق النقد الدولي",
-        type: "international_org",
-        url: "https://www.imf.org/en/Countries/YEM",
-        reliabilityScore: 95,
-        regimeAffiliation: null,
-        isActive: true,
-      },
-      {
-        nameEn: "OCHA Yemen",
-        nameAr: "مكتب تنسيق الشؤون الإنسانية - اليمن",
-        type: "international_org",
-        url: "https://www.unocha.org/yemen",
-        reliabilityScore: 90,
-        regimeAffiliation: null,
-        isActive: true,
-      },
-      {
-        nameEn: "Sana'a Center for Strategic Studies",
-        nameAr: "مركز صنعاء للدراسات الاستراتيجية",
-        type: "research_institution",
-        url: "https://sanaacenter.org",
-        reliabilityScore: 85,
-        regimeAffiliation: null,
-        isActive: true,
-      },
-      {
-        nameEn: "IPC Global Platform",
-        nameAr: "منصة التصنيف المرحلي المتكامل العالمية",
-        type: "international_org",
-        url: "https://www.ipcinfo.org",
-        reliabilityScore: 90,
-        regimeAffiliation: null,
-        isActive: true,
-      },
+      { sourceId: "SEED-CBY-ADEN", name: "Central Bank of Yemen - Aden", publisher: "Central Bank of Yemen - Aden", webUrl: "https://cby-ye.com", tier: "T0", status: "ACTIVE", accessType: "WEB", updateFrequency: "MONTHLY" },
+      { sourceId: "SEED-CBY-SANAA", name: "Central Bank of Yemen - Sana'a", publisher: "Central Bank of Yemen - Sana'a", tier: "T0", status: "ACTIVE", accessType: "WEB", updateFrequency: "MONTHLY" },
+      { sourceId: "SEED-WORLD-BANK", name: "World Bank", publisher: "World Bank", webUrl: "https://www.worldbank.org/en/country/yemen", tier: "T1", status: "ACTIVE", accessType: "API", updateFrequency: "QUARTERLY" },
+      { sourceId: "SEED-WFP", name: "World Food Programme", publisher: "WFP", webUrl: "https://www.wfp.org/countries/yemen", tier: "T1", status: "ACTIVE", accessType: "API", updateFrequency: "MONTHLY" },
+      { sourceId: "SEED-IMF", name: "IMF", publisher: "IMF", webUrl: "https://www.imf.org/en/Countries/YEM", tier: "T1", status: "ACTIVE", accessType: "API", updateFrequency: "QUARTERLY" },
+      { sourceId: "SEED-OCHA", name: "OCHA Yemen", publisher: "UN OCHA", webUrl: "https://www.unocha.org/yemen", tier: "T1", status: "ACTIVE", accessType: "API", updateFrequency: "WEEKLY" },
+      { sourceId: "SEED-SANAA-CENTER", name: "Sana'a Center for Strategic Studies", publisher: "Sana'a Center", webUrl: "https://sanaacenter.org", tier: "T2", status: "ACTIVE", accessType: "WEB", updateFrequency: "IRREGULAR" },
+      { sourceId: "SEED-IPC", name: "IPC Global Platform", publisher: "IPC", webUrl: "https://www.ipcinfo.org", tier: "T1", status: "ACTIVE", accessType: "API", updateFrequency: "QUARTERLY" },
     ];
 
     for (const source of sourcesData) {
-      await db.insert(schema.sources).values(source).onDuplicateKeyUpdate({
-        set: { nameEn: source.nameEn },
+      await db.insert(schema.sourceRegistry).values(source).onDuplicateKeyUpdate({
+        set: { name: source.name },
       });
     }
-    console.log(`  ✓ Seeded ${sourcesData.length} sources`);
+    console.log(`  ✓ Seeded ${sourcesData.length} sources into source_registry`);
 
     // ============================================================================
     // SEED INDICATORS

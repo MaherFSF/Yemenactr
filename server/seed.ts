@@ -1,109 +1,184 @@
 /**
  * YETO Database Seed Script
- * Seeds the database with sample Yemen economic data for demonstration
+ * Seeds the database with sample Yemen economic data for demonstration.
+ *
+ * Sources are seeded into the canonical `source_registry` table.
  * Run with: npx tsx server/seed.ts
+ *
+ * NOTE: For full source registry population (292+ sources), run:
+ *   npx tsx scripts/import-registry.ts
  */
 
 import { getDb } from "./db";
 import {
-  sources,
+  sourceRegistry,
   timeSeries,
   economicEvents,
   glossaryTerms,
   stakeholders,
 } from "../drizzle/schema";
+import { eq } from "drizzle-orm";
 
 async function seed() {
-  console.log("🌱 Starting database seed...\n");
+  console.log("Starting database seed...\n");
 
   const db = await getDb();
   if (!db) {
-    console.error("❌ Could not connect to database. Make sure DATABASE_URL is set.");
+    console.error("Could not connect to database. Make sure DATABASE_URL is set.");
     process.exit(1);
   }
 
   try {
     // ============================================================================
-    // SEED SOURCES
+    // SEED SOURCES (into sourceRegistry — the canonical source table)
     // ============================================================================
-    console.log("📚 Seeding sources...");
-    
-    const sourcesData = [
+    console.log("Seeding sources into source_registry...");
+
+    const seedSources = [
       {
+        sourceId: "SEED-CBY-ADEN",
+        name: "Central Bank of Yemen - Aden",
         publisher: "Central Bank of Yemen - Aden",
-        url: "https://cby-ye.com",
+        webUrl: "https://cby-ye.com",
         license: "Government Public Data",
-        retrievalDate: new Date(),
+        tier: "T0" as const,
+        status: "ACTIVE" as const,
+        accessType: "WEB" as const,
+        updateFrequency: "MONTHLY" as const,
+        regimeApplicability: "ADEN_IRG" as const,
+        description: "Official IRG central bank data",
         notes: "Official IRG central bank data",
       },
       {
+        sourceId: "SEED-CBY-SANAA",
+        name: "Central Bank of Yemen - Sana'a",
         publisher: "Central Bank of Yemen - Sana'a",
-        url: null,
         license: "Government Public Data",
-        retrievalDate: new Date(),
+        tier: "T0" as const,
+        status: "ACTIVE" as const,
+        accessType: "WEB" as const,
+        updateFrequency: "MONTHLY" as const,
+        regimeApplicability: "SANAA_DFA" as const,
+        description: "DFA central bank data",
         notes: "DFA central bank data",
       },
       {
+        sourceId: "SEED-WORLD-BANK",
+        name: "World Bank",
         publisher: "World Bank",
-        url: "https://data.worldbank.org/country/yemen",
+        webUrl: "https://data.worldbank.org/country/yemen",
         license: "CC-BY-4.0",
-        retrievalDate: new Date(),
+        tier: "T1" as const,
+        status: "ACTIVE" as const,
+        accessType: "API" as const,
+        updateFrequency: "QUARTERLY" as const,
+        regimeApplicability: "GLOBAL" as const,
+        description: "International development data",
         notes: "International development data",
       },
       {
+        sourceId: "SEED-UN-OCHA",
+        name: "UN OCHA",
         publisher: "UN OCHA",
-        url: "https://unocha.org/yemen",
+        webUrl: "https://unocha.org/yemen",
         license: "CC-BY-3.0-IGO",
-        retrievalDate: new Date(),
+        tier: "T1" as const,
+        status: "ACTIVE" as const,
+        accessType: "API" as const,
+        updateFrequency: "WEEKLY" as const,
+        regimeApplicability: "BOTH" as const,
+        description: "Humanitarian coordination data",
         notes: "Humanitarian coordination data",
       },
       {
-        publisher: "WFP - World Food Programme",
-        url: "https://www.wfp.org/countries/yemen",
+        sourceId: "SEED-WFP",
+        name: "WFP - World Food Programme",
+        publisher: "WFP",
+        webUrl: "https://www.wfp.org/countries/yemen",
         license: "CC-BY-4.0",
-        retrievalDate: new Date(),
+        tier: "T1" as const,
+        status: "ACTIVE" as const,
+        accessType: "API" as const,
+        updateFrequency: "MONTHLY" as const,
+        regimeApplicability: "BOTH" as const,
+        description: "Food security and market data",
         notes: "Food security and market data",
       },
       {
+        sourceId: "SEED-SANAA-CENTER",
+        name: "Sana'a Center for Strategic Studies",
         publisher: "Sana'a Center for Strategic Studies",
-        url: "https://sanaacenter.org",
+        webUrl: "https://sanaacenter.org",
         license: "CC-BY-NC-4.0",
-        retrievalDate: new Date(),
+        tier: "T2" as const,
+        status: "ACTIVE" as const,
+        accessType: "WEB" as const,
+        updateFrequency: "IRREGULAR" as const,
+        regimeApplicability: "BOTH" as const,
+        description: "Research and analysis",
         notes: "Research and analysis",
       },
       {
+        sourceId: "SEED-ACAPS",
+        name: "ACAPS",
         publisher: "ACAPS",
-        url: "https://www.acaps.org/country/yemen",
+        webUrl: "https://www.acaps.org/country/yemen",
         license: "CC-BY-NC-4.0",
-        retrievalDate: new Date(),
+        tier: "T2" as const,
+        status: "ACTIVE" as const,
+        accessType: "WEB" as const,
+        updateFrequency: "WEEKLY" as const,
+        regimeApplicability: "BOTH" as const,
+        description: "Humanitarian analysis",
         notes: "Humanitarian analysis",
       },
     ];
 
-    for (const source of sourcesData) {
+    // Look up or insert each seed source, collecting their IDs
+    const sourceIdMap: Record<string, number> = {};
+
+    for (const src of seedSources) {
       try {
-        await db.insert(sources).values(source);
+        // Check if already exists by sourceId
+        const existing = await db
+          .select({ id: sourceRegistry.id })
+          .from(sourceRegistry)
+          .where(eq(sourceRegistry.sourceId, src.sourceId))
+          .limit(1);
+
+        if (existing.length > 0) {
+          sourceIdMap[src.sourceId] = existing[0].id;
+        } else {
+          const result = await db.insert(sourceRegistry).values(src);
+          sourceIdMap[src.sourceId] = Number(result[0].insertId);
+        }
       } catch (e) {
-        // Skip duplicates
+        // Skip on error (e.g., duplicate name)
+        console.warn(`  Warning: Could not seed ${src.sourceId}:`, e);
       }
     }
-    console.log(`  ✅ Seeded ${sourcesData.length} sources\n`);
+    console.log(`  Seeded ${Object.keys(sourceIdMap).length} sources into source_registry\n`);
+
+    // Map old sourceId numbers (1-7) to new sourceRegistry IDs
+    const cbyAdenId = sourceIdMap["SEED-CBY-ADEN"];
+    const cbySanaaId = sourceIdMap["SEED-CBY-SANAA"];
+    const worldBankId = sourceIdMap["SEED-WORLD-BANK"];
+    const wfpId = sourceIdMap["SEED-WFP"];
+    const sanaaCenterId = sourceIdMap["SEED-SANAA-CENTER"];
 
     // ============================================================================
     // SEED TIME SERIES DATA
     // ============================================================================
-    console.log("📈 Seeding time series data...");
-    
-    // Generate sample FX rate data for 2024
+    console.log("Seeding time series data...");
+
     const fxData = [];
     let adenRate = 1850;
     let sanaaRate = 535;
-    
+
     for (let month = 1; month <= 12; month++) {
       for (let day = 1; day <= 28; day += 7) {
         const date = new Date(2024, month - 1, day);
-        
-        // Aden rate with gradual depreciation and volatility
+
         adenRate = adenRate + (Math.random() * 30 - 10);
         fxData.push({
           indicatorCode: "FX_RATE_PARALLEL",
@@ -112,10 +187,9 @@ async function seed() {
           value: String(Math.round(adenRate * 100) / 100),
           unit: "YER/USD",
           confidenceRating: "A" as const,
-          sourceId: 1,
+          sourceId: cbyAdenId,
         });
-        
-        // Sana'a rate relatively stable
+
         sanaaRate = sanaaRate + (Math.random() * 5 - 2.5);
         fxData.push({
           indicatorCode: "FX_RATE_PARALLEL",
@@ -124,12 +198,11 @@ async function seed() {
           value: String(Math.round(sanaaRate * 100) / 100),
           unit: "YER/USD",
           confidenceRating: "B" as const,
-          sourceId: 2,
+          sourceId: cbySanaaId,
         });
       }
     }
 
-    // Insert FX data
     let insertedCount = 0;
     for (const data of fxData) {
       try {
@@ -139,13 +212,13 @@ async function seed() {
         // Skip duplicates
       }
     }
-    console.log(`  ✅ Seeded ${insertedCount} FX rate data points\n`);
+    console.log(`  Seeded ${insertedCount} FX rate data points\n`);
 
     // ============================================================================
     // SEED ECONOMIC EVENTS
     // ============================================================================
-    console.log("📅 Seeding economic events...");
-    
+    console.log("Seeding economic events...");
+
     const eventsData = [
       {
         title: "CBY-Aden announces new monetary policy measures",
@@ -156,7 +229,7 @@ async function seed() {
         regimeTag: "aden_irg" as const,
         category: "monetary_policy",
         impactLevel: "high" as const,
-        sourceId: 1,
+        sourceId: cbyAdenId,
       },
       {
         title: "WFP warns of funding shortfall for 2025",
@@ -167,7 +240,7 @@ async function seed() {
         regimeTag: "mixed" as const,
         category: "humanitarian",
         impactLevel: "high" as const,
-        sourceId: 5,
+        sourceId: wfpId,
       },
       {
         title: "Fuel prices increase in IRG-controlled areas",
@@ -178,7 +251,7 @@ async function seed() {
         regimeTag: "aden_irg" as const,
         category: "energy",
         impactLevel: "medium" as const,
-        sourceId: 6,
+        sourceId: sanaaCenterId,
       },
       {
         title: "Saudi deposit supports CBY-Aden reserves",
@@ -189,7 +262,7 @@ async function seed() {
         regimeTag: "aden_irg" as const,
         category: "banking",
         impactLevel: "high" as const,
-        sourceId: 3,
+        sourceId: worldBankId,
       },
       {
         title: "DFA reinforces ban on new banknotes",
@@ -200,7 +273,7 @@ async function seed() {
         regimeTag: "sanaa_defacto" as const,
         category: "monetary_policy",
         impactLevel: "high" as const,
-        sourceId: 6,
+        sourceId: sanaaCenterId,
       },
     ];
 
@@ -211,13 +284,13 @@ async function seed() {
         // Skip duplicates
       }
     }
-    console.log(`  ✅ Seeded ${eventsData.length} economic events\n`);
+    console.log(`  Seeded ${eventsData.length} economic events\n`);
 
     // ============================================================================
     // SEED GLOSSARY TERMS
     // ============================================================================
-    console.log("📖 Seeding glossary terms...");
-    
+    console.log("Seeding glossary terms...");
+
     const glossaryData = [
       {
         termEn: "IRG",
@@ -284,13 +357,13 @@ async function seed() {
         // Skip duplicates
       }
     }
-    console.log(`  ✅ Seeded ${glossaryData.length} glossary terms\n`);
+    console.log(`  Seeded ${glossaryData.length} glossary terms\n`);
 
     // ============================================================================
     // SEED STAKEHOLDERS
     // ============================================================================
-    console.log("👥 Seeding stakeholders...");
-    
+    console.log("Seeding stakeholders...");
+
     const stakeholdersData = [
       {
         name: "Hayel Saeed Anam Group (HSA)",
@@ -348,22 +421,22 @@ async function seed() {
         // Skip duplicates
       }
     }
-    console.log(`  ✅ Seeded ${stakeholdersData.length} stakeholders\n`);
+    console.log(`  Seeded ${stakeholdersData.length} stakeholders\n`);
 
-    console.log("✅ Database seeding completed successfully!");
-    
+    console.log("Database seeding completed successfully!");
+
   } catch (error) {
-    console.error("❌ Error seeding database:", error);
+    console.error("Error seeding database:", error);
     throw error;
   }
 }
 
 seed()
   .then(() => {
-    console.log("\n🎉 Seed script finished!");
+    console.log("\nSeed script finished!");
     process.exit(0);
   })
   .catch((error) => {
-    console.error("\n💥 Seed script failed:", error);
+    console.error("\nSeed script failed:", error);
     process.exit(1);
   });

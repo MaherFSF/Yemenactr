@@ -6,7 +6,7 @@
  */
 
 import { getDb } from "../server/db";
-import { timeSeries, sources } from "../drizzle/schema";
+import { timeSeries, sourceRegistry } from "../drizzle/schema";
 import { eq, and } from "drizzle-orm";
 
 const YEMEN_ISO = "YEM";
@@ -22,18 +22,18 @@ interface FetchResult {
 
 // Helper to get or create source
 async function getOrCreateSource(db: any, publisher: string, url: string): Promise<number> {
-  const existing = await db.select().from(sources).where(eq(sources.publisher, publisher)).limit(1);
+  const existing = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, publisher)).limit(1);
   if (existing.length > 0) {
     return existing[0].id;
   }
-  
-  const result = await db.insert(sources).values({
-    publisher,
+
+  const result = await db.insert(sourceRegistry).values({
+    name: publisher,
     url,
     license: "Open Data",
     retrievalDate: new Date(),
   });
-  
+
   return result[0].insertId;
 }
 

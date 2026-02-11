@@ -17,7 +17,7 @@
  */
 
 import { getDb } from "../db";
-import { timeSeries, provenanceLog, sources } from "../../drizzle/schema";
+import { timeSeries, provenanceLog, sourceRegistry } from "../../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 
 // ============================================
@@ -285,33 +285,43 @@ export async function ingestCBYData(
     // Ensure CBY data sources exist (one for each regime)
     let adenSourceId: number;
     let sanaaSourceId: number;
-    
+
     // CBY Aden source
-    const adenSources = await db.select().from(sources).where(eq(sources.publisher, "CBY Aden")).limit(1);
+    const adenSources = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, "CBY Aden")).limit(1);
     if (adenSources.length > 0) {
       adenSourceId = adenSources[0].id;
     } else {
-      const [newSource] = await db.insert(sources).values({
-        publisher: "CBY Aden",
-        url: "https://www.centralbank.gov.ye/",
+      const [newSource] = await db.insert(sourceRegistry).values({
+        sourceId: "CONN-CBY-ADEN",
+        name: "CBY Aden",
+        publisher: "Central Bank of Yemen - Aden",
+        tier: "T2",
+        status: "ACTIVE",
+        accessType: "WEB",
+        updateFrequency: "MONTHLY",
+        webUrl: "https://www.centralbank.gov.ye/",
         license: "Government Data",
-        retrievalDate: new Date(),
-        notes: "Central Bank of Yemen - Aden (Internationally Recognized Government)",
+        description: "Central Bank of Yemen - Aden (Internationally Recognized Government)",
       });
       adenSourceId = newSource.insertId;
     }
-    
+
     // CBY Sana'a source
-    const sanaaSources = await db.select().from(sources).where(eq(sources.publisher, "CBY Sanaa")).limit(1);
+    const sanaaSources = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, "CBY Sanaa")).limit(1);
     if (sanaaSources.length > 0) {
       sanaaSourceId = sanaaSources[0].id;
     } else {
-      const [newSource] = await db.insert(sources).values({
-        publisher: "CBY Sanaa",
-        url: "https://www.cby-ye.com/",
+      const [newSource] = await db.insert(sourceRegistry).values({
+        sourceId: "CONN-CBY-SANAA",
+        name: "CBY Sanaa",
+        publisher: "Central Bank of Yemen - Sana'a",
+        tier: "T2",
+        status: "ACTIVE",
+        accessType: "WEB",
+        updateFrequency: "MONTHLY",
+        webUrl: "https://www.cby-ye.com/",
         license: "Government Data",
-        retrievalDate: new Date(),
-        notes: "Central Bank of Yemen - Sana'a (De Facto Authorities)",
+        description: "Central Bank of Yemen - Sana'a (De Facto Authorities)",
       });
       sanaaSourceId = newSource.insertId;
     }

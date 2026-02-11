@@ -6,7 +6,7 @@
  */
 
 import { getDb } from "../db";
-import { sources, economicEvents } from "../../drizzle/schema";
+import { sourceRegistry, economicEvents } from "../../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 
 // ============================================
@@ -76,22 +76,27 @@ function delay(ms: number): Promise<void> {
 async function ensureSource(): Promise<number> {
   const db = await getDb();
   if (!db) throw new Error('Database not available');
-  
-  const existing = await db.select().from(sources).where(eq(sources.publisher, SOURCE_NAME)).limit(1);
-  
+
+  const existing = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, SOURCE_NAME)).limit(1);
+
   if (existing.length > 0) {
     return existing[0].id;
   }
-  
-  await db.insert(sources).values({
-    publisher: SOURCE_NAME,
-    url: 'https://reliefweb.int/',
+
+  await db.insert(sourceRegistry).values({
+    sourceId: 'CONN-RW',
+    name: SOURCE_NAME,
+    publisher: 'OCHA / ReliefWeb',
+    tier: 'T1',
+    status: 'ACTIVE',
+    accessType: 'API',
+    updateFrequency: 'DAILY',
+    webUrl: 'https://reliefweb.int/',
     license: 'Open Data',
-    retrievalDate: new Date(),
-    notes: 'Leading humanitarian information source providing reports, maps, and updates on crises worldwide',
+    description: 'Leading humanitarian information source providing reports, maps, and updates on crises worldwide',
   });
-  
-  const newSource = await db.select().from(sources).where(eq(sources.publisher, SOURCE_NAME)).limit(1);
+
+  const newSource = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, SOURCE_NAME)).limit(1);
   return newSource[0].id;
 }
 

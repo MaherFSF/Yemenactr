@@ -368,13 +368,15 @@ This was cleaned up in Phase 0 (Feb 2026). See `archive/README.md` for details.
 
 ### Database Schema: Source Tables
 
-The codebase has evolved through multiple iterations. After cleanup:
+After Phase 1 unification, ALL foreign keys point to the canonical `source_registry` table:
 
 | Table | Purpose | Status |
 |-------|---------|--------|
-| `source_registry` | **PRIMARY** — 292+ sources with tiers, access methods, sectors | Active, canonical |
-| `sources` | Legacy simple source list (7 rows from seed) | Legacy — migrate to source_registry |
-| `evidence_sources` | Truth layer evidence links | Active — evidence subsystem |
+| `source_registry` | **CANONICAL** — 292+ sources with tiers, access methods, sectors | Active, all FKs point here |
+| `sources` | Legacy 7-row table (deprecated) | Deprecated — all FKs migrated to source_registry |
+| `evidence_sources` | Legacy truth-layer source list (deprecated) | Deprecated — all FKs migrated to source_registry |
+
+**Phase 1 Migration**: 20 FK references from `sources` and 5 FK references from `evidence_sources` were unified to point to `source_registry`. All connectors, services, and seed scripts updated.
 
 ### Importing Sources
 
@@ -429,9 +431,10 @@ client/src/main.tsx
 ```
 server/connectors/index.ts
   → WorldBankConnector.fetchAllIndicators()
+    → Look up source in source_registry (or insert with CONN-* sourceId)
     → normalize() → canonical NormalizedSeries
     → validate() → QA report
-    → load() → write to database
+    → load() → write to database (sourceId → source_registry.id)
   → HDXConnector, OCHAFTSConnector, etc. (same pattern)
 ```
 
@@ -445,6 +448,18 @@ server/connectors/index.ts
 | Pipeline config | Hardcoded 12-source array | Loads from DB at startup |
 | Connector config | 226-source JSON file | Loads from DB at startup |
 | Schema duplication | sourceRegistry in 2 files | 1 definition in schema.ts, re-exported |
+
+### Phase 1: Unify Source Tables (Feb 2026)
+
+| What | Before | After |
+|------|--------|-------|
+| FK references | 20 FKs → `sources`, 5 FKs → `evidence_sources` | All 25 FKs → `source_registry` |
+| Schema FKs | `datasets`, `timeSeries`, `geospatialData`, etc. → `sources.id` | All → `sourceRegistry.id` |
+| Evidence FKs | `evidenceDocuments`, `evidenceDatasets`, `ingestionRuns`, etc. → `evidenceSources.id` | All → `sourceRegistry.id` |
+| Seed script | Inserts 7 rows into legacy `sources` table | Inserts into `source_registry` with proper tiers |
+| Connectors | Query `sources` by publisher, insert if missing | Query `sourceRegistry` by name, insert with full metadata |
+| Services | `db.ts`, `accuracyChecker.ts`, etc. use `sources` | All use `sourceRegistry` |
+| Legacy tables | `sources`, `evidence_sources` actively used | Deprecated with `@deprecated` markers |
 
 ---
 

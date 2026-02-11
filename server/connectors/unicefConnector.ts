@@ -13,7 +13,7 @@
  */
 
 import { getDb } from "../db";
-import { timeSeries, provenanceLog, sources } from "../../drizzle/schema";
+import { timeSeries, provenanceLog, sourceRegistry } from "../../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 
 // ============================================
@@ -218,17 +218,22 @@ export async function ingestUNICEFData(
   try {
     // Ensure UNICEF data source exists
     let sourceId: number;
-    const existingSources = await db.select().from(sources).where(eq(sources.publisher, "UNICEF")).limit(1);
-    
+    const existingSources = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, "UNICEF")).limit(1);
+
     if (existingSources.length > 0) {
       sourceId = existingSources[0].id;
     } else {
-      const [newSource] = await db.insert(sources).values({
-        publisher: "UNICEF",
-        url: "https://data.unicef.org/",
+      const [newSource] = await db.insert(sourceRegistry).values({
+        sourceId: "CONN-UNICEF",
+        name: "UNICEF",
+        publisher: "United Nations Children's Fund",
+        tier: "T1",
+        status: "ACTIVE",
+        accessType: "API",
+        updateFrequency: "ANNUAL",
+        webUrl: "https://data.unicef.org/",
         license: "CC BY 3.0 IGO",
-        retrievalDate: new Date(),
-        notes: "United Nations Children's Fund - Child welfare statistics",
+        description: "United Nations Children's Fund - Child welfare statistics",
       });
       sourceId = newSource.insertId;
     }

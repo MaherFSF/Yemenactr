@@ -12,10 +12,10 @@
  */
 
 import { getDb } from "../db";
-import { 
-  sources, 
-  timeSeries, 
-  indicators, 
+import {
+  sourceRegistry,
+  timeSeries,
+  indicators,
   ingestionRuns,
   evidencePacks,
   datasetVersions,
@@ -443,8 +443,8 @@ export abstract class BaseConnector implements ConnectorSDK {
               // Insert new record
               const sourceRecord = await database
                 .select()
-                .from(sources)
-                .where(eq(sources.publisher, this.sourceName))
+                .from(sourceRegistry)
+                .where(eq(sourceRegistry.name, this.sourceName))
                 .limit(1);
               
               const sourceDbId = sourceRecord[0]?.id || 1;

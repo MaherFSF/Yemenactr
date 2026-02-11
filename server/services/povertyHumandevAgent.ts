@@ -10,7 +10,7 @@
  */
 
 import { db } from "../db";
-import { timeSeries, indicators, sources, economicEvents, documents, alerts } from "../../drizzle/schema";
+import { timeSeries, indicators, sourceRegistry, economicEvents, documents, alerts } from "../../drizzle/schema";
 import { eq, and, desc, gte, lte, sql, like, or } from "drizzle-orm";
 
 const SECTOR_CODE = "poverty";

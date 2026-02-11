@@ -4,7 +4,7 @@
  */
 
 import { mysqlTable, int, varchar, text, timestamp, boolean, mysqlEnum, json, index } from "drizzle-orm/mysql-core";
-import { evidenceSources } from "./schema";
+import { sourceRegistry } from "./schema";
 
 // ============================================================================
 // SOURCE CREDENTIALS - Secure storage for API keys and auth tokens
@@ -12,7 +12,7 @@ import { evidenceSources } from "./schema";
 
 export const sourceCredentials = mysqlTable("source_credentials", {
   id: int("id").autoincrement().primaryKey(),
-  sourceId: int("sourceId").notNull().references(() => evidenceSources.id),
+  sourceId: int("sourceId").notNull().references(() => sourceRegistry.id),
   credentialType: mysqlEnum("credentialType", ["api_key", "oauth_token", "basic_auth", "certificate"]).notNull(),
   apiKey: text("apiKey"), // For simple API keys (encrypted at application level)
   encryptedKey: text("encryptedKey"), // For encrypted storage
@@ -50,7 +50,7 @@ export const backfillCheckpoints = mysqlTable("backfill_checkpoints", {
   id: varchar("id", { length: 255 }).primaryKey(), // bf_{datasetId}_{indicatorCode}_{timestamp}
   datasetId: varchar("datasetId", { length: 255 }).notNull(),
   indicatorCode: varchar("indicatorCode", { length: 100 }).notNull(),
-  sourceId: int("sourceId").references(() => evidenceSources.id),
+  sourceId: int("sourceId").references(() => sourceRegistry.id),
   lastProcessedDate: timestamp("lastProcessedDate").notNull(),
   totalDays: int("totalDays").notNull().default(0),
   processedDays: int("processedDays").notNull().default(0),
@@ -79,7 +79,7 @@ export type InsertBackfillCheckpoint = typeof backfillCheckpoints.$inferInsert;
 
 export const backfillRequests = mysqlTable("backfill_requests", {
   id: varchar("id", { length: 255 }).primaryKey(),
-  sourceId: int("sourceId").notNull().references(() => evidenceSources.id),
+  sourceId: int("sourceId").notNull().references(() => sourceRegistry.id),
   indicatorCodes: json("indicatorCodes").$type<string[]>().notNull(),
   startDate: timestamp("startDate").notNull(),
   endDate: timestamp("endDate").notNull(),
@@ -112,7 +112,7 @@ export type InsertBackfillRequest = typeof backfillRequests.$inferInsert;
 
 export const partnershipRequests = mysqlTable("partnership_requests", {
   id: int("id").autoincrement().primaryKey(),
-  sourceId: int("sourceId").notNull().references(() => evidenceSources.id),
+  sourceId: int("sourceId").notNull().references(() => sourceRegistry.id),
   organizationName: varchar("organizationName", { length: 255 }).notNull(),
   contactEmail: varchar("contactEmail", { length: 320 }),
   contactName: varchar("contactName", { length: 255 }),
