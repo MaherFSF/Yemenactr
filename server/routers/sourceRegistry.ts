@@ -1,9 +1,9 @@
 /**
  * Source Registry Router - CANONICAL
- * 
- * This router reads from the source_registry table (canonical, 292 sources)
- * imported from YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx
- * 
+ *
+ * Reads from the source_registry table (292+ sources).
+ * Populated by: scripts/import-registry.ts from the canonical xlsx in data/registry/.
+ *
  * DO NOT use the legacy 'sources' table or JSON config files.
  * This is the single source of truth for all source metadata.
  */
