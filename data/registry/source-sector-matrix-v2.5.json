@@ -4005,7 +4005,7 @@
     },
     {
       "src_id": "SRC-200",
-      "source_name": "https://finDevgateway.org FATF (Fin",
+      "source_name": "https://finDevgateway.org FATF (Financial Action Task Force) Grey List/Mutual Evaluation",
       "S01": "●",
       "S02": "○",
       "S03": "○",
@@ -4385,7 +4385,7 @@
     },
     {
       "src_id": "SRC-219",
-      "source_name": "Mukalla Throughput \nLicensing Data ",
+      "source_name": "Mukalla Throughput \nLicensing Data Reports",
       "S01": "●",
       "S02": "○",
       "S03": "○",
@@ -4405,7 +4405,7 @@
     },
     {
       "src_id": "SRC-220",
-      "source_name": "Reports SRC-069 | Trade regulation ",
+      "source_name": "Reports SRC-069 | Trade regulation | National",
       "S01": "●",
       "S02": "○",
       "S03": "○",
@@ -4485,7 +4485,7 @@
     },
     {
       "src_id": "SRC-224",
-      "source_name": null,
+      "source_name": "TBD Source (SRC-224) — Needs Review",
       "S01": "●",
       "S02": "○",
       "S03": "○",
