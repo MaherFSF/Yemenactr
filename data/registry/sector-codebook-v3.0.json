@@ -1,0 +1,82 @@
+[
+  {
+    "sector_code": "S01",
+    "sector_name": "Macro",
+    "definition": "Macro aggregates and national accounts (GDP, growth, debt, BoP, reserves where macro-level)."
+  },
+  {
+    "sector_code": "S02",
+    "sector_name": "Prices & Cost of Living",
+    "definition": "Inflation/CPI, market price monitoring, cost-of-living baskets and price-based welfare proxies."
+  },
+  {
+    "sector_code": "S03",
+    "sector_name": "Currency & Exchange",
+    "definition": "Exchange rates, FX markets, reserve policy, fragmentation spreads and currency controls."
+  },
+  {
+    "sector_code": "S04",
+    "sector_name": "Banking & Finance",
+    "definition": "Banking system, monetary aggregates, payments, financial stability, AML/CFT and inclusion."
+  },
+  {
+    "sector_code": "S05",
+    "sector_name": "Public Finance & Governance",
+    "definition": "Budget, revenues/expenditure, governance, procurement, public sector administration and accountability."
+  },
+  {
+    "sector_code": "S06",
+    "sector_name": "Trade & Commerce",
+    "definition": "Imports/exports, customs, ports/shipping, trade policy, logistics and commerce flows."
+  },
+  {
+    "sector_code": "S07",
+    "sector_name": "Energy & Fuel",
+    "definition": "Oil/gas, fuel prices, electricity generation, energy infrastructure and energy-market signals."
+  },
+  {
+    "sector_code": "S08",
+    "sector_name": "Labour & Wages",
+    "definition": "Employment, wages, livelihoods and labor market structure including worker remittances where evidenced."
+  },
+  {
+    "sector_code": "S09",
+    "sector_name": "Aid & Projects",
+    "definition": "ODA/humanitarian funding, donor projects pipeline, implementing partners and project monitoring."
+  },
+  {
+    "sector_code": "S10",
+    "sector_name": "Food Security & Agriculture",
+    "definition": "Agriculture production, food security classifications, market systems, fisheries and land use for food."
+  },
+  {
+    "sector_code": "S11",
+    "sector_name": "Humanitarian & Social",
+    "definition": "Health, education, displacement, protection, demographics and social outcomes/human development."
+  },
+  {
+    "sector_code": "S12",
+    "sector_name": "Conflict & Political Economy",
+    "definition": "Conflict incidence, political economy, war economy dynamics, sanctions context (descriptive)."
+  },
+  {
+    "sector_code": "S13",
+    "sector_name": "Infrastructure & Services",
+    "definition": "Transport, WASH, telecom and other service delivery / public infrastructure status and disruptions."
+  },
+  {
+    "sector_code": "S14",
+    "sector_name": "Investment & Private Sector",
+    "definition": "Private sector, investment climate, corporate sector evidence, SMEs, FDI and market structure."
+  },
+  {
+    "sector_code": "S15",
+    "sector_name": "Narrative & Research Sources",
+    "definition": "Narrative and qualitative sources: credible research, reports, policy briefs, and reputable media."
+  },
+  {
+    "sector_code": "S16",
+    "sector_name": "Remote Sensing & Environmental",
+    "definition": "Satellite/remote sensing, climate/environmental datasets, vegetation/damage assessment and hazards."
+  }
+]

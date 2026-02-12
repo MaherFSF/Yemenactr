@@ -3,7 +3,7 @@
  *
  * Standalone API endpoints for accessing the source registry.
  * Loads from the database (source_registry table) — the single source of truth.
- * Falls back to data/registry/sources-v2.5-extracted.json if DB is unavailable.
+ * Falls back to data/registry/sources-v3.0-extracted.json if DB is unavailable.
  */
 
 import * as fs from 'fs';
@@ -33,7 +33,7 @@ function loadRegistry(): SourceConfigFile {
 
   // Fallback: load from extracted JSON (generated from xlsx)
   const jsonPaths = [
-    path.join(process.cwd(), 'data/registry/sources-v2.5-extracted.json'),
+    path.join(process.cwd(), 'data/registry/sources-v3.0-extracted.json'),
   ];
 
   for (const jsonPath of jsonPaths) {

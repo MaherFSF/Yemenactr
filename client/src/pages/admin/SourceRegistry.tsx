@@ -1,8 +1,8 @@
 /**
  * YETO Source Registry Admin Page - CANONICAL
  * 
- * Displays all 292 sources from the canonical source_registry table
- * imported from YETO_Sources_Universe_Master_PRODUCTION_READY_v2_3.xlsx
+ * Displays all 295 sources from the canonical source_registry table
+ * imported from YETO_Sources_Universe_Master_SINGLE_SOURCE_OF_TRUTH_v3_0.xlsx
  * 
  * Features:
  * - Source listing with tier/status/frequency filters

@@ -35,7 +35,7 @@ class IngestionScheduler {
 
   constructor() {
     // Fallback JSON path (DB is preferred, loaded via loadRegistry())
-    this.registryPath = path.join(process.cwd(), 'data/registry/sources-v2.5-extracted.json');
+    this.registryPath = path.join(process.cwd(), 'data/registry/sources-v3.0-extracted.json');
   }
 
   /**
