@@ -215,15 +215,15 @@ export default function DataFreshness() {
   const filteredSources =
     selectedCategory === "all"
       ? freshnessData
-      : freshnessData.filter(s => s.category === selectedCategory);
+      : freshnessData.filter((s: any) => s.category === selectedCategory);
 
   // Calculate overall stats
   const totalSources = freshnessData.length;
   const activeSources = freshnessData.filter(
-    s => s.status !== "inactive"
+    (s: any) => s.status !== "inactive"
   ).length;
-  const freshSources = freshnessData.filter(s => s.status === "fresh").length;
-  const staleSources = freshnessData.filter(s => s.status === "stale").length;
+  const freshSources = freshnessData.filter((s: any) => s.status === "fresh").length;
+  const staleSources = freshnessData.filter((s: any) => s.status === "stale").length;
 
   // Status badge component
   const StatusBadge = ({ status }: { status: string }) => {
@@ -437,7 +437,7 @@ export default function DataFreshness() {
 
         {/* Data Sources Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredSources.map(source => {
+          {filteredSources.map((source: any) => {
             const SourceIcon = source.icon;
             return (
               <Card key={source.id} className="overflow-hidden">

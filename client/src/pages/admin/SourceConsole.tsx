@@ -105,7 +105,7 @@ export default function SourceConsole() {
   }, [sourcesData]);
 
   // Filter sources (client-side for instant feedback)
-  const filteredSources = sources.filter(source => {
+  const filteredSources = sources.filter((source: any) => {
     const matchesSearch = source.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          source.publisher.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          source.sourceId.toLowerCase().includes(searchQuery.toLowerCase());
@@ -347,7 +347,7 @@ export default function SourceConsole() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {filteredSources.map((source) => (
+                  {filteredSources.map((source: any) => (
                     <div
                       key={source.id}
                       className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"

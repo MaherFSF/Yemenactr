@@ -7493,6 +7493,13 @@ export const sourceRegistry = mysqlTable("source_registry", {
   notes: text("notes"),
   sectorCategory: varchar("sectorCategory", { length: 100 }),
   registryType: mysqlEnum("registryType", ["master", "extended", "inclusive_pdf", "url_extract"]).default("master"),
+
+  // v3.0 classification fields
+  sourceType: varchar("sourceType", { length: 50 }), // e.g., "Data", "Media", "Report"
+  licenseState: varchar("licenseState", { length: 50 }), // known, unknown, restricted
+  needsClassification: boolean("needsClassification").default(true).notNull(),
+  reliabilityScore: varchar("reliabilityScore", { length: 10 }), // A, B, C, D
+  evidencePackFlag: boolean("evidencePackFlag").default(false).notNull(),
   
   // Audit
   createdAt: timestamp("createdAt").defaultNow().notNull(),

@@ -205,8 +205,8 @@ describe('Source Registry Router', () => {
       const result = await caller.getStats();
 
       expect(result.success).toBe(true);
-      expect(result.stats?.total).toBe(292);
-      expect(result.stats?.active).toBe(207);
+      expect(result.stats?.total).toBe(295);
+      expect(result.stats?.active).toBe(210);
       expect(result.stats?.needsKey).toBe(17);
       expect(result.stats?.sectorCount).toBe(16);
     });

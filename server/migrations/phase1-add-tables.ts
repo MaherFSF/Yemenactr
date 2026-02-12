@@ -16,8 +16,9 @@ import {
   glossaryTerm,
   auditLog,
   seedAgents,
-  seedSources,
 } from "../../drizzle/phase1-enhancements";
+// seedSources was removed in v3.0; sources now come from scripts/import-registry.ts
+const seedSources: any[] = [];
 
 export async function migratePhase1() {
   console.log("🚀 Starting YETO v1.6 Phase 1 Migration...");

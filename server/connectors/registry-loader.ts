@@ -44,8 +44,8 @@ export async function loadSourcesFromConfig(): Promise<void> {
           updateFrequency: (row.updateFrequency || 'IRREGULAR') as any,
           tier: (row.tier || 'UNKNOWN') as any,
           requiresAuth: row.apiKeyRequired || false,
-          requiresKey: row.apiKeyRequired || false,
-          dataFormat: row.sourceType || 'JSON',
+          requiresKey: row.apiKeyRequired ? row.apiKeyContact || undefined : undefined,
+          dataFormat: (row.sourceType === 'PDF' || row.sourceType === 'CSV' || row.sourceType === 'XML' ? row.sourceType : 'JSON') as any,
           indicators: [],
           coverage: {
             start: row.historicalStart ? new Date(`${row.historicalStart}-01-01`) : new Date('2010-01-01'),
