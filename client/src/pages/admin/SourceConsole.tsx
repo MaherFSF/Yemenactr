@@ -1,9 +1,11 @@
 /**
  * Admin Source Console
  * Comprehensive source registry management with tier system, review queue, and feed matrix
+ *
+ * Sources loaded from canonical source_registry table via tRPC.
  */
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -78,116 +80,32 @@ export default function SourceConsole() {
   const [selectedSource, setSelectedSource] = useState<any>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   
-  // Mock data for demonstration - will be replaced with tRPC queries
-  const mockSources = [
-    {
-      id: 1,
-      sourceId: 'SRC-001',
-      name: 'World Bank Open Data',
-      publisher: 'World Bank',
-      tier: 'T1',
-      status: 'ACTIVE',
-      accessType: 'API',
-      updateFrequency: 'MONTHLY',
-      sectorsFed: ['macro', 'trade', 'development'],
-      lastFetch: '2025-01-28',
-      confidenceRating: 'A',
-    },
-    {
-      id: 2,
-      sourceId: 'SRC-002',
-      name: 'Central Bank of Yemen - Aden',
-      publisher: 'CBY Aden',
-      tier: 'T0',
-      status: 'ACTIVE',
-      accessType: 'WEB',
-      updateFrequency: 'WEEKLY',
-      sectorsFed: ['monetary', 'banking', 'currency'],
-      lastFetch: '2025-01-27',
-      confidenceRating: 'A+',
-    },
-    {
-      id: 3,
-      sourceId: 'SRC-003',
-      name: 'OCHA Financial Tracking Service',
-      publisher: 'UN OCHA',
-      tier: 'T1',
-      status: 'ACTIVE',
-      accessType: 'API',
-      updateFrequency: 'DAILY',
-      sectorsFed: ['humanitarian', 'aid', 'development'],
-      lastFetch: '2025-01-29',
-      confidenceRating: 'A',
-    },
-    {
-      id: 4,
-      sourceId: 'SRC-004',
-      name: 'Yemen Economic Monitor',
-      publisher: 'World Bank',
-      tier: 'T1',
-      status: 'ACTIVE',
-      accessType: 'PDF',
-      updateFrequency: 'QUARTERLY',
-      sectorsFed: ['macro', 'fiscal', 'trade'],
-      lastFetch: '2025-01-15',
-      confidenceRating: 'A',
-    },
-    {
-      id: 5,
-      sourceId: 'SRC-005',
-      name: 'ACLED Conflict Data',
-      publisher: 'ACLED',
-      tier: 'T2',
-      status: 'ACTIVE',
-      accessType: 'API',
-      updateFrequency: 'WEEKLY',
-      sectorsFed: ['security', 'humanitarian'],
-      lastFetch: '2025-01-28',
-      confidenceRating: 'B+',
-    },
-    {
-      id: 6,
-      sourceId: 'SRC-006',
-      name: 'WFP Price Monitoring',
-      publisher: 'WFP',
-      tier: 'T1',
-      status: 'ACTIVE',
-      accessType: 'CSV',
-      updateFrequency: 'MONTHLY',
-      sectorsFed: ['prices', 'food_security'],
-      lastFetch: '2025-01-20',
-      confidenceRating: 'A',
-    },
-    {
-      id: 7,
-      sourceId: 'SRC-HV-001',
-      name: 'Central Statistical Organization (Yemen)',
-      publisher: 'CSO Yemen',
-      tier: 'T1',
-      status: 'PENDING_REVIEW',
-      accessType: 'WEB',
-      updateFrequency: 'ANNUAL',
-      sectorsFed: ['macro', 'demographics'],
-      lastFetch: null,
-      confidenceRating: 'B',
-    },
-    {
-      id: 8,
-      sourceId: 'SRC-HV-003',
-      name: 'University of Aden - Economics Theses',
-      publisher: 'University of Aden',
-      tier: 'T2',
-      status: 'PENDING_REVIEW',
-      accessType: 'WEB',
-      updateFrequency: 'IRREGULAR',
-      sectorsFed: ['research', 'macro'],
-      lastFetch: null,
-      confidenceRating: 'B',
-    },
-  ];
-  
-  // Filter sources
-  const filteredSources = mockSources.filter(source => {
+  // Load real sources from canonical source_registry via tRPC
+  const { data: sourcesData, isLoading: sourcesLoading } = trpc.sourceRegistry.getAll.useQuery({
+    limit: 500,
+  });
+  const { data: statsData } = trpc.sourceRegistry.getStats.useQuery();
+
+  // Map DB sources to display format
+  const sources = useMemo(() => {
+    if (!sourcesData?.sources) return [];
+    return sourcesData.sources.map((s: any) => ({
+      id: s.id,
+      sourceId: s.sourceId,
+      name: s.name,
+      publisher: s.publisher || '',
+      tier: s.tier || 'UNKNOWN',
+      status: s.status || 'PENDING_REVIEW',
+      accessType: s.accessType || 'WEB',
+      updateFrequency: s.updateFrequency || 'IRREGULAR',
+      sectorCategory: s.sectorCategory || '',
+      lastFetch: s.lastFetch ? new Date(s.lastFetch).toLocaleDateString() : null,
+      confidenceRating: s.confidenceRating || '',
+    }));
+  }, [sourcesData]);
+
+  // Filter sources (client-side for instant feedback)
+  const filteredSources = sources.filter(source => {
     const matchesSearch = source.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          source.publisher.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          source.sourceId.toLowerCase().includes(searchQuery.toLowerCase());
@@ -195,22 +113,22 @@ export default function SourceConsole() {
     const matchesStatus = statusFilter === 'all' || source.status === statusFilter;
     return matchesSearch && matchesTier && matchesStatus;
   });
-  
-  // Statistics
+
+  // Statistics from DB
   const stats = {
-    total: mockSources.length,
-    active: mockSources.filter(s => s.status === 'ACTIVE').length,
-    pendingReview: mockSources.filter(s => s.status === 'PENDING_REVIEW').length,
+    total: statsData?.stats?.total || sources.length,
+    active: statsData?.stats?.active || 0,
+    pendingReview: statsData?.stats?.pending || 0,
     byTier: {
-      T0: mockSources.filter(s => s.tier === 'T0').length,
-      T1: mockSources.filter(s => s.tier === 'T1').length,
-      T2: mockSources.filter(s => s.tier === 'T2').length,
-      T3: mockSources.filter(s => s.tier === 'T3').length,
-      T4: mockSources.filter(s => s.tier === 'T4').length,
+      T0: (statsData?.stats?.byTier as any)?.T0 || 0,
+      T1: (statsData?.stats?.byTier as any)?.T1 || 0,
+      T2: (statsData?.stats?.byTier as any)?.T2 || 0,
+      T3: (statsData?.stats?.byTier as any)?.T3 || 0,
+      T4: (statsData?.stats?.byTier as any)?.T4 || 0,
     },
   };
   
-  // Mock verification queue
+  // @placeholder — awaiting backend verification endpoint (tRPC procedure needed)
   const mockVerificationQueue = [
     {
       id: 1,
@@ -241,7 +159,7 @@ export default function SourceConsole() {
     },
   ];
   
-  // Mock sector feed matrix
+  // @placeholder — awaiting backend feed matrix endpoint (tRPC procedure needed)
   const mockSectorFeedMatrix = [
     { sector: 'Macroeconomy', sourceCount: 12, primarySources: 4, lastUpdate: '2025-01-29', coverage: 95 },
     { sector: 'Trade', sourceCount: 8, primarySources: 3, lastUpdate: '2025-01-28', coverage: 88 },
@@ -284,7 +202,7 @@ export default function SourceConsole() {
               Source Registry Console
             </h1>
             <p className="text-muted-foreground mt-1">
-              Manage 225+ data sources with tier classification, verification queue, and feed matrix
+              Manage {stats.total}+ data sources with tier classification, verification queue, and feed matrix
             </p>
           </div>
           <div className="flex gap-2">
@@ -446,13 +364,13 @@ export default function SourceConsole() {
                           <div className="text-sm text-muted-foreground mt-1">
                             {source.publisher} • {source.accessType} • {source.updateFrequency}
                           </div>
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {source.sectorsFed.map((sector) => (
-                              <Badge key={sector} variant="secondary" className="text-xs">
-                                {sector}
+                          {source.sectorCategory && (
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              <Badge variant="secondary" className="text-xs">
+                                {source.sectorCategory}
                               </Badge>
-                            ))}
-                          </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2">

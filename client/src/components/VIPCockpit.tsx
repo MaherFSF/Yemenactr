@@ -36,7 +36,7 @@ import {
   Shield,
 } from "lucide-react";
 
-// Mock evidence pack for demonstration
+// @placeholder — replace with tRPC evidence pack endpoint when available
 const createMockEvidencePack = (id: number, subject: string): EvidencePack => ({
   id,
   subjectType: "indicator",
@@ -483,7 +483,7 @@ export function VIPCockpit({ roleId, customTitle, customTitleAr }: VIPCockpitPro
   const isArabic = language === "ar";
   const [activeTab, setActiveTab] = useState("overview");
   
-  // Mock data - in production, this would come from trpc.vip.getCockpitData.useQuery({ roleId })
+  // @placeholder — replace with trpc.vip.getCockpitData.useQuery({ roleId })
   const mockData: CockpitData = {
     roleId,
     roleName: customTitle || "VIP Cockpit",

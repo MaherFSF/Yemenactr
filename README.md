@@ -482,6 +482,15 @@ server/connectors/index.ts
 | Diagnostic scripts | 8 tiny ad-hoc DB check scripts | Archived (use `validate.ts` instead) |
 | Server seed scripts | 4 .mjs duplicates in server/ | Archived (use `server/seed.ts` + `import-registry.ts`) |
 
+### Phase 4: Frontend Alignment (Feb 2026)
+
+| What | Before | After |
+|------|--------|-------|
+| DataFreshness.tsx | Hardcoded 16-entry `DATA_SOURCES` array + random freshness data | tRPC `sourceRegistry.getAll` with real `lastFetch`/`nextFetch` from DB |
+| SourceConsole.tsx | Hardcoded 8-entry `mockSources` + 8-entry mock stats | tRPC `sourceRegistry.getAll` + `getStats` from DB |
+| Dead pages | 2 `.old` files (`PartnerPortal.old.tsx`, `Banking.old.tsx`) | Archived to `archive/deprecated-scripts/phase4-dead-pages/` |
+| Mock data tagging | 4 components with unlabeled mock data | All tagged with `@placeholder` for future replacement |
+
 ---
 
 ## 📖 Documentation

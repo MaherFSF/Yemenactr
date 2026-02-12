@@ -62,7 +62,7 @@ interface OwnershipData {
   dataQuality: 'high' | 'medium' | 'low';
 }
 
-// Sample data for demonstration
+// @placeholder — replace with tRPC ownership graph endpoint when available
 const SAMPLE_DATA: OwnershipData = {
   nodes: [
     { id: 'hsa-group', name: 'HSA Group', nameAr: 'مجموعة هائل سعيد أنعم', type: 'company', country: 'YE', sector: 'conglomerate', regime: 'mixed' },

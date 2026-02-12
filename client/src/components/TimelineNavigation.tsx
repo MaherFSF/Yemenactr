@@ -53,7 +53,7 @@ interface TimelineIndicatorUpdate {
   unit: string;
 }
 
-// Comprehensive Yemen timeline events 2010-Present
+// @placeholder — replace with tRPC timeline events endpoint when available
 const yemenTimelineEvents: TimelineEvent[] = [
   {
     id: 'evt-001',

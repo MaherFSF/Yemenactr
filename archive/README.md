@@ -169,6 +169,40 @@ Server-level seed scripts superseded by canonical `server/seed.ts` and `scripts/
 | `seed-source-metadata.mjs` | 401 | Functionality in `import-registry.ts` |
 | `seed-yemen-sources-comprehensive.mjs` | 1228 | Use `scripts/seed-expanded-sources.mjs` |
 
+## Phase 4: Frontend Alignment (Feb 2026)
+
+Replaced hardcoded frontend mock data with tRPC calls to canonical `source_registry` table.
+Archived dead `.old` page files. Tagged remaining mock data with `@placeholder`.
+
+### Hardcoded Data Replaced
+
+| File | What Was Removed | Replacement |
+|------|-----------------|-------------|
+| `client/src/pages/DataFreshness.tsx` | 16-entry `DATA_SOURCES` array + `generateFreshnessData()` random data | `trpc.sourceRegistry.getAll` with real `lastFetch`/`nextFetch` |
+| `client/src/pages/admin/SourceConsole.tsx` | 8-entry `mockSources` array + hardcoded stats | `trpc.sourceRegistry.getAll` + `trpc.sourceRegistry.getStats` |
+
+### deprecated-scripts/phase4-dead-pages/ (2 files)
+
+Dead `.old` page files disconnected from routing.
+
+| File | Why Archived |
+|------|-------------|
+| `PartnerPortal.old.tsx` | Dead `.old` file, not routed or imported |
+| `Banking.old.tsx` | Dead `.old` file, not routed or imported |
+
+### Mock Data Tagged @placeholder (4 components)
+
+These components still use local mock data but are now tagged with `@placeholder` comments
+indicating which tRPC endpoint will replace them:
+
+| File | Mock Variable | Future Endpoint |
+|------|--------------|-----------------|
+| `VIPCockpit.tsx` | `createMockEvidencePack()` + `mockData` | `trpc.vip.getCockpitData` |
+| `InsightsTicker.tsx` | `insights` array | `trpc.insights` endpoint |
+| `OwnershipGraph.tsx` | `SAMPLE_DATA` | `trpc.ownership` endpoint |
+| `TimelineNavigation.tsx` | `yemenTimelineEvents` | `trpc.timeline` endpoint |
+| `SourceConsole.tsx` | `mockVerificationQueue` + `mockSectorFeedMatrix` | `trpc.verification` + `trpc.feedMatrix` endpoints |
+
 ### Canonical Scripts (Post Phase 3)
 
 After cleanup, these are the canonical scripts for key operations:
