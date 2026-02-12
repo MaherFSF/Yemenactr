@@ -8032,3 +8032,137 @@ export const insightMinerProposals = mysqlTable("insight_miner_proposals", {
 
 export type InsightMinerProposal = typeof insightMinerProposals.$inferSelect;
 export type InsertInsightMinerProposal = typeof insightMinerProposals.$inferInsert;
+
+// ============================================================================
+// NUMERIC DATA STORAGE - Native Frequency Observations
+// ============================================================================
+
+/**
+ * Numeric Series - Metadata for each time series
+ * Links to source and product, defines frequency and unit
+ */
+export const numericSeries = mysqlTable("numeric_series", {
+  id: varchar("id", { length: 255 }).primaryKey(), // series_{sourceId}_{productId}_{timestamp}
+  sourceId: varchar("sourceId", { length: 100 }).notNull(), // From numericSourceRegistry
+  productId: varchar("productId", { length: 100 }).notNull(), // From numericSourceRegistry
+  name: varchar("name", { length: 500 }).notNull(),
+  nameAr: varchar("nameAr", { length: 500 }),
+  frequency: mysqlEnum("frequency", ["daily", "weekly", "monthly", "quarterly", "annual"]).notNull(),
+  unit: varchar("unit", { length: 100 }).notNull(), // e.g., 'USD', 'YER', 'percent', 'persons'
+  regimeTag: mysqlEnum("regimeTag", ["aden_irg", "sanaa_defacto", "mixed", "international"]),
+  description: text("description"),
+  descriptionAr: text("descriptionAr"),
+  metadata: json("metadata").$type<Record<string, unknown>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  sourceProductIdx: index("num_series_source_product_idx").on(table.sourceId, table.productId),
+  frequencyIdx: index("num_series_frequency_idx").on(table.frequency),
+  regimeIdx: index("num_series_regime_idx").on(table.regimeTag),
+}));
+
+export type NumericSeries = typeof numericSeries.$inferSelect;
+export type InsertNumericSeries = typeof numericSeries.$inferInsert;
+
+/**
+ * Numeric Observations - Individual data points at native frequency
+ * Each observation has provenance via evidence pack
+ */
+export const numericObservations = mysqlTable("numeric_observations", {
+  id: varchar("id", { length: 255 }).primaryKey(), // obs_{seriesId}_{date}_{timestamp}
+  seriesId: varchar("seriesId", { length: 255 }).notNull().references(() => numericSeries.id),
+  observationDate: timestamp("observationDate").notNull(), // Native frequency date
+  value: decimal("value", { precision: 30, scale: 10 }).notNull(), // High precision for financial data
+  unit: varchar("unit", { length: 100 }).notNull(),
+  frequency: mysqlEnum("frequency", ["daily", "weekly", "monthly", "quarterly", "annual"]).notNull(),
+  regimeTag: mysqlEnum("regimeTag", ["aden_irg", "sanaa_defacto", "mixed", "international"]).notNull(),
+  evidencePackId: varchar("evidencePackId", { length: 255 }).notNull(), // Links to evidence pack
+  rawData: json("rawData").$type<Record<string, unknown>>(), // Original API response for this observation
+  flags: json("flags").$type<string[]>(), // Data quality flags: ['estimated', 'provisional', 'revised']
+  revisionNumber: int("revisionNumber").default(0), // Track revisions
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  seriesIdx: index("num_obs_series_idx").on(table.seriesId),
+  dateIdx: index("num_obs_date_idx").on(table.observationDate),
+  seriesDateRegimeIdx: unique("num_obs_series_date_regime_unique").on(
+    table.seriesId, 
+    table.observationDate, 
+    table.regimeTag
+  ),
+  evidencePackIdx: index("num_obs_evidence_pack_idx").on(table.evidencePackId),
+}));
+
+export type NumericObservation = typeof numericObservations.$inferSelect;
+export type InsertNumericObservation = typeof numericObservations.$inferInsert;
+
+/**
+ * Numeric Evidence Packs - Provenance for each backfill run
+ * Links observations to source, run metadata, and raw API responses
+ */
+export const numericEvidencePacks = mysqlTable("numeric_evidence_packs", {
+  id: varchar("id", { length: 255 }).primaryKey(), // evidence_{sourceId}_{productId}_{year}_{timestamp}
+  sourceId: varchar("sourceId", { length: 100 }).notNull(),
+  productId: varchar("productId", { length: 100 }).notNull(),
+  year: int("year").notNull(), // Year this pack covers
+  checkpointId: varchar("checkpointId", { length: 255 }), // Link to backfill checkpoint
+  runTimestamp: timestamp("runTimestamp").notNull(), // When this data was fetched
+  sourceUrl: text("sourceUrl"), // API endpoint used
+  apiVersion: varchar("apiVersion", { length: 50 }),
+  rawResponse: json("rawResponse").$type<Record<string, unknown>>(), // Full API response (may be large)
+  observationCount: int("observationCount").default(0), // Number of observations in this pack
+  metadata: json("metadata").$type<Record<string, unknown>>(), // Additional metadata
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  sourceProductIdx: index("num_evidence_source_product_idx").on(table.sourceId, table.productId),
+  yearIdx: index("num_evidence_year_idx").on(table.year),
+  checkpointIdx: index("num_evidence_checkpoint_idx").on(table.checkpointId),
+}));
+
+export type NumericEvidencePack = typeof numericEvidencePacks.$inferSelect;
+export type InsertNumericEvidencePack = typeof numericEvidencePacks.$inferInsert;
+
+/**
+ * Data Contradictions - Track conflicting values from multiple sources
+ * Triggered when variance > 15% between sources for same indicator/date
+ */
+export const dataContradictions = mysqlTable("data_contradictions", {
+  id: int("id").autoincrement().primaryKey(),
+  indicatorCode: varchar("indicatorCode", { length: 100 }).notNull(),
+  observationDate: timestamp("observationDate").notNull(),
+  regimeTag: mysqlEnum("regimeTag", ["aden_irg", "sanaa_defacto", "mixed", "international"]).notNull(),
+  
+  // Conflicting observations
+  observation1Id: varchar("observation1Id", { length: 255 }).notNull(),
+  observation1Value: decimal("observation1Value", { precision: 30, scale: 10 }).notNull(),
+  observation1Source: varchar("observation1Source", { length: 100 }).notNull(),
+  
+  observation2Id: varchar("observation2Id", { length: 255 }).notNull(),
+  observation2Value: decimal("observation2Value", { precision: 30, scale: 10 }).notNull(),
+  observation2Source: varchar("observation2Source", { length: 100 }).notNull(),
+  
+  // Variance metrics
+  variancePercent: decimal("variancePercent", { precision: 10, scale: 4 }).notNull(),
+  varianceAbsolute: decimal("varianceAbsolute", { precision: 30, scale: 10 }).notNull(),
+  
+  // Resolution
+  status: mysqlEnum("status", ["unresolved", "investigating", "resolved", "accepted_variance"]).default("unresolved").notNull(),
+  resolution: text("resolution"), // Explanation of resolution
+  preferredObservationId: varchar("preferredObservationId", { length: 255 }), // If one is chosen
+  
+  // Metadata
+  detectedAt: timestamp("detectedAt").defaultNow().notNull(),
+  resolvedAt: timestamp("resolvedAt"),
+  resolvedBy: int("resolvedBy").references(() => users.id),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  indicatorDateIdx: index("contradiction_indicator_date_idx").on(table.indicatorCode, table.observationDate),
+  statusIdx: index("contradiction_status_idx").on(table.status),
+  detectedAtIdx: index("contradiction_detected_idx").on(table.detectedAt),
+}));
+
+export type DataContradiction = typeof dataContradictions.$inferSelect;
+export type InsertDataContradiction = typeof dataContradictions.$inferInsert;

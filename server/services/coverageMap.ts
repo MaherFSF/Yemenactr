@@ -339,3 +339,80 @@ export async function getQuickCoverageStats(): Promise<{
     lastUpdated: tsStats?.[0]?.lastUpdated?.toISOString() || new Date().toISOString(),
   };
 }
+
+/**
+ * Get numeric series coverage stats
+ */
+export async function getNumericSeriesCoverageStats(): Promise<{
+  totalSeries: number;
+  totalObservations: number;
+  seriesByFrequency: Record<string, number>;
+  observationsByYear: Record<number, number>;
+  latestObservationDate: string | null;
+}> {
+  const db = await getDb();
+  if (!db) {
+    return {
+      totalSeries: 0,
+      totalObservations: 0,
+      seriesByFrequency: {},
+      observationsByYear: {},
+      latestObservationDate: null,
+    };
+  }
+
+  try {
+    // Count series
+    const [seriesCount] = await db.execute(sql`
+      SELECT COUNT(*) as count FROM numeric_series
+    `) as any;
+
+    // Count observations
+    const [obsCount] = await db.execute(sql`
+      SELECT COUNT(*) as count, MAX(observationDate) as latest
+      FROM numeric_observations
+    `) as any;
+
+    // Count by frequency
+    const [freqStats] = await db.execute(sql`
+      SELECT frequency, COUNT(*) as count
+      FROM numeric_series
+      GROUP BY frequency
+    `) as any;
+
+    // Count by year
+    const [yearStats] = await db.execute(sql`
+      SELECT YEAR(observationDate) as year, COUNT(*) as count
+      FROM numeric_observations
+      GROUP BY YEAR(observationDate)
+      ORDER BY year DESC
+    `) as any;
+
+    const seriesByFrequency: Record<string, number> = {};
+    (freqStats || []).forEach((row: any) => {
+      seriesByFrequency[row.frequency] = row.count;
+    });
+
+    const observationsByYear: Record<number, number> = {};
+    (yearStats || []).forEach((row: any) => {
+      observationsByYear[row.year] = row.count;
+    });
+
+    return {
+      totalSeries: seriesCount?.[0]?.count || 0,
+      totalObservations: obsCount?.[0]?.count || 0,
+      seriesByFrequency,
+      observationsByYear,
+      latestObservationDate: obsCount?.[0]?.latest?.toISOString() || null,
+    };
+  } catch (error) {
+    console.error('[CoverageMap] Error getting numeric series stats:', error);
+    return {
+      totalSeries: 0,
+      totalObservations: 0,
+      seriesByFrequency: {},
+      observationsByYear: {},
+      latestObservationDate: null,
+    };
+  }
+}
