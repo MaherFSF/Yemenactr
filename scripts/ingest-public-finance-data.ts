@@ -5,7 +5,7 @@
  */
 
 import { db } from '../server/db';
-import { timeSeries, indicators, sources } from '../drizzle/schema';
+import { timeSeries, indicators, sourceRegistry } from '../drizzle/schema';
 import { eq, and } from 'drizzle-orm';
 
 interface DataPoint {
@@ -284,21 +284,21 @@ async function ensureSourceExists(sourceName: string): Promise<number> {
     return sourceCache[sourceName];
   }
   
-  const existing = await db.select().from(sources).where(eq(sources.publisher, sourceName)).limit(1);
+  const existing = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, sourceName)).limit(1);
   
   if (existing.length > 0) {
     sourceCache[sourceName] = existing[0].id;
     return existing[0].id;
   }
   
-  const result = await db.insert(sources).values({
-    publisher: sourceName,
+  const result = await db.insert(sourceRegistry).values({
+    name: sourceName,
     retrievalDate: new Date(),
     license: sourceName.includes('World Bank') || sourceName.includes('IMF') ? 'CC-BY-4.0' : 'unknown',
     notes: `Public Finance data source: ${sourceName}`,
   });
-  
-  const newSource = await db.select().from(sources).where(eq(sources.publisher, sourceName)).limit(1);
+
+  const newSource = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, sourceName)).limit(1);
   sourceCache[sourceName] = newSource[0].id;
   console.log(`Created source: ${sourceName} (ID: ${newSource[0].id})`);
   return newSource[0].id;

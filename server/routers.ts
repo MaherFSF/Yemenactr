@@ -2097,7 +2097,7 @@ Answer the user's question based on this research. Be specific and cite sources 
     // Get status of all data sources
     getSourceStatus: publicProcedure
       .query(async () => {
-        return getDataSourceStatus();
+        return await getDataSourceStatus();
       }),
 
     // Fetch World Bank indicator data

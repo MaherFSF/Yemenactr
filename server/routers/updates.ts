@@ -14,7 +14,7 @@ import {
   updateEvidenceBundles,
   updateSignals,
   updateNotifications,
-  sources
+  sourceRegistry
 } from "../../drizzle/schema";
 import { eq, and, desc, asc, sql, like, or, inArray } from "drizzle-orm";
 import { ingestUpdate, RawUpdate, runDailyUpdatesIngestion } from "../services/updatesIngestionService";
@@ -316,8 +316,8 @@ export const updatesRouter = router({
       // Find or create source
       let sourceId = 1; // Default source
       const [existingSource] = await db.select()
-        .from(sources)
-        .where(eq(sources.publisher, input.sourcePublisher))
+        .from(sourceRegistry)
+        .where(eq(sourceRegistry.name, input.sourcePublisher))
         .limit(1);
       
       if (existingSource) {

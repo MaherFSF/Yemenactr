@@ -1,151 +1,73 @@
 /**
  * YETO Connector Registry Loader
- * 
- * Loads all 226 sources from sources-config.json into the universal connector registry
- * Activates automatic scheduling and ingestion for all sources
+ *
+ * Loads sources from the DATABASE (source_registry table) into the
+ * universal connector registry at startup.
+ *
+ * Previously loaded from sources-config.json (archived).
+ * Now uses the single source of truth: source_registry DB table,
+ * populated by scripts/import-registry.ts from the canonical xlsx.
  */
 
-import * as fs from 'fs';
-import * as path from 'path';
 import { registry, SourceConfig } from './universal-connector';
-
-interface SourceConfigFile {
-  version: string;
-  timestamp: string;
-  totalSources: number;
-  byTier: Record<string, number>;
-  byStatus: Record<string, number>;
-  byFrequency: Record<string, number>;
-  byAccessMethod: Record<string, number>;
-  byModule: Record<string, number>;
-  sources: Array<{
-    id: string;
-    numericId: number;
-    nameEn: string;
-    nameAr: string;
-    category: string;
-    tier: string;
-    institution: string;
-    url: string;
-    urlRaw: string;
-    accessMethod: string;
-    updateFrequency: string;
-    cadence: string;
-    license: string;
-    reliabilityScore: number;
-    geographicCoverage: string;
-    coverageText: string;
-    typicalLagDays: number;
-    typicalLagText: string;
-    requiresAuth: boolean;
-    dataFields: string[];
-    ingestionMethod: string;
-    yetoUsage: string;
-    yetoModule: string;
-    granularityCaveats: string;
-    notes: string;
-    tags: string[];
-    origin: string;
-    status: string;
-    active: boolean;
-    coverageRange: {
-      start: string;
-      end: string;
-    };
-  }>;
-}
+import { getDb } from '../db';
+import { sourceRegistry } from '../../drizzle/schema';
 
 /**
- * Load all sources from config file into registry
+ * Load all sources from database into the universal connector registry.
  */
 export async function loadSourcesFromConfig(): Promise<void> {
-  console.log('🚀 Loading YETO source registry from config...\n');
-
-  const configPath = path.join(__dirname, './sources-config.json');
-
-  if (!fs.existsSync(configPath)) {
-    console.error(`❌ Config file not found: ${configPath}`);
-    throw new Error(`Config file not found: ${configPath}`);
-  }
+  console.log('[RegistryLoader] Loading source registry from database...');
 
   try {
-    // Read config file
-    const configContent = fs.readFileSync(configPath, 'utf-8');
-    const config: SourceConfigFile = JSON.parse(configContent);
+    const db = await getDb();
+    if (!db) {
+      console.warn('[RegistryLoader] No database connection, skipping registry load');
+      return;
+    }
 
-    console.log(`📊 Loading ${config.totalSources} sources from config\n`);
-    console.log(`📈 Registry Statistics:`);
-    console.log(`   Version: ${config.version}`);
-    console.log(`   Generated: ${config.timestamp}`);
-    console.log(`   Total Sources: ${config.totalSources}`);
+    const rows = await db.select().from(sourceRegistry);
+    console.log(`[RegistryLoader] Found ${rows.length} sources in database`);
 
-    console.log(`\n📋 By Tier:`);
-    Object.entries(config.byTier).forEach(([tier, count]) => {
-      console.log(`   ${tier}: ${count}`);
-    });
-
-    console.log(`\n📅 By Update Frequency:`);
-    Object.entries(config.byFrequency).forEach(([freq, count]) => {
-      console.log(`   ${freq}: ${count}`);
-    });
-
-    console.log(`\n🔌 By Access Method:`);
-    Object.entries(config.byAccessMethod).forEach(([method, count]) => {
-      if (typeof method === 'string' && method.length < 50) {
-        console.log(`   ${method}: ${count}`);
-      }
-    });
-
-    // Register each source
     let registered = 0;
     let failed = 0;
 
-    for (const sourceData of config.sources) {
+    for (const row of rows) {
       try {
         const sourceConfig: SourceConfig = {
-          sourceId: sourceData.id,
-          sourceName: sourceData.nameEn,
-          category: sourceData.category,
-          url: sourceData.url,
-          apiEndpoint: sourceData.urlRaw,
-          accessMethod: (sourceData.accessMethod || 'WEB') as any,
-          updateFrequency: (sourceData.cadence || 'ANNUAL') as any,
-          tier: (sourceData.tier || 'T2') as any,
-          requiresAuth: sourceData.requiresAuth,
-          requiresKey: undefined,
-          dataFormat: 'JSON',
-          indicators: sourceData.dataFields || [],
+          sourceId: row.sourceId,
+          sourceName: row.name,
+          category: row.sectorCategory || 'general',
+          url: row.webUrl || '',
+          apiEndpoint: row.apiUrl || undefined,
+          accessMethod: (row.accessType || 'WEB') as any,
+          updateFrequency: (row.updateFrequency || 'IRREGULAR') as any,
+          tier: (row.tier || 'UNKNOWN') as any,
+          requiresAuth: row.apiKeyRequired || false,
+          requiresKey: row.apiKeyRequired ? row.apiKeyContact || undefined : undefined,
+          dataFormat: (row.sourceType === 'PDF' || row.sourceType === 'CSV' || row.sourceType === 'XML' ? row.sourceType : 'JSON') as any,
+          indicators: [],
           coverage: {
-            start: new Date(sourceData.coverageRange.start),
-            end: new Date(sourceData.coverageRange.end),
+            start: row.historicalStart ? new Date(`${row.historicalStart}-01-01`) : new Date('2010-01-01'),
+            end: row.historicalEnd ? new Date(`${row.historicalEnd}-12-31`) : new Date(),
           },
-          reliabilityScore: sourceData.reliabilityScore || 75,
+          reliabilityScore: row.reliabilityScore ? parseInt(String(row.reliabilityScore), 10) || 75 : 75,
         };
 
         registry.registerSource(sourceConfig);
         registered++;
       } catch (error) {
-        console.warn(`⚠️  Failed to register ${sourceData.id}: ${error}`);
+        console.warn(`[RegistryLoader] Failed to register ${row.sourceId}: ${error}`);
         failed++;
       }
     }
 
-    console.log(`\n✅ Registry Loading Complete`);
-    console.log(`   Registered: ${registered} sources`);
-    console.log(`   Failed: ${failed} sources`);
+    console.log(`[RegistryLoader] Registered: ${registered}, Failed: ${failed}`);
 
-    // Get registry stats
     const stats = registry.getStats();
-    console.log(`\n📊 Active Registry Statistics:`);
-    console.log(`   Total Sources: ${stats.totalSources}`);
-    console.log(`   By Tier: ${JSON.stringify(stats.byTier)}`);
-    console.log(`   By Frequency: ${JSON.stringify(stats.byFrequency)}`);
-
-    console.log(`\n✅ All sources ready for ingestion`);
-    console.log(`   Next: Start orchestrator with await orchestrator.start()`);
+    console.log(`[RegistryLoader] Active: ${stats.totalSources} sources`);
   } catch (error) {
-    console.error('❌ Error loading registry:', error);
-    throw error;
+    console.error('[RegistryLoader] Error loading registry:', error);
   }
 }
 

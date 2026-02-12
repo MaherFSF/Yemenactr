@@ -1,8 +1,0 @@
-{
-  "query": "SELECT \n  'research_publications' as table_name, \n  COUNT(*) as total_records,\n  MIN(publicationYear) as earliest_year,\n  MAX(publicationYear) as latest_year\nFROM research_publications\nUNION ALL\nSELECT \n  'glossary_terms' as table_name, \n  COUNT(*) as total_records,\n  NULL as earliest_year,\n  NULL as latest_year\nFROM glossary_terms\nUNION ALL\nSELECT \n  'economic_indicators' as table_name, \n  COUNT(*) as total_records,\n  MIN(YEAR(date)) as earliest_year,\n  MAX(YEAR(date)) as latest_year\nFROM economic_indicators\nUNION ALL\nSELECT \n  'data_sources' as table_name, \n  COUNT(*) as total_records,\n  NULL as earliest_year,\n  NULL as latest_year\nFROM data_sources;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT \n  'research_publications' as table_name, \n  COUNT(*) as total_records,\n  MIN(publicationYear) as earliest_year,\n  MAX(publicationYear) as latest_year\nFROM research_publications\nUNION ALL\nSELECT \n  'glossary_terms' as table_name, \n  COUNT(*) as total_records,\n  NULL as earliest_year,\n  NULL as latest_year\nFROM glossary_terms\nUNION ALL\nSELECT \n  'economic_indicators' as table_name, \n  COUNT(*) as total_records,\n  MIN(YEAR(date)) as earliest_year,\n  MAX(YEAR(date)) as latest_year\nFROM economic_indicators\nUNION ALL\nSELECT \n  'data_sources' as table_name, \n  COUNT(*) as total_records,\n  NULL as earliest_year,\n  NULL as latest_year\nFROM data_sources;",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1146 (42S02) at line 1: Table 'xodoykmzpdfikkvj3qftgk.economic_indicators' doesn't exist"
-  ]
-}

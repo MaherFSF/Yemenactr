@@ -168,9 +168,9 @@ export default function ExportBundle() {
   };
 
   const lastExports = [
+    { date: "2026-02-12 10:00", version: "v3.0.0", size: "42.1 MB", status: "success" },
     { date: "2026-01-14 14:30", version: "v2.5.0", size: "38.2 MB", status: "success" },
-    { date: "2026-01-10 09:15", version: "v2.4.1", size: "37.8 MB", status: "success" },
-    { date: "2026-01-05 16:45", version: "v2.4.0", size: "36.5 MB", status: "success" }
+    { date: "2026-01-10 09:15", version: "v2.4.1", size: "37.8 MB", status: "success" }
   ];
 
   return (
@@ -278,7 +278,7 @@ export default function ExportBundle() {
                 <Separator />
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Version</span>
-                  <Badge>v2.5.0</Badge>
+                  <Badge>v3.0.0</Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Build Status</span>

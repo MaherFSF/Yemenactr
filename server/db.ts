@@ -6,7 +6,7 @@ import {
   timeSeries,
   geospatialData,
   economicEvents,
-  sources,
+  sourceRegistry,
   datasets,
   documents,
   glossaryTerms,
@@ -15,7 +15,7 @@ import {
   type TimeSeries,
   type GeospatialData,
   type EconomicEvent,
-  type Source,
+  type SourceRegistry,
   type Dataset,
   type Document,
   type GlossaryTerm,
@@ -257,11 +257,11 @@ export async function getEconomicEvents(
 // SOURCES & DATASETS
 // ============================================================================
 
-export async function getSourceById(id: number): Promise<Source | undefined> {
+export async function getSourceById(id: number): Promise<SourceRegistry | undefined> {
   const db = await getDb();
   if (!db) return undefined;
 
-  const results = await db.select().from(sources).where(eq(sources.id, id)).limit(1);
+  const results = await db.select().from(sourceRegistry).where(eq(sourceRegistry.id, id)).limit(1);
   return results.length > 0 ? results[0] : undefined;
 }
 
@@ -273,11 +273,11 @@ export async function getDatasetById(id: number): Promise<Dataset | undefined> {
   return results.length > 0 ? results[0] : undefined;
 }
 
-export async function getAllSources(limit: number = 100): Promise<Source[]> {
+export async function getAllSources(limit: number = 100): Promise<SourceRegistry[]> {
   const db = await getDb();
   if (!db) return [];
 
-  return await db.select().from(sources).orderBy(desc(sources.createdAt)).limit(limit);
+  return await db.select().from(sourceRegistry).orderBy(desc(sourceRegistry.createdAt)).limit(limit);
 }
 
 // ============================================================================
@@ -618,7 +618,7 @@ export async function getPlatformStats(): Promise<PlatformStats> {
       sql`SELECT COUNT(DISTINCT indicatorCode) as count FROM time_series`
     );
     const [sourceResult] = await db.execute(
-      sql`SELECT COUNT(*) as count FROM sources`
+      sql`SELECT COUNT(*) as count FROM source_registry`
     );
     const [documentResult] = await db.execute(
       sql`SELECT COUNT(*) as count FROM documents`

@@ -107,10 +107,7 @@ temp/
 *.sqlite3
 
 # Manus transient files
-.manus/db/db-query-*.json
-.manus/cache/
-.manus/logs/
-.manus/temp/
+.manus/
 
 # Large files (should be in S3)
 *.mp4

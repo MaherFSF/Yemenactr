@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS `webhooks` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `name` varchar(255) NOT NULL,\n  `type` enum('slack','discord','email','custom') NOT NULL,\n  `url` text NOT NULL,\n  `enabled` boolean DEFAULT true NOT NULL,\n  `events` json NOT NULL,\n  `headers` json,\n  `lastTriggered` timestamp,\n  `failureCount` int DEFAULT 0 NOT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  `createdBy` int,\n  CONSTRAINT `webhooks_id` PRIMARY KEY(`id`),\n  INDEX `type_idx` (`type`),\n  INDEX `enabled_idx` (`enabled`)\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute CREATE TABLE IF NOT EXISTS `webhooks` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `name` varchar(255) NOT NULL,\n  `type` enum('slack','discord','email','custom') NOT NULL,\n  `url` text NOT NULL,\n  `enabled` boolean DEFAULT true NOT NULL,\n  `events` json NOT NULL,\n  `headers` json,\n  `lastTriggered` timestamp,\n  `failureCount` int DEFAULT 0 NOT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  `createdBy` int,\n  CONSTRAINT `webhooks_id` PRIMARY KEY(`id`),\n  INDEX `type_idx` (`type`),\n  INDEX `enabled_idx` (`enabled`)\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 283
-}

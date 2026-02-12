@@ -8,7 +8,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { db } from '../db';
-import { timeSeries, indicators, datasets, sources } from '../../drizzle/schema';
+import { timeSeries, indicators, datasets, sourceRegistry } from '../../drizzle/schema';
 import { eq, and } from 'drizzle-orm';
 
 // ============================================================================

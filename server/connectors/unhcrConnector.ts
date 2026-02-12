@@ -13,7 +13,7 @@
  */
 
 import { getDb } from "../db";
-import { timeSeries, provenanceLog, sources } from "../../drizzle/schema";
+import { timeSeries, provenanceLog, sourceRegistry } from "../../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
 
 // ============================================
@@ -311,17 +311,22 @@ export async function ingestUNHCRData(
   try {
     // Ensure UNHCR data source exists
     let sourceId: number;
-    const existingSources = await db.select().from(sources).where(eq(sources.publisher, "UNHCR")).limit(1);
-    
+    const existingSources = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, "UNHCR")).limit(1);
+
     if (existingSources.length > 0) {
       sourceId = existingSources[0].id;
     } else {
-      const [newSource] = await db.insert(sources).values({
-        publisher: "UNHCR",
-        url: "https://www.unhcr.org/refugee-statistics/",
+      const [newSource] = await db.insert(sourceRegistry).values({
+        sourceId: "CONN-UNHCR",
+        name: "UNHCR",
+        publisher: "UN High Commissioner for Refugees",
+        tier: "T1",
+        status: "ACTIVE",
+        accessType: "API",
+        updateFrequency: "ANNUAL",
+        webUrl: "https://www.unhcr.org/refugee-statistics/",
         license: "Open Data",
-        retrievalDate: new Date(),
-        notes: "UN High Commissioner for Refugees - Global refugee and displacement statistics",
+        description: "UN High Commissioner for Refugees - Global refugee and displacement statistics",
       });
       sourceId = newSource.insertId;
     }

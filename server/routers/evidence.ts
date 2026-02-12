@@ -3,10 +3,10 @@ import { publicProcedure, protectedProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
 import { eq, and, desc, sql } from "drizzle-orm";
 import { 
-  evidencePacks, 
-  datasetVersions, 
+  evidencePacks,
+  datasetVersions,
   dataContradictions,
-  sources,
+  sourceRegistry,
   datasets
 } from "../../drizzle/schema";
 
@@ -269,10 +269,10 @@ export const evidenceRouter = {
       const contradictions = await db
         .select({
           contradiction: dataContradictions,
-          source1: sources,
+          source1: sourceRegistry,
         })
         .from(dataContradictions)
-        .leftJoin(sources, eq(dataContradictions.source1Id, sources.id))
+        .leftJoin(sourceRegistry, eq(dataContradictions.source1Id, sourceRegistry.id))
         .where(whereClause)
         .orderBy(desc(dataContradictions.detectedAt))
         .limit(input.limit);
@@ -311,8 +311,8 @@ export const evidenceRouter = {
       
       // Get source details for each citation
       const sourceIds = evidencePack[0].citations?.map((c: any) => c.sourceId) || [];
-      const sourcesData = sourceIds.length > 0 
-        ? await db.select().from(sources).where(sql`id IN (${sourceIds.join(",")})`)
+      const sourcesData = sourceIds.length > 0
+        ? await db.select().from(sourceRegistry).where(sql`id IN (${sourceIds.join(",")})`)
         : [];
       
       return {

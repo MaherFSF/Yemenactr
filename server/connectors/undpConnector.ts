@@ -12,7 +12,7 @@
  */
 
 import { getDb } from "../db";
-import { timeSeries, provenanceLog, sources } from "../../drizzle/schema";
+import { timeSeries, provenanceLog, sourceRegistry } from "../../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 
 // ============================================
@@ -228,17 +228,22 @@ export async function ingestUNDPData(
   try {
     // Ensure UNDP data source exists
     let sourceId: number;
-    const existingSources = await db.select().from(sources).where(eq(sources.publisher, "UNDP")).limit(1);
-    
+    const existingSources = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, "UNDP")).limit(1);
+
     if (existingSources.length > 0) {
       sourceId = existingSources[0].id;
     } else {
-      const [newSource] = await db.insert(sources).values({
-        publisher: "UNDP",
-        url: "https://hdr.undp.org/",
+      const [newSource] = await db.insert(sourceRegistry).values({
+        sourceId: "CONN-UNDP",
+        name: "UNDP",
+        publisher: "United Nations Development Programme",
+        tier: "T1",
+        status: "ACTIVE",
+        accessType: "WEB",
+        updateFrequency: "ANNUAL",
+        webUrl: "https://hdr.undp.org/",
         license: "Open Data",
-        retrievalDate: new Date(),
-        notes: "United Nations Development Programme - Human Development Reports",
+        description: "United Nations Development Programme - Human Development Reports",
       });
       sourceId = newSource.insertId;
     }

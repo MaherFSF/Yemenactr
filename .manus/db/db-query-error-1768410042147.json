@@ -1,8 +1,0 @@
-{
-  "query": "SELECT \n  (SELECT COUNT(*) FROM research_publications) as publications_count,\n  (SELECT COUNT(*) FROM research_organizations) as organizations_count,\n  (SELECT COUNT(*) FROM documents) as documents_count,\n  (SELECT COUNT(DISTINCT source) FROM research_publications) as unique_sources;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT \n  (SELECT COUNT(*) FROM research_publications) as publications_count,\n  (SELECT COUNT(*) FROM research_organizations) as organizations_count,\n  (SELECT COUNT(*) FROM documents) as documents_count,\n  (SELECT COUNT(DISTINCT source) FROM research_publications) as unique_sources;",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1054 (42S22) at line 1: Unknown column 'source' in 'field list'"
-  ]
-}

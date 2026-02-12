@@ -1,7 +1,7 @@
 /**
  * YETO Data Ingestion Orchestrator
  * 
- * Manages continuous data ingestion from all 225 sources
+ * Manages continuous data ingestion from all 295 sources
  * - Automatic scheduling per source cadence
  * - Historical backfill (2010-2026)
  * - Real-time updates

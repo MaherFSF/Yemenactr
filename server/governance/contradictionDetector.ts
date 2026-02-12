@@ -9,7 +9,7 @@
  */
 
 import { getDb } from '../db';
-import { dataContradictions, sources, timeSeries } from '../../drizzle/schema';
+import { dataContradictions, sourceRegistry, timeSeries } from '../../drizzle/schema';
 import { eq, desc, and } from 'drizzle-orm';
 
 // Types for contradiction detection
@@ -104,10 +104,10 @@ export class ContradictionDetectorService {
     const plausibleReasons = this.generatePlausibleReasons(input, discrepancyType);
     
     // Get source names
-    const source1Results = await db.select().from(sources).where(eq(sources.id, input.source1Id));
-    const source2Results = await db.select().from(sources).where(eq(sources.id, input.source2Id));
-    const source1Name = source1Results[0]?.publisher || 'Unknown Source';
-    const source2Name = source2Results[0]?.publisher || 'Unknown Source';
+    const source1Results = await db.select().from(sourceRegistry).where(eq(sourceRegistry.id, input.source1Id));
+    const source2Results = await db.select().from(sourceRegistry).where(eq(sourceRegistry.id, input.source2Id));
+    const source1Name = source1Results[0]?.name || 'Unknown Source';
+    const source2Name = source2Results[0]?.name || 'Unknown Source';
     
     // Insert contradiction record
     const result = await db.insert(dataContradictions).values({
@@ -220,8 +220,8 @@ export class ContradictionDetectorService {
     const contradictions: ContradictionResult[] = [];
     
     for (const row of results) {
-      const source1Results = await db.select().from(sources).where(eq(sources.id, row.source1Id));
-      const source2Results = await db.select().from(sources).where(eq(sources.id, row.source2Id));
+      const source1Results = await db.select().from(sourceRegistry).where(eq(sourceRegistry.id, row.source1Id));
+      const source2Results = await db.select().from(sourceRegistry).where(eq(sourceRegistry.id, row.source2Id));
       
       contradictions.push({
         id: row.id,
@@ -229,9 +229,9 @@ export class ContradictionDetectorService {
         date: row.date,
         regimeTag: row.regimeTag,
         value1: parseFloat(row.value1),
-        source1: source1Results[0]?.publisher || 'Unknown',
+        source1: source1Results[0]?.name || 'Unknown',
         value2: parseFloat(row.value2),
-        source2: source2Results[0]?.publisher || 'Unknown',
+        source2: source2Results[0]?.name || 'Unknown',
         discrepancyPercent: parseFloat(row.discrepancyPercent),
         discrepancyType: row.discrepancyType,
         plausibleReasons: (row.plausibleReasons as string[]) || [],

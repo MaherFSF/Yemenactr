@@ -11,7 +11,7 @@
  */
 
 import { getDb } from "../db";
-import { provenanceLog, sources, timeSeries } from "../../drizzle/schema";
+import { provenanceLog, sourceRegistry, timeSeries } from "../../drizzle/schema";
 import { eq, sql, and, gte, lte } from "drizzle-orm";
 
 // Import all connectors

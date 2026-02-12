@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS claim_evidence_links (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  claimId VARCHAR(36) NOT NULL,\n  evidenceType ENUM('document','excerpt','dataset','observation') NOT NULL,\n  evidenceId INT NOT NULL,\n  relevanceScore DECIMAL(3,2),\n  isPrimary BOOLEAN DEFAULT FALSE NOT NULL,\n  notes TEXT,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  INDEX claim_evidence_claim_idx (claimId),\n  INDEX claim_evidence_evidence_idx (evidenceType, evidenceId),\n  FOREIGN KEY (claimId) REFERENCES claims(id)\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute CREATE TABLE IF NOT EXISTS claim_evidence_links (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  claimId VARCHAR(36) NOT NULL,\n  evidenceType ENUM('document','excerpt','dataset','observation') NOT NULL,\n  evidenceId INT NOT NULL,\n  relevanceScore DECIMAL(3,2),\n  isPrimary BOOLEAN DEFAULT FALSE NOT NULL,\n  notes TEXT,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  INDEX claim_evidence_claim_idx (claimId),\n  INDEX claim_evidence_evidence_idx (evidenceType, evidenceId),\n  FOREIGN KEY (claimId) REFERENCES claims(id)\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 278
-}

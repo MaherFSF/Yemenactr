@@ -3,7 +3,7 @@
  */
 
 import { mysqlTable, int, varchar, text, timestamp, boolean, mysqlEnum, json, index } from "drizzle-orm/mysql-core";
-import { evidenceSources } from "./schema";
+import { sourceRegistry } from "./schema";
 
 // ============================================================================
 // SOURCE CONTACTS - Contact information for each data source
@@ -11,7 +11,7 @@ import { evidenceSources } from "./schema";
 
 export const sourceContacts = mysqlTable("source_contacts", {
   id: int("id").autoincrement().primaryKey(),
-  sourceId: int("sourceId").notNull().references(() => evidenceSources.id),
+  sourceId: int("sourceId").notNull().references(() => sourceRegistry.id),
   contactType: mysqlEnum("contactType", ["api_support", "data_team", "general", "partnership"]).notNull(),
   contactName: varchar("contactName", { length: 255 }),
   email: varchar("email", { length: 320 }),
@@ -38,7 +38,7 @@ export type InsertSourceContact = typeof sourceContacts.$inferInsert;
 
 export const apiRegistrationInstructions = mysqlTable("api_registration_instructions", {
   id: int("id").autoincrement().primaryKey(),
-  sourceId: int("sourceId").notNull().references(() => evidenceSources.id),
+  sourceId: int("sourceId").notNull().references(() => sourceRegistry.id),
   registrationUrl: text("registrationUrl").notNull(), // URL to API registration page
   documentationUrl: text("documentationUrl"), // API documentation URL
   credentialType: mysqlEnum("credentialType", ["api_key", "oauth_token", "basic_auth", "certificate"]).notNull(),

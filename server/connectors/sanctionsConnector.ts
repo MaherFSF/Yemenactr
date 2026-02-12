@@ -9,7 +9,7 @@
  */
 
 import { getDb } from "../db";
-import { timeSeries, sources } from "../../drizzle/schema";
+import { timeSeries, sourceRegistry } from "../../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 
 // ============================================
@@ -63,44 +63,54 @@ function delay(ms: number): Promise<void> {
 async function ensureOFACSource(): Promise<number> {
   const db = await getDb();
   if (!db) throw new Error('Database not available');
-  
-  const existing = await db.select().from(sources).where(eq(sources.publisher, SOURCE_NAME_OFAC)).limit(1);
-  
+
+  const existing = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, SOURCE_NAME_OFAC)).limit(1);
+
   if (existing.length > 0) {
     return existing[0].id;
   }
-  
-  await db.insert(sources).values({
-    publisher: SOURCE_NAME_OFAC,
-    url: 'https://ofac.treasury.gov/sanctions-list-service',
+
+  await db.insert(sourceRegistry).values({
+    sourceId: "CONN-OFAC",
+    name: SOURCE_NAME_OFAC,
+    publisher: "US Treasury - OFAC",
+    tier: "T1",
+    status: "ACTIVE",
+    accessType: "WEB",
+    updateFrequency: "DAILY",
+    webUrl: 'https://ofac.treasury.gov/sanctions-list-service',
     license: 'Public Domain',
-    retrievalDate: new Date(),
-    notes: 'US Treasury OFAC Specially Designated Nationals and Blocked Persons List',
+    description: 'US Treasury OFAC Specially Designated Nationals and Blocked Persons List',
   });
-  
-  const newSource = await db.select().from(sources).where(eq(sources.publisher, SOURCE_NAME_OFAC)).limit(1);
+
+  const newSource = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, SOURCE_NAME_OFAC)).limit(1);
   return newSource[0].id;
 }
 
 async function ensureEUSource(): Promise<number> {
   const db = await getDb();
   if (!db) throw new Error('Database not available');
-  
-  const existing = await db.select().from(sources).where(eq(sources.publisher, SOURCE_NAME_EU)).limit(1);
-  
+
+  const existing = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, SOURCE_NAME_EU)).limit(1);
+
   if (existing.length > 0) {
     return existing[0].id;
   }
-  
-  await db.insert(sources).values({
-    publisher: SOURCE_NAME_EU,
-    url: 'https://data.europa.eu/data/datasets/consolidated-list-of-persons-groups-and-entities-subject-to-eu-financial-sanctions',
+
+  await db.insert(sourceRegistry).values({
+    sourceId: "CONN-EU-SANCTIONS",
+    name: SOURCE_NAME_EU,
+    publisher: "European Commission",
+    tier: "T1",
+    status: "ACTIVE",
+    accessType: "WEB",
+    updateFrequency: "DAILY",
+    webUrl: 'https://data.europa.eu/data/datasets/consolidated-list-of-persons-groups-and-entities-subject-to-eu-financial-sanctions',
     license: 'Open Data',
-    retrievalDate: new Date(),
-    notes: 'EU consolidated list of persons, groups and entities subject to EU financial sanctions',
+    description: 'EU consolidated list of persons, groups and entities subject to EU financial sanctions',
   });
-  
-  const newSource = await db.select().from(sources).where(eq(sources.publisher, SOURCE_NAME_EU)).limit(1);
+
+  const newSource = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, SOURCE_NAME_EU)).limit(1);
   return newSource[0].id;
 }
 

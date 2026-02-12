@@ -77,11 +77,18 @@ export type InsertAuditLog = typeof auditLogs.$inferInsert;
 // PROVENANCE & SOURCES
 // ============================================================================
 
+/**
+ * @deprecated LEGACY TABLE — Use `sourceRegistry` instead.
+ * This 7-row table is superseded by source_registry (292+ sources).
+ * All FK references have been migrated to sourceRegistry.id.
+ * Kept only for backward compatibility during migration.
+ * Will be dropped in a future migration.
+ */
 export const sources = mysqlTable("sources", {
   id: int("id").autoincrement().primaryKey(),
-  publisher: varchar("publisher", { length: 255 }).notNull(), // e.g., "Central Bank of Yemen - Aden"
-  url: text("url"), // Persistent link to source
-  license: varchar("license", { length: 100 }), // e.g., "CC-BY-4.0", "unknown"
+  publisher: varchar("publisher", { length: 255 }).notNull(),
+  url: text("url"),
+  license: varchar("license", { length: 100 }),
   retrievalDate: timestamp("retrievalDate").notNull(),
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -90,13 +97,15 @@ export const sources = mysqlTable("sources", {
   publisherIdx: index("publisher_idx").on(table.publisher),
 }));
 
+/** @deprecated Use SourceRegistry type instead */
 export type Source = typeof sources.$inferSelect;
+/** @deprecated Use InsertSourceRegistry type instead */
 export type InsertSource = typeof sources.$inferInsert;
 
 export const datasets = mysqlTable("datasets", {
   id: int("id").autoincrement().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(), // e.g., "CPI Monthly Series 2010-2024"
-  sourceId: int("sourceId").notNull().references(() => sources.id),
+  sourceId: int("sourceId").notNull().references(() => sourceRegistry.id),
   publicationDate: timestamp("publicationDate"),
   timeCoverageStart: timestamp("timeCoverageStart"),
   timeCoverageEnd: timestamp("timeCoverageEnd"),
@@ -140,7 +149,7 @@ export const timeSeries = mysqlTable("time_series", {
   value: decimal("value", { precision: 20, scale: 6 }).notNull(),
   unit: varchar("unit", { length: 50 }).notNull(), // e.g., "YER", "percent", "USD millions"
   confidenceRating: mysqlEnum("confidenceRating", ["A", "B", "C", "D"]).notNull(),
-  sourceId: int("sourceId").notNull().references(() => sources.id),
+  sourceId: int("sourceId").notNull().references(() => sourceRegistry.id),
   datasetId: int("datasetId").references(() => datasets.id),
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -168,7 +177,7 @@ export const geospatialData = mysqlTable("geospatial_data", {
   value: decimal("value", { precision: 20, scale: 6 }).notNull(),
   unit: varchar("unit", { length: 50 }).notNull(),
   confidenceRating: mysqlEnum("confidenceRating", ["A", "B", "C", "D"]).notNull(),
-  sourceId: int("sourceId").notNull().references(() => sources.id),
+  sourceId: int("sourceId").notNull().references(() => sourceRegistry.id),
   datasetId: int("datasetId").references(() => datasets.id),
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -196,7 +205,7 @@ export const economicEvents = mysqlTable("economic_events", {
   regimeTag: mysqlEnum("regimeTag", ["aden_irg", "sanaa_defacto", "mixed", "unknown"]).notNull(),
   category: varchar("category", { length: 100 }), // e.g., "policy", "crisis", "reform"
   impactLevel: mysqlEnum("impactLevel", ["low", "medium", "high", "critical"]),
-  sourceId: int("sourceId").references(() => sources.id),
+  sourceId: int("sourceId").references(() => sourceRegistry.id),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => ({
@@ -219,7 +228,7 @@ export const documents = mysqlTable("documents", {
   fileUrl: text("fileUrl").notNull(), // Public S3 URL
   mimeType: varchar("mimeType", { length: 100 }).notNull(),
   fileSize: int("fileSize"), // bytes
-  sourceId: int("sourceId").references(() => sources.id),
+  sourceId: int("sourceId").references(() => sourceRegistry.id),
   license: varchar("license", { length: 100 }),
   publicationDate: timestamp("publicationDate"),
   uploadDate: timestamp("uploadDate").defaultNow().notNull(),
@@ -487,7 +496,7 @@ export const indicators = mysqlTable("indicators", {
   sector: varchar("sector", { length: 100 }).notNull(), // e.g., "banking", "trade", "prices"
   frequency: mysqlEnum("frequency", ["daily", "weekly", "monthly", "quarterly", "annual"]).notNull(),
   methodology: text("methodology"),
-  primarySourceId: int("primarySourceId").references(() => sources.id),
+  primarySourceId: int("primarySourceId").references(() => sourceRegistry.id),
   isActive: boolean("isActive").default(true).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -680,7 +689,7 @@ export const provenanceLedgerFull = mysqlTable("provenance_ledger_full", {
   id: int("id").autoincrement().primaryKey(),
   
   // Data point reference
-  sourceId: int("sourceId").notNull().references(() => sources.id),
+  sourceId: int("sourceId").notNull().references(() => sourceRegistry.id),
   datasetId: int("datasetId").references(() => datasets.id),
   documentId: int("documentId").references(() => documents.id),
   seriesId: int("seriesId").references(() => timeSeries.id),
@@ -809,9 +818,9 @@ export const dataContradictions = mysqlTable("data_contradictions", {
   
   // Conflicting values
   value1: decimal("value1", { precision: 20, scale: 6 }).notNull(),
-  source1Id: int("source1Id").notNull().references(() => sources.id),
+  source1Id: int("source1Id").notNull().references(() => sourceRegistry.id),
   value2: decimal("value2", { precision: 20, scale: 6 }).notNull(),
-  source2Id: int("source2Id").notNull().references(() => sources.id),
+  source2Id: int("source2Id").notNull().references(() => sourceRegistry.id),
   
   // Discrepancy analysis
   discrepancyPercent: decimal("discrepancyPercent", { precision: 10, scale: 2 }).notNull(),
@@ -824,7 +833,7 @@ export const dataContradictions = mysqlTable("data_contradictions", {
   // Status
   status: mysqlEnum("status", ["detected", "investigating", "explained", "resolved"]).default("detected").notNull(),
   resolvedValue: decimal("resolvedValue", { precision: 20, scale: 6 }),
-  resolvedSourceId: int("resolvedSourceId").references(() => sources.id),
+  resolvedSourceId: int("resolvedSourceId").references(() => sourceRegistry.id),
   
   // Audit
   detectedAt: timestamp("detectedAt").defaultNow().notNull(),
@@ -864,7 +873,7 @@ export const dataVintages = mysqlTable("data_vintages", {
   changeMagnitude: decimal("changeMagnitude", { precision: 10, scale: 4 }), // Percent change
   
   // Metadata
-  sourceId: int("sourceId").references(() => sources.id),
+  sourceId: int("sourceId").references(() => sourceRegistry.id),
   confidenceRating: mysqlEnum("confidenceRating", ["A", "B", "C", "D"]),
   
   // Audit
@@ -1510,7 +1519,7 @@ export const commercialBanks = mysqlTable("commercial_banks", {
   // Data Quality
   metricsAsOf: timestamp("metricsAsOf"), // Date of financial metrics
   confidenceRating: mysqlEnum("confidenceRating", ["A", "B", "C", "D"]).default("C").notNull(),
-  sourceId: int("sourceId").references(() => sources.id),
+  sourceId: int("sourceId").references(() => sourceRegistry.id),
   
   // Contact & Details
   headquarters: varchar("headquarters", { length: 255 }),
@@ -1581,7 +1590,7 @@ export const cbyDirectives = mysqlTable("cby_directives", {
   impactLevel: mysqlEnum("impactLevel", ["low", "medium", "high", "critical"]).default("medium").notNull(),
   
   // Metadata
-  sourceId: int("sourceId").references(() => sources.id),
+  sourceId: int("sourceId").references(() => sourceRegistry.id),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => ({
@@ -1621,7 +1630,7 @@ export const bankingSectorMetrics = mysqlTable("banking_sector_metrics", {
   
   // Data Quality
   confidenceRating: mysqlEnum("confidenceRating", ["A", "B", "C", "D"]).default("C").notNull(),
-  sourceId: int("sourceId").references(() => sources.id),
+  sourceId: int("sourceId").references(() => sourceRegistry.id),
   notes: text("notes"),
   
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -1683,7 +1692,7 @@ export const executiveProfiles = mysqlTable("executive_profiles", {
   phone: varchar("phone", { length: 50 }),
   
   // Metadata
-  sourceId: int("sourceId").references(() => sources.id),
+  sourceId: int("sourceId").references(() => sourceRegistry.id),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => ({
@@ -1883,8 +1892,12 @@ export type InsertPartnerContribution = typeof partnerContributions.$inferInsert
 // ============================================================================
 
 /**
- * Evidence Sources - Registry of whitelisted data publishers
- * Categories: humanitarian, IFI, sanctions, domestic, partner
+ * @deprecated LEGACY TABLE — Use `sourceRegistry` instead.
+ * Evidence Sources was a separate source registry for the truth/evidence layer.
+ * All FK references have been migrated to sourceRegistry.id.
+ * The sourceRegistry table now serves as the unified source catalog for
+ * both operational data and evidence tracking.
+ * Kept only for backward compatibility during migration.
  */
 export const evidenceSources = mysqlTable("evidence_sources", {
   id: int("id").autoincrement().primaryKey(),
@@ -1920,7 +1933,9 @@ export const evidenceSources = mysqlTable("evidence_sources", {
   whitelistIdx: index("evidence_source_whitelist_idx").on(table.isWhitelisted),
 }));
 
+/** @deprecated Use SourceRegistry type instead */
 export type EvidenceSource = typeof evidenceSources.$inferSelect;
+/** @deprecated Use InsertSourceRegistry type instead */
 export type InsertEvidenceSource = typeof evidenceSources.$inferInsert;
 
 // Import backfill infrastructure tables
@@ -1932,7 +1947,7 @@ export * from "./schema-source-registry";
  */
 export const evidenceDocuments = mysqlTable("evidence_documents", {
   id: int("id").autoincrement().primaryKey(),
-  sourceId: int("sourceId").notNull().references(() => evidenceSources.id),
+  sourceId: int("sourceId").notNull().references(() => sourceRegistry.id),
   title: varchar("title", { length: 500 }).notNull(),
   titleAr: varchar("titleAr", { length: 500 }),
   documentType: mysqlEnum("documentType", [
@@ -2006,7 +2021,7 @@ export type InsertEvidenceExcerpt = typeof evidenceExcerpts.$inferInsert;
  */
 export const evidenceDatasets = mysqlTable("evidence_datasets", {
   id: int("id").autoincrement().primaryKey(),
-  sourceId: int("sourceId").notNull().references(() => evidenceSources.id),
+  sourceId: int("sourceId").notNull().references(() => sourceRegistry.id),
   name: varchar("name", { length: 255 }).notNull(),
   nameAr: varchar("nameAr", { length: 255 }),
   description: text("description"),
@@ -2574,7 +2589,7 @@ export type InsertFixTicket = typeof fixTickets.$inferInsert;
  */
 export const ingestionRuns = mysqlTable("ingestion_runs", {
   id: int("id").autoincrement().primaryKey(),
-  sourceId: int("sourceId").notNull().references(() => evidenceSources.id),
+  sourceId: int("sourceId").notNull().references(() => sourceRegistry.id),
   connectorName: varchar("connectorName", { length: 100 }).notNull(),
   
   // Timing
@@ -3339,7 +3354,7 @@ export const datasetVersions = mysqlTable("dataset_versions", {
   snapshotFileUrl: text("snapshotFileUrl"),
   
   // Metadata
-  sourceId: int("sourceId").references(() => sources.id),
+  sourceId: int("sourceId").references(() => sourceRegistry.id),
   confidenceRating: mysqlEnum("confidenceRating", ["A", "B", "C", "D"]),
   
   // Audit
@@ -5970,7 +5985,7 @@ export const updateItems = mysqlTable("update_items", {
   bodyAr: text("bodyAr"),
   
   // Source information
-  sourceId: int("sourceId").references(() => sources.id),
+  sourceId: int("sourceId").references(() => sourceRegistry.id),
   sourcePublisher: varchar("sourcePublisher", { length: 255 }),
   sourceUrl: varchar("sourceUrl", { length: 1000 }).notNull(),
   publishedAt: timestamp("publishedAt").notNull(),
@@ -6158,7 +6173,7 @@ export type InsertUpdateSignal = typeof updateSignals.$inferInsert;
 // UpdateIngestionCheckpoint - Track ingestion progress per source
 export const updateIngestionCheckpoints = mysqlTable("update_ingestion_checkpoints", {
   id: int("id").autoincrement().primaryKey(),
-  sourceId: int("sourceId").notNull().references(() => sources.id),
+  sourceId: int("sourceId").notNull().references(() => sourceRegistry.id),
   
   // Checkpoint state
   lastCursor: varchar("lastCursor", { length: 500 }),
@@ -6268,7 +6283,7 @@ export const libraryDocuments = mysqlTable("library_documents", {
   publisherEntityId: int("publisherEntityId").references(() => entities.id),
   
   // Source reference
-  sourceId: int("sourceId").references(() => sources.id),
+  sourceId: int("sourceId").references(() => sourceRegistry.id),
   
   // URLs
   canonicalUrl: text("canonicalUrl"),
@@ -6788,7 +6803,7 @@ export const literatureIngestionRuns = mysqlTable("literature_ingestion_runs", {
   runId: varchar("runId", { length: 50 }).notNull().unique(),
   
   // Source
-  sourceId: int("sourceId").references(() => sources.id),
+  sourceId: int("sourceId").references(() => sourceRegistry.id),
   sourceName: varchar("sourceName", { length: 255 }).notNull(),
   
   // Run type
@@ -7478,6 +7493,13 @@ export const sourceRegistry = mysqlTable("source_registry", {
   notes: text("notes"),
   sectorCategory: varchar("sectorCategory", { length: 100 }),
   registryType: mysqlEnum("registryType", ["master", "extended", "inclusive_pdf", "url_extract"]).default("master"),
+
+  // v3.0 classification fields
+  sourceType: varchar("sourceType", { length: 50 }), // e.g., "Data", "Media", "Report"
+  licenseState: varchar("licenseState", { length: 50 }), // known, unknown, restricted
+  needsClassification: boolean("needsClassification").default(true).notNull(),
+  reliabilityScore: varchar("reliabilityScore", { length: 10 }), // A, B, C, D
+  evidencePackFlag: boolean("evidencePackFlag").default(false).notNull(),
   
   // Audit
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -7703,7 +7725,7 @@ export type InsertDataUpdate = typeof dataUpdates.$inferInsert;
 
 
 // ============================================================================
-// SOURCE REGISTRY EXTENDED FIELDS (from YETO_Sources_Universe_Master_PRODUCTION_READY_v2_0.xlsx)
+// SOURCE REGISTRY EXTENDED FIELDS (schema aligned with canonical xlsx in data/registry/)
 // ============================================================================
 
 // Registry Sector Map: Maps sources to 16 sectors with weight (primary/secondary)

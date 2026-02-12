@@ -7,6 +7,9 @@
  */
 
 import axios from 'axios';
+import { getDb } from '../db';
+import { sourceRegistry } from '../../drizzle/schema';
+import { eq } from 'drizzle-orm';
 
 // ============================================
 // Types
@@ -779,92 +782,74 @@ export class ReliefWebConnector implements DataConnector {
 }
 
 // ============================================
-// Data Source Registry
+// DB-Backed Source Registry (Phase 2 cleanup)
+// Replaces former hardcoded DATA_SOURCES, ENHANCED_CONNECTOR_REGISTRY,
+// and EXTENDED_CONNECTORS arrays. All source data now comes from the
+// source_registry table (single source of truth).
 // ============================================
 
-export const DATA_SOURCES: DataSource[] = [
-  {
-    id: 'world-bank',
-    name: 'World Bank Development Indicators',
-    type: 'api',
-    url: 'https://api.worldbank.org/v2',
-    cadence: 'annual',
-    status: 'active',
-    requiresKey: false,
-  },
-  {
-    id: 'hdx-hapi',
-    name: 'Humanitarian Data Exchange (HAPI)',
-    type: 'api',
-    url: 'https://hapi.humdata.org/api/v1',
-    cadence: 'monthly',
-    status: 'active',
-    requiresKey: false,
-  },
-  {
-    id: 'ocha-fts',
-    name: 'OCHA Financial Tracking Service',
-    type: 'api',
-    url: 'https://api.hpc.tools/v2/public/fts',
-    cadence: 'daily',
-    status: 'active',
-    requiresKey: false,
-  },
-  {
-    id: 'reliefweb',
-    name: 'ReliefWeb',
-    type: 'api',
-    url: 'https://api.reliefweb.int/v1',
-    cadence: 'daily',
-    status: 'active',
-    requiresKey: false,
-  },
-  {
-    id: 'iati',
-    name: 'IATI Datastore',
-    type: 'api',
-    url: 'https://api.iatistandard.org/datastore',
-    cadence: 'weekly',
-    status: 'active',
-    requiresKey: false,
-  },
-  {
-    id: 'ucdp',
-    name: 'Uppsala Conflict Data Program',
-    type: 'api',
-    url: 'https://ucdp.uu.se/api',
-    cadence: 'annual',
-    status: 'active',
-    requiresKey: false,
-  },
-  {
-    id: 'acled',
-    name: 'Armed Conflict Location & Event Data',
-    type: 'api',
-    url: 'https://api.acleddata.com',
-    cadence: 'weekly',
-    status: 'blocked',
-    requiresKey: true,
-  },
-  {
-    id: 'cby-aden',
-    name: 'Central Bank of Yemen (Aden)',
-    type: 'document',
-    url: 'https://cby-ye.com',
-    cadence: 'monthly',
-    status: 'active',
-    requiresKey: false,
-  },
-  {
-    id: 'cby-sanaa',
-    name: 'Central Bank of Yemen (Sana\'a)',
-    type: 'document',
-    url: 'https://centralbank.gov.ye',
-    cadence: 'monthly',
-    status: 'active',
-    requiresKey: false,
-  },
-];
+function mapAccessTypeToDataSourceType(accessType: string | null): 'api' | 'document' | 'file' {
+  switch (accessType) {
+    case 'API': case 'SDMX': case 'RSS': return 'api';
+    case 'PDF': case 'WEB': return 'document';
+    case 'CSV': case 'XLSX': return 'file';
+    default: return 'api';
+  }
+}
+
+function mapUpdateFrequencyToCadence(freq: string | null): DataSource['cadence'] {
+  switch (freq) {
+    case 'REALTIME': case 'DAILY': return 'daily';
+    case 'WEEKLY': return 'weekly';
+    case 'MONTHLY': return 'monthly';
+    case 'QUARTERLY': return 'quarterly';
+    case 'ANNUAL': return 'annual';
+    default: return 'on-demand';
+  }
+}
+
+function mapStatusToDataSourceStatus(status: string | null): DataSource['status'] {
+  switch (status) {
+    case 'ACTIVE': return 'active';
+    case 'DEPRECATED': return 'deprecated';
+    case 'NEEDS_KEY': return 'blocked';
+    default: return 'blocked';
+  }
+}
+
+function mapTierToPriority(tier: string | null): number {
+  switch (tier) {
+    case 'T0': case 'T1': return 1;
+    case 'T2': return 2;
+    case 'T3': return 3;
+    case 'T4': return 4;
+    default: return 5;
+  }
+}
+
+function mapRowToDataSource(row: any): DataSource {
+  return {
+    id: row.sourceId,
+    name: row.name,
+    type: mapAccessTypeToDataSourceType(row.accessType),
+    url: row.apiUrl || row.webUrl || '',
+    cadence: mapUpdateFrequencyToCadence(row.updateFrequency),
+    status: mapStatusToDataSourceStatus(row.status),
+    requiresKey: row.apiKeyRequired || false,
+    lastRun: row.lastFetch || undefined,
+  };
+}
+
+/**
+ * Load all data sources from the source_registry DB table.
+ * Replaces the former hardcoded DATA_SOURCES and EXTENDED_CONNECTORS arrays.
+ */
+export async function getDataSources(): Promise<DataSource[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const rows = await db.select().from(sourceRegistry);
+  return rows.map(mapRowToDataSource);
+}
 
 // ============================================
 // Connector Factory
@@ -1174,7 +1159,7 @@ import iomDtmConnector from "./iomDtmConnector";
 export { imfConnector, faoConnector, acledConnector, iomDtmConnector };
 
 // ============================================
-// Enhanced Connector Registry
+// Enhanced Connector Info (DB-backed, Phase 2)
 // ============================================
 
 export interface EnhancedConnectorInfo {
@@ -1194,250 +1179,72 @@ export interface EnhancedConnectorInfo {
   priority: number; // 1=highest, 5=lowest
 }
 
-export const ENHANCED_CONNECTOR_REGISTRY: EnhancedConnectorInfo[] = [
-  {
-    id: "world-bank",
-    name: "World Bank Open Data",
-    nameAr: "بيانات البنك الدولي المفتوحة",
-    description: "Development indicators, GDP, poverty, trade statistics",
-    descriptionAr: "مؤشرات التنمية، الناتج المحلي الإجمالي، الفقر، إحصاءات التجارة",
-    baseUrl: "https://api.worldbank.org/v2",
-    dataTypes: ["macroeconomic", "development", "poverty", "trade"],
-    frequency: "annual",
-    requiresAuth: false,
-    status: "active",
-    lastSync: null,
-    nextSync: null,
+function mapRowToEnhancedConnectorInfo(row: any): EnhancedConnectorInfo {
+  const freqMap: Record<string, EnhancedConnectorInfo['frequency']> = {
+    REALTIME: 'realtime', DAILY: 'daily', WEEKLY: 'weekly',
+    MONTHLY: 'monthly', QUARTERLY: 'quarterly', ANNUAL: 'annual',
+  };
+  return {
+    id: row.sourceId,
+    name: row.name,
+    nameAr: row.altName || '',
+    description: row.description || '',
+    descriptionAr: '',
+    baseUrl: row.apiUrl || row.webUrl || '',
+    dataTypes: row.sectorsFed || [],
+    frequency: freqMap[row.updateFrequency] || 'annual',
+    requiresAuth: row.apiKeyRequired || false,
+    status: row.status === 'ACTIVE' ? 'active' : 'inactive',
+    lastSync: row.lastFetch || null,
+    nextSync: row.nextFetch || null,
     recordCount: 0,
-    priority: 1,
-  },
-  {
-    id: "imf-data",
-    name: "IMF Data Services",
-    nameAr: "خدمات بيانات صندوق النقد الدولي",
-    description: "International Financial Statistics, monetary data, exchange rates, balance of payments",
-    descriptionAr: "الإحصاءات المالية الدولية، البيانات النقدية، أسعار الصرف، ميزان المدفوعات",
-    baseUrl: "http://dataservices.imf.org/REST/SDMX_JSON.svc",
-    dataTypes: ["monetary", "fiscal", "exchange-rates", "balance-of-payments"],
-    frequency: "monthly",
-    requiresAuth: false,
-    status: "active",
-    lastSync: null,
-    nextSync: null,
-    recordCount: 0,
-    priority: 1,
-  },
-  {
-    id: "ocha-fts",
-    name: "OCHA Financial Tracking Service",
-    nameAr: "خدمة التتبع المالي - أوتشا",
-    description: "Humanitarian funding flows, donor contributions, aid tracking",
-    descriptionAr: "تدفقات التمويل الإنساني، مساهمات المانحين، تتبع المساعدات",
-    baseUrl: "https://api.hpc.tools",
-    dataTypes: ["humanitarian", "funding", "aid"],
-    frequency: "daily",
-    requiresAuth: false,
-    status: "active",
-    lastSync: null,
-    nextSync: null,
-    recordCount: 0,
-    priority: 1,
-  },
-  {
-    id: "hdx-hapi",
-    name: "HDX HAPI",
-    nameAr: "واجهة برمجة البيانات الإنسانية",
-    description: "Humanitarian data exchange, population, food security",
-    descriptionAr: "تبادل البيانات الإنسانية، السكان، الأمن الغذائي",
-    baseUrl: "https://hapi.humdata.org",
-    dataTypes: ["humanitarian", "population", "food-security"],
-    frequency: "weekly",
-    requiresAuth: true,
-    status: "active",
-    lastSync: null,
-    nextSync: null,
-    recordCount: 0,
-    priority: 2,
-  },
-  {
-    id: "fao-stat",
-    name: "FAO/FAOSTAT",
-    nameAr: "منظمة الأغذية والزراعة",
-    description: "Agricultural production, food security, land use, livestock statistics",
-    descriptionAr: "الإنتاج الزراعي، الأمن الغذائي، استخدام الأراضي، إحصاءات الثروة الحيوانية",
-    baseUrl: "https://fenixservices.fao.org/faostat/api/v1",
-    dataTypes: ["agriculture", "food-security", "land-use", "livestock"],
-    frequency: "annual",
-    requiresAuth: false,
-    status: "active",
-    lastSync: null,
-    nextSync: null,
-    recordCount: 0,
-    priority: 2,
-  },
-  {
-    id: "acled",
-    name: "ACLED",
-    nameAr: "بيانات الصراع المسلح",
-    description: "Armed conflict events, fatalities, actor information, geographic mapping",
-    descriptionAr: "أحداث النزاع المسلح، الوفيات، معلومات الأطراف، الخرائط الجغرافية",
-    baseUrl: "https://api.acleddata.com",
-    dataTypes: ["conflict", "security", "events", "geospatial"],
-    frequency: "weekly",
-    requiresAuth: true,
-    status: "active",
-    lastSync: null,
-    nextSync: null,
-    recordCount: 0,
-    priority: 2,
-  },
-  {
-    id: "iom-dtm",
-    name: "IOM DTM Yemen",
-    nameAr: "مصفوفة تتبع النزوح - اليمن",
-    description: "Displacement tracking, IDP figures, site assessments, mobility data",
-    descriptionAr: "تتبع النزوح، أرقام النازحين، تقييمات المواقع، بيانات التنقل",
-    baseUrl: "https://dtm.iom.int/yemen",
-    dataTypes: ["displacement", "migration", "humanitarian", "geospatial"],
-    frequency: "monthly",
-    requiresAuth: false,
-    status: "active",
-    lastSync: null,
-    nextSync: null,
-    recordCount: 0,
-    priority: 2,
-  },
-  {
-    id: "wfp-vam",
-    name: "WFP Market Monitoring",
-    nameAr: "مراقبة الأسواق - برنامج الأغذية العالمي",
-    description: "Food prices, market functionality, food security analysis",
-    descriptionAr: "أسعار الغذاء، وظائف السوق، تحليل الأمن الغذائي",
-    baseUrl: "https://dataviz.vam.wfp.org",
-    dataTypes: ["prices", "food-security", "markets"],
-    frequency: "weekly",
-    requiresAuth: false,
-    status: "active",
-    lastSync: null,
-    nextSync: null,
-    recordCount: 0,
-    priority: 2,
-  },
-  {
-    id: "cby-aden",
-    name: "Central Bank of Yemen (Aden)",
-    nameAr: "البنك المركزي اليمني (عدن)",
-    description: "Official exchange rates, monetary policy, banking statistics",
-    descriptionAr: "أسعار الصرف الرسمية، السياسة النقدية، إحصاءات البنوك",
-    baseUrl: "https://cby-ye.com",
-    dataTypes: ["monetary", "banking", "exchange-rates"],
-    frequency: "daily",
-    requiresAuth: false,
-    status: "active",
-    lastSync: null,
-    nextSync: null,
-    recordCount: 0,
-    priority: 1,
-  },
-  {
-    id: "reliefweb",
-    name: "ReliefWeb",
-    nameAr: "ريليف ويب",
-    description: "Humanitarian reports, situation updates, assessments",
-    descriptionAr: "التقارير الإنسانية، تحديثات الوضع، التقييمات",
-    baseUrl: "https://api.reliefweb.int",
-    dataTypes: ["humanitarian", "reports", "assessments"],
-    frequency: "daily",
-    requiresAuth: false,
-    status: "active",
-    lastSync: null,
-    nextSync: null,
-    recordCount: 0,
-    priority: 3,
-  },
-  {
-    id: "unhcr",
-    name: "UNHCR Data Portal",
-    nameAr: "بوابة بيانات المفوضية السامية للاجئين",
-    description: "Refugee and asylum seeker statistics, protection data",
-    descriptionAr: "إحصاءات اللاجئين وطالبي اللجوء، بيانات الحماية",
-    baseUrl: "https://api.unhcr.org",
-    dataTypes: ["refugees", "displacement", "protection"],
-    frequency: "monthly",
-    requiresAuth: false,
-    status: "active",
-    lastSync: null,
-    nextSync: null,
-    recordCount: 0,
-    priority: 3,
-  },
-  {
-    id: "unicef",
-    name: "UNICEF Data",
-    nameAr: "بيانات اليونيسف",
-    description: "Child welfare, education, health, nutrition indicators",
-    descriptionAr: "رعاية الطفل، التعليم، الصحة، مؤشرات التغذية",
-    baseUrl: "https://data.unicef.org",
-    dataTypes: ["education", "health", "nutrition", "children"],
-    frequency: "annual",
-    requiresAuth: false,
-    status: "active",
-    lastSync: null,
-    nextSync: null,
-    recordCount: 0,
-    priority: 3,
-  },
-  {
-    id: "who-gho",
-    name: "WHO Global Health Observatory",
-    nameAr: "المرصد الصحي العالمي",
-    description: "Health statistics, disease burden, health systems data",
-    descriptionAr: "الإحصاءات الصحية، عبء الأمراض، بيانات النظم الصحية",
-    baseUrl: "https://ghoapi.azureedge.net/api",
-    dataTypes: ["health", "disease", "mortality"],
-    frequency: "annual",
-    requiresAuth: false,
-    status: "active",
-    lastSync: null,
-    nextSync: null,
-    recordCount: 0,
-    priority: 3,
-  },
-];
-
-/**
- * Get all enhanced connector statuses
- */
-export function getAllEnhancedConnectorStatuses(): EnhancedConnectorInfo[] {
-  return ENHANCED_CONNECTOR_REGISTRY;
+    priority: mapTierToPriority(row.tier),
+  };
 }
 
 /**
- * Get enhanced connector by ID
+ * Get all enhanced connector statuses from DB.
+ * Replaces the former hardcoded ENHANCED_CONNECTOR_REGISTRY array.
  */
-export function getEnhancedConnectorById(id: string): EnhancedConnectorInfo | undefined {
-  return ENHANCED_CONNECTOR_REGISTRY.find(c => c.id === id);
+export async function getAllEnhancedConnectorStatuses(): Promise<EnhancedConnectorInfo[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const rows = await db.select().from(sourceRegistry);
+  return rows.map(mapRowToEnhancedConnectorInfo);
 }
 
 /**
- * Get connectors by priority
+ * Get enhanced connector by ID from DB
  */
-export function getConnectorsByPriority(priority: number): EnhancedConnectorInfo[] {
-  return ENHANCED_CONNECTOR_REGISTRY.filter(c => c.priority === priority);
+export async function getEnhancedConnectorById(id: string): Promise<EnhancedConnectorInfo | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(sourceRegistry).where(eq(sourceRegistry.sourceId, id)).limit(1);
+  return rows.length > 0 ? mapRowToEnhancedConnectorInfo(rows[0]) : undefined;
 }
 
 /**
- * Get connectors by data type
+ * Get connectors by priority (tier-based) from DB
  */
-export function getEnhancedConnectorsByDataType(dataType: string): EnhancedConnectorInfo[] {
-  return ENHANCED_CONNECTOR_REGISTRY.filter(c => c.dataTypes.includes(dataType));
+export async function getConnectorsByPriority(priority: number): Promise<EnhancedConnectorInfo[]> {
+  const all = await getAllEnhancedConnectorStatuses();
+  return all.filter(c => c.priority === priority);
 }
 
 /**
- * Get active connectors sorted by priority
+ * Get connectors by data type from DB
  */
-export function getActiveConnectorsSorted(): EnhancedConnectorInfo[] {
-  return ENHANCED_CONNECTOR_REGISTRY
+export async function getEnhancedConnectorsByDataType(dataType: string): Promise<EnhancedConnectorInfo[]> {
+  const all = await getAllEnhancedConnectorStatuses();
+  return all.filter(c => c.dataTypes.includes(dataType));
+}
+
+/**
+ * Get active connectors sorted by priority from DB
+ */
+export async function getActiveConnectorsSorted(): Promise<EnhancedConnectorInfo[]> {
+  const all = await getAllEnhancedConnectorStatuses();
+  return all
     .filter(c => c.status === "active")
     .sort((a, b) => a.priority - b.priority);
 }
@@ -1461,7 +1268,7 @@ export async function runAllConnectors(): Promise<{
     errors: string[];
   }> = [];
   
-  const sortedConnectors = getActiveConnectorsSorted();
+  const sortedConnectors = await getActiveConnectorsSorted();
   
   for (const connector of sortedConnectors) {
     console.log(`[Ingestion] Running connector: ${connector.name}`);
@@ -1573,88 +1380,12 @@ export {
 import backfillModule from "../scheduler/historicalBackfill";
 export const CONNECTOR_REGISTRY = backfillModule.CONNECTOR_REGISTRY;
 
-// ============================================
-// Extended Connector Registry
-// ============================================
-
-export const EXTENDED_CONNECTORS: DataSource[] = [
-  {
-    id: "unhcr",
-    name: "UNHCR Refugee Data",
-    type: "api",
-    url: "https://data.unhcr.org/",
-    cadence: "monthly",
-    status: "active",
-    requiresKey: false,
-  },
-  {
-    id: "who",
-    name: "WHO Health Indicators",
-    type: "api",
-    url: "https://www.who.int/data/gho",
-    cadence: "annual",
-    status: "active",
-    requiresKey: false,
-  },
-  {
-    id: "unicef",
-    name: "UNICEF Child Welfare",
-    type: "api",
-    url: "https://data.unicef.org/",
-    cadence: "annual",
-    status: "active",
-    requiresKey: false,
-  },
-  {
-    id: "wfp",
-    name: "WFP Food Security",
-    type: "api",
-    url: "https://dataviz.vam.wfp.org/",
-    cadence: "monthly",
-    status: "active",
-    requiresKey: false,
-  },
-  {
-    id: "undp",
-    name: "UNDP Human Development",
-    type: "api",
-    url: "https://hdr.undp.org/",
-    cadence: "annual",
-    status: "active",
-    requiresKey: false,
-  },
-  {
-    id: "iati",
-    name: "IATI Aid Transparency",
-    type: "api",
-    url: "https://iatistandard.org/",
-    cadence: "quarterly",
-    status: "active",
-    requiresKey: false,
-  },
-  {
-    id: "cby-aden",
-    name: "Central Bank of Yemen (Aden)",
-    type: "api",
-    url: "https://www.centralbank.gov.ye/",
-    cadence: "monthly",
-    status: "active",
-    requiresKey: false,
-  },
-  {
-    id: "cby-sanaa",
-    name: "Central Bank of Yemen (Sana'a)",
-    type: "api",
-    url: "https://www.cby-ye.com/",
-    cadence: "monthly",
-    status: "active",
-    requiresKey: false,
-  },
-];
-
-// Merge with existing connectors
-export function getAllConnectors(): DataSource[] {
-  return [...DATA_SOURCES, ...EXTENDED_CONNECTORS];
+/**
+ * Get all connectors from DB.
+ * Replaces the former hardcoded EXTENDED_CONNECTORS array and getAllConnectors() merge.
+ */
+export async function getAllConnectors(): Promise<DataSource[]> {
+  return getDataSources();
 }
 
 // ============================================

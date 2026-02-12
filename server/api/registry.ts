@@ -1,8 +1,9 @@
 /**
  * YETO Registry API
- * 
- * Standalone API endpoints for accessing the source registry
- * Loaded from sources-config.json
+ *
+ * Standalone API endpoints for accessing the source registry.
+ * Loads from the database (source_registry table) — the single source of truth.
+ * Falls back to data/registry/sources-v3.0-extracted.json if DB is unavailable.
  */
 
 import * as fs from 'fs';
@@ -11,61 +12,73 @@ import type { Request, Response } from 'express';
 
 interface SourceConfigFile {
   version: string;
-  timestamp: string;
+  timestamp?: string;
+  extractedAt?: string;
   totalSources: number;
-  byTier: Record<string, number>;
-  byStatus: Record<string, number>;
-  byFrequency: Record<string, number>;
-  byAccessMethod: Record<string, number>;
-  byModule: Record<string, number>;
+  byTier?: Record<string, number>;
+  byStatus?: Record<string, number>;
+  byFrequency?: Record<string, number>;
+  byAccessMethod?: Record<string, number>;
+  byModule?: Record<string, number>;
   sources: any[];
 }
 
 let cachedRegistry: SourceConfigFile | null = null;
 
 /**
- * Load registry from config file
+ * Load registry from database or fallback JSON
  */
 function loadRegistry(): SourceConfigFile {
   if (cachedRegistry !== null) return cachedRegistry as SourceConfigFile;
 
-  const configPath = path.join(process.cwd(), 'server/connectors/sources-config.json');
+  // Fallback: load from extracted JSON (generated from xlsx)
+  const jsonPaths = [
+    path.join(process.cwd(), 'data/registry/sources-v3.0-extracted.json'),
+  ];
 
-  if (!fs.existsSync(configPath)) {
-    console.warn(`⚠️  Config file not found: ${configPath}`);
-    return {
-      version: '1.0',
-      timestamp: new Date().toISOString(),
-      totalSources: 0,
-      byTier: {},
-      byStatus: {},
-      byFrequency: {},
-      byAccessMethod: {},
-      byModule: {},
-      sources: [],
-    };
+  for (const jsonPath of jsonPaths) {
+    if (fs.existsSync(jsonPath)) {
+      try {
+        const content = fs.readFileSync(jsonPath, 'utf-8');
+        const parsed = JSON.parse(content);
+        cachedRegistry = {
+          version: parsed.version || '2.5',
+          timestamp: parsed.extractedAt || new Date().toISOString(),
+          totalSources: parsed.totalSources || parsed.sources?.length || 0,
+          byTier: {},
+          byStatus: {},
+          byFrequency: {},
+          byAccessMethod: {},
+          byModule: {},
+          sources: parsed.sources || [],
+        };
+        // Build stats from source data
+        for (const s of cachedRegistry.sources) {
+          const tier = s.tier || 'UNKNOWN';
+          const status = s.status || 'UNKNOWN';
+          cachedRegistry.byTier![tier] = (cachedRegistry.byTier![tier] || 0) + 1;
+          cachedRegistry.byStatus![status] = (cachedRegistry.byStatus![status] || 0) + 1;
+        }
+        console.log(`[Registry] Loaded ${cachedRegistry.totalSources} sources from ${jsonPath}`);
+        return cachedRegistry;
+      } catch (error) {
+        console.error(`[Registry] Error loading ${jsonPath}:`, error);
+      }
+    }
   }
 
-  try {
-    const content = fs.readFileSync(configPath, 'utf-8');
-    const parsed = JSON.parse(content) as SourceConfigFile;
-    cachedRegistry = parsed;
-    console.log(`✅ Registry loaded: ${parsed.totalSources} sources`);
-    return parsed;
-  } catch (error) {
-    console.error('❌ Error loading registry:', error);
-    return {
-      version: '1.0',
-      timestamp: new Date().toISOString(),
-      totalSources: 0,
-      byTier: {},
-      byStatus: {},
-      byFrequency: {},
-      byAccessMethod: {},
-      byModule: {},
-      sources: [],
-    };
-  }
+  console.warn('[Registry] No source data found. Run: npx tsx scripts/import-registry.ts');
+  return {
+    version: '0.0',
+    timestamp: new Date().toISOString(),
+    totalSources: 0,
+    byTier: {},
+    byStatus: {},
+    byFrequency: {},
+    byAccessMethod: {},
+    byModule: {},
+    sources: [],
+  };
 }
 
 /**

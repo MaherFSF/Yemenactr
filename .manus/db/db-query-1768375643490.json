@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS reliability_runs (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  runType ENUM('nightly', 'release', 'manual') DEFAULT 'nightly',\n  startedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  completedAt TIMESTAMP,\n  totalTests INT DEFAULT 0,\n  passedTests INT DEFAULT 0,\n  failedTests INT DEFAULT 0,\n  avgCitationCoverage DECIMAL(5,2),\n  avgContradictionResolution DECIMAL(5,2),\n  hallucinationFlags INT DEFAULT 0,\n  avgLatencyMs INT,\n  reliabilityScore DECIMAL(5,2),\n  passThreshold DECIMAL(5,2) DEFAULT 85.00,\n  deploymentBlocked BOOLEAN DEFAULT FALSE,\n  resultsJson JSON,\n  INDEX idx_run_type (runType),\n  INDEX idx_started (startedAt)\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute CREATE TABLE IF NOT EXISTS reliability_runs (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  runType ENUM('nightly', 'release', 'manual') DEFAULT 'nightly',\n  startedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  completedAt TIMESTAMP,\n  totalTests INT DEFAULT 0,\n  passedTests INT DEFAULT 0,\n  failedTests INT DEFAULT 0,\n  avgCitationCoverage DECIMAL(5,2),\n  avgContradictionResolution DECIMAL(5,2),\n  hallucinationFlags INT DEFAULT 0,\n  avgLatencyMs INT,\n  reliabilityScore DECIMAL(5,2),\n  passThreshold DECIMAL(5,2) DEFAULT 85.00,\n  deploymentBlocked BOOLEAN DEFAULT FALSE,\n  resultsJson JSON,\n  INDEX idx_run_type (runType),\n  INDEX idx_started (startedAt)\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 232
-}

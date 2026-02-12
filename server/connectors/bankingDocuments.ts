@@ -444,70 +444,38 @@ export async function createBankingClaims(): Promise<{
 }
 
 /**
- * Seed evidence sources for banking sector
+ * Seed banking-related sources into source_registry.
+ * These sources should already exist from the canonical xlsx import.
+ * This function ensures they exist as a fallback.
  */
 export async function seedBankingEvidenceSources(): Promise<void> {
   const conn = await mysql.createConnection(process.env.DATABASE_URL!);
-  
-  const sources = [
-    {
-      name: 'Central Bank of Yemen - Aden',
-      nameAr: 'البنك المركزي اليمني - عدن',
-      sourceType: 'domestic',
-      trustTier: 'A',
-      website: 'https://english.cby-ye.com',
-      description: 'Official central bank of the internationally recognized government'
-    },
-    {
-      name: 'Central Bank of Yemen - Sana\'a',
-      nameAr: 'البنك المركزي اليمني - صنعاء',
-      sourceType: 'domestic',
-      trustTier: 'B',
-      website: 'https://www.centralbank.gov.ye',
-      description: 'De facto central bank in Houthi-controlled areas'
-    },
-    {
-      name: 'U.S. Department of Treasury - OFAC',
-      nameAr: 'وزارة الخزانة الأمريكية - مكتب مراقبة الأصول الأجنبية',
-      sourceType: 'ifi',
-      trustTier: 'A',
-      website: 'https://ofac.treasury.gov',
-      description: 'Office of Foreign Assets Control - sanctions authority'
-    },
-    {
-      name: 'World Bank - Yemen',
-      nameAr: 'البنك الدولي - اليمن',
-      sourceType: 'ifi',
-      trustTier: 'A',
-      website: 'https://www.worldbank.org/en/country/yemen',
-      description: 'International financial institution providing development data'
-    },
-    {
-      name: 'International Monetary Fund',
-      nameAr: 'صندوق النقد الدولي',
-      sourceType: 'ifi',
-      trustTier: 'A',
-      website: 'https://www.imf.org/en/Countries/YEM',
-      description: 'IMF Article IV consultations and economic assessments'
-    }
+
+  const bankingSources = [
+    { sourceId: 'BANK-CBY-ADEN', name: 'Central Bank of Yemen - Aden', tier: 'T0', status: 'ACTIVE', accessType: 'WEB', webUrl: 'https://english.cby-ye.com', description: 'Official central bank of the internationally recognized government' },
+    { sourceId: 'BANK-CBY-SANAA', name: 'Central Bank of Yemen - Sana\'a', tier: 'T0', status: 'ACTIVE', accessType: 'WEB', webUrl: 'https://www.centralbank.gov.ye', description: 'De facto central bank in Houthi-controlled areas' },
+    { sourceId: 'BANK-OFAC', name: 'U.S. Department of Treasury - OFAC', tier: 'T1', status: 'ACTIVE', accessType: 'WEB', webUrl: 'https://ofac.treasury.gov', description: 'Office of Foreign Assets Control - sanctions authority' },
+    { sourceId: 'BANK-WORLD-BANK', name: 'World Bank - Yemen', tier: 'T1', status: 'ACTIVE', accessType: 'API', webUrl: 'https://www.worldbank.org/en/country/yemen', description: 'International financial institution providing development data' },
+    { sourceId: 'BANK-IMF', name: 'International Monetary Fund', tier: 'T1', status: 'ACTIVE', accessType: 'API', webUrl: 'https://www.imf.org/en/Countries/YEM', description: 'IMF Article IV consultations and economic assessments' },
   ];
-  
+
   try {
-    for (const source of sources) {
+    for (const source of bankingSources) {
       await conn.execute(`
-        INSERT INTO evidence_sources (
-          name, nameAr, category, trustLevel, websiteUrl, notes, isActive, createdAt
-        ) VALUES (?, ?, ?, ?, ?, ?, 1, NOW())
+        INSERT INTO source_registry (
+          sourceId, name, tier, status, accessType, webUrl, description, updateFrequency, createdAt, updatedAt
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, 'QUARTERLY', NOW(), NOW())
         ON DUPLICATE KEY UPDATE
-          trustLevel = VALUES(trustLevel),
-          websiteUrl = VALUES(websiteUrl)
+          name = VALUES(name),
+          webUrl = VALUES(webUrl)
       `, [
+        source.sourceId,
         source.name,
-        source.nameAr,
-        source.sourceType,
-        source.trustTier,
-        source.website,
-        source.description
+        source.tier,
+        source.status,
+        source.accessType,
+        source.webUrl,
+        source.description,
       ]);
     }
   } finally {

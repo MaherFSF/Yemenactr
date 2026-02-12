@@ -29,7 +29,7 @@ let registryData: SourceConfigFile | null = null;
 function loadRegistry(): SourceConfigFile {
   if (registryData !== null) return registryData;
 
-  const configPath = path.join(process.cwd(), 'server/connectors/sources-config.json');
+  const configPath = path.join(process.cwd(), 'data/registry/sources-v3.0-extracted.json');
 
   if (!fs.existsSync(configPath)) {
     console.warn(`⚠️  Config file not found: ${configPath}`);

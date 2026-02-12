@@ -42,6 +42,7 @@ interface Insight {
   }[];
 }
 
+// @placeholder — replace with tRPC insights endpoint when available
 const insights: Insight[] = [
   {
     id: "1",

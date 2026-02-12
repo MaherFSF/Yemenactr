@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS reliability_tests (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  testName VARCHAR(255) NOT NULL,\n  testCategory ENUM('central_bank_split', 'fx_gap', 'inflation', 'aid_flows', 'sanctions', 'sector_metrics', 'humanitarian', 'banking', 'trade') NOT NULL,\n  questionText TEXT NOT NULL,\n  expectedEvidencePattern TEXT,\n  expectedSources JSON,\n  difficulty ENUM('easy', 'medium', 'hard') DEFAULT 'medium',\n  isActive BOOLEAN DEFAULT TRUE,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  INDEX idx_category (testCategory),\n  INDEX idx_active (isActive)\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute CREATE TABLE IF NOT EXISTS reliability_tests (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  testName VARCHAR(255) NOT NULL,\n  testCategory ENUM('central_bank_split', 'fx_gap', 'inflation', 'aid_flows', 'sanctions', 'sector_metrics', 'humanitarian', 'banking', 'trade') NOT NULL,\n  questionText TEXT NOT NULL,\n  expectedEvidencePattern TEXT,\n  expectedSources JSON,\n  difficulty ENUM('easy', 'medium', 'hard') DEFAULT 'medium',\n  isActive BOOLEAN DEFAULT TRUE,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  INDEX idx_category (testCategory),\n  INDEX idx_active (isActive)\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 244
-}

@@ -12,7 +12,7 @@
  */
 
 import { getDb } from "../db";
-import { timeSeries, provenanceLog, sources } from "../../drizzle/schema";
+import { timeSeries, provenanceLog, sourceRegistry } from "../../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 
 // ============================================
@@ -236,17 +236,22 @@ export async function ingestWFPData(
   try {
     // Ensure WFP data source exists
     let sourceId: number;
-    const existingSources = await db.select().from(sources).where(eq(sources.publisher, "WFP")).limit(1);
-    
+    const existingSources = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, "WFP")).limit(1);
+
     if (existingSources.length > 0) {
       sourceId = existingSources[0].id;
     } else {
-      const [newSource] = await db.insert(sources).values({
-        publisher: "WFP",
-        url: "https://dataviz.vam.wfp.org/",
+      const [newSource] = await db.insert(sourceRegistry).values({
+        sourceId: "CONN-WFP",
+        name: "WFP",
+        publisher: "World Food Programme",
+        tier: "T1",
+        status: "ACTIVE",
+        accessType: "API",
+        updateFrequency: "MONTHLY",
+        webUrl: "https://dataviz.vam.wfp.org/",
         license: "Open Data",
-        retrievalDate: new Date(),
-        notes: "World Food Programme - Vulnerability Analysis and Mapping",
+        description: "World Food Programme - Vulnerability Analysis and Mapping",
       });
       sourceId = newSource.insertId;
     }

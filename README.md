@@ -296,28 +296,200 @@ pnpm db:studio    # Open Drizzle Studio
 
 ```
 yeto/
-├── client/                 # Frontend React application
+├── client/                 # Frontend React 19 application
 │   ├── src/
+│   │   ├── main.tsx        # ENTRY: tRPC client + React Query setup
+│   │   ├── App.tsx         # ENTRY: Router (100+ routes) + contexts
 │   │   ├── components/     # Reusable UI components (114)
 │   │   ├── pages/          # Page components (90)
-│   │   ├── contexts/       # React contexts
-│   │   ├── hooks/          # Custom hooks
-│   │   └── lib/            # Utilities and tRPC client
+│   │   │   └── sectors/    # 16 sector pages
+│   │   ├── contexts/       # LanguageContext, ThemeContext
+│   │   ├── hooks/          # Custom React hooks
+│   │   └── lib/trpc.ts     # tRPC client definition
 │   └── public/             # Static assets
 ├── server/                 # Backend Express + tRPC
-│   ├── routers/            # tRPC routers (14)
+│   ├── _core/
+│   │   └── index.ts        # ENTRY: Server startup, tRPC mount, scheduler
+│   ├── routers/            # tRPC routers (30+)
+│   ├── routers.ts          # appRouter — combines all sub-routers
 │   ├── connectors/         # Data source connectors (26)
-│   ├── services/           # Business logic services
-│   ├── governance/         # Truth layer and gates
+│   │   └── index.ts        # Connector registry + factory
+│   ├── services/           # Business logic services (81)
+│   ├── pipeline/
+│   │   └── sourceRegistry.ts  # DB-backed source config (loads from source_registry)
+│   ├── governance/         # Truth layer and evidence gates
+│   ├── ai/                 # OneBrain AI system
 │   ├── hardening/          # Security and production readiness
-│   ├── etl/                # ETL pipeline framework
-│   └── _core/              # Framework infrastructure
-├── drizzle/                # Database schema and migrations
+│   └── db.ts               # Database connection
+├── drizzle/
+│   ├── schema.ts           # CANONICAL: All 81+ tables (source_registry at line ~7412)
+│   ├── relations.ts        # Table relationships
+│   └── phase1-enhancements.ts  # Calendar, agents, evidence (re-exports sourceRegistry from schema.ts)
+├── data/
+│   └── registry/           # Source data files
+│       └── *.xlsx          # Canonical source xlsx (SINGLE SOURCE OF TRUTH)
+├── scripts/
+│   └── import-registry.ts  # CANONICAL: xlsx → source_registry DB importer
+├── archive/                # Deprecated files preserved for reference
+│   ├── README.md           # Index of all archived files and why
+│   ├── deprecated-xlsx/    # Old v2.0, v2.3, v2.5 xlsx files
+│   ├── deprecated-scripts/ # Old import/seed scripts (6 files)
+│   └── deprecated-source-defs/  # Old CSV, JSON source configs
 ├── shared/                 # Shared types and constants
 ├── docs/                   # Documentation (70+ files)
-├── scripts/                # Utility scripts
 └── e2e/                    # Playwright E2E tests
 ```
+
+---
+
+## 🗄️ Source Data Architecture
+
+### Single Source of Truth
+
+All source data flows from ONE canonical path:
+
+```
+data/registry/YETO_Sources_Universe_Master_*.xlsx   (Canonical Excel)
+        │
+        ▼
+scripts/import-registry.ts                          (Canonical importer)
+        │
+        ▼
+source_registry table (292+ rows, 40+ columns)      (Database)
+        │
+        ├──▶ server/pipeline/sourceRegistry.ts       (Pipeline config — loads from DB)
+        ├──▶ server/connectors/registry-loader.ts    (Connector config — loads from DB)
+        ├──▶ server/routers/sourceRegistry.ts        (tRPC API)
+        └──▶ client/src/pages/                       (Display via tRPC)
+```
+
+**Previously**, source data was scattered across 12+ files with conflicting formats.
+This was cleaned up in Phase 0 (Feb 2026). See `archive/README.md` for details.
+
+### Database Schema: Source Tables
+
+After Phase 1 unification, ALL foreign keys point to the canonical `source_registry` table:
+
+| Table | Purpose | Status |
+|-------|---------|--------|
+| `source_registry` | **CANONICAL** — 292+ sources with tiers, access methods, sectors | Active, all FKs point here |
+| `sources` | Legacy 7-row table (deprecated) | Deprecated — all FKs migrated to source_registry |
+| `evidence_sources` | Legacy truth-layer source list (deprecated) | Deprecated — all FKs migrated to source_registry |
+
+**Phase 1 Migration**: 20 FK references from `sources` and 5 FK references from `evidence_sources` were unified to point to `source_registry`. All connectors, services, and seed scripts updated.
+
+### Importing Sources
+
+```bash
+# Import from the canonical xlsx (auto-detects latest file in data/registry/)
+npx tsx scripts/import-registry.ts
+
+# Import from a specific file
+npx tsx scripts/import-registry.ts --file path/to/custom.xlsx
+```
+
+### Source Tiers
+
+| Tier | Description | Count |
+|------|-------------|-------|
+| T0 | Yemen government primary sources | 16 |
+| T1 | International organizations (World Bank, IMF, UN) | 117 |
+| T2 | Academic and research institutions | 22 |
+| T3 | Media and monitoring organizations | 18 |
+| T4 | Informal / unverified | — |
+| UNKNOWN | Needs classification | 119 |
+
+---
+
+## 🔧 Developer Guide — Code Flow
+
+### Server Startup
+
+```
+server/_core/index.ts
+  1. Creates Express app (JSON body parser, 50MB limit)
+  2. Registers OAuth routes at /api/login, /api/callback
+  3. Mounts tRPC middleware at /api/trpc → server/routers.ts (appRouter)
+  4. Sets up Vite (dev) or static file serving (prod)
+  5. Initializes scheduler → runDueJobs() every 5 min
+  6. Listens on port 3000 (auto-increments if busy)
+```
+
+### Frontend Data Flow
+
+```
+client/src/main.tsx
+  → tRPC client (httpBatchLink → /api/trpc)
+  → React Query (auto 401 redirect)
+  → App.tsx (ThemeProvider → LanguageProvider → Router)
+       → 100+ routes using Wouter
+       → Each page uses trpc.xxx.useQuery() for data
+```
+
+### Connector Ingestion Flow
+
+```
+server/connectors/index.ts
+  → WorldBankConnector.fetchAllIndicators()
+    → Look up source in source_registry (or insert with CONN-* sourceId)
+    → normalize() → canonical NormalizedSeries
+    → validate() → QA report
+    → load() → write to database (sourceId → source_registry.id)
+  → HDXConnector, OCHAFTSConnector, etc. (same pattern)
+```
+
+### Phase 0 Cleanup (Feb 2026)
+
+| What | Before | After |
+|------|--------|-------|
+| Source xlsx files | 5 copies (v2.0, v2.3 x3, v2.5) | 1 canonical in data/registry/ |
+| Import scripts | 7 different scripts | 1 canonical: scripts/import-registry.ts |
+| Source data files | JSON, CSV, hardcoded arrays | All from DB (source_registry table) |
+| Pipeline config | Hardcoded 12-source array | Loads from DB at startup |
+| Connector config | 226-source JSON file | Loads from DB at startup |
+| Schema duplication | sourceRegistry in 2 files | 1 definition in schema.ts, re-exported |
+
+### Phase 1: Unify Source Tables (Feb 2026)
+
+| What | Before | After |
+|------|--------|-------|
+| FK references | 20 FKs → `sources`, 5 FKs → `evidence_sources` | All 25 FKs → `source_registry` |
+| Schema FKs | `datasets`, `timeSeries`, `geospatialData`, etc. → `sources.id` | All → `sourceRegistry.id` |
+| Evidence FKs | `evidenceDocuments`, `evidenceDatasets`, `ingestionRuns`, etc. → `evidenceSources.id` | All → `sourceRegistry.id` |
+| Seed script | Inserts 7 rows into legacy `sources` table | Inserts into `source_registry` with proper tiers |
+| Connectors | Query `sources` by publisher, insert if missing | Query `sourceRegistry` by name, insert with full metadata |
+| Services | `db.ts`, `accuracyChecker.ts`, etc. use `sources` | All use `sourceRegistry` |
+| Legacy tables | `sources`, `evidence_sources` actively used | Deprecated with `@deprecated` markers |
+
+### Phase 2: Clean Connector System (Feb 2026)
+
+| What | Before | After |
+|------|--------|-------|
+| Source arrays | 3 hardcoded arrays (9+13+8 entries) in `connectors/index.ts` | All from DB via async `getDataSources()` |
+| `DATA_SOURCES` | 9 hardcoded `DataSource` objects | Removed — use `getDataSources()` |
+| `ENHANCED_CONNECTOR_REGISTRY` | 13 hardcoded `EnhancedConnectorInfo` objects | Removed — use `getAllEnhancedConnectorStatuses()` |
+| `EXTENDED_CONNECTORS` | 8 hardcoded `DataSource` objects | Removed — merged into `getDataSources()` |
+| Helper functions | Sync reads from arrays | Async DB queries against `source_registry` |
+| Scheduler init | Sync iteration over hardcoded array in constructor | Async `initializeJobs()` loads from DB |
+
+### Phase 3: Script Consolidation (Feb 2026)
+
+| What | Before | After |
+|------|--------|-------|
+| Total scripts | ~97 files (.ts + .mjs) in scripts/ + server/ | 64 active scripts (33 archived) |
+| Duplicate scripts | 15 scripts duplicating others | Archived, canonical versions identified |
+| One-off migrations | 6 UI/schema migration scripts | Archived (migrations complete) |
+| Diagnostic scripts | 8 tiny ad-hoc DB check scripts | Archived (use `validate.ts` instead) |
+| Server seed scripts | 4 .mjs duplicates in server/ | Archived (use `server/seed.ts` + `import-registry.ts`) |
+
+### Phase 4: Frontend Alignment (Feb 2026)
+
+| What | Before | After |
+|------|--------|-------|
+| DataFreshness.tsx | Hardcoded 16-entry `DATA_SOURCES` array + random freshness data | tRPC `sourceRegistry.getAll` with real `lastFetch`/`nextFetch` from DB |
+| SourceConsole.tsx | Hardcoded 8-entry `mockSources` + 8-entry mock stats | tRPC `sourceRegistry.getAll` + `getStats` from DB |
+| Dead pages | 2 `.old` files (`PartnerPortal.old.tsx`, `Banking.old.tsx`) | Archived to `archive/deprecated-scripts/phase4-dead-pages/` |
+| Mock data tagging | 4 components with unlabeled mock data | All tagged with `@placeholder` for future replacement |
 
 ---
 
@@ -435,7 +607,7 @@ node scripts/release-gate.mjs
 | v2.5 Schema | All present | ✅ Yes |
 | NO_STATIC_PUBLIC_KPIS | Clean | ✅ Clean |
 
-### Source Registry v2.5 Statistics
+### Source Registry Statistics
 
 | Category | Distribution |
 |----------|--------------|
@@ -443,4 +615,7 @@ node scripts/release-gate.mjs
 | **Status** | ACTIVE: 234, PENDING_REVIEW: 41, NEEDS_KEY: 17 |
 | **Source Type** | DATA: 246, RESEARCH: 23, MEDIA: 10, COMPLIANCE: 7, ACADEMIA: 6 |
 | **Sectors** | 16 sectors in codebook |
+
+> **Note:** When v3.0 xlsx is imported, these statistics will update automatically
+> via `scripts/import-registry.ts`.
 

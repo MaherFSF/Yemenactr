@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS coverage_cells (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  year INT NOT NULL,\n  sector VARCHAR(100) NOT NULL,\n  governorate VARCHAR(100) DEFAULT 'national',\n  coverageScore DECIMAL(5,4) DEFAULT 0,\n  claimCount INT DEFAULT 0,\n  evidenceCount INT DEFAULT 0,\n  lastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  UNIQUE KEY coverage_cell_unique (year, sector, governorate),\n  INDEX coverage_year_idx (year),\n  INDEX coverage_sector_idx (sector),\n  INDEX coverage_score_idx (coverageScore)\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute CREATE TABLE IF NOT EXISTS coverage_cells (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  year INT NOT NULL,\n  sector VARCHAR(100) NOT NULL,\n  governorate VARCHAR(100) DEFAULT 'national',\n  coverageScore DECIMAL(5,4) DEFAULT 0,\n  claimCount INT DEFAULT 0,\n  evidenceCount INT DEFAULT 0,\n  lastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  UNIQUE KEY coverage_cell_unique (year, sector, governorate),\n  INDEX coverage_year_idx (year),\n  INDEX coverage_sector_idx (sector),\n  INDEX coverage_score_idx (coverageScore)\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 56
-}

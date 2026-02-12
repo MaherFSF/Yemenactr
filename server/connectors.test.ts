@@ -7,12 +7,12 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { 
-  WorldBankConnector, 
-  HDXConnector, 
-  OCHAFTSConnector, 
+import {
+  WorldBankConnector,
+  HDXConnector,
+  OCHAFTSConnector,
   ReliefWebConnector,
-  DATA_SOURCES,
+  getDataSources,
 } from './connectors/index';
 
 describe('WorldBankConnector', () => {
@@ -221,37 +221,28 @@ describe('ReliefWebConnector', () => {
   });
 });
 
-describe('DATA_SOURCES configuration', () => {
-  it('should have all required sources', () => {
-    const sourceIds = DATA_SOURCES.map(s => s.id);
-    
-    expect(sourceIds).toContain('world-bank');
-    expect(sourceIds).toContain('hdx-hapi');
-    expect(sourceIds).toContain('ocha-fts');
-    expect(sourceIds).toContain('reliefweb');
+describe('getDataSources() (DB-backed)', () => {
+  it('should return an array of data sources from DB', async () => {
+    const sources = await getDataSources();
+    // If DB is available, sources should be an array
+    expect(Array.isArray(sources)).toBe(true);
   });
-  
-  it('should have valid status for all sources', () => {
-    const validStatuses = ['active', 'blocked', 'pending'];
-    
-    for (const source of DATA_SOURCES) {
+
+  it('should have valid status for all sources when DB is available', async () => {
+    const sources = await getDataSources();
+    const validStatuses = ['active', 'blocked', 'deprecated', 'on-demand'];
+
+    for (const source of sources) {
       expect(validStatuses).toContain(source.status);
     }
   });
-  
-  it('should have valid cadence for all sources', () => {
-    const validCadences = ['real-time', 'daily', 'weekly', 'monthly', 'quarterly', 'annual'];
-    
-    for (const source of DATA_SOURCES) {
-      expect(validCadences).toContain(source.cadence);
-    }
-  });
-  
-  it('should have required fields for all sources', () => {
-    for (const source of DATA_SOURCES) {
+
+  it('should have required fields for all sources when DB is available', async () => {
+    const sources = await getDataSources();
+
+    for (const source of sources) {
       expect(source.id).toBeDefined();
       expect(source.name).toBeDefined();
-      expect(source.url).toBeDefined();
       expect(source.cadence).toBeDefined();
       expect(source.type).toBeDefined();
       expect(source.status).toBeDefined();

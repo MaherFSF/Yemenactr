@@ -11,7 +11,7 @@
  */
 
 import { getDb } from "../db";
-import { timeSeries, provenanceLog, sources } from "../../drizzle/schema";
+import { timeSeries, provenanceLog, sourceRegistry } from "../../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 
 // ============================================
@@ -223,17 +223,22 @@ export async function ingestIATIData(
   try {
     // Ensure IATI data source exists
     let sourceId: number;
-    const existingSources = await db.select().from(sources).where(eq(sources.publisher, "IATI")).limit(1);
-    
+    const existingSources = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, "IATI")).limit(1);
+
     if (existingSources.length > 0) {
       sourceId = existingSources[0].id;
     } else {
-      const [newSource] = await db.insert(sources).values({
-        publisher: "IATI",
-        url: "https://iatistandard.org/",
+      const [newSource] = await db.insert(sourceRegistry).values({
+        sourceId: 'CONN-IATI',
+        name: "IATI",
+        publisher: "IATI Secretariat",
+        tier: 'T1',
+        status: 'ACTIVE',
+        accessType: 'API',
+        updateFrequency: 'MONTHLY',
+        webUrl: "https://iatistandard.org/",
         license: "Open Data",
-        retrievalDate: new Date(),
-        notes: "International Aid Transparency Initiative - Aid activity data",
+        description: "International Aid Transparency Initiative - Aid activity data",
       });
       sourceId = newSource.insertId;
     }

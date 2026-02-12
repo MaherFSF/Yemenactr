@@ -6,7 +6,7 @@
  */
 
 import { getDb } from "../db";
-import { timeSeries, geospatialData, sources } from "../../drizzle/schema";
+import { timeSeries, geospatialData, sourceRegistry } from "../../drizzle/schema";
 import { eq, desc, and } from "drizzle-orm";
 
 // ============================================
@@ -74,22 +74,27 @@ function delay(ms: number): Promise<void> {
 async function ensureSource(): Promise<number> {
   const db = await getDb();
   if (!db) throw new Error('Database not available');
-  
-  const existing = await db.select().from(sources).where(eq(sources.publisher, SOURCE_NAME)).limit(1);
-  
+
+  const existing = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, SOURCE_NAME)).limit(1);
+
   if (existing.length > 0) {
     return existing[0].id;
   }
-  
-  await db.insert(sources).values({
-    publisher: SOURCE_NAME,
-    url: 'https://fews.net/',
+
+  await db.insert(sourceRegistry).values({
+    sourceId: 'CONN-FEWS',
+    name: SOURCE_NAME,
+    publisher: 'USAID / FEWS NET',
+    tier: 'T1',
+    status: 'ACTIVE',
+    accessType: 'API',
+    updateFrequency: 'MONTHLY',
+    webUrl: 'https://fews.net/',
     license: 'Public Domain',
-    retrievalDate: new Date(),
-    notes: 'Famine Early Warning Systems Network - food security monitoring and early warning information',
+    description: 'Famine Early Warning Systems Network - food security monitoring and early warning information',
   });
-  
-  const newSource = await db.select().from(sources).where(eq(sources.publisher, SOURCE_NAME)).limit(1);
+
+  const newSource = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, SOURCE_NAME)).limit(1);
   return newSource[0].id;
 }
 

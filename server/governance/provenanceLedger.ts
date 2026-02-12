@@ -11,7 +11,7 @@
  */
 
 import { getDb } from '../db';
-import { provenanceLedgerFull, sources } from '../../drizzle/schema';
+import { provenanceLedgerFull, sourceRegistry } from '../../drizzle/schema';
 import { eq, desc } from 'drizzle-orm';
 
 // Types for provenance tracking
@@ -253,8 +253,8 @@ export class ProvenanceLedgerService {
     
     const db = await getDb();
     if (!db) throw new Error('Database connection failed');
-    const sourceResults = await db.select().from(sources).where(eq(sources.id, entry.sourceId));
-    const sourceName = sourceResults[0]?.publisher || 'Unknown Source';
+    const sourceResults = await db.select().from(sourceRegistry).where(eq(sourceRegistry.id, entry.sourceId));
+    const sourceName = sourceResults[0]?.name || 'Unknown Source';
     
     return {
       source: sourceName,

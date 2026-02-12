@@ -56,42 +56,16 @@ export type CalendarDay = typeof calendarDay.$inferSelect;
 export type InsertCalendarDay = typeof calendarDay.$inferInsert;
 
 // ============================================================================
-// ENHANCED SOURCE REGISTRY (225+ CONNECTORS)
+// SOURCE REGISTRY — USE THE CANONICAL DEFINITION IN schema.ts
 // ============================================================================
-
-export const sourceRegistry = mysqlTable(
-  "source_registry",
-  {
-    id: int("id").autoincrement().primaryKey(),
-    sourceCode: varchar("source_code", { length: 100 }).notNull().unique(),
-    nameEn: varchar("name_en", { length: 255 }).notNull(),
-    nameAr: varchar("name_ar", { length: 255 }),
-    publisher: varchar("publisher", { length: 255 }).notNull(),
-    url: text("url"),
-    tier: mysqlEnum("tier", ["T1", "T2", "T3"]).default("T2").notNull(),
-    status: mysqlEnum("status", ["ACTIVE", "INACTIVE", "PENDING", "DEPRECATED"]).default("ACTIVE").notNull(),
-    descriptionEn: text("description_en"),
-    descriptionAr: text("description_ar"),
-    license: varchar("license", { length: 100 }),
-    contactEmail: varchar("contact_email", { length: 255 }),
-    apiEndpoint: text("api_endpoint"),
-    apiAuthType: varchar("api_auth_type", { length: 50 }),
-    dataFormats: varchar("data_formats", { length: 255 }),
-    updateFrequency: varchar("update_frequency", { length: 50 }),
-    geographicCoverage: varchar("geographic_coverage", { length: 255 }),
-    temporalCoverageStart: date("temporal_coverage_start"),
-    temporalCoverageEnd: date("temporal_coverage_end"),
-    metadata: json("metadata").$type<Record<string, unknown>>().default({}),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
-  },
-  (table) => ({
-    sourceCodeIdx: uniqueIndex("idx_source_code").on(table.sourceCode),
-    tierIdx: index("idx_source_tier").on(table.tier),
-    statusIdx: index("idx_source_status").on(table.status),
-  })
-);
-
+// IMPORTANT: The sourceRegistry table is defined in drizzle/schema.ts (line ~7412).
+// That is the SINGLE canonical definition with T0-T4 tiers, 40+ fields.
+// This file previously had a duplicate, simpler definition that has been removed
+// to prevent schema conflicts. Import sourceRegistry from schema.ts instead.
+//
+// Re-export from canonical schema for backward compatibility:
+import { sourceRegistry } from "./schema";
+export { sourceRegistry };
 export type SourceRegistry = typeof sourceRegistry.$inferSelect;
 export type InsertSourceRegistry = typeof sourceRegistry.$inferInsert;
 
@@ -424,93 +398,6 @@ export const seedAgents = [
   },
 ];
 
-export const seedSources = [
-  {
-    sourceCode: "CBY_ADEN",
-    nameEn: "Central Bank of Yemen - Aden",
-    nameAr: "البنك المركزي اليمني - عدن",
-    publisher: "Central Bank of Yemen",
-    url: "https://cby.gov.ye",
-    tier: "T1" as const,
-    status: "ACTIVE" as const,
-    descriptionEn: "Official monetary authority for Aden-controlled areas",
-    license: "Public Domain",
-  },
-  {
-    sourceCode: "CBY_SANAA",
-    nameEn: "Central Bank of Yemen - Sana'a",
-    nameAr: "البنك المركزي اليمني - صنعاء",
-    publisher: "Central Bank of Yemen",
-    url: "https://cby.gov.ye",
-    tier: "T1" as const,
-    status: "ACTIVE" as const,
-    descriptionEn: "Official monetary authority for Sana'a-controlled areas",
-    license: "Public Domain",
-  },
-  {
-    sourceCode: "WORLD_BANK",
-    nameEn: "World Bank",
-    nameAr: "البنك الدولي",
-    publisher: "World Bank",
-    url: "https://data.worldbank.org",
-    tier: "T1" as const,
-    status: "ACTIVE" as const,
-    descriptionEn: "International development data",
-    license: "CC BY 4.0",
-  },
-  {
-    sourceCode: "IMF",
-    nameEn: "International Monetary Fund",
-    nameAr: "صندوق النقد الدولي",
-    publisher: "IMF",
-    url: "https://www.imf.org",
-    tier: "T1" as const,
-    status: "ACTIVE" as const,
-    descriptionEn: "Global economic and financial data",
-    license: "Public Domain",
-  },
-  {
-    sourceCode: "OCHA",
-    nameEn: "UN Office for Coordination of Humanitarian Affairs",
-    nameAr: "مكتب الأمم المتحدة لتنسيق الشؤون الإنسانية",
-    publisher: "OCHA",
-    url: "https://fts.ocha.org",
-    tier: "T1" as const,
-    status: "ACTIVE" as const,
-    descriptionEn: "Humanitarian funding and response data",
-    license: "CC BY 4.0",
-  },
-  {
-    sourceCode: "WFP",
-    nameEn: "World Food Programme",
-    nameAr: "برنامج الغذاء العالمي",
-    publisher: "WFP",
-    url: "https://wfp.org",
-    tier: "T1" as const,
-    status: "ACTIVE" as const,
-    descriptionEn: "Food security and market monitoring",
-    license: "CC BY 4.0",
-  },
-  {
-    sourceCode: "UNHCR",
-    nameEn: "UN Refugee Agency",
-    nameAr: "المفوضية السامية للأمم المتحدة لشؤون اللاجئين",
-    publisher: "UNHCR",
-    url: "https://unhcr.org",
-    tier: "T1" as const,
-    status: "ACTIVE" as const,
-    descriptionEn: "Refugee and displacement statistics",
-    license: "CC BY 4.0",
-  },
-  {
-    sourceCode: "UNICEF",
-    nameEn: "UN Children's Fund",
-    nameAr: "منظمة الأمم المتحدة للطفولة",
-    publisher: "UNICEF",
-    url: "https://unicef.org",
-    tier: "T1" as const,
-    status: "ACTIVE" as const,
-    descriptionEn: "Child welfare and development indicators",
-    license: "CC BY 4.0",
-  },
-];
+// seedSources removed — source data comes exclusively from the canonical xlsx
+// imported via scripts/import-registry.ts → source_registry table.
+// See: archive/README.md for details on the cleanup.

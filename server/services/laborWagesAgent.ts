@@ -5,13 +5,13 @@
 
 import { db } from '../db';
 import { 
-  timeSeries, 
-  indicators, 
-  documents, 
-  economicEvents, 
+  timeSeries,
+  indicators,
+  documents,
+  economicEvents,
   alerts,
   sectorAgentRuns,
-  sources
+  sourceRegistry
 } from '../../drizzle/schema';
 import { eq, and, gte, lte, desc, sql, like, or } from 'drizzle-orm';
 
@@ -403,24 +403,24 @@ async function getLaborGaps(): Promise<DataGap[]> {
 async function getLaborSources(): Promise<SourceInfo[]> {
   try {
     const sourcesData = await db.select()
-      .from(sources)
+      .from(sourceRegistry)
       .where(or(
-        like(sources.publisher, '%ILO%'),
-        like(sources.publisher, '%World Bank%'),
-        like(sources.publisher, '%UNDP%'),
-        like(sources.publisher, '%WFP%'),
-        like(sources.publisher, '%UNICEF%'),
-        like(sources.publisher, '%Ministry of Finance%'),
-        like(sources.publisher, '%Central Bank%'),
-        like(sources.publisher, '%CSO%')
+        like(sourceRegistry.name, '%ILO%'),
+        like(sourceRegistry.name, '%World Bank%'),
+        like(sourceRegistry.name, '%UNDP%'),
+        like(sourceRegistry.name, '%WFP%'),
+        like(sourceRegistry.name, '%UNICEF%'),
+        like(sourceRegistry.name, '%Ministry of Finance%'),
+        like(sourceRegistry.name, '%Central Bank%'),
+        like(sourceRegistry.name, '%CSO%')
       ))
       .limit(20);
-    
+
     return sourcesData.map(s => ({
       id: s.id.toString(),
-      publisher: s.publisher || '',
-      tier: 'T2',
-      lastUpdate: s.retrievalDate?.toISOString() || '',
+      publisher: s.name || '',
+      tier: s.tier || 'T2',
+      lastUpdate: s.updatedAt?.toISOString() || '',
       indicatorCount: 0
     }));
   } catch (error) {

@@ -6,7 +6,7 @@
  */
 
 import { getDb } from "../db";
-import { timeSeries, sources } from "../../drizzle/schema";
+import { timeSeries, sourceRegistry } from "../../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
 
 // ============================================
@@ -71,22 +71,27 @@ function delay(ms: number): Promise<void> {
 async function ensureSource(): Promise<number> {
   const db = await getDb();
   if (!db) throw new Error('Database not available');
-  
-  const existing = await db.select().from(sources).where(eq(sources.publisher, SOURCE_NAME)).limit(1);
-  
+
+  const existing = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, SOURCE_NAME)).limit(1);
+
   if (existing.length > 0) {
     return existing[0].id;
   }
-  
-  await db.insert(sources).values({
-    publisher: SOURCE_NAME,
-    url: 'https://fts.unocha.org/',
+
+  await db.insert(sourceRegistry).values({
+    sourceId: 'CONN-FTS',
+    name: SOURCE_NAME,
+    publisher: 'OCHA',
+    tier: 'T0',
+    status: 'ACTIVE',
+    accessType: 'API',
+    updateFrequency: 'DAILY',
+    webUrl: 'https://fts.unocha.org/',
     license: 'Open Data',
-    retrievalDate: new Date(),
-    notes: 'Official registry of humanitarian funding flows - who funded what, by when, for which crisis',
+    description: 'Official registry of humanitarian funding flows - who funded what, by when, for which crisis',
   });
-  
-  const newSource = await db.select().from(sources).where(eq(sources.publisher, SOURCE_NAME)).limit(1);
+
+  const newSource = await db.select().from(sourceRegistry).where(eq(sourceRegistry.name, SOURCE_NAME)).limit(1);
   return newSource[0].id;
 }
 

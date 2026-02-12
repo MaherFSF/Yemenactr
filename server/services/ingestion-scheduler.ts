@@ -1,7 +1,7 @@
 /**
  * YETO Automated Ingestion Scheduler
  * 
- * Manages cron jobs for all 226 data sources
+ * Manages cron jobs for all 295 data sources
  * - Tier 1 sources: Daily ingestion
  * - Tier 2 sources: Twice weekly
  * - Tier 3 sources: Weekly
@@ -34,7 +34,8 @@ class IngestionScheduler {
   private registryPath: string;
 
   constructor() {
-    this.registryPath = path.join(process.cwd(), 'server/connectors/sources-config.json');
+    // Fallback JSON path (DB is preferred, loaded via loadRegistry())
+    this.registryPath = path.join(process.cwd(), 'data/registry/sources-v3.0-extracted.json');
   }
 
   /**

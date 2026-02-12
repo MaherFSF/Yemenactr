@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS publication_log (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  claimId INT NOT NULL,\n  tribunalRunId INT,\n  publishedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  gitSha VARCHAR(64),\n  datasetVintageIds JSON,\n  publishedBy VARCHAR(100),\n  publishType ENUM('auto', 'manual_override') DEFAULT 'auto',\n  overrideReason TEXT,\n  pageContext VARCHAR(255),\n  INDEX idx_claim (claimId),\n  INDEX idx_published (publishedAt)\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute CREATE TABLE IF NOT EXISTS publication_log (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  claimId INT NOT NULL,\n  tribunalRunId INT,\n  publishedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n  gitSha VARCHAR(64),\n  datasetVintageIds JSON,\n  publishedBy VARCHAR(100),\n  publishType ENUM('auto', 'manual_override') DEFAULT 'auto',\n  overrideReason TEXT,\n  pageContext VARCHAR(255),\n  INDEX idx_claim (claimId),\n  INDEX idx_published (publishedAt)\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 251
-}

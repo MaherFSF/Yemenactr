@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE regulations (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  regulationType VARCHAR(50) NOT NULL,\n  referenceNumber VARCHAR(100),\n  title VARCHAR(500) NOT NULL,\n  titleAr VARCHAR(500),\n  summary TEXT,\n  summaryAr TEXT,\n  issuingEntityId INT,\n  issuedDate DATE,\n  effectiveDate DATE,\n  expiryDate DATE,\n  status VARCHAR(50) DEFAULT 'active',\n  regimeTag VARCHAR(50) DEFAULT 'unknown',\n  sector VARCHAR(100),\n  sourceUrl VARCHAR(500),\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute CREATE TABLE regulations (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  regulationType VARCHAR(50) NOT NULL,\n  referenceNumber VARCHAR(100),\n  title VARCHAR(500) NOT NULL,\n  titleAr VARCHAR(500),\n  summary TEXT,\n  summaryAr TEXT,\n  issuingEntityId INT,\n  issuedDate DATE,\n  effectiveDate DATE,\n  expiryDate DATE,\n  status VARCHAR(50) DEFAULT 'active',\n  regimeTag VARCHAR(50) DEFAULT 'unknown',\n  sector VARCHAR(100),\n  sourceUrl VARCHAR(500),\n  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,\n  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 203
-}
