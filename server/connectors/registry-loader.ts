@@ -45,13 +45,13 @@ export async function loadSourcesFromConfig(): Promise<void> {
           tier: (row.tier || 'UNKNOWN') as any,
           requiresAuth: row.apiKeyRequired || false,
           requiresKey: row.apiKeyRequired || false,
-          dataFormat: 'JSON',
+          dataFormat: row.sourceType || 'JSON',
           indicators: [],
           coverage: {
             start: row.historicalStart ? new Date(`${row.historicalStart}-01-01`) : new Date('2010-01-01'),
             end: row.historicalEnd ? new Date(`${row.historicalEnd}-12-31`) : new Date(),
           },
-          reliabilityScore: 75,
+          reliabilityScore: row.reliabilityScore ? parseInt(String(row.reliabilityScore), 10) || 75 : 75,
         };
 
         registry.registerSource(sourceConfig);

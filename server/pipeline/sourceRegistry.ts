@@ -5,7 +5,7 @@
  * SOURCES COME FROM THE DATABASE (source_registry table), not hardcoded arrays.
  *
  * The source_registry table is populated by: scripts/import-registry.ts
- * from the canonical xlsx: data/registry/YETO_Sources_Universe_Master_*.xlsx
+ * from the canonical xlsx: data/registry/YETO_Sources_Universe_Master_SINGLE_SOURCE_OF_TRUTH_v3_0.xlsx
  */
 
 import { getDb } from "../db";

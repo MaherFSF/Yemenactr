@@ -1,8 +1,0 @@
-{
-  "query": "SELECT COUNT(*) as count FROM economic_indicators;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT COUNT(*) as count FROM economic_indicators;",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1146 (42S02) at line 1: Table 'xodoykmzpdfikkvj3qftgk.economic_indicators' doesn't exist"
-  ]
-}

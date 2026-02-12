@@ -19,7 +19,7 @@
  * - Idempotent upsert (no duplicates on rerun)
  * - Registry diff tracking
  * - LINT validation with P0/P1 rules
- * - Works with any xlsx version (v2.3, v2.5, v3.0+)
+ * - Works with any xlsx version (v2.3, v2.5, v3.0+); canonical is v3.0
  *
  * History:
  * - Originally import-registry-v2.3.ts, upgraded to canonical version
@@ -145,7 +145,7 @@ function i(val: any): number | null {
 }
 
 async function main() {
-  console.log('=== Source Registry Importer v2.3 ===');
+  console.log('=== Source Registry Importer v3.0 ===');
   console.log(`Reading: ${EXCEL_PATH}`);
   
   const wb = XLSX.readFile(EXCEL_PATH);
@@ -220,12 +220,13 @@ async function main() {
       // Parse other fields - map Excel columns to DB columns
       const nameAr = s(row['name_ar']);
       const institution = s(row['institution']);
-      const url = s(row['url']);
+      const url = s(row['url_canonical']) || s(row['url']);
       const description = s(row['notes']);
       const languages = JSON.stringify(parseLanguages(row['multilingual_required'] ? 'ar,en' : 'en'));
-      const allowedUse = JSON.stringify([row['source_class'] || 'DATA_NUMERIC']);
-      const authRequired = parseBoolean(row['auth_required']);
-      const needsPartnership = parseBoolean(row['partnership_required']);
+      const sourceClass = row['source_class'] || 'DATA_NUMERIC';
+      const allowedUse = JSON.stringify(row['allowed_use_json'] ? JSON.parse(String(row['allowed_use_json']).replace(/'/g, '"')) : [sourceClass]);
+      const authRequired = parseBoolean(row['auth_required_bool'] ?? row['auth_required']);
+      const needsPartnership = parseBoolean(row['partnership_required_bool'] ?? row['partnership_required']);
       const partnershipContact = s(row['partnership_action_email']);
       const confidenceGrade = s(row['confidence_grade']);
       const cadenceLagDays = i(row['cadence_lag_tolerance']);
@@ -235,7 +236,18 @@ async function main() {
       const license = s(row['license'], 495);
       const historicalStart = i(row['time_coverage_start']);
       const historicalEnd = i(row['time_coverage_end']);
-      
+
+      // v3.0 additional columns
+      const sourceType = s(row['source_type_norm']) || s(row['source_type']);
+      const licenseState = s(row['license_state']);
+      const needsClassification = parseBoolean(row['needs_classification']);
+      const reliabilityScore = s(row['reliability_score']);
+      const evidencePackFlag = parseBoolean(row['evidence_pack_flag']);
+      const isPrimary = parseBoolean(row['is_primary']);
+      const isProxy = parseBoolean(row['is_proxy']);
+      const isMedia = parseBoolean(row['is_media']);
+      const connectorOwner = s(row['ingestion_owner_agent']) || 'Manus';
+
       // Upsert into source_registry
       await connection.execute(`
         INSERT INTO source_registry (
@@ -243,8 +255,10 @@ async function main() {
           tier, status, accessType, updateFrequency,
           language, allowedUse, apiKeyRequired, needsPartnership, partnershipContact,
           confidenceRating, freshnessSla, connectorType,
-          geographicScope, sectorCategory, license, historicalStart, historicalEnd
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          geographicScope, sectorCategory, license, historicalStart, historicalEnd,
+          sourceType, licenseState, needsClassification, reliabilityScore, evidencePackFlag,
+          isPrimary, isProxy, isMedia, connectorOwner
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
           name = VALUES(name), altName = VALUES(altName),
           publisher = VALUES(publisher), webUrl = VALUES(webUrl),
@@ -256,13 +270,20 @@ async function main() {
           confidenceRating = VALUES(confidenceRating),
           freshnessSla = VALUES(freshnessSla), connectorType = VALUES(connectorType),
           geographicScope = VALUES(geographicScope), sectorCategory = VALUES(sectorCategory),
-          license = VALUES(license), historicalStart = VALUES(historicalStart), historicalEnd = VALUES(historicalEnd)
+          license = VALUES(license), historicalStart = VALUES(historicalStart), historicalEnd = VALUES(historicalEnd),
+          sourceType = VALUES(sourceType), licenseState = VALUES(licenseState),
+          needsClassification = VALUES(needsClassification), reliabilityScore = VALUES(reliabilityScore),
+          evidencePackFlag = VALUES(evidencePackFlag),
+          isPrimary = VALUES(isPrimary), isProxy = VALUES(isProxy), isMedia = VALUES(isMedia),
+          connectorOwner = VALUES(connectorOwner)
       `, [
         sourceId, nameEn, nameAr, institution, url, description,
         tier, status, accessMethod, frequency,
         languages, allowedUse, authRequired, needsPartnership, partnershipContact,
         confidenceGrade, cadenceLagDays, connectorType,
-        countryScope, sectorCategory, license, historicalStart, historicalEnd
+        countryScope, sectorCategory, license, historicalStart, historicalEnd,
+        sourceType, licenseState, needsClassification, reliabilityScore, evidencePackFlag,
+        isPrimary, isProxy, isMedia, connectorOwner
       ]);
       
       sourceCount++;
@@ -315,14 +336,14 @@ async function main() {
       
       for (const row of endpointsData as any[]) {
         const sourceId = row['src_id'];
-        const endpointUrl = s(row['endpoint_url']);
-        
+        const endpointUrl = s(row['url']) || s(row['endpoint_url']);
+
         if (!sourceId || !endpointUrl) continue;
-        
+
         await connection.execute(`
           INSERT INTO source_endpoints (sourceId, endpointUrl, endpointType, method, params, headers, isActive)
           VALUES (?, ?, ?, ?, ?, ?, ?)
-          ON DUPLICATE KEY UPDATE 
+          ON DUPLICATE KEY UPDATE
             endpointType = VALUES(endpointType),
             method = VALUES(method),
             params = VALUES(params),
@@ -332,10 +353,10 @@ async function main() {
           sourceId,
           endpointUrl,
           s(row['endpoint_type']) || 'DATA',
-          s(row['method']) || 'GET',
-          s(row['params']),
-          s(row['headers']),
-          true
+          s(row['http_method']) || s(row['method']) || 'GET',
+          s(row['params_template']) || s(row['params']),
+          s(row['auth_env_vars']) || s(row['headers']),
+          row['status'] !== 'DEPRECATED'
         ]);
         endpointCount++;
       }
@@ -353,14 +374,14 @@ async function main() {
       
       for (const row of productsData as any[]) {
         const sourceId = row['src_id'];
-        const productName = s(row['product_name']);
-        
-        if (!sourceId || !productName) continue;
-        
+        const productName = s(row['product_name']) || 'TBD';
+
+        if (!sourceId) continue;
+
         await connection.execute(`
           INSERT INTO source_products (sourceId, productName, productType, description, url, isActive)
           VALUES (?, ?, ?, ?, ?, ?)
-          ON DUPLICATE KEY UPDATE 
+          ON DUPLICATE KEY UPDATE
             productType = VALUES(productType),
             description = VALUES(description),
             url = VALUES(url),
@@ -369,7 +390,7 @@ async function main() {
           sourceId,
           productName,
           s(row['product_type']) || 'DATA_NUMERIC',
-          s(row['description']),
+          s(row['product_description']) || s(row['notes']),
           s(row['url']),
           true
         ]);

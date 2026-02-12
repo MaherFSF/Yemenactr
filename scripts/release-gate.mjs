@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * YETO Platform Release Gate v2.6 (Truth-Native)
+ * YETO Platform Release Gate v3.0 (Truth-Native)
  * 
  * This script verifies data integrity before any deployment.
  * All 11 gates must pass for a release to proceed.
@@ -27,7 +27,7 @@ async function runReleaseGate() {
   const stats = {};
   
   console.log('╔══════════════════════════════════════════════════════════════╗');
-  console.log('║           YETO Platform Release Gate v2.5                    ║');
+  console.log('║           YETO Platform Release Gate v3.0                    ║');
   console.log('╚══════════════════════════════════════════════════════════════╝');
   
   // Gate 1: Source Registry Count
@@ -106,15 +106,15 @@ async function runReleaseGate() {
   }
   results.push({ gate: 'S3 Storage', value: gate8Pass ? 'Configured' : 'Missing', expected: 'Configured', pass: gate8Pass });
 
-  // Gate 9: v2.5 Schema Columns
-  console.log('🔍 Gate 9: v2.5 Schema Columns');
+  // Gate 9: v3.0 Schema Columns
+  console.log('🔍 Gate 9: v3.0 Schema Columns');
   const [columns] = await conn.execute('DESCRIBE source_registry');
   const colNames = columns.map(c => c.Field);
-  const v25Cols = ['sourceType', 'licenseState', 'needsClassification', 'reliabilityScore', 'evidencePackFlag'];
-  const missingCols = v25Cols.filter(c => !colNames.includes(c));
+  const v30Cols = ['sourceType', 'licenseState', 'needsClassification', 'reliabilityScore', 'evidencePackFlag', 'isPrimary', 'isProxy', 'isMedia', 'connectorOwner'];
+  const missingCols = v30Cols.filter(c => !colNames.includes(c));
   const gate9Pass = missingCols.length === 0;
-  console.log(`   ${gate9Pass ? '✅' : '❌'} v2.5 columns: ${gate9Pass ? 'All present' : `Missing: ${missingCols.join(', ')}`}`);
-  results.push({ gate: 'v2.5 Schema', value: gate9Pass ? 'Present' : `Missing: ${missingCols.join(', ')}`, expected: 'All v2.5 columns', pass: gate9Pass });
+  console.log(`   ${gate9Pass ? '✅' : '❌'} v3.0 columns: ${gate9Pass ? 'All present' : `Missing: ${missingCols.join(', ')}`}`);
+  results.push({ gate: 'v3.0 Schema', value: gate9Pass ? 'Present' : `Missing: ${missingCols.join(', ')}`, expected: 'All v3.0 columns', pass: gate9Pass });
   
   // Gate 10: NO_STATIC_PUBLIC_KPIS - Scan frontend files for forbidden static patterns
   console.log('🔍 Gate 10: NO_STATIC_PUBLIC_KPIS');
@@ -213,8 +213,8 @@ async function runReleaseGate() {
   const [statusDist] = await conn.execute('SELECT status, COUNT(*) as count FROM source_registry GROUP BY status');
   stats.statusDistribution = statusDist.reduce((acc, s) => { acc[s.status] = s.count; return acc; }, {});
   
-  const [typeDist] = await conn.execute('SELECT sourceType, COUNT(*) as count FROM source_registry GROUP BY sourceType');
-  stats.sourceTypeDistribution = typeDist.reduce((acc, t) => { acc[t.sourceType] = t.count; return acc; }, {});
+  const [typeDist] = await conn.execute('SELECT COALESCE(sourceType, accessType) as sourceType, COUNT(*) as count FROM source_registry GROUP BY COALESCE(sourceType, accessType)');
+  stats.sourceTypeDistribution = typeDist.reduce((acc, t) => { acc[t.sourceType || 'UNKNOWN'] = t.count; return acc; }, {});
   
   await conn.end();
   

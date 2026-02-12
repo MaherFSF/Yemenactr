@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE IF NOT EXISTS `research_authors` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `name` varchar(255) NOT NULL,\n  `nameAr` varchar(255),\n  `affiliation` varchar(255),\n  `affiliationAr` varchar(255),\n  `orcid` varchar(50),\n  `email` varchar(320),\n  `bio` text,\n  `bioAr` text,\n  `profileUrl` text,\n  `publicationCount` int NOT NULL DEFAULT 0,\n  `citationCount` int NOT NULL DEFAULT 0,\n  `createdAt` timestamp NOT NULL DEFAULT (now()),\n  `updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `research_authors_id` PRIMARY KEY(`id`),\n  INDEX `name_idx` (`name`),\n  INDEX `affiliation_idx` (`affiliation`)\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute CREATE TABLE IF NOT EXISTS `research_authors` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `name` varchar(255) NOT NULL,\n  `nameAr` varchar(255),\n  `affiliation` varchar(255),\n  `affiliationAr` varchar(255),\n  `orcid` varchar(50),\n  `email` varchar(320),\n  `bio` text,\n  `bioAr` text,\n  `profileUrl` text,\n  `publicationCount` int NOT NULL DEFAULT 0,\n  `citationCount` int NOT NULL DEFAULT 0,\n  `createdAt` timestamp NOT NULL DEFAULT (now()),\n  `updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `research_authors_id` PRIMARY KEY(`id`),\n  INDEX `name_idx` (`name`),\n  INDEX `affiliation_idx` (`affiliation`)\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 253
-}

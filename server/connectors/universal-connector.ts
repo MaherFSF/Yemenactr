@@ -1,7 +1,7 @@
 /**
  * YETO Universal Dynamic Connector Framework
  * 
- * Handles all 225 data sources with:
+ * Handles all 295 data sources with:
  * - Automatic historical backfill (2010-2026)
  * - Continuous ingestion per cadence
  * - Adaptive error handling

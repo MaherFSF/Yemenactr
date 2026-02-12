@@ -1,8 +1,0 @@
-{
-  "query": "SELECT 'time_series' as tbl, COUNT(*) as cnt FROM time_series UNION ALL SELECT 'economic_events', COUNT(*) FROM economic_events UNION ALL SELECT 'research_publications', COUNT(*) FROM research_publications UNION ALL SELECT 'commercial_banks', COUNT(*) FROM commercial_banks UNION ALL SELECT 'glossary_terms', COUNT(*) FROM glossary_terms UNION ALL SELECT 'indicator_definitions', COUNT(*) FROM indicator_definitions UNION ALL SELECT 'sources', COUNT(*) FROM sources UNION ALL SELECT 'scheduler_jobs', COUNT(*) FROM scheduler_jobs;",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute SELECT 'time_series' as tbl, COUNT(*) as cnt FROM time_series UNION ALL SELECT 'economic_events', COUNT(*) FROM economic_events UNION ALL SELECT 'research_publications', COUNT(*) FROM research_publications UNION ALL SELECT 'commercial_banks', COUNT(*) FROM commercial_banks UNION ALL SELECT 'glossary_terms', COUNT(*) FROM glossary_terms UNION ALL SELECT 'indicator_definitions', COUNT(*) FROM indicator_definitions UNION ALL SELECT 'sources', COUNT(*) FROM sources UNION ALL SELECT 'scheduler_jobs', COUNT(*) FROM scheduler_jobs;",
-  "returncode": 1,
-  "logs": [
-    "ERROR 1146 (42S02) at line 1: Table 'xodoykmzpdfikkvj3qftgk.indicator_definitions' doesn't exist"
-  ]
-}

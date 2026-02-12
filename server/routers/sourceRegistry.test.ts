@@ -188,10 +188,10 @@ describe('Source Registry Router', () => {
       ]]);
 
       // Mock total count
-      mockDb.execute.mockResolvedValueOnce([[{ total: 292 }]]);
+      mockDb.execute.mockResolvedValueOnce([[{ total: 295 }]]);
 
       // Mock active count
-      mockDb.execute.mockResolvedValueOnce([[{ active: 207 }]]);
+      mockDb.execute.mockResolvedValueOnce([[{ active: 210 }]]);
 
       // Mock needs key count
       mockDb.execute.mockResolvedValueOnce([[{ needsKey: 17 }]]);

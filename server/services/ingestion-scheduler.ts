@@ -1,7 +1,7 @@
 /**
  * YETO Automated Ingestion Scheduler
  * 
- * Manages cron jobs for all 226 data sources
+ * Manages cron jobs for all 295 data sources
  * - Tier 1 sources: Daily ingestion
  * - Tier 2 sources: Twice weekly
  * - Tier 3 sources: Weekly

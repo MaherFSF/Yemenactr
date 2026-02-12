@@ -1,9 +1,0 @@
-{
-  "query": "INSERT INTO connector_thresholds (connectorCode, warningDays, criticalDays, enabled) VALUES\n('world_bank', 30, 90, true),\n('unhcr', 14, 30, true),\n('who', 30, 60, true),\n('ocha_fts', 7, 14, true),\n('wfp', 7, 14, true),\n('cby', 1, 3, true),\n('hdx', 14, 30, true),\n('fews_net', 30, 60, true),\n('reliefweb', 3, 7, true),\n('sanctions', 7, 14, true),\n('unicef', 30, 60, true),\n('undp', 90, 180, true)\nON DUPLICATE KEY UPDATE warningDays=VALUES(warningDays);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4DB9hJWqLzCzJpD.4ae2ba9639dc --database XodoyKMzPdFiKkVj3QFTGK --execute INSERT INTO connector_thresholds (connectorCode, warningDays, criticalDays, enabled) VALUES\n('world_bank', 30, 90, true),\n('unhcr', 14, 30, true),\n('who', 30, 60, true),\n('ocha_fts', 7, 14, true),\n('wfp', 7, 14, true),\n('cby', 1, 3, true),\n('hdx', 14, 30, true),\n('fews_net', 30, 60, true),\n('reliefweb', 3, 7, true),\n('sanctions', 7, 14, true),\n('unicef', 30, 60, true),\n('undp', 90, 180, true)\nON DUPLICATE KEY UPDATE warningDays=VALUES(warningDays);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 82
-}

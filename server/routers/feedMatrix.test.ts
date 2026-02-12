@@ -43,9 +43,9 @@ vi.mock('../services/routingEngine', () => ({
     { sourceId: 'SRC-002', name: 'IMF', tier: 'T1', status: 'ACTIVE' }
   ]),
   getSourceCoverage: vi.fn().mockResolvedValue({
-    totalSources: 292,
-    activeSources: 207,
-    coveragePercent: 70
+    totalSources: 295,
+    activeSources: 210,
+    coveragePercent: 71
   }),
   TARGET_PAGES: ['dashboard', 'data-repository', 'research-library']
 }));

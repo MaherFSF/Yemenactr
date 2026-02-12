@@ -161,7 +161,7 @@ export default function SourceRegistry() {
             Source Registry
           </h1>
           <p className="text-muted-foreground mt-1">
-            Canonical registry of {total} data sources from YETO Universe v2.3
+            Canonical registry of {total} data sources from YETO Universe v3.0
           </p>
         </div>
         <Button variant="outline" onClick={handleRefresh}>
