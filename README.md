@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://yeto.causewaygrp.com"><img src="https://img.shields.io/badge/🌐_Production-yeto.causewaygrp.com-107040?style=for-the-badge" alt="Production"></a>
+  <a href="https://yeto.yeto-yemen.org"><img src="https://img.shields.io/badge/🌐_Production-yeto.yeto-yemen.org-107040?style=for-the-badge" alt="Production"></a>
   <a href="https://yteocauseway.manus.space"><img src="https://img.shields.io/badge/🔬_Preview-manus.space-103050?style=for-the-badge" alt="Preview"></a>
 </p>
 
@@ -22,7 +22,7 @@
   <img src="https://img.shields.io/badge/Sources-292_(234_Active)-orange?style=flat-square" alt="Sources">
   <img src="https://img.shields.io/badge/Tier_Classification-59%25_Complete-blue?style=flat-square" alt="Tier Classification">
   <img src="https://img.shields.io/badge/Release_Gate-✅_PASSING-brightgreen?style=flat-square" alt="Release Gate">
-  <img src="https://img.shields.io/badge/License-Proprietary-C0A030?style=flat-square" alt="License">
+  <img src="https://img.shields.io/badge/License-MIT License-C0A030?style=flat-square" alt="License">
 </p>
 
 <p align="center">
@@ -364,7 +364,7 @@ yeto/
 
 ### Responsible Disclosure
 
-Security issues should be reported to: **security@causewaygrp.com**
+Security issues should be reported to: **security@yeto-yemen.org**
 
 ---
 
@@ -386,9 +386,9 @@ We welcome contributions from the community. Please read our [Contributing Guide
 
 ## 📜 License
 
-This project is proprietary software owned by [Causeway Group](https://causewaygrp.com). All rights reserved.
+This project is proprietary software owned by [YETO Contributors](https://yeto-yemen.org). All rights reserved.
 
-For licensing inquiries, contact: **legal@causewaygrp.com**
+For licensing inquiries, contact: **legal@yeto-yemen.org**
 
 ---
 
@@ -396,20 +396,20 @@ For licensing inquiries, contact: **legal@causewaygrp.com**
 
 | Purpose | Contact |
 |---------|---------|
-| **General Inquiries** | yeto@causewaygrp.com |
-| **Technical Support** | support@causewaygrp.com |
-| **Security Issues** | security@causewaygrp.com |
-| **Partnership** | partnerships@causewaygrp.com |
+| **General Inquiries** | yeto@yeto-yemen.org |
+| **Technical Support** | support@yeto-yemen.org |
+| **Security Issues** | security@yeto-yemen.org |
+| **Partnership** | partnerships@yeto-yemen.org |
 
 ---
 
 <p align="center">
-  <strong>Built with ❤️ by <a href="https://causewaygrp.com">Causeway Group</a></strong><br>
+  <strong>Built with ❤️ by <a href="https://yeto-yemen.org">YETO Contributors</a></strong><br>
   <em>Bringing transparency to Yemen's economy, one data point at a time.</em>
 </p>
 
 <p align="center">
-  <a href="https://causewaygrp.com"><img src="https://img.shields.io/badge/Causeway-Group-103050?style=for-the-badge" alt="Causeway Group"></a>
+  <a href="https://yeto-yemen.org"><img src="https://img.shields.io/badge/Causeway-Group-103050?style=for-the-badge" alt="YETO Contributors"></a>
 </p>
 
 
