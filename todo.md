@@ -10081,3 +10081,8 @@ Based on review of master design documents and data source register:
 - TypeScript errors: 70 → 0 (100% reduction)
 - All 736 tests pass
 - Zero build errors
+
+### CI/CD and GitHub Handover (CURRENT)
+- [ ] Update seed-ci.mjs to add production-like test data (250+ sources, sector codebook, v2.5 schema columns)
+- [ ] Add missing v2.5 schema columns to source_registry (sourceType, licenseState, needsClassification, reliabilityScore, evidencePackFlag)
+- [ ] Create developer handover documentation
