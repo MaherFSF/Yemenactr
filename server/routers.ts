@@ -74,7 +74,7 @@ import { oneBrainRouter } from "./routers/oneBrainRouter";
 import { fxRouter } from "./routers/fxRouter";
 import { dataInfraRouter } from "./routers/dataInfraRouter";
 import { backfillRouter } from "./routers/backfillRouter";
-import { apiKeysRouter } from "./routers/apiKeysRouter";
+// import { apiKeysRouter } from "./routers/apiKeysRouter"; // Disabled - depends on deleted tables
 import { storageRouter } from "./routers/storageRouter";
 import { historicalRouter } from "./routers/historicalRouter";
 import { reportsRouter } from "./routers/reportsRouter";
@@ -107,7 +107,7 @@ export const appRouter = router({
   dataInfra: dataInfraRouter,
   fx: fxRouter,
   backfill: backfillRouter,
-  apiKeys: apiKeysRouter,
+  // apiKeys: apiKeysRouter, // Disabled - depends on deleted tables
   storage: storageRouter,
   historical: historicalRouter,
   reports: reportsRouter,
