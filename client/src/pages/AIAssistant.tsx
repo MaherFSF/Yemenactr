@@ -246,6 +246,8 @@ export default function AIAssistant() {
         })),
         context: {
           regime: "both",
+          language: language === "ar" ? "ar" : "en",
+          page: "/ai-assistant",
         },
       });
     } catch (error) {

@@ -139,7 +139,7 @@ function MainRouter() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-1">
+      <main className="flex-1" id="main-content">
     <Switch>
       <Route path={"/home"} component={Home} />
       <Route path={"/dashboard"} component={Dashboard} />

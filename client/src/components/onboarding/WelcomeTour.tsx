@@ -8,9 +8,8 @@ import {
 } from "@/components/ui/dialog";
 import { 
   ChevronLeft, ChevronRight, X,
-  BarChart3, BookOpen, Brain, Globe, 
-  Shield, Sparkles, Clock, FileText,
-  TrendingUp, Database, Search, Layers
+  BarChart3, Brain, Sparkles,
+  FileText, Search, Layers
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -18,9 +17,12 @@ interface TourStep {
   id: string;
   title: string;
   titleAr: string;
+  kicker: string;
+  kickerAr: string;
   description: string;
   descriptionAr: string;
   icon: React.ComponentType<{ className?: string }>;
+  accent: string;
   features?: { en: string; ar: string }[];
   actionLabel?: string;
   actionLabelAr?: string;
@@ -30,44 +32,53 @@ interface TourStep {
 const tourSteps: TourStep[] = [
   {
     id: 'welcome',
-    title: 'Welcome to YETO',
-    titleAr: 'مرحباً بك في يتو',
-    description: "Yemen Economic Transparency Observatory - the most comprehensive economic intelligence platform for Yemen.",
-    descriptionAr: "مرصد الشفافية الاقتصادية اليمني - أشمل منصة للاستخبارات الاقتصادية في اليمن.",
+    title: 'YETO Discovery Atlas',
+    titleAr: 'أطلس الاستكشاف في يتو',
+    kicker: 'Discovery Portal',
+    kickerAr: 'بوابة الاستكشاف',
+    description: "A guided intelligence journey across Yemen's economy—verified, bilingual, and evidence-first.",
+    descriptionAr: "رحلة ذكاء موجهة عبر اقتصاد اليمن — موثقة، ثنائية اللغة، قائمة على الأدلة.",
     icon: Sparkles,
+    accent: '#1f2d1d',
     features: [
-      { en: "Verified data from 2010-2026", ar: "بيانات موثقة من 2010-2026" },
-      { en: "170+ trusted sources", ar: "+170 مصدر موثوق" },
-      { en: "Bilingual (Arabic/English)", ar: "ثنائي اللغة (عربي/إنجليزي)" },
+      { en: "Evidence-led answers, never guesses", ar: "إجابات مدعومة بالأدلة وليست تخميناً" },
+      { en: "Bilingual interface (Arabic/English)", ar: "واجهة ثنائية اللغة (عربي/إنجليزي)" },
+      { en: "Live confidence and provenance", ar: "ثقة ومصدر لكل معلومة" },
     ],
   },
   {
     id: 'dashboard',
-    title: 'Economic Dashboard',
-    titleAr: 'لوحة البيانات الاقتصادية',
-    description: "Real-time economic indicators with live data from World Bank, IMF, and Central Bank of Yemen.",
-    descriptionAr: "مؤشرات اقتصادية حية مع بيانات مباشرة من البنك الدولي وصندوق النقد والبنك المركزي اليمني.",
+    title: 'Live Signal Deck',
+    titleAr: 'لوحة الإشارات الحية',
+    kicker: 'Signals',
+    kickerAr: 'الإشارات',
+    description: "Real-time indicators with freshness SLAs, confidence grades, and provenance tracking.",
+    descriptionAr: "مؤشرات فورية مع اتفاقيات حداثة، وتصنيفات ثقة، وتتبع المصدر.",
     icon: BarChart3,
+    accent: '#2e8b6e',
     features: [
-      { en: "Exchange rates (Aden/Sana'a)", ar: "أسعار الصرف (عدن/صنعاء)" },
-      { en: "GDP & inflation tracking", ar: "تتبع الناتج المحلي والتضخم" },
-      { en: "Auto-updated daily", ar: "تحديث يومي تلقائي" },
+      { en: "Exchange rates by authority", ar: "أسعار صرف حسب السلطة" },
+      { en: "Auto-refresh & anomaly flags", ar: "تحديث تلقائي وتنبيه الشذوذ" },
+      { en: "Confidence grading for each KPI", ar: "تصنيف ثقة لكل مؤشر" },
     ],
-    actionLabel: 'View Dashboard',
-    actionLabelAr: 'عرض لوحة البيانات',
+    actionLabel: 'Open Dashboard',
+    actionLabelAr: 'عرض لوحة الإشارات',
     actionHref: '/dashboard',
   },
   {
     id: 'sectors',
-    title: '16 Economic Sectors',
-    titleAr: '16 قطاعاً اقتصادياً',
-    description: "Comprehensive coverage of every economic sector with dedicated dashboards and analysis.",
-    descriptionAr: "تغطية شاملة لكل قطاع اقتصادي مع لوحات بيانات وتحليلات مخصصة.",
+    title: 'Sector Intelligence Map',
+    titleAr: 'خريطة ذكاء القطاعات',
+    kicker: 'Sectors',
+    kickerAr: 'القطاعات',
+    description: "Sixteen sector lenses with regional overlays, evidence packs, and time-travel views.",
+    descriptionAr: "ستة عشر عدسة قطاعية مع طبقات إقليمية وحزم أدلة وعرض تاريخي.",
     icon: Layers,
+    accent: '#6b8e6b',
     features: [
-      { en: "Banking & Finance", ar: "البنوك والتمويل" },
-      { en: "Trade & Commerce", ar: "التجارة" },
-      { en: "Energy, Agriculture, Aid...", ar: "الطاقة، الزراعة، المساعدات..." },
+      { en: "16 sector dashboards", ar: "16 لوحة قطاعية" },
+      { en: "Regional + regime lenses", ar: "عدسات إقليمية وسلطوية" },
+      { en: "Scenario-ready comparisons", ar: "مقارنات جاهزة للسيناريو" },
     ],
     actionLabel: 'Explore Sectors',
     actionLabelAr: 'استكشف القطاعات',
@@ -75,66 +86,59 @@ const tourSteps: TourStep[] = [
   },
   {
     id: 'ai-assistant',
-    title: 'AI Economic Advisor',
-    titleAr: 'المستشار الاقتصادي الذكي',
-    description: "Ask questions in Arabic or English and get evidence-backed answers from our database.",
-    descriptionAr: "اسأل بالعربية أو الإنجليزية واحصل على إجابات مدعومة بالأدلة من قاعدة بياناتنا.",
+    title: 'One Brain + Specialist Agents',
+    titleAr: 'العقل الواحد + وكلاء متخصصون',
+    kicker: 'Agents',
+    kickerAr: 'الوكلاء',
+    description: "Ask in Arabic or English and get evidence-backed responses with persona routing.",
+    descriptionAr: "اسأل بالعربية أو الإنجليزية واحصل على إجابات مدعومة بالأدلة وتوجيه تلقائي للوكلاء.",
     icon: Brain,
+    accent: '#C5A028',
     features: [
-      { en: "Natural language queries", ar: "استعلامات باللغة الطبيعية" },
-      { en: "Source citations included", ar: "مع ذكر المصادر" },
-      { en: "Expert-level analysis", ar: "تحليل على مستوى الخبراء" },
+      { en: "Persona routing for every sector", ar: "توجيه الوكلاء حسب القطاع" },
+      { en: "Evidence packs & caveats included", ar: "حزم أدلة وتحفظات مدمجة" },
+      { en: "Translation duo built-in", ar: "وكيلان متخصصان للترجمة" },
     ],
-    actionLabel: 'Ask AI Assistant',
-    actionLabelAr: 'اسأل المساعد الذكي',
+    actionLabel: 'Open AI Assistant',
+    actionLabelAr: 'افتح المساعد الذكي',
     actionHref: '/ai-assistant',
   },
   {
     id: 'research',
-    title: 'Research Library',
-    titleAr: 'مكتبة الأبحاث',
-    description: "Access 370+ research publications from leading institutions and organizations.",
-    descriptionAr: "الوصول إلى أكثر من 370 منشوراً بحثياً من المؤسسات والمنظمات الرائدة.",
+    title: 'Evidence Vault',
+    titleAr: 'خزانة الأدلة',
+    kicker: 'Evidence',
+    kickerAr: 'الأدلة',
+    description: "A verified research library with citations, audit trails, and export-ready evidence packs.",
+    descriptionAr: "مكتبة أبحاث موثقة مع استشهادات ومسارات تدقيق وحزم أدلة قابلة للتصدير.",
     icon: FileText,
+    accent: '#234876',
     features: [
-      { en: "World Bank & IMF reports", ar: "تقارير البنك الدولي وصندوق النقد" },
-      { en: "CBY circulars & decisions", ar: "تعميمات وقرارات البنك المركزي" },
-      { en: "Academic publications", ar: "المنشورات الأكاديمية" },
+      { en: "370+ vetted publications", ar: "أكثر من 370 منشوراً موثقاً" },
+      { en: "Source reliability ratings", ar: "تصنيفات موثوقية للمصادر" },
+      { en: "Exportable evidence packs", ar: "حزم أدلة قابلة للتصدير" },
     ],
-    actionLabel: 'Browse Library',
-    actionLabelAr: 'تصفح المكتبة',
+    actionLabel: 'Browse Evidence',
+    actionLabelAr: 'تصفح الأدلة',
     actionHref: '/research-library',
   },
   {
-    id: 'tools',
-    title: 'Analysis Tools',
-    titleAr: 'أدوات التحليل',
-    description: "Professional tools for economic analysis, comparison, and scenario simulation.",
-    descriptionAr: "أدوات احترافية للتحليل الاقتصادي والمقارنة ومحاكاة السيناريوهات.",
-    icon: TrendingUp,
-    features: [
-      { en: "Report Builder", ar: "منشئ التقارير" },
-      { en: "Scenario Simulator", ar: "محاكي السيناريوهات" },
-      { en: "Comparison Tool", ar: "أداة المقارنة" },
-    ],
-    actionLabel: 'Explore Tools',
-    actionLabelAr: 'استكشف الأدوات',
-    actionHref: '/report-builder',
-  },
-  {
     id: 'complete',
-    title: 'Start Exploring',
-    titleAr: 'ابدأ الاستكشاف',
-    description: "Use the search bar to find anything, or start with the dashboard.",
-    descriptionAr: "استخدم شريط البحث للعثور على أي شيء، أو ابدأ بلوحة البيانات.",
+    title: 'Launch Your Mission',
+    titleAr: 'ابدأ المهمة',
+    kicker: 'Ready',
+    kickerAr: 'جاهز',
+    description: "Search anything, navigate fast, and share insights across teams and devices.",
+    descriptionAr: "ابحث عن أي شيء، تنقل بسرعة، وشارك الرؤى عبر الفرق والأجهزة.",
     icon: Search,
+    accent: '#0D2818',
     features: [
-      { en: "Global search across all data", ar: "بحث شامل في جميع البيانات" },
-      { en: "Keyboard shortcuts available", ar: "اختصارات لوحة المفاتيح متاحة" },
-      { en: "Export data anytime", ar: "تصدير البيانات في أي وقت" },
+      { en: "Unified global search", ar: "بحث شامل موحّد" },
+      { en: "Mobile-first navigation", ar: "تنقل مهيأ للموبايل" },
+      { en: "Download and share insights", ar: "تنزيل ومشاركة الرؤى" },
     ],
-    actionLabel: 'Go to Dashboard',
-    actionLabelAr: 'الذهاب للوحة البيانات',
+    actionLabel: 'Start Exploring',
+    actionLabelAr: 'ابدأ الاستكشاف',
     actionHref: '/dashboard',
   },
 ];
@@ -220,16 +224,21 @@ export function WelcomeTour({ onComplete, forceShow = false, isOpen: externalIsO
   
   const step = tourSteps[currentStep];
   const Icon = step.icon;
+  const progress = Math.round(((currentStep + 1) / tourSteps.length) * 100);
+  const accent = step.accent || "#1f2d1d";
   
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent 
-        className="max-w-md p-0 overflow-hidden border-0 shadow-2xl rounded-2xl bg-white"
+        className="max-w-lg p-0 overflow-hidden border-0 shadow-2xl rounded-3xl bg-white"
         dir={isRTL ? 'rtl' : 'ltr'}
       >
-        {/* Clean Header */}
-        <div className="relative bg-white border-b border-gray-100 px-6 py-4">
-          <div className="flex items-center justify-between">
+        {/* Discovery Header */}
+        <div
+          className="relative border-b border-gray-100"
+          style={{ background: `linear-gradient(135deg, ${accent}22 0%, #ffffff 55%)` }}
+        >
+          <div className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center gap-3">
               <img 
                 src="/images/yeto-logo.png" 
@@ -239,8 +248,11 @@ export function WelcomeTour({ onComplete, forceShow = false, isOpen: externalIsO
                   e.currentTarget.style.display = 'none';
                 }}
               />
-              <Badge className="bg-[#1f2d1d] text-white border-0 text-xs font-medium">
-                {language === 'ar' ? 'جولة سريعة' : 'Quick Tour'}
+              <Badge
+                className="border-0 text-xs font-medium"
+                style={{ backgroundColor: accent, color: "#fff" }}
+              >
+                {language === 'ar' ? 'جولة الاستكشاف' : 'Discovery Tour'}
               </Badge>
             </div>
             <Button 
@@ -252,70 +264,83 @@ export function WelcomeTour({ onComplete, forceShow = false, isOpen: externalIsO
               <X className="h-4 w-4" />
             </Button>
           </div>
-          
-          {/* Step indicator dots - clickable */}
-          <div className="flex items-center gap-1.5 mt-4">
-            {tourSteps.map((_, idx) => (
-              <button 
-                key={idx}
-                onClick={() => goToStep(idx)}
-                className={cn(
-                  "h-1.5 rounded-full transition-all duration-300 cursor-pointer hover:opacity-80",
-                  idx === currentStep 
-                    ? "w-8 bg-[#1f2d1d]" 
-                    : idx < currentStep 
-                      ? "w-2 bg-[#1f2d1d]/40" 
-                      : "w-2 bg-gray-200"
-                )}
+
+          <div className="px-6 pb-4">
+            <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
+              <span>{language === 'ar' ? step.kickerAr : step.kicker}</span>
+              <span className="text-gray-300">•</span>
+              <span>{currentStep + 1}/{tourSteps.length}</span>
+            </div>
+            <div className="mt-3 h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
+              <div
+                className="h-1.5 rounded-full transition-all duration-300"
+                style={{ width: `${progress}%`, backgroundColor: accent }}
               />
-            ))}
-            <span className={cn(
-              "text-gray-400 text-xs font-medium",
-              isRTL ? "mr-auto" : "ml-auto"
-            )}>
-              {currentStep + 1}/{tourSteps.length}
-            </span>
+            </div>
+            <div className="flex items-center gap-1.5 mt-4">
+              {tourSteps.map((_, idx) => (
+                <button 
+                  key={idx}
+                  onClick={() => goToStep(idx)}
+                  className="rounded-full transition-all duration-300 cursor-pointer hover:opacity-80"
+                  style={{
+                    width: idx === currentStep ? "26px" : "8px",
+                    height: "6px",
+                    backgroundColor: idx <= currentStep ? accent : "#E5E7EB",
+                    opacity: idx < currentStep ? 0.5 : 1,
+                  }}
+                />
+              ))}
+              <span className={cn(
+                "text-gray-400 text-xs font-medium",
+                isRTL ? "mr-auto" : "ml-auto"
+              )}>
+                {progress}%
+              </span>
+            </div>
           </div>
         </div>
         
         {/* Content */}
         <div className={cn(
-          "p-6 transition-opacity duration-150",
+          "p-6 space-y-5 transition-opacity duration-150",
           isAnimating ? "opacity-0" : "opacity-100"
         )}>
-          {/* Icon */}
-          <div className="flex justify-center mb-5">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1f2d1d]/10 to-[#C5A028]/10 flex items-center justify-center">
-              <Icon className="h-8 w-8 text-[#1f2d1d]" />
+          <div className="flex items-center gap-4">
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center"
+              style={{ backgroundColor: `${accent}1a` }}
+            >
+              <Icon className="h-7 w-7" style={{ color: accent }} />
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-widest text-gray-400">
+                {language === 'ar' ? step.kickerAr : step.kicker}
+              </p>
+              <h3 className="text-xl font-bold text-gray-900">
+                {language === 'ar' ? step.titleAr : step.title}
+              </h3>
             </div>
           </div>
-          
-          {/* Title and Description */}
-          <div className="text-center mb-5">
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
-              {language === 'ar' ? step.titleAr : step.title}
-            </h3>
-            <p className="text-gray-500 text-sm leading-relaxed">
-              {language === 'ar' ? step.descriptionAr : step.description}
-            </p>
-          </div>
-          
-          {/* Feature list */}
+
+          <p className="text-sm text-gray-600 leading-relaxed">
+            {language === 'ar' ? step.descriptionAr : step.description}
+          </p>
+
           {step.features && (
-            <div className="space-y-2 mb-5">
+            <div className="space-y-2">
               {step.features.map((feature, idx) => (
                 <div 
                   key={idx}
                   className="flex items-center gap-2 text-sm text-gray-600"
                 >
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#C5A028]" />
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: accent }} />
                   <span>{language === 'ar' ? feature.ar : feature.en}</span>
                 </div>
               ))}
             </div>
           )}
-          
-          {/* Action button if available */}
+
           {step.actionHref && (
             <a 
               href={step.actionHref}
@@ -324,7 +349,8 @@ export function WelcomeTour({ onComplete, forceShow = false, isOpen: externalIsO
             >
               <Button 
                 variant="outline" 
-                className="w-full border-[#1f2d1d]/20 text-[#1f2d1d] hover:bg-[#1f2d1d]/5 hover:border-[#1f2d1d]/40"
+                className="w-full hover:bg-black/5"
+                style={{ borderColor: accent, color: accent }}
               >
                 {language === 'ar' ? step.actionLabelAr : step.actionLabel}
               </Button>
@@ -355,7 +381,8 @@ export function WelcomeTour({ onComplete, forceShow = false, isOpen: externalIsO
             
             <Button
               onClick={nextStep}
-              className="bg-[#1f2d1d] hover:bg-[#0D2818] text-white px-5"
+              className="text-white px-5 hover:opacity-90"
+              style={{ backgroundColor: accent }}
             >
               {currentStep === tourSteps.length - 1 
                 ? (language === 'ar' ? 'ابدأ' : 'Start')
@@ -384,8 +411,10 @@ export function QuickTourButton() {
         onClick={() => setShowTour(true)}
         className="text-gray-600 hover:text-[#1f2d1d] hover:bg-[#1f2d1d]/5"
       >
-        <Sparkles className="h-4 w-4 mr-1" />
-        {language === 'ar' ? 'جولة سريعة' : 'Quick Tour'}
+        <Sparkles className="h-4 w-4 sm:mr-1" />
+        <span className="hidden sm:inline">
+          {language === 'ar' ? 'جولة الاستكشاف' : 'Discovery Tour'}
+        </span>
       </Button>
       <WelcomeTour 
         isOpen={showTour} 
