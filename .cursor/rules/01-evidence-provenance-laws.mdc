@@ -1,0 +1,12 @@
+---
+description: Evidence-only and provenance chain requirements for every number/claim.
+alwaysApply: true
+---
+# Evidence-only & provenance laws
+
+- **No number or claim may be displayed without evidence.**
+- Any KPI card / chart point must be linked to an `evidencePackId`.
+- If evidence is missing: render a **Gap Card** (no placeholders).
+- Provenance chain must exist:
+  `observation → series → dataset_version → ingestion_run → raw_object → source_id`.
+- Never invent uncertainty or confidence intervals.
