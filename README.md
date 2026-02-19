@@ -12,6 +12,7 @@
 <p align="center">
   <a href="https://yeto.yeto-yemen.org"><img src="https://img.shields.io/badge/🌐_Production-yeto.yeto-yemen.org-107040?style=for-the-badge" alt="Production"></a>
   <a href="https://yteocauseway.manus.space"><img src="https://img.shields.io/badge/🔬_Preview-manus.space-103050?style=for-the-badge" alt="Preview"></a>
+  <a href="#"><img src="https://img.shields.io/badge/📅_Updated-February_14_2026-blue?style=for-the-badge" alt="Last Updated"></a>
 </p>
 
 <p align="center">
@@ -21,7 +22,9 @@
   <img src="https://img.shields.io/badge/Data_Points-5%2C500%2B-blue?style=flat-square" alt="Data Points">
   <img src="https://img.shields.io/badge/Sources-292_(234_Active)-orange?style=flat-square" alt="Sources">
   <img src="https://img.shields.io/badge/Tier_Classification-59%25_Complete-blue?style=flat-square" alt="Tier Classification">
-  <img src="https://img.shields.io/badge/Release_Gate-✅_PASSING-brightgreen?style=flat-square" alt="Release Gate">
+  <img src="https://img.shields.io/badge/Version-3.0_Production-brightgreen?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/Status-✅_Production_Ready-brightgreen?style=flat-square" alt="Status">
+  <img src="https://img.shields.io/badge/Updated-Feb_14_2026-blue?style=flat-square" alt="Last Updated">
   <img src="https://img.shields.io/badge/License-MIT License-C0A030?style=flat-square" alt="License">
 </p>
 
