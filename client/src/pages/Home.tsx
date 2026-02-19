@@ -40,6 +40,7 @@ import { useScrollPosition } from "@/hooks/useParallax";
 import { KpiCardSkeleton, KpiRowSkeleton } from "@/components/KpiCardSkeleton";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import ExchangeRateChart from "@/components/ExchangeRateChart";
+import EconomicDashboard from "@/components/EconomicDashboard";
 
 export default function Home() {
   const { language } = useLanguage();
@@ -602,6 +603,21 @@ export default function Home() {
               </div>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Interactive Economic Dashboard */}
+      <section className="py-16 bg-white dark:bg-gray-800">
+        <div className="container">
+          <AnimatedSection animation="fadeInUp" className="mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              {language === "ar" ? "لوحة المؤشرات الاقتصادية" : "Economic Indicators Dashboard"}
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              {language === "ar" ? "تتبع المؤشرات الاقتصادية الرئيسية والاتجاهات الحالية" : "Track key economic indicators and current trends"}
+            </p>
+          </AnimatedSection>
+          <EconomicDashboard />
         </div>
       </section>
 
