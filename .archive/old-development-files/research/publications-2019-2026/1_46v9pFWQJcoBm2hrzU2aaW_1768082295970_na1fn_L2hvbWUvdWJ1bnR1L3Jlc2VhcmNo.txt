@@ -1,0 +1,26 @@
+World Bank Publications on Yemen's Economy (2019-2026)
+
+
+Publication: Yemen Economic Monitor, Spring 2024: Navigating Increased Hardship and Growing Fragmentation
+Date: 2024-08-01
+URL: https://openknowledge.worldbank.org/entities/publication/b644cf40-8b14-4031-ac20-f419cd65e58a
+Key Findings: The abstract mentions that the monitor provides an update on key economic developments and policies, and presents findings from recent World Bank work on Yemen. It covers the macro economy to financial markets to human welfare and development indicators.
+Economic Indicators: REAL SECTOR, FISCAL DEVELOPMENTS, EXTERNAL SECTOR, MONETARY POLICY, INFLATION
+
+Publication: Yemen Economic Monitor, Spring 2025: Persistent Fragility amid Rising Risks
+Date: 2025-06-04
+URL: https://openknowledge.worldbank.org/entities/publication/cc22675d-e06c-466e-be62-a2c290c2a86e
+Key Findings: The report highlights persistent domestic tensions, growing external risks, and the impact of the Houthi movement's blockade on oil exports. It also notes the effect of the U.S. designation of the Houthis as a Foreign Terrorist Organization on the banking sector and the scaling back of donor assistance. Two-thirds of the population have inadequate food consumption, and poverty is widespread. The outlook remains bleak, and Yemen's future depends on lasting peace, rebuilding, and critical reforms.
+Economic Indicators: Not explicitly mentioned in the abstract, but the text refers to oil exports, the banking sector, and food consumption.
+
+Publication: Yemen Monthly Economic Update- December 2019
+Date: 2020-01-28
+URL: https://www.worldbank.org/en/country/yemen/publication/yemen-monthly-economic-update-december-2019
+Key Findings: During 2019, Yemen’s economy suffered from protracted conflict. The economy was projected to grow at around 2 percent in 2019, but this scenario may not materialize due to escalating conflicts and repeated disruptions to oil production and exports.
+Economic Indicators: GDP growth, oil sector, gas production, foreign exchange.
+
+Publication: Yemen Economic Monitor, Fall 2025: Navigating Increased Hardship and Growing Economic Fragmentation
+Date: Fall 2025
+URL: https://documents1.worldbank.org/curated/en/099603311122530091/pdf/IDU-9d206bab-c565-4ec7-bc19-914509bc0cdc.pdf
+Key Findings: Yemen's economy remained under severe strain in the first half of 2025. Oil-sector activity stagnated due to the Houthi movement’s ongoing blockade on exports. Inflation sharply eroded household purchasing power in IRG-controlled areas. Declining aid flows and dwindling foreign currency reserves weighed heavily on imports and consumption. The IRG’s fiscal position deteriorated further, with revenues declining by 30% year-on-year in the first half of 2025. External imbalances intensified, with the Yemeni rial weakening sharply. International aid has declined sharply. Food insecurity has reached alarming levels. Real GDP is projected to contract by 1.5% in 2025.
+Economic Indicators: GDP, inflation, exchange rate, oil exports, public finance, external sector, monetary policy, food security, remittances, donor support.

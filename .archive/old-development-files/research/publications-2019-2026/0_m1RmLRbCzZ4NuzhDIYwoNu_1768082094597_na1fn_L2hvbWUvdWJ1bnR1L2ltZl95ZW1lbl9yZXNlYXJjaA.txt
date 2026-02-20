@@ -1,0 +1,36 @@
+Organization: International Monetary Fund
+
+Publication 1:
+Title: Yemen: Concluding Statement of the 2025 IMF Article IV Mission
+Date: October 9, 2025
+URL: https://www.imf.org/en/news/articles/2025/10/09/imf-cs-yemen-2025-imf-article-iv-mission
+Key Findings: Real GDP contracted by ~27% over the last decade; GDP contracted by 1.5% in 2024; inflation was 27% in 2024; public debt is over 100% of IRG GDP; the current account deficit is almost 11% of GDP in 2024.
+Economic Indicators: GDP, inflation, currency depreciation, government revenue, public debt, current account deficit, international reserve coverage.
+
+Publication 2:
+Title: Republic of Yemen: Customs Reform and Emergency Revenue Mobilization
+Date: January 6, 2026
+URL: https://www.imf.org/en/publications/high-level-summary-technical-assistance-reports/issues/2026/01/06/republic-of-yemen-customs-reform-and-emergency-revenue-mobilization-573021
+Key Findings: Customs revenue has declined due to fragmented governance, outdated legal frameworks, and weak enforcement. The report proposes a twelve-month emergency revenue mobilization plan focusing on strengthening strategic management, risk-based controls, human resources, anti-corruption measures, and customs-tax cooperation.
+Economic Indicators: Customs revenue, revenue mobilization.
+
+Publication 3:
+Title: IMF Staff Concludes Visit to Yemen
+Date: January 23, 2025
+URL: https://www.imf.org/en/news/articles/2025/01/23/pr25015-yemen-imf-staff-concludes-visit
+Key Findings: The ongoing regional conflict has deepened Yemen's already acute humanitarian and economic conditions, leading to further contractions in GDP and rising inflation. The economic outlook hinges on the progress of the Yemen peace talks and a continued commitment to reforms. Key priorities for economic stabilization include continuing to enhance fiscal discipline, unifying the currency, and resuming oil exports. External financing will be essential for maintaining macroeconomic stability, addressing humanitarian needs, and supporting the reform process.
+Economic Indicators: GDP, inflation, Yemeni rial depreciation, oil exports, external financing, fiscal position, reserves, arrears, government spending, monetary financing, exchange rate, AML/CFT.
+
+Publication 4:
+Title: IMF Staff Concludes Staff Visit to Yemen
+Date: May 2, 2024
+URL: https://www.imf.org/en/news/articles/2024/05/02/pr-24133-yemen-imf-staff-concludes-staff-visit
+Key Findings: The halt in oil exports continues to weigh on the economy, with a 2% contraction in 2023 and high inflation. The fiscal deficit widened to 4.5% of GDP in 2023. The authorities are committed to reforms, including aligning exchange rates and strengthening cash management. External financing is critical.
+Economic Indicators: GDP, inflation, oil exports, government revenues, fiscal deficit, reserves, exchange rate, remittances, external financing, AML/CFT.
+
+Publication 5:
+Title: IMF Staff Concludes Visit to Yemen (October 5, 2022)
+Date: October 5, 2022
+URL: https://reliefweb.int/report/yemen/imf-staff-concludes-visit-yemen-october-5-2022
+Key Findings: Yemen faces a major humanitarian crisis with rising food insecurity. The truce and policy reforms have contributed to macroeconomic stability. Consolidating gains requires strengthening the fiscal position, improving governance, and continued progress in conflict resolution. Additional external financing is critically needed.
+Economic Indicators: Inflation, food inflation, wheat imports, exchange rate, budget deficit, central bank financing, customs revenues, electricity subsidies, public debt management, reserve management, AML/CFT.

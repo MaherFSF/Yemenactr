@@ -138,4 +138,3 @@ client/public/images/letterhead-ar.png
 client/public/images/letterhead-en.png
 .github/workflows/deploy.yml
 .github/workflows/
-.archive/

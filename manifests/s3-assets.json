@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-28T10:00:00Z",
+  "description": "Manifest of large assets stored in S3 instead of Git repository",
+  "s3Bucket": "yeto-data-prod",
+  "prefixes": {
+    "documents": "documents/",
+    "raw-data": "raw-data/",
+    "processed-data": "processed-data/",
+    "exports": "exports/",
+    "logs": "logs/",
+    "backups": "backups/"
+  },
+  "assets": []
+}
