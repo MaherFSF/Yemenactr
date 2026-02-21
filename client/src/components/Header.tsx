@@ -141,7 +141,7 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-1">
-          <Link href="/home" className={`px-4 py-2 text-sm font-semibold transition-all duration-300 ${
+          <Link href="/home" data-tour="home" className={`px-4 py-2 text-sm font-semibold transition-all duration-300 ${
             location === "/home" || location === "/" 
               ? "text-[#2C3424] border-b-2 border-[#C9A961]" 
               : "text-gray-600 hover:text-[#2C3424] hover:border-b-2 hover:border-[#C9A961]/50"
@@ -152,7 +152,7 @@ export default function Header() {
           {/* Sectors Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className={`flex items-center gap-1 px-4 py-2 text-sm font-semibold transition-all duration-300 ${
+              <button data-tour="sectors" className={`flex items-center gap-1 px-4 py-2 text-sm font-semibold transition-all duration-300 ${
                 location.startsWith("/sectors") 
                   ? "text-[#2C3424] border-b-2 border-[#C9A961]" 
                   : "text-gray-600 hover:text-[#2C3424] hover:border-b-2 hover:border-[#C9A961]/50"
@@ -298,7 +298,7 @@ export default function Header() {
         {/* Right Side Actions */}
         <div className="flex items-center gap-2">
           {/* Global Search */}
-          <div className="hidden md:block">
+          <div className="hidden md:block" data-tour="search">
             <GlobalSearch />
           </div>
 

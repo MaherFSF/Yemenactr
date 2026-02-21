@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { TourProvider } from "./contexts/TourContext";
+import { AdaptiveTourManager } from "./components/AdaptiveTourManager";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
@@ -137,9 +139,11 @@ import DocumentDetail from "./pages/DocumentDetail";
 // Main app router with header/footer
 function MainRouter() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-1">
+    <TourProvider>
+      <div className="flex flex-col min-h-screen">
+        <AdaptiveTourManager />
+        <Header />
+        <main className="flex-1">
     <Switch>
       <Route path={"/home"} component={Home} />
       <Route path={"/dashboard"} component={Dashboard} />
@@ -272,9 +276,10 @@ function MainRouter() {
       {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
-      </main>
-      <Footer />
-    </div>
+        </main>
+        <Footer />
+      </div>
+    </TourProvider>
   );
 }
 
