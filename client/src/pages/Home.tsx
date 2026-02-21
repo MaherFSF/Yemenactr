@@ -349,74 +349,91 @@ export default function Home() {
       {/* Insights Ticker - Sticky bar with rotating updates */}
       <InsightsTicker />
       
-      {/* Hero Section - Yemen skyline background with parallax */}
-      <section className="relative min-h-[650px] overflow-hidden">
-        {/* Yemen skyline background image with parallax effect */}
-        <div 
-          className="absolute inset-0 scale-110"
-          style={{ transform: `translateY(${scrollY * 0.3}px) scale(1.1)` }}
-        >
-          <img 
-            src="/images/yemen/aden-harbor-hero.jpg" 
-            alt="Aden Harbor, Yemen" 
-            className="w-full h-full object-cover"
-          />
+      {/* Hero Section - CauseWay Luxury Design */}
+      <section className="relative min-h-[700px] overflow-hidden bg-gradient-to-br from-[#1a2318] via-[#2C3424] to-[#1a2318]">
+        {/* Elegant geometric pattern overlay */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='%23C9A961' fill-opacity='0.4'/%3E%3C/svg%3E")`,
+            backgroundSize: '60px 60px'
+          }} />
         </div>
-        {/* Green overlay for text readability - YETO brand colors - reduced opacity for better image visibility */}
-        {/* CauseWay green overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1f2d1d]/85 via-[#2e8b6e]/60 to-transparent" />
+        
+        {/* Gold accent lines */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#C9A961] to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#C9A961] to-transparent" />
 
         {/* Content overlay */}
         <div className="relative z-10 container py-16 md:py-24">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
+            {/* Left Content - CauseWay Branding */}
             <div className={`text-white ${language === 'ar' ? 'lg:order-2 text-right' : ''}`}>
+              {/* CauseWay Logo with elegant presentation */}
+              <div className="mb-8 flex items-center gap-4">
+                <div className="relative">
+                  <div className="absolute -inset-2 bg-gradient-to-r from-[#C9A961]/20 to-transparent rounded-lg blur-xl" />
+                  <img src="/causeway-logo.png" alt="CauseWay" className="relative h-20 md:h-24 w-auto drop-shadow-2xl" />
+                </div>
+                <div className="h-16 w-px bg-gradient-to-b from-transparent via-[#C9A961] to-transparent" />
+                <div className="flex flex-col">
+                  <span className="text-sm uppercase tracking-[0.3em] text-[#C9A961] font-light">Economic Observatory</span>
+                  <span className="text-xs text-white/60 mt-1">{language === 'ar' ? 'مرصد اقتصادي' : 'Yemen Intelligence'}</span>
+                </div>
+              </div>
+              
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                 {language === "ar" ? (
                   <>
-                    <span className="text-white">مرصد</span>
+                    <span className="text-white/90">مرصد</span>
                     <br />
-                    <span className="text-[#d4a528]">الشفافية الاقتصادية</span>
+                    <span className="bg-gradient-to-r from-[#C9A961] via-[#d4af37] to-[#C9A961] bg-clip-text text-transparent">الشفافية الاقتصادية</span>
                     <br />
-                    <span className="text-white">اليمني</span>
+                    <span className="text-white/90">اليمني</span>
                   </>
                 ) : (
                   <>
-                    <span className="text-white">Yemen Economic</span>
+                    <span className="text-white/90">Yemen Economic</span>
                     <br />
-                    <span className="text-[#d4a528]">Transparency</span>
+                    <span className="bg-gradient-to-r from-[#C9A961] via-[#d4af37] to-[#C9A961] bg-clip-text text-transparent drop-shadow-lg">Transparency</span>
                     <br />
-                    <span className="text-white">Observatory</span>
+                    <span className="text-white/90">Observatory</span>
                   </>
                 )}
               </h1>
               
-              <p className="text-lg md:text-xl text-white/90 mb-8 max-w-lg">
-                {language === "ar"
-                  ? "إضاءة مسار اليمن نحو التعافي الاقتصادي من خلال المساءلة المبنية على البيانات"
-                  : "Illuminating Yemen's Path to Economic Recovery Through Data-Driven Accountability"}
-              </p>
+              <div className="relative mb-8">
+                <div className="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-[#C9A961] to-transparent" />
+                <p className="text-lg md:text-xl text-white/80 max-w-lg leading-relaxed pl-4">
+                  {language === "ar"
+                    ? "إضاءة مسار اليمن نحو التعافي الاقتصادي من خلال المساءلة المبنية على البيانات"
+                    : "Illuminating Yemen's path to economic recovery through evidence-based intelligence and data-driven accountability"}
+                </p>
+              </div>
               
               <div className="flex flex-wrap gap-4">
                 <Link href="/dashboard">
-                  <Button size="lg" className="bg-[#2e8b6e] hover:bg-[#1f2d1d] text-white gap-2 px-8 rounded-full">
+                  <Button size="lg" className="bg-gradient-to-r from-[#C9A961] to-[#b8964d] hover:from-[#d4af37] hover:to-[#C9A961] text-[#1a2318] font-semibold gap-2 px-8 py-6 rounded-none shadow-xl hover:shadow-2xl transition-all duration-300">
                     {language === "ar" ? "استكشف لوحة البيانات" : "Explore Dashboard"}
-                    <ArrowRight className={`h-4 w-4 ${language === 'ar' ? 'rotate-180' : ''}`} />
+                    <ArrowRight className={`h-5 w-5 ${language === 'ar' ? 'rotate-180' : ''}`} />
                   </Button>
                 </Link>
                 <Link href="/research">
-                  <Button size="lg" variant="outline" className="bg-transparent border-white/50 hover:bg-white/10 text-white px-8 rounded-full">
+                  <Button size="lg" variant="outline" className="bg-transparent border-2 border-[#C9A961]/50 hover:border-[#C9A961] hover:bg-[#C9A961]/10 text-white px-8 py-6 rounded-none backdrop-blur-sm transition-all duration-300">
                     {language === "ar" ? "اعرف المزيد" : "Learn More"}
                   </Button>
                 </Link>
               </div>
             </div>
 
-            {/* Right Content - Floating KPI Cards with animations */}
-            <div className={`relative ${language === 'ar' ? 'lg:order-1' : ''}`}>
-              {/* Custom YETO Logo SVG in center */}
+            {/* Right Content - Elegant KPI Display */}
+            <div className={`relative min-h-[500px] ${language === 'ar' ? 'lg:order-1' : ''}`}>
+              {/* Elegant centerpiece with gold accent */}
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0">
-                <YetoLogo variant="badge" size="lg" animated />
+                <div className="relative w-48 h-48">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#C9A961]/20 to-transparent rounded-full blur-3xl" />
+                  <div className="absolute inset-8 border-2 border-[#C9A961]/30 rounded-full" />
+                  <div className="absolute inset-16 border border-[#C9A961]/20 rounded-full" />
+                </div>
               </div>
 
               {/* Loading skeleton state */}
@@ -441,77 +458,77 @@ export default function Home() {
               {!kpiLoading && (
                 <>
                   {/* GDP Growth Card - Top Left */}
-                  <div className="absolute top-0 left-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-all duration-300 animate-[slideInLeft_0.6s_ease-out]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
-                        <BarChart3 className="w-4 h-4 text-[#C0A030]" />
+                  <div className="absolute top-0 left-0 bg-gradient-to-br from-white to-gray-50 border-l-4 border-[#C9A961] shadow-2xl p-5 w-48 transform hover:scale-105 hover:shadow-3xl transition-all duration-300 animate-[slideInLeft_0.6s_ease-out]">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-[#C9A961] to-[#b8964d] rounded-sm flex items-center justify-center shadow-lg">
+                        <BarChart3 className="w-5 h-5 text-white" />
                       </div>
-                      <span className="text-sm font-medium text-gray-700">
+                      <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         {language === "ar" ? "نمو الناتج المحلي" : "GDP Growth"}
                       </span>
                     </div>
-                    <div className="text-2xl font-bold text-[#2e8b6e] mb-1">{kpiData?.gdpGrowth?.value || "+2.5%"}</div>
-                    <div className="text-xs text-gray-500 mb-2">
+                    <div className="text-3xl font-bold bg-gradient-to-r from-[#2C3424] to-[#3d4a32] bg-clip-text text-transparent mb-1">{kpiData?.gdpGrowth?.value || "+2.5%"}</div>
+                    <div className="text-xs text-gray-500 mb-3 font-medium">
                       {language === "ar" ? "نمو ربع سنوي" : "Quarterly Growth"}
                     </div>
-                    <Sparkline data={kpiData?.gdpGrowth?.trend || [20, 30, 25, 40, 35, 50, 45, 60, 55, 70, 80, 90]} color="#2e8b6e" />
+                    <Sparkline data={kpiData?.gdpGrowth?.trend || [20, 30, 25, 40, 35, 50, 45, 60, 55, 70, 80, 90]} color="#C9A961" />
                   </div>
 
                   {/* Inflation Rate Card - Top Right */}
-                  <div className="absolute top-0 right-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-all duration-300 animate-[slideInRight_0.6s_ease-out_0.1s_both]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
-                        <Coins className="w-4 h-4 text-[#C0A030]" />
+                  <div className="absolute top-0 right-0 bg-gradient-to-br from-white to-gray-50 border-l-4 border-[#2C3424] shadow-2xl p-5 w-48 transform hover:scale-105 hover:shadow-3xl transition-all duration-300 animate-[slideInRight_0.6s_ease-out_0.1s_both]">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-[#2C3424] to-[#3d4a32] rounded-sm flex items-center justify-center shadow-lg">
+                        <Coins className="w-5 h-5 text-[#C9A961]" />
                       </div>
-                      <span className="text-sm font-medium text-gray-700">
+                      <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         {language === "ar" ? "معدل التضخم" : "Inflation Rate"}
                       </span>
                     </div>
-                    <div className="text-2xl font-bold text-[#2e8b6e] mb-1">{kpiData?.inflation?.value || "15.0%"}</div>
-                    <div className="text-xs text-gray-500 mb-2">
+                    <div className="text-3xl font-bold bg-gradient-to-r from-[#2C3424] to-[#3d4a32] bg-clip-text text-transparent mb-1">{kpiData?.inflation?.value || "15.0%"}</div>
+                    <div className="text-xs text-gray-500 mb-3 font-medium">
                       {language === "ar" ? "سنوي" : "Year-over-Year"}
                     </div>
-                    <Sparkline data={kpiData?.inflation?.trend || [40, 45, 50, 55, 60, 55, 60, 65, 70, 75, 80, 85]} color="#2e8b6e" />
+                    <Sparkline data={kpiData?.inflation?.trend || [40, 45, 50, 55, 60, 55, 60, 65, 70, 75, 80, 85]} color="#2C3424" />
                   </div>
 
                   {/* Exchange Rate % Card - Bottom Left */}
-                  <div className="absolute bottom-0 left-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-all duration-300 animate-[slideInLeft_0.6s_ease-out_0.2s_both]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
-                        <Globe className="w-4 h-4 text-[#C0A030]" />
+                  <div className="absolute bottom-0 left-0 bg-gradient-to-br from-white to-gray-50 border-l-4 border-[#C9A961] shadow-2xl p-5 w-48 transform hover:scale-105 hover:shadow-3xl transition-all duration-300 animate-[slideInLeft_0.6s_ease-out_0.2s_both]">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-[#C9A961] to-[#b8964d] rounded-sm flex items-center justify-center shadow-lg">
+                        <Globe className="w-5 h-5 text-white" />
                       </div>
-                      <span className="text-sm font-medium text-gray-700">
+                      <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         {language === "ar" ? "سعر الصرف" : "Exchange Rate"}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-xs text-gray-500">YER/USD</span>
+                    <div className="flex items-center gap-1 mb-1">
+                      <span className="text-xs text-gray-500 font-medium">YER/USD</span>
                     </div>
-                    <div className="text-2xl font-bold text-[#2e8b6e] mb-1">{kpiData?.exchangeRateYoY?.value || "51.9%"}</div>
-                    <div className="text-xs text-gray-500 mb-2">
+                    <div className="text-3xl font-bold bg-gradient-to-r from-[#2C3424] to-[#3d4a32] bg-clip-text text-transparent mb-1">{kpiData?.exchangeRateYoY?.value || "51.9%"}</div>
+                    <div className="text-xs text-gray-500 mb-3 font-medium">
                       {language === "ar" ? "التغير السنوي" : "YoY Change"}
                     </div>
-                    <Sparkline data={kpiData?.exchangeRateYoY?.trend || [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85]} color="#2e8b6e" />
+                    <Sparkline data={kpiData?.exchangeRateYoY?.trend || [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85]} color="#C9A961" />
                   </div>
 
                   {/* Exchange Rate Value Card - Bottom Right */}
-                  <div className="absolute bottom-0 right-0 bg-white rounded-xl shadow-lg p-4 w-44 transform hover:scale-105 transition-all duration-300 animate-[slideInRight_0.6s_ease-out_0.3s_both]">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
-                        <DollarSign className="w-4 h-4 text-[#C0A030]" />
+                  <div className="absolute bottom-0 right-0 bg-gradient-to-br from-white to-gray-50 border-l-4 border-[#2C3424] shadow-2xl p-5 w-48 transform hover:scale-105 hover:shadow-3xl transition-all duration-300 animate-[slideInRight_0.6s_ease-out_0.3s_both]">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-[#2C3424] to-[#3d4a32] rounded-sm flex items-center justify-center shadow-lg">
+                        <DollarSign className="w-5 h-5 text-[#C9A961]" />
                       </div>
-                      <span className="text-sm font-medium text-gray-700">
+                      <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         {language === "ar" ? "سعر الصرف" : "Exchange Rate"}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-xs text-gray-500">YER/USD</span>
+                    <div className="flex items-center gap-1 mb-1">
+                      <span className="text-xs text-gray-500 font-medium">YER/USD</span>
                     </div>
-                    <div className="text-xl font-bold text-[#2e8b6e] mb-1">{kpiData?.exchangeRateAden?.value || "1 USD = 1,620 YER"}</div>
-                    <div className="text-xs text-gray-500 mb-2">
+                    <div className="text-2xl font-bold bg-gradient-to-r from-[#2C3424] to-[#3d4a32] bg-clip-text text-transparent mb-1">{kpiData?.exchangeRateAden?.value || "1,620"}</div>
+                    <div className="text-xs text-gray-500 mb-3 font-medium">
                       {language === "ar" ? "سعر عدن الموازي" : "Aden Parallel Rate"}
                     </div>
-                    <Sparkline data={kpiData?.exchangeRateAden?.trend || [50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72]} color="#2e8b6e" />
+                    <Sparkline data={kpiData?.exchangeRateAden?.trend || [50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72]} color="#2C3424" />
                   </div>
                 </>
               )}

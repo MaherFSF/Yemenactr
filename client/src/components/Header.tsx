@@ -121,32 +121,30 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 dark:bg-gray-950/95 dark:border-gray-800">
-      <div className="container flex h-16 items-center justify-between">
-        {/* Logo - CauseWay Exact Mockup: Icon on top, CauseWay below, كوزواي at bottom */}
-        <Link href="/home" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          {/* CauseWay Logo Icon - Exact from mockup */}
-          <svg width="36" height="32" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
-            <path d="M8 10 L62 10 Q68 10 68 16 L68 28 L28 28 L28 72 L68 72 L68 84 Q68 90 62 90 L8 90 Q2 90 2 84 L2 16 Q2 10 8 10 Z" fill="#2e8b6e" />
-            <rect x="48" y="36" width="26" height="26" rx="4" fill="#6b8e6b" />
-            <rect x="82" y="10" width="26" height="26" rx="5" fill="#d4a528" />
-            <rect x="82" y="48" width="16" height="16" rx="8" fill="#2e8b6e" />
-          </svg>
+    <header className="sticky top-0 z-50 w-full border-b border-[#C9A961]/20 bg-gradient-to-r from-white via-gray-50 to-white backdrop-blur-xl supports-[backdrop-filter]:bg-white/90 shadow-sm">
+      <div className="container flex h-18 items-center justify-between py-2">
+        {/* Logo - CauseWay Professional */}
+        <Link href="/home" className="flex items-center gap-3 group transition-all duration-300">
+          <div className="relative">
+            <div className="absolute -inset-1 bg-gradient-to-r from-[#C9A961]/20 to-transparent rounded-lg opacity-0 group-hover:opacity-100 blur transition-opacity duration-300" />
+            <img src="/causeway-logo.png" alt="CauseWay" className="relative h-12 w-auto drop-shadow-md" />
+          </div>
           <div className="flex flex-col leading-tight">
-            <span className="font-serif text-lg font-semibold text-[#1f2d1d] tracking-wide">CauseWay</span>
-            <span className="text-sm text-[#6b8e6b] font-arabic -mt-0.5">كوزواي</span>
-            <span className="text-[9px] uppercase tracking-[0.15em] text-[#d4a528] font-medium mt-0.5">
+            <span className="text-xs uppercase tracking-[0.25em] text-[#2C3424] font-semibold">
               {language === "ar" ? "مرصد اقتصادي" : "Economic Observatory"}
+            </span>
+            <span className="text-[10px] text-[#C9A961] font-medium mt-0.5">
+              {language === "ar" ? "مرصد الشفافية اليمني" : "Yemen Transparency Observatory"}
             </span>
           </div>
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-1">
-          <Link href="/home" className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+          <Link href="/home" className={`px-4 py-2 text-sm font-semibold transition-all duration-300 ${
             location === "/home" || location === "/" 
-              ? "text-[#2e8b6e] bg-[#2e8b6e]/10" 
-              : "text-foreground/80 hover:text-[#2e8b6e] hover:bg-[#2e8b6e]/5"
+              ? "text-[#2C3424] border-b-2 border-[#C9A961]" 
+              : "text-gray-600 hover:text-[#2C3424] hover:border-b-2 hover:border-[#C9A961]/50"
           }`}>
             {language === "ar" ? "الرئيسية" : "Home"}
           </Link>
@@ -154,10 +152,10 @@ export default function Header() {
           {/* Sectors Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+              <button className={`flex items-center gap-1 px-4 py-2 text-sm font-semibold transition-all duration-300 ${
                 location.startsWith("/sectors") 
-                  ? "text-[#2e8b6e] bg-[#2e8b6e]/10" 
-                  : "text-foreground/80 hover:text-[#2e8b6e] hover:bg-[#2e8b6e]/5"
+                  ? "text-[#2C3424] border-b-2 border-[#C9A961]" 
+                  : "text-gray-600 hover:text-[#2C3424] hover:border-b-2 hover:border-[#C9A961]/50"
               }`}>
                 {language === "ar" ? "القطاعات" : "Sectors"}
                 <ChevronDown className="h-4 w-4" />

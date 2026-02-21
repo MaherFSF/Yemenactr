@@ -10081,3 +10081,23 @@ Based on review of master design documents and data source register:
 - TypeScript errors: 70 → 0 (100% reduction)
 - All 736 tests pass
 - Zero build errors
+
+## Design Issues - CauseWay Rebranding (URGENT - Feb 20, 2026)
+- [ ] Replace basic logo with professional CauseWay branding
+- [ ] Redesign hero banner with luxury green/gold aesthetic (not template-like)
+- [ ] Improve header navigation with elegant styling
+- [ ] Remove generic template feel from landing page
+- [ ] Apply professional color scheme throughout (#2C3424 moss green, #C9A961 gold)
+- [ ] Test all visual changes in browser before checkpoint
+
+## CauseWay Rebranding - COMPLETED (Feb 21, 2026)
+- [x] Replace basic logo with professional CauseWay branding
+- [x] Redesign hero banner with luxury green/gold aesthetic (#2C3424, #C9A961)
+- [x] Improve header navigation with elegant styling
+- [x] Remove generic template feel from landing page
+- [x] Apply professional color scheme throughout
+- [x] Test all visual changes in browser
+- [x] Luxury KPI cards with enhanced shadows and gold/green accents
+- [x] Gold gradient "Transparency" text in hero title
+- [x] Professional CauseWay logo in header with hover effects
+- [x] Dark green hero background with geometric pattern overlay
