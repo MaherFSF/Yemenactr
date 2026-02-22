@@ -10,6 +10,8 @@ export interface TourStep {
   prerequisite?: string; // Step that must be completed first
   difficulty?: 'beginner' | 'intermediate' | 'advanced';
   category?: string; // e.g., 'navigation', 'data', 'analysis'
+  titleAr?: string; // Arabic title
+  descriptionAr?: string; // Arabic description
 }
 
 export interface TourAchievement {
@@ -29,6 +31,7 @@ export interface TourState {
   lastInteractionTime: number;
   pageVisits: Record<string, number>;
   featureDiscoveries: Set<string>;
+  language: 'en' | 'ar';
 }
 
 export interface TourContextType {
@@ -46,11 +49,15 @@ export interface TourContextType {
   getSuggestedFeatures: () => TourStep[];
   unlockAchievement: (achievementId: string) => void;
   resetTour: () => void;
+  keyboardShortcutsEnabled: boolean;
+  setKeyboardShortcutsEnabled: (enabled: boolean) => void;
+  setLanguage: (language: 'en' | 'ar') => void;
 }
 
 const TourContext = createContext<TourContextType | undefined>(undefined);
 
 export const TourProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [keyboardShortcutsEnabled, setKeyboardShortcutsEnabled] = useState(true);
   const [state, setState] = useState<TourState>(() => {
     // Load from localStorage
     const saved = localStorage.getItem('yeto_tour_state');
@@ -62,6 +69,7 @@ export const TourProvider: React.FC<{ children: React.ReactNode }> = ({ children
           completedSteps: new Set(parsed.completedSteps),
           featureDiscoveries: new Set(parsed.featureDiscoveries),
           achievements: parsed.achievements || [],
+          language: parsed.language || 'en',
         };
       } catch {
         // Fall back to defaults
@@ -77,6 +85,7 @@ export const TourProvider: React.FC<{ children: React.ReactNode }> = ({ children
       lastInteractionTime: Date.now(),
       pageVisits: {},
       featureDiscoveries: new Set(),
+      language: 'en',
     };
   });
 
@@ -89,6 +98,61 @@ export const TourProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
     localStorage.setItem('yeto_tour_state', JSON.stringify(toSave));
   }, [state]);
+
+  // Keyboard shortcuts handler
+  useEffect(() => {
+    if (!keyboardShortcutsEnabled || !state.isActive) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Check if user is typing in an input
+      const target = e.target as HTMLElement;
+      const isTyping = ['INPUT', 'TEXTAREA'].includes(target.tagName);
+      if (isTyping) return;
+
+      const steps = ['welcome', 'search', 'dashboard', 'sectors', 'tools', 'data-repo', 'ai-assistant', 'report-builder', 'scenario-simulator'];
+      const currentIndex = state.currentStep ? steps.indexOf(state.currentStep) : -1;
+
+      switch (e.key) {
+        case 'ArrowRight':
+        case 'n':
+        case 'N':
+          e.preventDefault();
+          if (currentIndex < steps.length - 1) {
+            setState(prev => ({
+              ...prev,
+              currentStep: steps[currentIndex + 1],
+            }));
+          }
+          break;
+        case 'ArrowLeft':
+        case 'p':
+        case 'P':
+          e.preventDefault();
+          if (currentIndex > 0) {
+            setState(prev => ({
+              ...prev,
+              currentStep: steps[currentIndex - 1],
+            }));
+          }
+          break;
+        case 'Escape':
+          e.preventDefault();
+          endTour();
+          break;
+        case '?':
+          // Show keyboard shortcuts help
+          e.preventDefault();
+          const helpText = state.language === 'ar'
+            ? 'اختصارات لوحة المفاتيح للجولة:\n→ أو N: الخطوة التالية\n← أو P: الخطوة السابقة\nEsc: إغلاق الجولة\n? : عرض هذه المساعدة'
+            : 'Tour Keyboard Shortcuts:\n→ or N: Next step\n← or P: Previous step\nEsc: Exit tour\n? : Show this help';
+          console.log(helpText);
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [keyboardShortcutsEnabled, state.isActive, state.currentStep]);
 
   const startTour = useCallback((stepId?: string) => {
     setState(prev => ({
@@ -216,8 +280,16 @@ export const TourProvider: React.FC<{ children: React.ReactNode }> = ({ children
       lastInteractionTime: Date.now(),
       pageVisits: {},
       featureDiscoveries: new Set(),
+      language: 'en',
     });
     localStorage.removeItem('yeto_tour_state');
+  }, []);
+
+  const setLanguage = useCallback((language: 'en' | 'ar') => {
+    setState(prev => ({
+      ...prev,
+      language,
+    }));
   }, []);
 
   const value: TourContextType = {
@@ -235,6 +307,9 @@ export const TourProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getSuggestedFeatures,
     unlockAchievement,
     resetTour,
+    keyboardShortcutsEnabled,
+    setKeyboardShortcutsEnabled,
+    setLanguage,
   };
 
   return <TourContext.Provider value={value}>{children}</TourContext.Provider>;
