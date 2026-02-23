@@ -1,7 +1,7 @@
-import { useLanguage } from "@/contexts/LanguageContext";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import InsightsTicker from "@/components/InsightsTicker";
-import { WelcomeTour, QuickTourButton } from "@/components/onboarding/WelcomeTour";
+import { WelcomeTour } from "@/components/onboarding/WelcomeTour";
 import { Card, CardContent } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
 import { 
@@ -9,763 +9,438 @@ import {
   BarChart3, 
   Database, 
   FileText, 
-  TrendingUp, 
-  TrendingDown,
-  Users,
-  Building2,
-  Banknote,
-  Ship,
-  Wheat,
-  Zap,
-  Heart,
-  Globe,
-  Briefcase,
-  DollarSign,
-  Factory,
-  AlertTriangle,
+  TrendingUp,
   Brain,
   Search,
-  Fuel,
-  Droplets,
   Coins,
-  Package,
-  Compass
+  Globe,
+  DollarSign,
+  CheckCircle2,
+  Zap,
+  Lock
 } from "lucide-react";
 import { Link } from "wouter";
-import DataQualityBadge from "@/components/DataQualityBadge";
 import { AnimatedSection, StaggeredContainer } from "@/components/AnimatedSection";
-import { AnimatedCounter, FadeIn, CardHover, Sparkline } from "@/components/ui/animated";
-import { YetoLogo } from "@/components/YetoLogo";
 import { useScrollPosition } from "@/hooks/useParallax";
-import { KpiCardSkeleton, KpiRowSkeleton } from "@/components/KpiCardSkeleton";
+import { KpiCardSkeleton } from "@/components/KpiCardSkeleton";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import ExchangeRateChart from "@/components/ExchangeRateChart";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Home() {
   const { language } = useLanguage();
   const scrollY = useScrollPosition();
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-  // Fetch real-time KPI data from database
+  // Fetch real-time KPI data
   const { data: kpiData, isLoading: kpiLoading } = trpc.dashboard.getHeroKPIs.useQuery();
-  
-  // Fetch dynamic platform stats from database
   const { data: platformStatsData } = trpc.platform.getStats.useQuery();
+  const { data: latestEventsData } = trpc.events.list.useQuery({ limit: 6 });
 
-  // Hero floating KPI cards with real-time data and source attribution
-  const heroKPIs = [
-    {
-      labelEn: "GDP Growth",
-      labelAr: "نمو الناتج المحلي",
-      value: kpiData?.gdpGrowth?.value || "N/A",
-      subEn: kpiData?.gdpGrowth?.subtext || "Annual Growth",
-      subAr: "نمو سنوي",
-      sparklineData: kpiData?.gdpGrowth?.trend || [20, 25, 30, 35, 40, 50, 55, 60, 65, 70, 80, 90],
-      color: "#2e8b6e",
-      source: kpiData?.gdpGrowth?.source || "World Bank",
-      confidence: kpiData?.gdpGrowth?.confidence || "B"
-    },
-    {
-      labelEn: "Inflation Rate",
-      labelAr: "معدل التضخم",
-      value: kpiData?.inflation?.value || "N/A",
-      subEn: kpiData?.inflation?.subtext || "Year-over-Year",
-      subAr: "سنوي",
-      sparklineData: kpiData?.inflation?.trend || [30, 35, 40, 45, 50, 55, 50, 55, 60, 65, 70, 75],
-      color: "#2e8b6e",
-      source: kpiData?.inflation?.source || "CBY Aden",
-      confidence: kpiData?.inflation?.confidence || "B"
-    },
-    {
-      labelEn: "Exchange Rate",
-      labelAr: "سعر الصرف",
-      value: kpiData?.exchangeRateYoY?.value || "N/A",
-      subEn: kpiData?.exchangeRateYoY?.subtext || "YER/USD YoY Change",
-      subAr: "التغير السنوي",
-      sparklineData: kpiData?.exchangeRateYoY?.trend || [40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95],
-      color: "#2e8b6e",
-      icon: "globe",
-      source: kpiData?.exchangeRateYoY?.source || "CBY Aden",
-      confidence: kpiData?.exchangeRateYoY?.confidence || "B"
-    },
-    {
-      labelEn: "Exchange Rate",
-      labelAr: "سعر الصرف",
-      value: kpiData?.exchangeRateAden?.value || "N/A",
-      subEn: kpiData?.exchangeRateAden?.subtext || "Aden Parallel Rate",
-      subAr: "سعر عدن الموازي",
-      sparklineData: kpiData?.exchangeRateAden?.trend || [50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72],
-      color: "#2e8b6e",
-      icon: "currency",
-      source: kpiData?.exchangeRateAden?.source || "CBY Aden",
-      confidence: kpiData?.exchangeRateAden?.confidence || "B"
-    }
-  ];
-
-  // Platform stats - dynamically fetched from database
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-    if (num >= 1000) return `${(num / 1000).toFixed(0)}K`;
-    return num.toString();
-  };
-  
-  const platformStats = [
-    { 
-      valueEn: platformStatsData?.totalDocuments?.toString() || "0", 
-      valueAr: platformStatsData?.totalDocuments?.toString() || "0", 
-      labelEn: "Research Reports", 
-      labelAr: "تقرير بحثي", 
-      icon: FileText,
-      source: "YETO Database"
-    },
-    { 
-      valueEn: platformStatsData?.totalIndicators ? `${platformStatsData.totalIndicators}+` : "0", 
-      valueAr: platformStatsData?.totalIndicators ? `${platformStatsData.totalIndicators}+` : "0", 
-      labelEn: "Indicators", 
-      labelAr: "مؤشر", 
-      icon: TrendingUp,
-      source: "YETO Database"
-    },
-    { 
-      valueEn: platformStatsData?.dataPointsCount ? formatNumber(platformStatsData.dataPointsCount) : "0", 
-      valueAr: platformStatsData?.dataPointsCount ? formatNumber(platformStatsData.dataPointsCount) : "0", 
-      labelEn: "Data Points", 
-      labelAr: "نقطة بيانات", 
-      icon: Database,
-      source: "YETO Database"
-    },
-    { 
-      valueEn: platformStatsData?.totalSources?.toString() || "0", 
-      valueAr: platformStatsData?.totalSources?.toString() || "0", 
-      labelEn: "Data Sources", 
-      labelAr: "مصدر بيانات", 
-      icon: BarChart3,
-      source: "YETO Database"
-    },
-  ];
-
-  // Sectors with images - all 15 sectors matching mockup IMG_1527
-  const sectorsWithImages = [
-    { nameEn: "Trade & Commerce", nameAr: "التجارة والأعمال", href: "/sectors/trade", image: "/images/sectors/trade-port.jpg", icon: Ship },
-    { nameEn: "Local Economy", nameAr: "الاقتصاد المحلي", href: "/sectors/macroeconomy", image: "/images/sectors/local-market.webp", icon: TrendingUp },
-    { nameEn: "Rural Development", nameAr: "التنمية الريفية", href: "/sectors/agriculture", image: "/images/sectors/agriculture-terraces.jpg", icon: Droplets },
-    { nameEn: "Banking & Finance", nameAr: "القطاع المصرفي", href: "/sectors/banking", image: "/images/sectors/banking-finance.webp", icon: Banknote },
-    { nameEn: "Currency & Exchange", nameAr: "العملة والصرف", href: "/sectors/currency", image: "/images/sectors/currency-exchange.jpg", icon: Globe },
-    { nameEn: "Food Security", nameAr: "الأمن الغذائي", href: "/sectors/food-security", image: "/images/sectors/food-security.jpg", icon: Wheat },
-    { nameEn: "Energy & Fuel", nameAr: "الطاقة والوقود", href: "/sectors/energy", image: "/images/sectors/energy-fuel.jpg", icon: Zap },
-    { nameEn: "Aid Flows", nameAr: "تدفقات المساعدات", href: "/sectors/aid-flows", image: "/images/sectors/aid-flows.jpg", icon: Heart },
-    { nameEn: "Poverty & Development", nameAr: "الفقر والتنمية", href: "/sectors/poverty", image: "/images/sectors/poverty-development.jpg", icon: Users },
-    { nameEn: "Labor Market", nameAr: "سوق العمل", href: "/sectors/labor-market", image: "/images/sectors/labor-market.jpg", icon: Briefcase },
-    { nameEn: "Infrastructure", nameAr: "البنية التحتية", href: "/sectors/infrastructure", image: "/images/sectors/infrastructure.jpg", icon: Building2 },
-    { nameEn: "Conflict Economy", nameAr: "اقتصاد الصراع", href: "/sectors/conflict-economy", image: "/images/sectors/conflict-economy.jpg", icon: AlertTriangle },
-    { nameEn: "Public Finance", nameAr: "المالية العامة", href: "/sectors/public-finance", image: "/images/sectors/public-finance.jpg", icon: Building2 },
-    { nameEn: "Investment", nameAr: "الاستثمار", href: "/sectors/investment", image: "/images/sectors/investment.jpg", icon: Factory },
-    { nameEn: "Prices & Cost of Living", nameAr: "الأسعار وتكاليف المعيشة", href: "/sectors/prices", image: "/images/sectors/prices-cost.jpg", icon: DollarSign },
-  ];
-
-  // All sectors grid
-  const sectors = [
-    { nameEn: "Macroeconomy & Growth", nameAr: "الاقتصاد الكلي والنمو", href: "/sectors/macroeconomy", icon: TrendingUp, color: "bg-green-50 hover:bg-green-100 border-green-200" },
-    { nameEn: "Trade & Commerce", nameAr: "التجارة والأعمال", href: "/sectors/trade", icon: Ship, color: "bg-cyan-50 hover:bg-cyan-100 border-cyan-200" },
-    { nameEn: "Banking & Finance", nameAr: "القطاع المصرفي والمالي", href: "/sectors/banking", icon: Banknote, color: "bg-blue-50 hover:bg-blue-100 border-blue-200" },
-    { nameEn: "Public Finance", nameAr: "المالية العامة", href: "/sectors/public-finance", icon: Building2, color: "bg-purple-50 hover:bg-purple-100 border-purple-200" },
-    { nameEn: "Currency & Exchange", nameAr: "العملة والصرف", href: "/sectors/currency", icon: Globe, color: "bg-yellow-50 hover:bg-yellow-100 border-yellow-200" },
-    { nameEn: "Prices & Cost of Living", nameAr: "الأسعار وتكاليف المعيشة", href: "/sectors/prices", icon: DollarSign, color: "bg-red-50 hover:bg-red-100 border-red-200" },
-    { nameEn: "Aid Flows", nameAr: "تدفقات المساعدات", href: "/sectors/aid-flows", icon: Heart, color: "bg-pink-50 hover:bg-pink-100 border-pink-200" },
-    { nameEn: "Food Security", nameAr: "الأمن الغذائي", href: "/sectors/food-security", icon: Wheat, color: "bg-lime-50 hover:bg-lime-100 border-lime-200" },
-    { nameEn: "Energy & Fuel", nameAr: "الطاقة والوقود", href: "/sectors/energy", icon: Zap, color: "bg-orange-50 hover:bg-orange-100 border-orange-200" },
-    { nameEn: "Investment", nameAr: "الاستثمار", href: "/sectors/investment", icon: Factory, color: "bg-emerald-50 hover:bg-emerald-100 border-emerald-200" },
-    { nameEn: "Conflict Economy", nameAr: "اقتصاد الصراع", href: "/sectors/conflict-economy", icon: AlertTriangle, color: "bg-rose-50 hover:bg-rose-100 border-rose-200" },
-    { nameEn: "Labor Market", nameAr: "سوق العمل", href: "/sectors/labor-market", icon: Briefcase, color: "bg-indigo-50 hover:bg-indigo-100 border-indigo-200" },
-    { nameEn: "Agriculture", nameAr: "الزراعة", href: "/sectors/agriculture", icon: Droplets, color: "bg-teal-50 hover:bg-teal-100 border-teal-200" },
-    { nameEn: "Infrastructure", nameAr: "البنية التحتية", href: "/sectors/infrastructure", icon: Building2, color: "bg-slate-50 hover:bg-slate-100 border-slate-200" },
-    { nameEn: "Poverty & Development", nameAr: "الفقر والتنمية", href: "/sectors/poverty", icon: Users, color: "bg-amber-50 hover:bg-amber-100 border-amber-200" },
-  ];
+  // Track mouse position for interactive effects
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
   const features = [
     {
       icon: Database,
       titleEn: "Comprehensive Data Repository",
       titleAr: "مستودع بيانات شامل",
-      descEn: "Access verified economic indicators with complete provenance tracking and confidence ratings",
-      descAr: "الوصول إلى المؤشرات الاقتصادية الموثقة مع تتبع كامل للمصادر",
+      descEn: "2,000+ verified economic indicators from 170+ trusted sources with complete provenance tracking",
+      descAr: "أكثر من 2000 مؤشر اقتصادي من 170+ مصدر موثوق",
       href: "/data-repository",
-      stats: "2,000+ data points",
-      statsAr: "أكثر من 2000 نقطة بيانات",
-      color: "from-[#2e8b6e] to-[#1f2d1d]"
+      color: "from-[#2e8b6e] to-[#1f5a47]",
+      icon_bg: "bg-[#2e8b6e]"
     },
     {
       icon: BarChart3,
       titleEn: "Interactive Analytics",
       titleAr: "تحليلات تفاعلية",
-      descEn: "Explore data through customizable dashboards and regime-specific comparisons",
-      descAr: "استكشف البيانات من خلال لوحات معلومات قابلة للتخصيص",
+      descEn: "Customizable dashboards with real-time updates and regime-specific comparisons",
+      descAr: "لوحات معلومات قابلة للتخصيص مع تحديثات فورية",
       href: "/dashboard",
-      stats: "Real-time updates",
-      statsAr: "تحديثات فورية",
-      color: "from-[#6b8e6b] to-[#2e8b6e]"
+      color: "from-[#6b8e6b] to-[#2e8b6e]",
+      icon_bg: "bg-[#6b8e6b]"
     },
     {
       icon: Brain,
-      titleEn: "AI-Powered Assistant",
-      titleAr: "مساعد ذكي",
-      descEn: "Ask questions in natural language and get evidence-backed answers with source citations",
-      descAr: "اطرح أسئلة بلغة طبيعية واحصل على إجابات مدعومة بالأدلة والمصادر",
+      titleEn: "AI Intelligence",
+      titleAr: "ذكاء اصطناعي",
+      descEn: "Ask questions in natural language and get evidence-backed answers with citations",
+      descAr: "اطرح أسئلة واحصل على إجابات مدعومة بالأدلة",
       href: "/ai-assistant",
-      stats: "Evidence-backed",
-      statsAr: "مدعوم بالأدلة",
-      color: "from-[#d4a528] to-[#a88a1f]"
+      color: "from-[#d4a528] to-[#a88a1f]",
+      icon_bg: "bg-[#d4a528]"
     },
     {
       icon: FileText,
-      titleEn: "Custom Report Builder",
+      titleEn: "Report Builder",
       titleAr: "منشئ التقارير",
-      descEn: "Generate professional reports with selected indicators, charts, and analysis",
-      descAr: "إنشاء تقارير احترافية مع المؤشرات والرسوم البيانية والتحليلات",
+      descEn: "Generate professional reports with charts, analysis, and export to PDF/Excel",
+      descAr: "إنشاء تقارير احترافية وتصديرها",
       href: "/report-builder",
-      stats: "PDF/Excel export",
-      statsAr: "تصدير PDF/Excel",
-      color: "from-[#1f2d1d] to-[#2a3a28]"
+      color: "from-[#1f2d1d] to-[#2a3a28]",
+      icon_bg: "bg-[#1f2d1d]"
     },
     {
       icon: TrendingUp,
       titleEn: "Scenario Simulator",
       titleAr: "محاكي السيناريوهات",
-      descEn: "Model policy impacts and forecast economic outcomes with ML-powered predictions",
-      descAr: "نمذجة تأثيرات السياسات والتنبؤ بالنتائج الاقتصادية",
+      descEn: "Model policy impacts with ML-powered predictions and what-if analysis",
+      descAr: "نمذجة تأثيرات السياسات والتنبؤ",
       href: "/scenario-simulator",
-      stats: "What-if analysis",
-      statsAr: "تحليل ماذا لو",
-      color: "from-[#2a3a28] to-[#6b8e6b]"
+      color: "from-[#2a3a28] to-[#6b8e6b]",
+      icon_bg: "bg-[#2a3a28]"
     },
     {
       icon: Search,
       titleEn: "Research Library",
       titleAr: "مكتبة الأبحاث",
-      descEn: "Browse reports, policy briefs, and academic publications from 50+ sources",
-      descAr: "تصفح التقارير والملخصات السياسية والمنشورات الأكاديمية من أكثر من 50 مصدر",
+      descEn: "500+ publications from 50+ international and local sources",
+      descAr: "أكثر من 500 منشور من 50+ مصدر",
       href: "/research",
-      stats: "500+ publications",
-      statsAr: "أكثر من 500 منشور",
-      color: "from-[#2e8b6e] to-[#6b8e6b]"
+      color: "from-[#2e8b6e] to-[#6b8e6b]",
+      icon_bg: "bg-[#2e8b6e]"
     },
   ];
 
-  // Simple sparkline SVG component
-  const Sparkline = ({ data, color, height = 24 }: { data: number[], color: string, height?: number }) => {
-    const max = Math.max(...data);
-    const min = Math.min(...data);
-    const range = max - min || 1;
-    const width = 60;
-    const points = data.map((val, i) => {
-      const x = (i / (data.length - 1)) * width;
-      const y = height - ((val - min) / range) * height;
-      return `${x},${y}`;
-    }).join(' ');
-
-    return (
-      <svg width={width} height={height} className="inline-block">
-        <polyline
-          fill="none"
-          stroke={color}
-          strokeWidth="1.5"
-          points={points}
-        />
-      </svg>
-    );
-  };
-
-  // Fetch latest economic events from database
-  const { data: latestEventsData } = trpc.events.list.useQuery({ limit: 6 });
-  
-  // Map sector to image paths
-  const sectorImages: Record<string, string> = {
-    banking: "/images/sectors/central-bank.jpg",
-    trade: "/images/sectors/trade-port.jpg",
-    currency: "/images/sectors/currency-exchange.jpg",
-    conflict: "/images/sectors/infrastructure.jpg",
-    humanitarian: "/images/sectors/humanitarian-aid.jpg",
-    food_security: "/images/sectors/food-security.jpg",
-    energy: "/images/sectors/energy-fuel.jpg",
-    default: "/images/sectors/local-market.webp"
-  };
-  
-  // Array of varied images for news items to avoid repetition
-  const newsImages = [
-    "/images/sectors/currency-exchange.jpg",
-    "/images/sectors/central-bank.jpg",
-    "/images/sectors/trade-port.jpg",
-    "/images/sectors/infrastructure.jpg",
-    "/images/sectors/humanitarian-aid.jpg",
-    "/images/sectors/energy-fuel.jpg",
-    "/images/sectors/food-security.jpg",
-    "/images/sectors/local-market.webp"
+  const sectors = [
+    { nameEn: "Trade", nameAr: "التجارة", href: "/sectors/trade" },
+    { nameEn: "Banking", nameAr: "المصرفي", href: "/sectors/banking" },
+    { nameEn: "Currency", nameAr: "العملة", href: "/sectors/currency" },
+    { nameEn: "Food Security", nameAr: "الأمن الغذائي", href: "/sectors/food-security" },
+    { nameEn: "Energy", nameAr: "الطاقة", href: "/sectors/energy" },
+    { nameEn: "Aid Flows", nameAr: "المساعدات", href: "/sectors/aid-flows" },
+    { nameEn: "Labor", nameAr: "العمل", href: "/sectors/labor-market" },
+    { nameEn: "Infrastructure", nameAr: "البنية", href: "/sectors/infrastructure" },
   ];
-  
-  // Function to get image based on event title keywords
-  const getEventImage = (title: string, index: number): string => {
-    const lowerTitle = title.toLowerCase();
-    if (lowerTitle.includes('exchange') || lowerTitle.includes('yer') || lowerTitle.includes('currency') || lowerTitle.includes('صرف')) {
-      return "/images/sectors/currency-exchange.jpg";
-    }
-    if (lowerTitle.includes('bank') || lowerTitle.includes('cby') || lowerTitle.includes('بنك') || lowerTitle.includes('مركزي')) {
-      return "/images/sectors/central-bank.jpg";
-    }
-    if (lowerTitle.includes('port') || lowerTitle.includes('trade') || lowerTitle.includes('ميناء') || lowerTitle.includes('تجار')) {
-      return "/images/sectors/trade-port.jpg";
-    }
-    if (lowerTitle.includes('defense') || lowerTitle.includes('security') || lowerTitle.includes('military') || lowerTitle.includes('دفاع') || lowerTitle.includes('أمن')) {
-      return "/images/sectors/infrastructure.jpg";
-    }
-    if (lowerTitle.includes('rally') || lowerTitle.includes('protest') || lowerTitle.includes('stc') || lowerTitle.includes('مظاهر')) {
-      return "/images/sectors/humanitarian-aid.jpg";
-    }
-    if (lowerTitle.includes('fuel') || lowerTitle.includes('oil') || lowerTitle.includes('وقود') || lowerTitle.includes('نفط')) {
-      return "/images/sectors/energy-fuel.jpg";
-    }
-    if (lowerTitle.includes('food') || lowerTitle.includes('wheat') || lowerTitle.includes('غذاء') || lowerTitle.includes('قمح')) {
-      return "/images/sectors/food-security.jpg";
-    }
-    // Use varied images based on index to avoid repetition
-    return newsImages[index % newsImages.length];
-  };
-  
-  // Transform database events to display format
-  const latestUpdates = (latestEventsData || []).slice(0, 6).map((event, index) => ({
+
+  const latestUpdates = (latestEventsData || []).slice(0, 6).map((event) => ({
     titleEn: event.title,
     titleAr: event.titleAr || event.title,
-    date: new Date(event.eventDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-    image: getEventImage(event.title, index),
+    date: new Date(event.eventDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
     href: `/sectors/${event.category || 'macroeconomy'}`,
-    source: 'YETO Database'
   }));
 
   return (
-    <div className="flex flex-col">
-      {/* Welcome Tour for first-time users */}
+    <div className="flex flex-col overflow-hidden">
       <WelcomeTour />
-      
-      {/* Production Mode - Real Data */}
-      
-      {/* Insights Ticker - Sticky bar with rotating updates */}
       <InsightsTicker />
       
-      {/* Hero Section - CauseWay Luxury Design */}
-      <section className="relative min-h-[700px] overflow-hidden bg-gradient-to-br from-[#1a2318] via-[#2C3424] to-[#1a2318]">
-        {/* Elegant geometric pattern overlay */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='%23C9A961' fill-opacity='0.4'/%3E%3C/svg%3E")`,
-            backgroundSize: '60px 60px'
-          }} />
+      {/* ===== HERO SECTION - REVOLUTIONARY DESIGN ===== */}
+      <section className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#0f1410] via-[#1a2318] to-[#0f1410] flex items-center">
+        {/* Animated gradient background */}
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#2e8b6e]/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#C9A961]/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
         </div>
-        
-        {/* Gold accent lines */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#C9A961] to-transparent" />
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#C9A961] to-transparent" />
 
-        {/* Content overlay */}
-        <div className="relative z-10 container py-16 md:py-24">
+        {/* Grid pattern */}
+        <div className="absolute inset-0 opacity-5" style={{
+          backgroundImage: `linear-gradient(0deg, transparent 24%, rgba(201, 169, 97, 0.05) 25%, rgba(201, 169, 97, 0.05) 26%, transparent 27%, transparent 74%, rgba(201, 169, 97, 0.05) 75%, rgba(201, 169, 97, 0.05) 76%, transparent 77%, transparent),
+                           linear-gradient(90deg, transparent 24%, rgba(201, 169, 97, 0.05) 25%, rgba(201, 169, 97, 0.05) 26%, transparent 27%, transparent 74%, rgba(201, 169, 97, 0.05) 75%, rgba(201, 169, 97, 0.05) 76%, transparent 77%, transparent)`,
+          backgroundSize: '50px 50px'
+        }} />
+
+        {/* Content */}
+        <div className="relative z-10 container mx-auto px-4 py-20 md:py-32">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content - CauseWay Branding */}
-            <div className={`text-white ${language === 'ar' ? 'lg:order-2 text-right' : ''}`}>
-              {/* CauseWay Logo with elegant presentation */}
+            {/* Left: Text Content */}
+            <div className={`${language === 'ar' ? 'lg:order-2 text-right' : ''}`}>
+              {/* Logo with animation */}
               <div className="mb-8 flex items-center gap-4">
-                <div className="relative">
-                  <div className="absolute -inset-2 bg-gradient-to-r from-[#C9A961]/20 to-transparent rounded-lg blur-xl" />
-                  <img src="/causeway-logo.png" alt="CauseWay" className="relative h-20 md:h-24 w-auto drop-shadow-2xl" />
+                <div className="relative group">
+                  <div className="absolute -inset-3 bg-gradient-to-r from-[#C9A961]/30 to-transparent rounded-lg blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <img src="https://files.manuscdn.com/user_upload_by_module/session_file/310419663029421755/YEGPLugduSkSNneV.png" alt="CauseWay" className="relative h-20 md:h-24 w-auto drop-shadow-2xl hover:scale-110 transition-transform duration-300" />
                 </div>
-                <div className="h-16 w-px bg-gradient-to-b from-transparent via-[#C9A961] to-transparent" />
+                <div className="h-16 w-px bg-gradient-to-b from-[#C9A961]/0 via-[#C9A961]/50 to-[#C9A961]/0" />
                 <div className="flex flex-col">
-                  <span className="text-sm uppercase tracking-[0.3em] text-[#C9A961] font-light">Economic Observatory</span>
-                  <span className="text-xs text-white/60 mt-1">{language === 'ar' ? 'مرصد اقتصادي' : 'Yemen Intelligence'}</span>
+                  <span className="text-xs uppercase tracking-[0.4em] text-[#C9A961] font-light">Observatory</span>
+                  <span className="text-xs text-white/50 mt-1 font-light">{language === 'ar' ? 'مرصد' : 'Yemen'}</span>
                 </div>
               </div>
-              
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+
+              {/* Main heading with gradient */}
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight">
                 {language === "ar" ? (
                   <>
-                    <span className="text-white/90">مرصد</span>
+                    <span className="text-white/95">مرصد</span>
                     <br />
-                    <span className="bg-gradient-to-r from-[#C9A961] via-[#d4af37] to-[#C9A961] bg-clip-text text-transparent">الشفافية الاقتصادية</span>
+                    <span className="bg-gradient-to-r from-[#C9A961] via-[#d4af37] to-[#C9A961] bg-clip-text text-transparent">الشفافية</span>
                     <br />
-                    <span className="text-white/90">اليمني</span>
+                    <span className="text-white/95">الاقتصادية</span>
                   </>
                 ) : (
                   <>
-                    <span className="text-white/90">Yemen Economic</span>
+                    <span className="text-white/95">Economic</span>
                     <br />
-                    <span className="bg-gradient-to-r from-[#C9A961] via-[#d4af37] to-[#C9A961] bg-clip-text text-transparent drop-shadow-lg">Transparency</span>
+                    <span className="bg-gradient-to-r from-[#C9A961] via-[#d4af37] to-[#C9A961] bg-clip-text text-transparent">Transparency</span>
                     <br />
-                    <span className="text-white/90">Observatory</span>
+                    <span className="text-white/95">Observatory</span>
                   </>
                 )}
               </h1>
-              
-              <div className="relative mb-8">
-                <div className="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-[#C9A961] to-transparent" />
-                <p className="text-lg md:text-xl text-white/80 max-w-lg leading-relaxed pl-4">
-                  {language === "ar"
-                    ? "إضاءة مسار اليمن نحو التعافي الاقتصادي من خلال المساءلة المبنية على البيانات"
-                    : "Illuminating Yemen's path to economic recovery through evidence-based intelligence and data-driven accountability"}
-                </p>
-              </div>
-              
+
+              {/* Subtitle */}
+              <p className="text-lg md:text-xl text-white/70 max-w-lg leading-relaxed mb-8 font-light">
+                {language === "ar"
+                  ? "إضاءة مسار اليمن نحو التعافي الاقتصادي من خلال المساءلة المبنية على البيانات"
+                  : "Illuminating Yemen's path to economic recovery through evidence-based intelligence"}
+              </p>
+
+              {/* CTA Buttons */}
               <div className="flex flex-wrap gap-4">
                 <Link href="/dashboard">
-                  <Button size="lg" className="bg-gradient-to-r from-[#C9A961] to-[#b8964d] hover:from-[#d4af37] hover:to-[#C9A961] text-[#1a2318] font-semibold gap-2 px-8 py-6 rounded-none shadow-xl hover:shadow-2xl transition-all duration-300">
-                    {language === "ar" ? "استكشف لوحة البيانات" : "Explore Dashboard"}
+                  <Button size="lg" className="bg-gradient-to-r from-[#C9A961] to-[#b8964d] hover:from-[#d4af37] hover:to-[#C9A961] text-[#0f1410] font-bold gap-2 px-8 py-6 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                    {language === "ar" ? "استكشف البيانات" : "Explore Data"}
                     <ArrowRight className={`h-5 w-5 ${language === 'ar' ? 'rotate-180' : ''}`} />
                   </Button>
                 </Link>
                 <Link href="/research">
-                  <Button size="lg" variant="outline" className="bg-transparent border-2 border-[#C9A961]/50 hover:border-[#C9A961] hover:bg-[#C9A961]/10 text-white px-8 py-6 rounded-none backdrop-blur-sm transition-all duration-300">
+                  <Button size="lg" variant="outline" className="bg-white/5 border-2 border-[#C9A961]/40 hover:border-[#C9A961] hover:bg-[#C9A961]/10 text-white px-8 py-6 rounded-lg backdrop-blur-sm transition-all duration-300">
                     {language === "ar" ? "اعرف المزيد" : "Learn More"}
                   </Button>
                 </Link>
               </div>
+
+              {/* Trust badges */}
+              <div className="mt-12 flex flex-wrap gap-6">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-[#C9A961]" />
+                  <span className="text-sm text-white/70">{language === 'ar' ? '170+ مصدر موثوق' : '170+ Trusted Sources'}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-[#C9A961]" />
+                  <span className="text-sm text-white/70">{language === 'ar' ? '2000+ مؤشر' : '2000+ Indicators'}</span>
+                </div>
+              </div>
             </div>
 
-            {/* Right Content - Elegant KPI Display */}
+            {/* Right: KPI Cards */}
             <div className={`relative min-h-[500px] ${language === 'ar' ? 'lg:order-1' : ''}`}>
-              {/* Elegant centerpiece with gold accent */}
+              {/* Central glow */}
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0">
-                <div className="relative w-48 h-48">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#C9A961]/20 to-transparent rounded-full blur-3xl" />
-                  <div className="absolute inset-8 border-2 border-[#C9A961]/30 rounded-full" />
-                  <div className="absolute inset-16 border border-[#C9A961]/20 rounded-full" />
+                <div className="relative w-56 h-56">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#C9A961]/15 to-transparent rounded-full blur-3xl" />
+                  <div className="absolute inset-12 border border-[#C9A961]/20 rounded-full" />
                 </div>
               </div>
 
-              {/* Loading skeleton state */}
-              {kpiLoading && (
-                <>
-                  <div className="absolute top-0 left-0 animate-[slideInLeft_0.6s_ease-out]">
-                    <KpiCardSkeleton variant="hero" />
-                  </div>
-                  <div className="absolute top-0 right-0 animate-[slideInRight_0.6s_ease-out_0.1s_both]">
-                    <KpiCardSkeleton variant="hero" />
-                  </div>
-                  <div className="absolute bottom-0 left-0 animate-[slideInLeft_0.6s_ease-out_0.2s_both]">
-                    <KpiCardSkeleton variant="hero" />
-                  </div>
-                  <div className="absolute bottom-0 right-0 animate-[slideInRight_0.6s_ease-out_0.3s_both]">
-                    <KpiCardSkeleton variant="hero" />
-                  </div>
-                </>
-              )}
-
-              {/* KPI Cards - Only show when loaded */}
-              {!kpiLoading && (
-                <>
-                  {/* GDP Growth Card - Top Left */}
-                  <div className="absolute top-0 left-0 bg-gradient-to-br from-white to-gray-50 border-l-4 border-[#C9A961] shadow-2xl p-5 w-48 transform hover:scale-105 hover:shadow-3xl transition-all duration-300 animate-[slideInLeft_0.6s_ease-out]">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-[#C9A961] to-[#b8964d] rounded-sm flex items-center justify-center shadow-lg">
+              {/* KPI Cards Grid */}
+              {kpiLoading ? (
+                <div className="grid grid-cols-2 gap-4">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="h-32 bg-white/5 rounded-lg animate-pulse" />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-4">
+                  {/* GDP Card */}
+                  <div className="group relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-[#C9A961]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#C9A961]/10">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 bg-gradient-to-br from-[#C9A961] to-[#b8964d] rounded-lg flex items-center justify-center">
                         <BarChart3 className="w-5 h-5 text-white" />
                       </div>
-                      <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        {language === "ar" ? "نمو الناتج المحلي" : "GDP Growth"}
-                      </span>
+                      <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">GDP</span>
                     </div>
-                    <div className="text-3xl font-bold bg-gradient-to-r from-[#2C3424] to-[#3d4a32] bg-clip-text text-transparent mb-1">{kpiData?.gdpGrowth?.value || "+2.5%"}</div>
-                    <div className="text-xs text-gray-500 mb-3 font-medium">
-                      {language === "ar" ? "نمو ربع سنوي" : "Quarterly Growth"}
-                    </div>
-                    <Sparkline data={kpiData?.gdpGrowth?.trend || [20, 30, 25, 40, 35, 50, 45, 60, 55, 70, 80, 90]} color="#C9A961" />
+                    <div className="text-3xl font-bold text-[#C9A961] mb-1">{kpiData?.gdpGrowth?.value || "+2.5%"}</div>
+                    <div className="text-xs text-white/50">{language === "ar" ? "نمو سنوي" : "Annual Growth"}</div>
                   </div>
 
-                  {/* Inflation Rate Card - Top Right */}
-                  <div className="absolute top-0 right-0 bg-gradient-to-br from-white to-gray-50 border-l-4 border-[#2C3424] shadow-2xl p-5 w-48 transform hover:scale-105 hover:shadow-3xl transition-all duration-300 animate-[slideInRight_0.6s_ease-out_0.1s_both]">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-[#2C3424] to-[#3d4a32] rounded-sm flex items-center justify-center shadow-lg">
+                  {/* Inflation Card */}
+                  <div className="group relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-[#C9A961]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#C9A961]/10">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 bg-gradient-to-br from-[#2e8b6e] to-[#1f5a47] rounded-lg flex items-center justify-center">
                         <Coins className="w-5 h-5 text-[#C9A961]" />
                       </div>
-                      <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        {language === "ar" ? "معدل التضخم" : "Inflation Rate"}
-                      </span>
+                      <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">Inflation</span>
                     </div>
-                    <div className="text-3xl font-bold bg-gradient-to-r from-[#2C3424] to-[#3d4a32] bg-clip-text text-transparent mb-1">{kpiData?.inflation?.value || "15.0%"}</div>
-                    <div className="text-xs text-gray-500 mb-3 font-medium">
-                      {language === "ar" ? "سنوي" : "Year-over-Year"}
-                    </div>
-                    <Sparkline data={kpiData?.inflation?.trend || [40, 45, 50, 55, 60, 55, 60, 65, 70, 75, 80, 85]} color="#2C3424" />
+                    <div className="text-3xl font-bold text-[#C9A961] mb-1">{kpiData?.inflation?.value || "15.0%"}</div>
+                    <div className="text-xs text-white/50">{language === "ar" ? "سنوي" : "Year-over-Year"}</div>
                   </div>
 
-                  {/* Exchange Rate % Card - Bottom Left */}
-                  <div className="absolute bottom-0 left-0 bg-gradient-to-br from-white to-gray-50 border-l-4 border-[#C9A961] shadow-2xl p-5 w-48 transform hover:scale-105 hover:shadow-3xl transition-all duration-300 animate-[slideInLeft_0.6s_ease-out_0.2s_both]">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-[#C9A961] to-[#b8964d] rounded-sm flex items-center justify-center shadow-lg">
+                  {/* Exchange Rate % Card */}
+                  <div className="group relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-[#C9A961]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#C9A961]/10">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 bg-gradient-to-br from-[#C9A961] to-[#b8964d] rounded-lg flex items-center justify-center">
                         <Globe className="w-5 h-5 text-white" />
                       </div>
-                      <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        {language === "ar" ? "سعر الصرف" : "Exchange Rate"}
-                      </span>
+                      <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">FX %</span>
                     </div>
-                    <div className="flex items-center gap-1 mb-1">
-                      <span className="text-xs text-gray-500 font-medium">YER/USD</span>
-                    </div>
-                    <div className="text-3xl font-bold bg-gradient-to-r from-[#2C3424] to-[#3d4a32] bg-clip-text text-transparent mb-1">{kpiData?.exchangeRateYoY?.value || "51.9%"}</div>
-                    <div className="text-xs text-gray-500 mb-3 font-medium">
-                      {language === "ar" ? "التغير السنوي" : "YoY Change"}
-                    </div>
-                    <Sparkline data={kpiData?.exchangeRateYoY?.trend || [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85]} color="#C9A961" />
+                    <div className="text-3xl font-bold text-[#C9A961] mb-1">{kpiData?.exchangeRateYoY?.value || "+4.5%"}</div>
+                    <div className="text-xs text-white/50">{language === "ar" ? "التغير السنوي" : "YoY Change"}</div>
                   </div>
 
-                  {/* Exchange Rate Value Card - Bottom Right */}
-                  <div className="absolute bottom-0 right-0 bg-gradient-to-br from-white to-gray-50 border-l-4 border-[#2C3424] shadow-2xl p-5 w-48 transform hover:scale-105 hover:shadow-3xl transition-all duration-300 animate-[slideInRight_0.6s_ease-out_0.3s_both]">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-[#2C3424] to-[#3d4a32] rounded-sm flex items-center justify-center shadow-lg">
+                  {/* Exchange Rate Value Card */}
+                  <div className="group relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-[#C9A961]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#C9A961]/10">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 bg-gradient-to-br from-[#2e8b6e] to-[#1f5a47] rounded-lg flex items-center justify-center">
                         <DollarSign className="w-5 h-5 text-[#C9A961]" />
                       </div>
-                      <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        {language === "ar" ? "سعر الصرف" : "Exchange Rate"}
-                      </span>
+                      <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">Rate</span>
                     </div>
-                    <div className="flex items-center gap-1 mb-1">
-                      <span className="text-xs text-gray-500 font-medium">YER/USD</span>
-                    </div>
-                    <div className="text-2xl font-bold bg-gradient-to-r from-[#2C3424] to-[#3d4a32] bg-clip-text text-transparent mb-1">{kpiData?.exchangeRateAden?.value || "1,620"}</div>
-                    <div className="text-xs text-gray-500 mb-3 font-medium">
-                      {language === "ar" ? "سعر عدن الموازي" : "Aden Parallel Rate"}
-                    </div>
-                    <Sparkline data={kpiData?.exchangeRateAden?.trend || [50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72]} color="#2C3424" />
+                    <div className="text-2xl font-bold text-[#C9A961] mb-1">{kpiData?.exchangeRateAden?.value || "1,620"}</div>
+                    <div className="text-xs text-white/50">{language === "ar" ? "YER/USD" : "YER/USD"}</div>
                   </div>
-                </>
+                </div>
               )}
-
-              {/* Spacer for card positioning */}
-              <div className="h-80"></div>
             </div>
+          </div>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
+          <div className="flex flex-col items-center gap-2 animate-bounce">
+            <span className="text-xs text-white/50 uppercase tracking-widest">{language === 'ar' ? 'اسحب' : 'Scroll'}</span>
+            <svg className="w-5 h-5 text-[#C9A961]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
           </div>
         </div>
       </section>
 
-      {/* KPI Cards Row - Unique indicators not shown in hero (Foreign Reserves, IDPs) */}
-      <section id="kpi-stats" className="py-8 bg-[#1f2d1d]">
-        <div className="container">
-          <StaggeredContainer staggerDelay={100} className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { icon: BarChart3, labelEn: "GDP Growth", labelAr: "نمو الناتج المحلي", value: kpiData?.gdpGrowth?.value || "+2.5%", trend: "up" },
-              { icon: Coins, labelEn: "Inflation Rate", labelAr: "معدل التضخم", value: kpiData?.inflation?.value || "15.0%", trend: "up" },
-              { icon: Globe, labelEn: "Foreign Reserves", labelAr: "الاحتياطيات الأجنبية", value: kpiData?.foreignReserves?.value || "$1.2B", trend: "down" },
-              { icon: Users, labelEn: "IDPs", labelAr: "النازحون", value: kpiData?.idps?.value || "4.8M", trend: "stable" },
-            ].map((kpi, index) => (
-              <div key={index} className="bg-white rounded-xl p-5 shadow-lg">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-[#C0A030]/20 rounded-lg flex items-center justify-center">
-                    <kpi.icon className="w-5 h-5 text-[#C0A030]" />
-                  </div>
-                  <span className="text-sm font-medium text-gray-700">
-                    {language === "ar" ? kpi.labelAr : kpi.labelEn}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-bold text-[#1f2d1d]">{kpi.value}</span>
-                  <div className="flex items-center gap-1">
-                    {kpi.trend === "up" && <TrendingUp className="w-4 h-4 text-green-500" />}
-                    {kpi.trend === "down" && <TrendingDown className="w-4 h-4 text-red-500" />}
-                    <Sparkline data={[40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95]} color="#2e8b6e" height={20} />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </StaggeredContainer>
-          
-          {/* Data freshness indicator with enhanced badge */}
-          {kpiData && (
-            <div className="mt-4 text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-sm border border-gray-200 dark:border-gray-700">
-                {/* Freshness status dot */}
-                <span className={`w-2 h-2 rounded-full animate-pulse ${
-                  (kpiData as any).freshnessInfo?.hoursAgo !== null && (kpiData as any).freshnessInfo?.hoursAgo < 24
-                    ? "bg-green-500"
-                    : (kpiData as any).freshnessInfo?.hoursAgo !== null && (kpiData as any).freshnessInfo?.hoursAgo < 168
-                    ? "bg-yellow-500"
-                    : "bg-red-500"
-                }`} />
-                
-                {/* Freshness label */}
-                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                  {language === "ar" ? "آخر تحديث: " : "Updated: "}
-                  {(kpiData as any).freshnessInfo?.hoursAgo !== null ? (
-                    (kpiData as any).freshnessInfo?.hoursAgo < 1 ? (
-                      language === "ar" ? "الآن" : "Just now"
-                    ) : (kpiData as any).freshnessInfo?.hoursAgo < 24 ? (
-                      language === "ar" 
-                        ? `منذ ${(kpiData as any).freshnessInfo?.hoursAgo} ساعة`
-                        : `${(kpiData as any).freshnessInfo?.hoursAgo}h ago`
-                    ) : (kpiData as any).freshnessInfo?.hoursAgo < 48 ? (
-                      language === "ar" ? "أمس" : "Yesterday"
-                    ) : (
-                      language === "ar"
-                        ? `منذ ${Math.floor((kpiData as any).freshnessInfo?.hoursAgo / 24)} يوم`
-                        : `${Math.floor((kpiData as any).freshnessInfo?.hoursAgo / 24)}d ago`
-                    )
-                  ) : (
-                    language === "ar" ? "غير معروف" : "Unknown"
-                  )}
-                </span>
-                
-                {/* Separator */}
-                <span className="text-gray-300 dark:text-gray-600">|</span>
-                
-                {/* Auto-update indicator */}
-                <span className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  {language === "ar" ? "تحديث تلقائي" : "Auto-refresh"}
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Sector Cards with Images - All 15 sectors */}
-      <section id="sectors" className="py-16 bg-gray-50 dark:bg-gray-900">
-        <div className="container">
-          <AnimatedSection animation="fadeInUp" className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-600 dark:text-gray-300">
-              {language === "ar" ? "استكشف القطاعات الاقتصادية" : "Explore Economic Sectors"}
-            </h2>
-          </AnimatedSection>
-          <StaggeredContainer staggerDelay={80} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {sectorsWithImages.map((sector, index) => (
-              <Link key={index} href={sector.href}>
-                <div className="relative rounded-xl overflow-hidden h-40 group cursor-pointer
-                  transition-all duration-500 ease-out
-                  hover:shadow-2xl hover:-translate-y-2 hover:ring-4 hover:ring-[#2e8b6e]/30">
-                  <img 
-                    src={sector.image} 
-                    alt={language === "ar" ? sector.nameAr : sector.nameEn}
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent transition-all duration-500 group-hover:from-[#2e8b6e]/90 group-hover:via-[#2e8b6e]/40" />
-                  <div className="absolute bottom-3 left-3 right-3 transition-transform duration-300 group-hover:translate-y-[-4px]">
-                    <h3 className="text-sm font-bold text-white transition-all duration-300 group-hover:text-[#C0A030] leading-tight">
-                      {language === "ar" ? sector.nameAr : sector.nameEn}
-                    </h3>
-                    <div className="h-0.5 w-0 bg-[#C0A030] transition-all duration-500 group-hover:w-full mt-1" />
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </StaggeredContainer>
-        </div>
-      </section>
-
-      {/* Trusted Data Sources Section */}
-      <section className="py-4 bg-[#1f2d1d] dark:bg-[#0D3311]">
-        <div className="container">
-          <div className="flex flex-wrap justify-center items-center gap-3 md:gap-6">
-            <span className="text-white/80 text-sm font-medium uppercase tracking-wider">
-              {language === "ar" ? "مصادر البيانات:" : "Data Sources:"}
+      {/* Data Sources Bar */}
+      <section className="py-6 bg-gradient-to-r from-[#1f2d1d] to-[#0f1410] border-t border-[#C9A961]/10">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8">
+            <span className="text-white/60 text-sm font-medium uppercase tracking-wider">
+              {language === "ar" ? "مصادر موثوقة:" : "Trusted Sources:"}
             </span>
-            <span className="text-white font-medium">World Bank</span>
-            <span className="text-white/40">|</span>
-            <span className="text-white font-medium">IMF</span>
-            <span className="text-white/40">|</span>
-            <span className="text-white font-medium">UN OCHA</span>
-            <span className="text-white/40">|</span>
-            <span className="text-white font-medium">WFP</span>
-            <span className="text-white/40">|</span>
-            <span className="text-white font-medium">CBY</span>
-            <span className="text-white/40">|</span>
-            <span className="text-[#C5A028] font-semibold">+170 {language === "ar" ? "مصدر" : "sources"}</span>
+            {['World Bank', 'IMF', 'UN OCHA', 'WFP', 'CBY'].map((source, i) => (
+              <React.Fragment key={source}>
+                <span className="text-white/80 font-medium text-sm">{source}</span>
+                {i < 4 && <span className="text-white/20">|</span>}
+              </React.Fragment>
+            ))}
+            <span className="text-[#C9A961] font-semibold text-sm">+170 {language === "ar" ? "مصدر" : "sources"}</span>
           </div>
         </div>
       </section>
 
-      {/* Exchange Rate Trends Section */}
-      <section id="exchange-rates" className="py-16 bg-white dark:bg-gray-800">
-        <div className="container">
+      {/* Exchange Rate Chart */}
+      <section className="py-16 bg-white/2 dark:bg-gray-900/50 backdrop-blur-sm">
+        <div className="container mx-auto px-4">
           <AnimatedSection animation="fadeInUp">
             <ExchangeRateChart />
           </AnimatedSection>
         </div>
       </section>
 
-      {/* Latest Updates Section - Matching mockup IMG_1499 */}
-      <section id="updates" className="py-16 bg-gray-50 dark:bg-gray-900">
-        <div className="container">
+      {/* Latest Updates */}
+      <section className="py-16 bg-gradient-to-b from-[#0f1410] to-[#1a2318]">
+        <div className="container mx-auto px-4">
           <AnimatedSection animation="fadeInUp">
-            <h2 className="text-3xl font-bold text-center text-[#1f2d1d] dark:text-white mb-12">
+            <h2 className="text-4xl font-bold text-center text-white mb-4">
               {language === "ar" ? "آخر التحديثات" : "Latest Updates"}
             </h2>
+            <p className="text-center text-white/60 mb-12 max-w-2xl mx-auto">
+              {language === "ar" 
+                ? "تابع أحدث المؤشرات الاقتصادية والتطورات"
+                : "Stay updated with the latest economic indicators"}
+            </p>
           </AnimatedSection>
 
-          <StaggeredContainer staggerDelay={150} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <StaggeredContainer staggerDelay={100} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {latestUpdates.map((update, index) => (
               <Link key={index} href={update.href}>
-                <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full">
-                  <div className="h-48 overflow-hidden">
-                    <img 
-                      src={update.image} 
-                      alt={language === "ar" ? update.titleAr : update.titleEn}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold text-[#1f2d1d] dark:text-white mb-2 line-clamp-2">
-                      {language === "ar" ? update.titleAr : update.titleEn}
-                    </h3>
-                    <p className="text-sm text-gray-500">{update.date}</p>
-                    <div className="mt-3 text-[#2e8b6e] text-sm font-medium flex items-center gap-1">
-                      {language === "ar" ? "اقرأ المزيد" : "Read More"}
-                      <ArrowRight className={`w-4 h-4 ${language === 'ar' ? 'rotate-180' : ''}`} />
+                <div className="group relative bg-gradient-to-br from-white/5 to-white/2 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:border-[#C9A961]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#C9A961]/10 cursor-pointer">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#C9A961] to-[#b8964d] rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                      <TrendingUp className="w-6 h-6 text-white" />
                     </div>
-                  </CardContent>
-                </Card>
+                    <span className="text-xs text-white/50 font-medium">{update.date}</span>
+                  </div>
+                  <h3 className="font-semibold text-white mb-2 line-clamp-2 group-hover:text-[#C9A961] transition-colors">
+                    {language === "ar" ? update.titleAr : update.titleEn}
+                  </h3>
+                  <div className="flex items-center gap-2 text-[#C9A961] font-medium text-sm group-hover:gap-3 transition-all">
+                    {language === "ar" ? "اقرأ المزيد" : "Read More"}
+                    <ArrowRight className={`w-4 h-4 ${language === 'ar' ? 'rotate-180' : ''}`} />
+                  </div>
+                </div>
               </Link>
             ))}
           </StaggeredContainer>
         </div>
       </section>
 
-      {/* Features Grid - Matching mockup IMG_1498 */}
-      <section id="features" className="py-16 bg-white dark:bg-gray-950">
-        <div className="container">
-          <AnimatedSection animation="fadeInUp" className={`text-center mb-12 ${language === 'ar' ? 'text-right' : ''}`}>
-            <h2 className="text-3xl font-bold text-[#1f2d1d] dark:text-white mb-4">
-              {language === "ar" ? "أدوات وميزات المنصة" : "Platform Tools & Features"}
+      {/* Features Grid */}
+      <section className="py-20 bg-gradient-to-b from-[#1a2318] to-[#0f1410]">
+        <div className="container mx-auto px-4">
+          <AnimatedSection animation="fadeInUp" className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-white mb-4">
+              {language === "ar" ? "الأدوات والميزات" : "Tools & Features"}
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <p className="text-white/60 max-w-2xl mx-auto">
               {language === "ar" 
-                ? "استفد من مجموعة شاملة من الأدوات لتحليل البيانات الاقتصادية"
-                : "Leverage a comprehensive suite of tools for economic data analysis"}
+                ? "مجموعة شاملة من الأدوات المتقدمة لتحليل البيانات الاقتصادية"
+                : "Comprehensive suite of advanced tools for economic analysis"}
             </p>
           </AnimatedSection>
 
           <StaggeredContainer staggerDelay={100} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, index) => (
               <Link key={index} href={feature.href}>
-                <Card className="h-full hover:shadow-xl transition-all duration-300 cursor-pointer group border-0 overflow-hidden bg-white dark:bg-gray-800">
-                  <CardContent className="p-0">
-                    {/* Gradient header */}
-                    <div className={`bg-gradient-to-r ${feature.color} p-4 flex items-center justify-between`}>
-                      <div className="p-3 rounded-xl bg-white/20 backdrop-blur-sm">
-                        <feature.icon className="h-6 w-6 text-white" />
-                      </div>
-                      <span className="text-xs font-medium text-white/90 bg-white/20 px-3 py-1 rounded-full">
-                        {language === "ar" ? feature.statsAr : feature.stats}
-                      </span>
+                <div className="group relative bg-gradient-to-br from-white/5 to-white/2 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden hover:border-[#C9A961]/50 transition-all duration-300 hover:shadow-xl hover:shadow-[#C9A961]/10 cursor-pointer h-full">
+                  {/* Gradient header */}
+                  <div className={`bg-gradient-to-r ${feature.color} p-6 flex items-center justify-between`}>
+                    <div className={`${feature.icon_bg} p-3 rounded-lg`}>
+                      <feature.icon className="h-6 w-6 text-white" />
                     </div>
-                    {/* Content */}
-                    <div className="p-5">
-                      <h3 className="font-bold text-lg text-[#1f2d1d] dark:text-white mb-2 group-hover:text-[#2e8b6e] transition-colors">
-                        {language === "ar" ? feature.titleAr : feature.titleEn}
-                      </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                        {language === "ar" ? feature.descAr : feature.descEn}
-                      </p>
-                      <div className="mt-4 flex items-center text-[#2e8b6e] font-medium text-sm group-hover:translate-x-1 transition-transform">
-                        {language === "ar" ? "استكشف" : "Explore"}
-                        <ArrowRight className={`h-4 w-4 ${language === 'ar' ? 'mr-2 rotate-180' : 'ml-2'}`} />
-                      </div>
+                    <Zap className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" />
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="p-6">
+                    <h3 className="font-bold text-lg text-white mb-3 group-hover:text-[#C9A961] transition-colors">
+                      {language === "ar" ? feature.titleAr : feature.titleEn}
+                    </h3>
+                    <p className="text-sm text-white/60 leading-relaxed mb-4">
+                      {language === "ar" ? feature.descAr : feature.descEn}
+                    </p>
+                    <div className="flex items-center gap-2 text-[#C9A961] font-medium text-sm group-hover:gap-3 transition-all">
+                      {language === "ar" ? "استكشف" : "Explore"}
+                      <ArrowRight className={`w-4 h-4 ${language === 'ar' ? 'rotate-180' : ''}`} />
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </StaggeredContainer>
+        </div>
+      </section>
+
+      {/* Sectors Grid */}
+      <section className="py-20 bg-gradient-to-b from-[#0f1410] to-[#1a2318]">
+        <div className="container mx-auto px-4">
+          <AnimatedSection animation="fadeInUp" className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-white mb-4">
+              {language === "ar" ? "القطاعات الاقتصادية" : "Economic Sectors"}
+            </h2>
+            <p className="text-white/60 max-w-2xl mx-auto">
+              {language === "ar" 
+                ? "استكشف البيانات والتحليلات لكل قطاع"
+                : "Explore data and analytics for each sector"}
+            </p>
+          </AnimatedSection>
+
+          <StaggeredContainer staggerDelay={80} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {sectors.map((sector, index) => (
+              <Link key={index} href={sector.href}>
+                <div className="group relative bg-gradient-to-br from-[#2e8b6e]/20 to-[#C9A961]/10 backdrop-blur-md border border-white/10 rounded-xl p-4 h-32 flex items-center justify-center text-center hover:border-[#C9A961]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#C9A961]/10 cursor-pointer">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent rounded-xl group-hover:from-[#C9A961]/60 group-hover:via-[#C9A961]/20 transition-all duration-300" />
+                  <div className="relative z-10">
+                    <h3 className="text-sm font-bold text-white group-hover:text-[#C9A961] transition-colors leading-tight">
+                      {language === "ar" ? sector.nameAr : sector.nameEn}
+                    </h3>
+                    <div className="h-0.5 w-0 bg-[#C9A961] transition-all duration-500 group-hover:w-full mt-2 mx-auto" />
+                  </div>
+                </div>
               </Link>
             ))}
           </StaggeredContainer>
@@ -773,55 +448,29 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-[#2e8b6e] text-white">
-        <div className="container">
-          <AnimatedSection animation="scaleIn" className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-4">
+      <section className="py-20 bg-gradient-to-r from-[#2C3424] via-[#1a2318] to-[#0f1410] border-t border-[#C9A961]/20">
+        <div className="container mx-auto px-4 text-center">
+          <AnimatedSection animation="fadeInUp">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
               {language === "ar" 
-                ? "ابدأ استكشاف البيانات الاقتصادية اليمنية"
-                : "Start Exploring Yemen's Economic Data"}
+                ? "ابدأ استكشاف البيانات اليوم"
+                : "Start Exploring Today"}
             </h2>
-            <p className="text-white/80 mb-8">
+            <p className="text-white/70 max-w-2xl mx-auto mb-8 text-lg">
               {language === "ar"
-                ? "انضم إلى مئات الباحثين وصناع القرار الذين يعتمدون على YETO للحصول على رؤى اقتصادية موثوقة"
-                : "Join hundreds of researchers and policymakers who rely on YETO for reliable economic insights"}
+                ? "انضم إلى مئات الباحثين وصانعي السياسات"
+                : "Join hundreds of researchers and policymakers"}
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/dashboard">
-                <Button size="lg" className="bg-[#2e8b6e] hover:bg-[#0D5A34] text-white px-8">
-                  {language === "ar" ? "استكشف لوحة البيانات" : "Explore Dashboard"}
-                </Button>
-              </Link>
-              <Link href="/ai-assistant">
-                <Button size="lg" variant="outline" className="border-white/50 hover:bg-white/10 text-white px-8">
-                  <Brain className="h-4 w-4 mr-2" />
-                  {language === "ar" ? "اسأل المساعد الذكي" : "Ask AI Assistant"}
-                </Button>
-              </Link>
-            </div>
+            <Link href="/dashboard">
+              <Button size="lg" className="bg-gradient-to-r from-[#C9A961] to-[#b8964d] hover:from-[#d4af37] hover:to-[#C9A961] text-[#0f1410] font-bold gap-2 px-8 py-6 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                {language === "ar" ? "استكشف لوحة البيانات" : "Explore Dashboard"}
+                <ArrowRight className={`h-5 w-5 ${language === 'ar' ? 'rotate-180' : ''}`} />
+              </Button>
+            </Link>
           </AnimatedSection>
         </div>
       </section>
 
-      {/* Footer Attribution */}
-      <section className="py-6 bg-[#0D2818] text-white/60 text-center text-sm">
-        <div className="container">
-          <div className="flex items-center justify-center gap-2">
-            <span>{language === "ar" ? "مدعوم من" : "Powered by"}</span>
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 relative">
-                <div className="absolute top-0 left-0 w-2.5 h-2.5 bg-[#2e8b6e] rounded-sm"></div>
-                <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-[#C0A030] rounded-sm"></div>
-                <div className="absolute bottom-0 left-0 w-2.5 h-2.5 bg-white rounded-sm"></div>
-                <div className="absolute bottom-0 right-0 w-2 h-2 bg-[#4A90E2] rounded-full"></div>
-              </div>
-              <span className="text-white font-medium">CauseWay</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Scroll to Top Button */}
       <ScrollToTop />
     </div>
   );
