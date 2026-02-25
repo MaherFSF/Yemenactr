@@ -584,6 +584,86 @@ export const appRouter = router({
           return [];
         }
       }),
+
+    // Agent Chat - Interactive conversation with sector-specific AI agents
+    agentChat: publicProcedure
+      .input(
+        z.object({
+          sectorId: z.string(),
+          message: z.string(),
+          conversationHistory: z.array(
+            z.object({
+              role: z.enum(["user", "assistant"]),
+              content: z.string(),
+            })
+          ).optional(),
+          agentPersona: z.enum([
+            "citizen_explainer",
+            "policymaker_brief",
+            "donor_accountability",
+            "bank_compliance",
+            "research_librarian",
+            "data_steward",
+            "translation_agent",
+            "scenario_modeler",
+          ]).default("citizen_explainer"),
+          language: z.enum(["en", "ar"]).default("en"),
+        })
+      )
+      .mutation(async ({ input }) => {
+        try {
+          const { invokeLLM } = await import("../_core/llm");
+          const { AGENT_PERSONAS } = await import("../ai/agentPersonas");
+
+          const persona = AGENT_PERSONAS[input.agentPersona];
+          if (!persona) {
+            throw new Error(`Unknown agent persona: ${input.agentPersona}`);
+          }
+
+          const systemPrompt = `You are an expert AI assistant for the YETO (Yemen Economic Transparency Observatory) platform.
+
+${persona.systemPromptAddition}
+
+Context:
+- Sector: ${input.sectorId}
+- User Language: ${input.language === "ar" ? "Arabic" : "English"}
+- Agent Persona: ${persona.nameEn}
+
+Important Guidelines:
+1. Always cite your sources when making claims
+2. Be transparent about confidence levels
+3. If you don't have reliable data, say so clearly
+4. For Yemen-specific economic data, use YETO's knowledge base
+5. Provide evidence-backed answers with citations
+6. Consider both Aden and Sanaa economic dynamics when relevant`;
+
+          const messages: any[] = [
+            { role: "system", content: systemPrompt },
+          ];
+
+          if (input.conversationHistory && input.conversationHistory.length > 0) {
+            messages.push(...input.conversationHistory);
+          }
+
+          messages.push({ role: "user", content: input.message });
+
+          const response = await invokeLLM({ messages });
+          const assistantContent = response.choices[0]?.message?.content || "No response generated";
+
+          return {
+            content: assistantContent,
+            sources: [],
+            confidence: "high" as const,
+          };
+        } catch (error) {
+          console.error("Agent chat error:", error);
+          throw new Error(
+            `Failed to get response from agent: ${
+              error instanceof Error ? error.message : "Unknown error"
+            }`
+          );
+        }
+      }),
   }),
 
   // ============================================================================

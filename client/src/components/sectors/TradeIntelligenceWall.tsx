@@ -48,6 +48,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import EvidencePackButton from "@/components/EvidencePackButton";
+import { SectorAgentChat } from "@/components/SectorAgentChat";
 import { RelatedInsightsPanel } from "@/components/RelatedInsights";
 
 interface TradeIntelligenceWallProps {
@@ -920,6 +921,27 @@ export default function TradeIntelligenceWall({ regime = 'both', isVip = false }
           vintages={vintages}
         />
         <TradeConnectedPanel isArabic={isArabic} />
+      </div>
+
+      {/* AI Agent Chat Section */}
+      <div className="mt-8 border-t pt-8">
+        <h2 className="text-2xl font-bold mb-6 text-[#2C3424]">
+          {isArabic ? 'استشر وكيل التجارة' : 'Ask the Trade Agent'}
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <SectorAgentChat
+            sectorId="trade"
+            sectorName="Trade & Ports"
+            sectorNameAr="التجارة والموانئ"
+            agentPersona="policymaker_brief"
+          />
+          <SectorAgentChat
+            sectorId="trade"
+            sectorName="Trade & Ports"
+            sectorNameAr="التجارة والموانئ"
+            agentPersona="citizen_explainer"
+          />
+        </div>
       </div>
     </div>
   );
