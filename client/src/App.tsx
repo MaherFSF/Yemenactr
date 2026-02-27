@@ -85,6 +85,7 @@ import RegionalZones from "./pages/RegionalZones";
 import EconomicActors from "./pages/EconomicActors";
 import HSAGroupProfile from "./pages/HSAGroupProfile";
 import ApiHealthDashboard from "./pages/admin/ApiHealthDashboard";
+import DataBackfill from "./pages/admin/DataBackfill";
 import AlertHistory from "./pages/admin/AlertHistory";
 import AdminHub from "./pages/admin/AdminHub";
 import WebhookSettings from "./pages/admin/WebhookSettings";
@@ -219,6 +220,7 @@ function MainRouter() {
           <Route path="/admin/alerts" component={AlertsDashboard} />
           <Route path="/admin/api-health" component={ApiHealthDashboard} />
           <Route path="/admin/alert-history" component={AlertHistory} />
+          <Route path="/admin/data-backfill" component={DataBackfill} />
           <Route path="/admin-hub" component={AdminHub} />
           <Route path="/admin/webhooks" component={WebhookSettings} />
           <Route path="/admin/connector-thresholds" component={ConnectorThresholds} />

@@ -1979,6 +1979,21 @@ Answer the user's question based on this research. Be specific and cite sources 
           return { total: 0, unread: 0, critical: 0, warnings: 0 };
         }
       }),
+
+    // Backfill Banking Data (admin only)
+    backfillBankingData: adminProcedure
+      .mutation(async () => {
+        try {
+          const { backfillBankingData } = await import('./scripts/backfillBanking');
+          const result = await backfillBankingData();
+          return result;
+        } catch (error) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: error instanceof Error ? error.message : 'Backfill failed',
+          });
+        }
+      }),
   }),
 
   // ============================================================================
