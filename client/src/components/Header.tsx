@@ -93,6 +93,7 @@ export default function Header() {
   ];
 
   const tools = [
+    { nameEn: "🔴 Live Yemen Data", nameAr: "بيانات اليمن الحية", href: "/live-data", icon: Globe },
     { nameEn: "AI Assistant", nameAr: "المساعد الذكي", href: "/ai-assistant", icon: Brain },
     { nameEn: "Dashboard", nameAr: "لوحة المعلومات", href: "/dashboard", icon: BarChart3 },
     { nameEn: "Report Builder", nameAr: "منشئ التقارير", href: "/report-builder", icon: FileText },

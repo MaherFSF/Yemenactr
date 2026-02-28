@@ -44,6 +44,7 @@ import ReportBuilder from "./pages/ReportBuilder";
 import Pricing from "./pages/Pricing";
 import Legal from "./pages/Legal";
 import DataPolicy from "./pages/DataPolicy";
+import YemenLiveData from "./pages/YemenLiveData";
 import Entities from "./pages/Entities";
 import EntityDetail from "./pages/EntityDetail";
 import EntityProfileDB from "./pages/EntityProfileDB";
@@ -162,6 +163,7 @@ function MainRouter() {
       <Route path="/research-hub" component={ResearchHub} />
       <Route path="/research/:docId" component={DocumentDetail} />
       <Route path="/sectors" component={SectorsHub} />
+      <Route path="/live-data" component={YemenLiveData} />
       <Route path={"/sectors/banking"} component={Banking} />
       <Route path={"/sectors/trade"} component={Trade} />
       <Route path={"/sectors/poverty"} component={Poverty} />

@@ -664,6 +664,48 @@ Important Guidelines:
           );
         }
       }),
+
+    // Live World Bank data - fetches REAL Yemen data directly from World Bank API
+    getLiveWorldBankData: publicProcedure
+      .input(z.object({
+        indicators: z.array(z.object({
+          code: z.string(),
+          label: z.string(),
+          unit: z.string().optional(),
+        })),
+        fromYear: z.number().default(2010),
+      }))
+      .query(async ({ input }) => {
+        const results: Record<string, { year: number; value: number }[]> = {};
+        
+        for (const indicator of input.indicators) {
+          try {
+            const url = `https://api.worldbank.org/v2/country/YE/indicator/${indicator.code}?format=json&mrv=20&per_page=20`;
+            const response = await fetch(url);
+            if (!response.ok) continue;
+            
+            const data = await response.json() as any[];
+            if (!data[1]) continue;
+            
+            const points = (data[1] as any[])
+              .filter((x: any) => x.value !== null && parseInt(x.date) >= input.fromYear)
+              .map((x: any) => ({ year: parseInt(x.date), value: Math.round(x.value * 100) / 100 }))
+              .sort((a: any, b: any) => a.year - b.year);
+            
+            results[indicator.code] = points;
+          } catch (err) {
+            console.error(`[WorldBank] Failed to fetch ${indicator.code}:`, err);
+            results[indicator.code] = [];
+          }
+        }
+        
+        return {
+          data: results,
+          fetchedAt: new Date().toISOString(),
+          source: 'World Bank Open Data API',
+          country: 'Yemen (YE)',
+        };
+      }),
   }),
 
   // ============================================================================
