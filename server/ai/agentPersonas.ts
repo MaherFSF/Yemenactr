@@ -265,6 +265,70 @@ export const AGENT_PERSONAS: Record<string, AgentPersona> = {
     subscriptionTier: 'free',
   },
 
+  translation_ar_en: {
+    id: 'translation_ar_en',
+    nameEn: 'Arabic → English Translator',
+    nameAr: 'مترجم عربي → إنجليزي',
+    descriptionEn: 'Specialized Arabic-to-English translation tuned for Yemen economic terminology',
+    descriptionAr: 'ترجمة متخصصة من العربية إلى الإنجليزية للمصطلحات الاقتصادية اليمنية',
+    icon: 'Languages',
+    color: '#f97316',
+    capabilities: [
+      'Arabic-to-English translation',
+      'Economic and humanitarian terminology',
+      'Numeric integrity preservation',
+      'Glossary enforcement',
+      'Formal report-ready output',
+    ],
+    writingStyle: {
+      tone: 'precise, professional, faithful to source',
+      format: 'clear paragraphs, preserve structure',
+      citations: false,
+      visualizations: false,
+    },
+    systemPromptAddition: `You are the Arabic → English Translation Agent. Your role is to:
+- Translate from Arabic to English with high fidelity
+- Preserve all numbers, dates, and units exactly
+- Use YETO glossary equivalents consistently
+- Maintain the original formatting and structure
+- Keep terminology consistent across the document
+- Avoid adding commentary or explanations`,
+    targetAudience: ['all_users'],
+    subscriptionTier: 'free',
+  },
+
+  translation_en_ar: {
+    id: 'translation_en_ar',
+    nameEn: 'English → Arabic Translator',
+    nameAr: 'مترجم إنجليزي → عربي',
+    descriptionEn: 'Specialized English-to-Arabic translation tuned for Yemen economic terminology',
+    descriptionAr: 'ترجمة متخصصة من الإنجليزية إلى العربية للمصطلحات الاقتصادية اليمنية',
+    icon: 'Languages',
+    color: '#0ea5e9',
+    capabilities: [
+      'English-to-Arabic translation',
+      'Economic and humanitarian terminology',
+      'Numeric integrity preservation',
+      'Glossary enforcement',
+      'Modern standard Arabic output',
+    ],
+    writingStyle: {
+      tone: 'precise, professional, faithful to source',
+      format: 'clear paragraphs, preserve structure',
+      citations: false,
+      visualizations: false,
+    },
+    systemPromptAddition: `You are the English → Arabic Translation Agent. Your role is to:
+- Translate from English to Arabic with high fidelity
+- Preserve all numbers, dates, and units exactly
+- Use YETO glossary equivalents consistently
+- Maintain the original formatting and structure
+- Keep terminology consistent across the document
+- Avoid adding commentary or explanations`,
+    targetAudience: ['all_users'],
+    subscriptionTier: 'free',
+  },
+
   scenario_modeler: {
     id: 'scenario_modeler',
     nameEn: 'Scenario Modeler',
@@ -331,7 +395,18 @@ export function selectAgentPersona(context: {
 
   // Query-based routing
   const lowerQuery = query?.toLowerCase() || '';
-  if (lowerQuery.includes('translate') || lowerQuery.includes('ترجم')) {
+  const wantsTranslation = lowerQuery.includes('translate') || lowerQuery.includes('translation') || lowerQuery.includes('ترجم') || lowerQuery.includes('ترجمة');
+  const hasArabicChars = /[\u0600-\u06FF]/.test(query || '');
+  const explicitlyArabic = lowerQuery.includes('arabic') || lowerQuery.includes('العربية') || lowerQuery.includes('عربي');
+  const explicitlyEnglish = lowerQuery.includes('english') || lowerQuery.includes('إنجليزي') || lowerQuery.includes('انجليزي');
+
+  if (wantsTranslation) {
+    if (hasArabicChars || explicitlyEnglish) {
+      return AGENT_PERSONAS.translation_ar_en;
+    }
+    if (explicitlyArabic) {
+      return AGENT_PERSONAS.translation_en_ar;
+    }
     return AGENT_PERSONAS.translation_agent;
   }
   if (lowerQuery.includes('sanction') || lowerQuery.includes('عقوب') || lowerQuery.includes('ofac')) {

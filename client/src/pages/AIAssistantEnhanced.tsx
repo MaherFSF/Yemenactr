@@ -8,6 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Brain, 
   Send,
@@ -43,7 +48,9 @@ import {
   Shield,
   MapPin,
   Calendar,
-  Minus
+  Minus,
+  Languages,
+  ArrowLeftRight
 } from "lucide-react";
 
 interface Message {
@@ -71,6 +78,24 @@ interface EvidencePack {
   }>;
   methodology?: string;
   caveats?: string[];
+}
+
+interface TranslationResult {
+  translatedText: string;
+  glossaryAdherenceScore: number;
+  numericIntegrityPass: boolean;
+  glossaryIssues: Array<{
+    term: string;
+    expected: string;
+    found: string;
+    location: string;
+  }>;
+  numericIssues: Array<{
+    original: string;
+    translated: string;
+    location: string;
+  }>;
+  status?: "ok" | "needs_review" | "no_op";
 }
 
 // Suggested questions organized by category
@@ -107,7 +132,13 @@ export default function AIAssistantEnhanced() {
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>("exchangeRate");
+  const [activePanel, setActivePanel] = useState<"advisor" | "translation">("advisor");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [translationDirection, setTranslationDirection] = useState<"ar-en" | "en-ar">("ar-en");
+  const [translationInput, setTranslationInput] = useState("");
+  const [translationOutput, setTranslationOutput] = useState("");
+  const [translationSector, setTranslationSector] = useState("general");
+  const [translationResult, setTranslationResult] = useState<TranslationResult | null>(null);
   
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -197,6 +228,16 @@ Ask me any question about Yemen's economy and I'll provide a documented answer w
     }
   });
 
+  const translationMutation = trpc.ai.translate.useMutation({
+    onSuccess: (data) => {
+      setTranslationOutput(data.translatedText);
+      setTranslationResult(data);
+    },
+    onError: () => {
+      toast.error(language === "ar" ? "تعذر إكمال الترجمة" : "Unable to complete translation");
+    }
+  });
+
   const handleSubmit = async () => {
     if (!query.trim()) return;
     
@@ -220,6 +261,8 @@ Ask me any question about Yemen's economy and I'll provide a documented answer w
       })),
       context: {
         regime: "both",
+        language: language === "ar" ? "ar" : "en",
+        page: "/ai-assistant",
       },
     });
   };
@@ -231,6 +274,35 @@ Ask me any question about Yemen's economy and I'll provide a documented answer w
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     toast.success(language === "ar" ? "تم النسخ" : "Copied to clipboard");
+  };
+
+  const handleTranslate = () => {
+    if (!translationInput.trim()) return;
+    const sourceLang = translationDirection === "ar-en" ? "ar" : "en";
+    const targetLang = translationDirection === "ar-en" ? "en" : "ar";
+    const sector = translationSector === "general" ? undefined : translationSector;
+
+    translationMutation.mutate({
+      text: translationInput,
+      sourceLang,
+      targetLang,
+      sector,
+    });
+  };
+
+  const handleSwapTranslation = () => {
+    setTranslationDirection((prev) => (prev === "ar-en" ? "en-ar" : "ar-en"));
+    if (translationOutput) {
+      setTranslationInput(translationOutput);
+      setTranslationOutput("");
+      setTranslationResult(null);
+    }
+  };
+
+  const handleClearTranslation = () => {
+    setTranslationInput("");
+    setTranslationOutput("");
+    setTranslationResult(null);
   };
 
   const getConfidenceBadge = (confidence?: string) => {
@@ -273,6 +345,35 @@ Ask me any question about Yemen's economy and I'll provide a documented answer w
     political: { en: "Political", ar: "السياسي", icon: Shield },
     economy: { en: "Economy", ar: "الاقتصاد", icon: BarChart3 },
   };
+
+  const translationAgents = [
+    {
+      id: "ar-en",
+      titleEn: "Arabic → English Agent",
+      titleAr: "وكيل عربي → إنجليزي",
+      descEn: "Formal, glossary-aligned translation with numeric integrity checks.",
+      descAr: "ترجمة رسمية متوافقة مع المعجم مع فحص سلامة الأرقام.",
+      accent: "#f97316",
+    },
+    {
+      id: "en-ar",
+      titleEn: "English → Arabic Agent",
+      titleAr: "وكيل إنجليزي → عربي",
+      descEn: "Modern Arabic output tuned for economic and humanitarian terms.",
+      descAr: "مخرجات عربية حديثة مهيأة للمصطلحات الاقتصادية والإنسانية.",
+      accent: "#0ea5e9",
+    },
+  ];
+
+  const translationSectors = [
+    { value: "general", labelEn: "General Glossary", labelAr: "معجم عام" },
+    { value: "banking", labelEn: "Banking & Finance", labelAr: "القطاع المصرفي" },
+    { value: "trade", labelEn: "Trade & Commerce", labelAr: "التجارة والأعمال" },
+    { value: "humanitarian", labelEn: "Humanitarian", labelAr: "الإنساني" },
+    { value: "energy", labelEn: "Energy & Fuel", labelAr: "الطاقة والوقود" },
+    { value: "prices", labelEn: "Prices & Inflation", labelAr: "الأسعار والتضخم" },
+    { value: "public-finance", labelEn: "Public Finance", labelAr: "المالية العامة" },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
@@ -405,189 +506,472 @@ Ask me any question about Yemen's economy and I'll provide a documented answer w
                 </ul>
               </CardContent>
             </Card>
+
+            <Card className="border-blue-200 dark:border-blue-900 bg-gradient-to-br from-blue-50 to-slate-50 dark:from-blue-950/30 dark:to-slate-900/40">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-blue-600" />
+                  {language === "ar" ? "ضمانات الوكيل" : "Agent Assurance"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-blue-600" />
+                    {language === "ar" ? "بوابات الأدلة والاقتباس" : "Evidence + citation gates"}
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-blue-600" />
+                    {language === "ar" ? "توافق مع المعجم المتخصص" : "Glossary-aligned terminology"}
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-blue-600" />
+                    {language === "ar" ? "سلامة الأرقام والوحدات" : "Numeric integrity checks"}
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-blue-600" />
+                    {language === "ar" ? "حماية الخصوصية والإخفاء" : "Privacy-safe redaction rules"}
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
           </div>
 
-          {/* Main Chat Interface */}
+          {/* Main Experience */}
           <div className="lg:col-span-3">
-            <Card className="h-[700px] flex flex-col shadow-lg border-2">
-              {/* Chat Messages */}
-              <ScrollArea className="flex-1 p-6">
-                <div className="space-y-6">
-                  {messages.map((message) => (
-                    <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-                      <div className={`max-w-[90%] ${message.role === "user" ? "" : "w-full"}`}>
-                        <div className={`rounded-xl p-4 ${
-                          message.role === "user"
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted"
-                        }`}>
-                          {message.role === "assistant" && (
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center gap-2">
-                                <div className="p-1.5 bg-primary/10 rounded-lg">
-                                  <Brain className="h-4 w-4 text-primary" />
+            <Tabs value={activePanel} onValueChange={(value) => setActivePanel(value as "advisor" | "translation")}>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="advisor" className="gap-2">
+                  <Brain className="h-4 w-4" />
+                  {language === "ar" ? "المستشار" : "Advisor"}
+                </TabsTrigger>
+                <TabsTrigger value="translation" className="gap-2">
+                  <Languages className="h-4 w-4" />
+                  {language === "ar" ? "مختبر الترجمة" : "Translation Studio"}
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="advisor">
+                <Card className="h-[700px] flex flex-col shadow-lg border-2">
+                  {/* Chat Messages */}
+                  <ScrollArea className="flex-1 p-6">
+                    <div className="space-y-6">
+                      {messages.map((message) => (
+                        <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+                          <div className={`max-w-[90%] ${message.role === "user" ? "" : "w-full"}`}>
+                            <div className={`rounded-xl p-4 ${
+                              message.role === "user"
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-muted"
+                            }`}>
+                              {message.role === "assistant" && (
+                                <div className="flex items-center justify-between mb-3">
+                                  <div className="flex items-center gap-2">
+                                    <div className="p-1.5 bg-primary/10 rounded-lg">
+                                      <Brain className="h-4 w-4 text-primary" />
+                                    </div>
+                                    <span className="text-sm font-medium">
+                                      {language === "ar" ? "العقل الواحد" : "One Brain"}
+                                    </span>
+                                  </div>
+                                  {getConfidenceBadge(message.confidence)}
                                 </div>
-                                <span className="text-sm font-medium">
-                                  {language === "ar" ? "العقل الواحد" : "One Brain"}
-                                </span>
+                              )}
+                              <div className="text-sm whitespace-pre-wrap prose prose-sm dark:prose-invert max-w-none">
+                                {message.content.split('\n').map((line, i) => {
+                                  // Handle bold text
+                                  const parts = line.split(/\*\*(.*?)\*\*/g);
+                                  return (
+                                    <p key={i} className="mb-2 last:mb-0">
+                                      {parts.map((part, j) => 
+                                        j % 2 === 1 ? <strong key={j}>{part}</strong> : part
+                                      )}
+                                    </p>
+                                  );
+                                })}
                               </div>
-                              {getConfidenceBadge(message.confidence)}
-                            </div>
-                          )}
-                          <div className="text-sm whitespace-pre-wrap prose prose-sm dark:prose-invert max-w-none">
-                            {message.content.split('\n').map((line, i) => {
-                              // Handle bold text
-                              const parts = line.split(/\*\*(.*?)\*\*/g);
-                              return (
-                                <p key={i} className="mb-2 last:mb-0">
-                                  {parts.map((part, j) => 
-                                    j % 2 === 1 ? <strong key={j}>{part}</strong> : part
+                              
+                              {/* Evidence Pack */}
+                              {message.evidencePack && (
+                                <div className="mt-4 pt-4 border-t border-border/50">
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <BookOpen className="h-4 w-4" />
+                                    <span className="text-sm font-semibold">
+                                      {language === "ar" ? "حزمة الأدلة" : "Evidence Pack"}
+                                    </span>
+                                  </div>
+                                  
+                                  {/* Sources */}
+                                  {message.evidencePack.sources.length > 0 && (
+                                    <div className="mb-3">
+                                      <div className="text-xs font-medium text-muted-foreground mb-2">
+                                        {language === "ar" ? "المصادر" : "Sources"}
+                                      </div>
+                                      <div className="space-y-1">
+                                        {message.evidencePack.sources.map((source, i) => (
+                                          <div key={i} className="flex items-center justify-between text-xs p-2 bg-background/50 rounded">
+                                            <span>{source.title}</span>
+                                            <div className="flex items-center gap-2">
+                                              <Badge variant="outline" className="text-xs">{source.type}</Badge>
+                                              <Badge variant="secondary" className="text-xs">{source.confidence}</Badge>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
                                   )}
-                                </p>
-                              );
-                            })}
-                          </div>
-                          
-                          {/* Evidence Pack */}
-                          {message.evidencePack && (
-                            <div className="mt-4 pt-4 border-t border-border/50">
-                              <div className="flex items-center gap-2 mb-3">
-                                <BookOpen className="h-4 w-4" />
-                                <span className="text-sm font-semibold">
-                                  {language === "ar" ? "حزمة الأدلة" : "Evidence Pack"}
-                                </span>
-                              </div>
-                              
-                              {/* Sources */}
-                              {message.evidencePack.sources.length > 0 && (
-                                <div className="mb-3">
-                                  <div className="text-xs font-medium text-muted-foreground mb-2">
-                                    {language === "ar" ? "المصادر" : "Sources"}
-                                  </div>
-                                  <div className="space-y-1">
-                                    {message.evidencePack.sources.map((source, i) => (
-                                      <div key={i} className="flex items-center justify-between text-xs p-2 bg-background/50 rounded">
-                                        <span>{source.title}</span>
-                                        <div className="flex items-center gap-2">
-                                          <Badge variant="outline" className="text-xs">{source.type}</Badge>
-                                          <Badge variant="secondary" className="text-xs">{source.confidence}</Badge>
-                                        </div>
+                                  
+                                  {/* Indicators */}
+                                  {message.evidencePack.indicators.length > 0 && (
+                                    <div className="mb-3">
+                                      <div className="text-xs font-medium text-muted-foreground mb-2">
+                                        {language === "ar" ? "المؤشرات" : "Indicators"}
                                       </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-                              
-                              {/* Indicators */}
-                              {message.evidencePack.indicators.length > 0 && (
-                                <div className="mb-3">
-                                  <div className="text-xs font-medium text-muted-foreground mb-2">
-                                    {language === "ar" ? "المؤشرات" : "Indicators"}
-                                  </div>
-                                  <div className="grid grid-cols-2 gap-2">
-                                    {message.evidencePack.indicators.map((ind, i) => (
-                                      <div key={i} className="text-xs p-2 bg-background/50 rounded">
-                                        <div className="flex items-center justify-between">
-                                          <span className="text-muted-foreground">{ind.name}</span>
-                                          {ind.regime && <Badge variant="outline" className="text-xs">{ind.regime}</Badge>}
-                                        </div>
-                                        <div className="flex items-center gap-1 mt-1">
-                                          <span className="font-semibold">{ind.value}</span>
-                                          {getTrendIcon(ind.trend)}
-                                        </div>
+                                      <div className="grid grid-cols-2 gap-2">
+                                        {message.evidencePack.indicators.map((ind, i) => (
+                                          <div key={i} className="text-xs p-2 bg-background/50 rounded">
+                                            <div className="flex items-center justify-between">
+                                              <span className="text-muted-foreground">{ind.name}</span>
+                                              {ind.regime && <Badge variant="outline" className="text-xs">{ind.regime}</Badge>}
+                                            </div>
+                                            <div className="flex items-center gap-1 mt-1">
+                                              <span className="font-semibold">{ind.value}</span>
+                                              {getTrendIcon(ind.trend)}
+                                            </div>
+                                          </div>
+                                        ))}
                                       </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-                              
-                              {/* Caveats */}
-                              {message.evidencePack.caveats && message.evidencePack.caveats.length > 0 && (
-                                <div className="text-xs p-2 bg-yellow-50 dark:bg-yellow-950/20 rounded border border-yellow-200 dark:border-yellow-900">
-                                  <div className="flex items-center gap-1 text-yellow-700 dark:text-yellow-300 font-medium mb-1">
-                                    <AlertCircle className="h-3 w-3" />
-                                    {language === "ar" ? "تحفظات" : "Caveats"}
-                                  </div>
-                                  <ul className="list-disc list-inside text-yellow-600 dark:text-yellow-400">
-                                    {message.evidencePack.caveats.map((caveat, i) => (
-                                      <li key={i}>{caveat}</li>
-                                    ))}
-                                  </ul>
+                                    </div>
+                                  )}
+                                  
+                                  {/* Caveats */}
+                                  {message.evidencePack.caveats && message.evidencePack.caveats.length > 0 && (
+                                    <div className="text-xs p-2 bg-yellow-50 dark:bg-yellow-950/20 rounded border border-yellow-200 dark:border-yellow-900">
+                                      <div className="flex items-center gap-1 text-yellow-700 dark:text-yellow-300 font-medium mb-1">
+                                        <AlertCircle className="h-3 w-3" />
+                                        {language === "ar" ? "تحفظات" : "Caveats"}
+                                      </div>
+                                      <ul className="list-disc list-inside text-yellow-600 dark:text-yellow-400">
+                                        {message.evidencePack.caveats.map((caveat, i) => (
+                                          <li key={i}>{caveat}</li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  )}
                                 </div>
                               )}
                             </div>
-                          )}
-                        </div>
-                        
-                        {/* Message Actions */}
-                        {message.role === "assistant" && message.id !== "welcome" && (
-                          <div className="flex items-center gap-2 mt-2">
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="h-7 text-xs gap-1"
-                              onClick={() => copyToClipboard(message.content)}
-                            >
-                              <Copy className="h-3 w-3" />
-                              {language === "ar" ? "نسخ" : "Copy"}
-                            </Button>
-                            <div className="flex-1" />
-                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
-                              <ThumbsUp className="h-3 w-3" />
-                            </Button>
-                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
-                              <ThumbsDown className="h-3 w-3" />
-                            </Button>
+                            
+                            {/* Message Actions */}
+                            {message.role === "assistant" && message.id !== "welcome" && (
+                              <div className="flex items-center gap-2 mt-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="h-7 text-xs gap-1"
+                                  onClick={() => copyToClipboard(message.content)}
+                                >
+                                  <Copy className="h-3 w-3" />
+                                  {language === "ar" ? "نسخ" : "Copy"}
+                                </Button>
+                                <div className="flex-1" />
+                                <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                                  <ThumbsUp className="h-3 w-3" />
+                                </Button>
+                                <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                                  <ThumbsDown className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            )}
                           </div>
-                        )}
+                        </div>
+                      ))}
+                      
+                      {isLoading && (
+                        <div className="flex justify-start">
+                          <div className="bg-muted rounded-xl p-4">
+                            <div className="flex items-center gap-2">
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <span className="text-sm">
+                                {language === "ar" ? "جاري التحليل..." : "Analyzing..."}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div ref={messagesEndRef} />
+                    </div>
+                  </ScrollArea>
+                  
+                  {/* Input Area */}
+                  <div className="border-t p-4 bg-gray-50 dark:bg-gray-900/50">
+                    <div className="flex gap-2 items-center">
+                      <Input
+                        placeholder={language === "ar" ? "اسأل عن الاقتصاد اليمني..." : "Ask about Yemen's economy..."}
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        onKeyPress={(e) => e.key === "Enter" && !isLoading && handleSubmit()}
+                        className="flex-1 bg-white dark:bg-gray-800"
+                        disabled={isLoading}
+                      />
+                      <Button 
+                        onClick={handleSubmit} 
+                        size="icon"
+                        className="rounded-full bg-emerald-600 hover:bg-emerald-700 h-10 w-10" 
+                        disabled={isLoading || !query.trim()}
+                      >
+                        <Send className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2 text-center">
+                      {language === "ar" 
+                        ? "جميع الإجابات مدعومة بالأدلة والمصادر الموثقة"
+                        : "All answers are backed by evidence and documented sources"}
+                    </p>
+                  </div>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="translation">
+                <Card className="shadow-lg border-2">
+                  <CardHeader>
+                    <CardTitle className="text-xl flex items-center gap-2">
+                      <Languages className="h-5 w-5 text-primary" />
+                      {language === "ar" ? "مختبر الترجمة الذكي" : "Intelligent Translation Studio"}
+                    </CardTitle>
+                    <CardDescription>
+                      {language === "ar"
+                        ? "وكلاء ترجمة متخصصون مع بوابات جودة ومعجم اقتصادي مُحكم."
+                        : "Specialized translation agents with quality gates and glossary enforcement."}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid gap-4 md:grid-cols-2">
+                      {translationAgents.map((agent) => {
+                        const isActive = translationDirection === agent.id;
+                        return (
+                          <button
+                            key={agent.id}
+                            onClick={() => setTranslationDirection(agent.id as "ar-en" | "en-ar")}
+                            className={`text-left border rounded-xl p-4 transition-all ${
+                              isActive ? "border-primary shadow-md bg-primary/5" : "hover:border-primary/50"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <div
+                                  className="h-9 w-9 rounded-lg flex items-center justify-center text-white"
+                                  style={{ backgroundColor: agent.accent }}
+                                >
+                                  <Languages className="h-4 w-4" />
+                                </div>
+                                <div>
+                                  <div className="text-sm font-semibold">
+                                    {language === "ar" ? agent.titleAr : agent.titleEn}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground">
+                                    {language === "ar" ? agent.descAr : agent.descEn}
+                                  </div>
+                                </div>
+                              </div>
+                              {isActive && (
+                                <Badge className="bg-primary/10 text-primary border-0">
+                                  {language === "ar" ? "نشط" : "Active"}
+                                </Badge>
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant="outline" className="gap-1">
+                          <Shield className="h-3 w-3" />
+                          {language === "ar" ? "بوابة الجودة" : "Quality Gate"}
+                          {translationResult?.status === "ok" && (
+                            <span className="text-emerald-600">
+                              {language === "ar" ? " • ناجح" : " • Pass"}
+                            </span>
+                          )}
+                          {translationResult?.status === "needs_review" && (
+                            <span className="text-amber-600">
+                              {language === "ar" ? " • مراجعة" : " • Review"}
+                            </span>
+                          )}
+                        </Badge>
+                        <Badge variant="outline" className="gap-1">
+                          {translationResult?.numericIntegrityPass ? (
+                            <CheckCircle className="h-3 w-3 text-emerald-600" />
+                          ) : (
+                            <AlertCircle className="h-3 w-3 text-amber-600" />
+                          )}
+                          {language === "ar" ? "سلامة الأرقام" : "Numeric Integrity"}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Select value={translationSector} onValueChange={setTranslationSector}>
+                          <SelectTrigger className="w-[200px]">
+                            <SelectValue placeholder={language === "ar" ? "اختر القطاع" : "Select sector"} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {translationSectors.map((sector) => (
+                              <SelectItem key={sector.value} value={sector.value}>
+                                {language === "ar" ? sector.labelAr : sector.labelEn}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Button variant="outline" size="sm" onClick={handleSwapTranslation}>
+                          <ArrowLeftRight className="h-4 w-4 mr-1" />
+                          {language === "ar" ? "تبديل" : "Swap"}
+                        </Button>
                       </div>
                     </div>
-                  ))}
-                  
-                  {isLoading && (
-                    <div className="flex justify-start">
-                      <div className="bg-muted rounded-xl p-4">
-                        <div className="flex items-center gap-2">
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          <span className="text-sm">
-                            {language === "ar" ? "جاري التحليل..." : "Analyzing..."}
-                          </span>
+
+                    <div className="grid gap-4 lg:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label>{language === "ar" ? "النص المصدر" : "Source Text"}</Label>
+                        <Textarea
+                          value={translationInput}
+                          onChange={(e) => setTranslationInput(e.target.value)}
+                          placeholder={language === "ar" ? "ألصق النص العربي أو الإنجليزي هنا..." : "Paste Arabic or English text here..."}
+                          className="min-h-[180px] bg-white dark:bg-gray-900"
+                          dir={translationDirection === "ar-en" ? "rtl" : "ltr"}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label>{language === "ar" ? "الترجمة" : "Translation"}</Label>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 text-xs gap-1"
+                            onClick={() => translationOutput && copyToClipboard(translationOutput)}
+                          >
+                            <Copy className="h-3 w-3" />
+                            {language === "ar" ? "نسخ" : "Copy"}
+                          </Button>
+                        </div>
+                        <Textarea
+                          value={translationOutput}
+                          readOnly
+                          placeholder={language === "ar" ? "ستظهر الترجمة هنا..." : "Translation will appear here..."}
+                          className="min-h-[180px] bg-gray-50 dark:bg-gray-900/40"
+                          dir={translationDirection === "ar-en" ? "ltr" : "rtl"}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      <Button onClick={handleTranslate} disabled={translationMutation.isPending || !translationInput.trim()}>
+                        {translationMutation.isPending ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            {language === "ar" ? "جاري الترجمة..." : "Translating..."}
+                          </>
+                        ) : (
+                          <>
+                            <Languages className="h-4 w-4 mr-2" />
+                            {language === "ar" ? "ترجم الآن" : "Translate Now"}
+                          </>
+                        )}
+                      </Button>
+                      <Button variant="outline" onClick={handleClearTranslation}>
+                        {language === "ar" ? "مسح" : "Clear"}
+                      </Button>
+                    </div>
+
+                    {translationResult && (
+                      <div className="grid gap-4 md:grid-cols-3">
+                        <div className="rounded-lg border p-3">
+                          <div className="text-xs text-muted-foreground mb-2">
+                            {language === "ar" ? "التزام المعجم" : "Glossary Adherence"}
+                          </div>
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-lg font-semibold">
+                              {Math.round(translationResult.glossaryAdherenceScore)}%
+                            </span>
+                            <Badge variant="outline">
+                              {translationResult.glossaryAdherenceScore >= 80
+                                ? (language === "ar" ? "قوي" : "Strong")
+                                : (language === "ar" ? "يحتاج مراجعة" : "Review")}
+                            </Badge>
+                          </div>
+                          <Progress value={Math.min(100, Math.max(0, translationResult.glossaryAdherenceScore))} className="h-2" />
+                        </div>
+                        <div className="rounded-lg border p-3">
+                          <div className="text-xs text-muted-foreground mb-2">
+                            {language === "ar" ? "سلامة الأرقام" : "Numeric Integrity"}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {translationResult.numericIntegrityPass ? (
+                              <CheckCircle className="h-4 w-4 text-emerald-600" />
+                            ) : (
+                              <AlertCircle className="h-4 w-4 text-amber-600" />
+                            )}
+                            <span className="text-sm font-medium">
+                              {translationResult.numericIntegrityPass
+                                ? (language === "ar" ? "متطابقة" : "Verified")
+                                : (language === "ar" ? "تحتاج تدقيق" : "Needs review")}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="rounded-lg border p-3">
+                          <div className="text-xs text-muted-foreground mb-2">
+                            {language === "ar" ? "بوابة الجودة" : "Quality Gate"}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {translationResult.status === "ok" ? (
+                              <CheckCircle className="h-4 w-4 text-emerald-600" />
+                            ) : (
+                              <AlertCircle className="h-4 w-4 text-amber-600" />
+                            )}
+                            <span className="text-sm font-medium">
+                              {translationResult.status === "ok"
+                                ? (language === "ar" ? "اجتاز" : "Passed")
+                                : (language === "ar" ? "مراجعة" : "Review")}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
-                  
-                  <div ref={messagesEndRef} />
-                </div>
-              </ScrollArea>
-              
-              {/* Input Area */}
-              <div className="border-t p-4 bg-gray-50 dark:bg-gray-900/50">
-                <div className="flex gap-2 items-center">
-                  <Input
-                    placeholder={language === "ar" ? "اسأل عن الاقتصاد اليمني..." : "Ask about Yemen's economy..."}
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && !isLoading && handleSubmit()}
-                    className="flex-1 bg-white dark:bg-gray-800"
-                    disabled={isLoading}
-                  />
-                  <Button 
-                    onClick={handleSubmit} 
-                    size="icon"
-                    className="rounded-full bg-emerald-600 hover:bg-emerald-700 h-10 w-10" 
-                    disabled={isLoading || !query.trim()}
-                  >
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground mt-2 text-center">
-                  {language === "ar" 
-                    ? "جميع الإجابات مدعومة بالأدلة والمصادر الموثقة"
-                    : "All answers are backed by evidence and documented sources"}
-                </p>
-              </div>
-            </Card>
+                    )}
+
+                    {translationResult?.glossaryIssues?.length ? (
+                      <div className="rounded-lg border border-amber-200 bg-amber-50/60 p-4 text-sm">
+                        <div className="font-semibold mb-2">
+                          {language === "ar" ? "مشاكل المعجم" : "Glossary Issues"}
+                        </div>
+                        <ul className="space-y-2">
+                          {translationResult.glossaryIssues.slice(0, 3).map((issue, idx) => (
+                            <li key={idx} className="text-xs text-amber-700">
+                              {issue.term} → {issue.expected} ({issue.found})
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+
+                    {translationResult?.numericIssues?.length ? (
+                      <div className="rounded-lg border border-amber-200 bg-amber-50/60 p-4 text-sm">
+                        <div className="font-semibold mb-2">
+                          {language === "ar" ? "مشاكل الأرقام" : "Numeric Issues"}
+                        </div>
+                        <ul className="space-y-2">
+                          {translationResult.numericIssues.slice(0, 3).map((issue, idx) => (
+                            <li key={idx} className="text-xs text-amber-700">
+                              {issue.original} → {issue.translated}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </div>
