@@ -96,6 +96,7 @@ import { feedMatrixRouter } from "./routers/feedMatrix";
 import { bulkClassificationRouter } from "./routers/bulkClassification";
 import { povertyHumandevRouter } from "./routers/povertyHumandev";
 import { methodologyDownloadsRouter } from "./routers/methodologyDownloads";
+import { sectorAgentsRouter } from "./routers/sectorAgents";
 import { sql, desc, eq, like, or, and, inArray } from "drizzle-orm";
 
 export const appRouter = router({
@@ -116,6 +117,7 @@ export const appRouter = router({
   entities: entitiesRouter,
   vipCockpit: vipCockpitRouter,
   sectorPages: sectorPagesRouter,
+  sectorAgents: sectorAgentsRouter,
   publications: publicationsRouter,
   partnerEngine: partnerEngineRouter,
   updates: updatesRouter,
