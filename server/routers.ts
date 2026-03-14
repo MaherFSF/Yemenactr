@@ -625,7 +625,7 @@ export const appRouter = router({
         try {
           const { invokeLLM } = await import("./_core/llm");
           const { AGENT_PERSONAS } = await import("./ai/agentPersonas");
-          const { getSectorDataContext } = await import("./services/sectorDataService");
+          const { getSectorDataContext, getSectorResearchContext } = await import("./services/sectorDataService");
 
           const persona = AGENT_PERSONAS[input.agentPersona];
           if (!persona) {
@@ -668,6 +668,20 @@ export const appRouter = router({
               }
             }
             dataContext += `=== END OF REAL DATA ===\n`;
+          }
+
+          // Add research library context
+          const researchData = await getSectorResearchContext(input.sectorId);
+          if (researchData && researchData.totalPublications > 0) {
+            dataContext += `\n=== RESEARCH LIBRARY (${researchData.totalPublications} publications) ===\n`;
+            dataContext += `Recent key publications on this sector:\n`;
+            for (const pub of researchData.recentPublications.slice(0, 10)) {
+              dataContext += `- [${pub.year}] ${pub.title} (${pub.type})\n`;
+              if (pub.sourceUrl) {
+                sourcesUsed.push({ title: pub.title, url: pub.sourceUrl, type: 'research', confidence: 'medium' });
+              }
+            }
+            dataContext += `=== END OF RESEARCH LIBRARY ===\n`;
           }
 
           const systemPrompt = `You are an expert AI assistant for the YETO (Yemen Economic Transparency Observatory) platform.

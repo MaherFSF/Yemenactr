@@ -54,11 +54,12 @@ async function startServer() {
       res.flushHeaders();
 
       const { AGENT_PERSONAS } = await import('../ai/agentPersonas');
-      const { getSectorDataContext } = await import('../services/sectorDataService');
+      const { getSectorDataContext, getSectorResearchContext, getFullSectorBriefing } = await import('../services/sectorDataService');
       const { ENV } = await import('./env');
 
       const persona = AGENT_PERSONAS[agentPersona || 'citizen_explainer'];
       const sectorData = await getSectorDataContext(sectorId);
+      const researchData = await getSectorResearchContext(sectorId);
       let dataContext = '';
       const sourcesUsed: Array<{ title: string; url: string; type: string; confidence: string }> = [];
 
@@ -79,6 +80,19 @@ async function startServer() {
           }
         }
         dataContext += `=== END OF REAL DATA ===\n`;
+      }
+
+      // Add research library context
+      if (researchData && researchData.totalPublications > 0) {
+        dataContext += `\n=== RESEARCH LIBRARY (${researchData.totalPublications} publications) ===\n`;
+        dataContext += `Recent key publications on this sector:\n`;
+        for (const pub of researchData.recentPublications.slice(0, 10)) {
+          dataContext += `- [${pub.year}] ${pub.title} (${pub.type})\n`;
+          if (pub.sourceUrl) {
+            sourcesUsed.push({ title: pub.title, url: pub.sourceUrl, type: 'research', confidence: 'medium' });
+          }
+        }
+        dataContext += `=== END OF RESEARCH LIBRARY ===\n`;
       }
 
       const systemPrompt = `You are an expert AI assistant for YETO (Yemen Economic Transparency Observatory).\n${persona?.systemPromptAddition || ''}\nContext: Sector: ${sectorId}, Language: ${language === 'ar' ? 'Arabic' : 'English'}\n${dataContext}\nCRITICAL: Use the REAL DATA above. Cite sources. Be transparent about confidence. Respond in ${language === 'ar' ? 'Arabic' : 'English'}.`;

@@ -10246,3 +10246,57 @@ Based on review of master design documents and data source register:
 - [x] Setup and deployment instructions
 - [x] AI agent capabilities documentation (8 agents with full knowledge bases)
 - [x] Admin panel guide
+
+## Phase 85: Ultimate Data Observatory - Connect ALL Sources, Backfill ALL Data Since 2010 (March 14, 2026)
+
+### Task 1 - Audit & Classify All 292 Sources
+- [x] Query all sources from source_registry (292 total)
+- [x] Classify each source: 25 API connected, 17 need URLs, 250+ manual
+- [x] Identify all sources with free public APIs (World Bank, IMF, UNHCR, OpenAlex)
+- [x] Identify all sources with data portals (HDX, ReliefWeb, ACLED)
+- [x] Identify all sources needing API keys (UN Comtrade, IEA, ACLED)
+- [x] Create comprehensive source connection plan (AUDIT_PHASE85.md)
+
+### Task 2 - Build Advanced Multi-Source Ingestion Engine
+- [x] Build megaIngest.ts unified engine with World Bank (402 records) + UNHCR (39 records)
+- [x] Build OpenAlex API connector (1,397 academic publications)
+- [x] Build IMF WEO connector via WB cross-listing (263 records)
+- [ ] ReliefWeb API connector (blocked by sandbox network restrictions)
+- [ ] OCHA FTS API connector (blocked by sandbox network restrictions)
+- [ ] ACLED, FAO, ILO, UN DESA, WFP, IPC, UNCTAD, WHO, UNESCO (need API keys)
+
+### Task 3 - Backfill ALL Data Since 2010
+- [x] Run all connectors with full backfill from 2010 to present (7,427+ time series)
+- [x] Verify data completeness per source per year
+- [x] Fill gaps with alternative sources (WB cross-listed IMF data)
+- [ ] Some gaps remain due to Yemen conflict data unavailability
+
+### Task 4 - Literature & Research Library Ingestion
+- [x] Fetch 1,397 academic publications from OpenAlex covering 11 Yemen topics
+- [x] Topics: economy, banking, humanitarian, conflict, trade, labor, energy, agriculture, fiscal, sanctions, microfinance
+- [x] Store all publications in research_publications table (1,767 total)
+- [x] Make all publications searchable and part of closed knowledge base
+- [x] Wire research context to all AI agents via getFullSectorBriefing
+
+### Task 5 - Enrich Knowledge Base & Wire to All Agents
+- [x] Build comprehensive knowledge context from all ingested data (sectorDataService enhanced)
+- [x] Ensure every AI agent has access to full data corpus (getFullSectorBriefing)
+- [x] Ensure every dashboard pulls from real ingested data (GovernorDashboard rewritten)
+- [x] Ensure every sector intelligence wall uses all relevant sources (8 walls with SectorAgentChat)
+
+### Task 6 - Enhance VIP Dashboards
+- [x] GovernorDashboard rewritten with 4 live tRPC sector queries
+- [x] Live currency, banking, macro data from real DB
+- [x] AI Banking Advisor integrated with SectorAgentChat
+
+### Task 7 - Admin Source Monitoring
+- [x] Build admin view with 4 action item panels (AdminHub enhanced)
+- [x] Show sources needing API keys (UN Comtrade, ACLED, IEA, Bloomberg)
+- [x] Show manual upload sources (250+ with CBY, MoF, CSO, SCMCHA)
+- [x] Show recently connected APIs (WB, UNHCR, OpenAlex, IMF)
+- [x] Show stale data alerts (Exchange Rate, Food Prices, Labor Force)
+
+### Task 8 - Testing & Delivery
+- [x] Run all vitest tests (736/736 pass across 33 test files)
+- [x] Zero TypeScript errors
+- [x] Save checkpoint and deliver

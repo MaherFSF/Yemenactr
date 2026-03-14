@@ -157,6 +157,122 @@ function generateSectorSummary(sectorId: string, indicators: SectorDataContext['
   return parts.join('\n');
 }
 
+// Map sector IDs to research categories for publication lookup
+const SECTOR_RESEARCH_MAPPING: Record<string, string[]> = {
+  banking: ['banking_sector', 'monetary_policy', 'sanctions_compliance'],
+  trade: ['trade_external'],
+  energy: ['energy_infrastructure'],
+  humanitarian: ['humanitarian_finance', 'poverty_development'],
+  labor: ['labor_market'],
+  macroeconomy: ['macroeconomic_analysis', 'fiscal_policy'],
+  prices: ['monetary_policy', 'macroeconomic_analysis'],
+  currency: ['monetary_policy', 'banking_sector'],
+  public_finance: ['fiscal_policy', 'macroeconomic_analysis'],
+  food_security: ['food_security'],
+  poverty: ['poverty_development'],
+  infrastructure: ['energy_infrastructure'],
+  conflict: ['conflict_economics'],
+  agriculture: ['food_security'],
+};
+
+export interface ResearchContext {
+  totalPublications: number;
+  recentPublications: Array<{
+    title: string;
+    year: number;
+    type: string;
+    category: string;
+    sourceUrl: string;
+  }>;
+  yearDistribution: Record<number, number>;
+  topCategories: Array<{ category: string; count: number }>;
+}
+
+export async function getSectorResearchContext(sectorId: string): Promise<ResearchContext | null> {
+  const db = await getDb();
+  if (!db) return null;
+
+  const categories = SECTOR_RESEARCH_MAPPING[sectorId] || ['macroeconomic_analysis'];
+  const catFilter = categories.map(c => `'${c}'`).join(',');
+
+  try {
+    // Get total count
+    const [countRows] = await db.execute(
+      sql`SELECT COUNT(*) as cnt FROM research_publications WHERE researchCategory IN (${sql.raw(catFilter)})`
+    );
+    const totalPublications = (countRows as unknown as any[])[0]?.cnt || 0;
+
+    // Get recent publications (last 20)
+    const [recentRows] = await db.execute(
+      sql`SELECT title, publicationYear, publicationType, researchCategory, sourceUrl 
+          FROM research_publications 
+          WHERE researchCategory IN (${sql.raw(catFilter)})
+          ORDER BY publicationYear DESC, publicationDate DESC 
+          LIMIT 20`
+    );
+    const recentPublications = (recentRows as unknown as any[]).map(r => ({
+      title: r.title,
+      year: r.publicationYear,
+      type: r.publicationType,
+      category: r.researchCategory,
+      sourceUrl: r.sourceUrl || '',
+    }));
+
+    // Year distribution
+    const [yearRows] = await db.execute(
+      sql`SELECT publicationYear as yr, COUNT(*) as cnt 
+          FROM research_publications 
+          WHERE researchCategory IN (${sql.raw(catFilter)}) AND publicationYear >= 2010
+          GROUP BY publicationYear ORDER BY publicationYear`
+    );
+    const yearDistribution: Record<number, number> = {};
+    for (const r of (yearRows as unknown as any[])) {
+      yearDistribution[r.yr] = r.cnt;
+    }
+
+    // Top categories
+    const [catRows] = await db.execute(
+      sql`SELECT researchCategory as cat, COUNT(*) as cnt 
+          FROM research_publications 
+          WHERE researchCategory IN (${sql.raw(catFilter)})
+          GROUP BY researchCategory ORDER BY cnt DESC`
+    );
+    const topCategories = (catRows as unknown as any[]).map(r => ({
+      category: r.cat,
+      count: r.cnt,
+    }));
+
+    return { totalPublications, recentPublications, yearDistribution, topCategories };
+  } catch (error) {
+    console.error(`[SectorData] Error fetching research for ${sectorId}:`, error);
+    return null;
+  }
+}
+
+export async function getFullSectorBriefing(sectorId: string): Promise<string> {
+  const dataContext = await getSectorDataContext(sectorId);
+  const researchContext = await getSectorResearchContext(sectorId);
+
+  const parts: string[] = [];
+
+  if (dataContext) {
+    parts.push('=== REAL-TIME DATA ===');
+    parts.push(dataContext.summary);
+    parts.push(`Data coverage: ${dataContext.dataPoints} data points from ${dataContext.dateRange.from} to ${dataContext.dateRange.to}`);
+  }
+
+  if (researchContext && researchContext.totalPublications > 0) {
+    parts.push('\n=== RESEARCH LIBRARY ===');
+    parts.push(`${researchContext.totalPublications} academic publications and reports available.`);
+    parts.push('Recent key publications:');
+    for (const pub of researchContext.recentPublications.slice(0, 10)) {
+      parts.push(`- [${pub.year}] ${pub.title} (${pub.type})`);
+    }
+  }
+
+  return parts.join('\n');
+}
+
 export async function getAllSectorsSummary(): Promise<Record<string, string>> {
   const summaries: Record<string, string> = {};
   

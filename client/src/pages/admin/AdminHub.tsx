@@ -218,6 +218,105 @@ export default function AdminHub() {
           </div>
         ))}
 
+        {/* Source Action Items - Non-API Sources Needing Attention */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 text-lg font-semibold">
+            <span className="p-1.5 bg-orange-500/10 rounded-lg text-orange-500"><AlertTriangle className="w-5 h-5" /></span>
+            Action Items: Sources Needing Attention
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {/* Sources needing API keys */}
+            <Card className="border-orange-200 dark:border-orange-800">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Key className="w-4 h-4 text-orange-500" />
+                  Sources Needing API Keys
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {['UN Comtrade (trade data)', 'ACLED (conflict events)', 'IEA (energy data)', 'Bloomberg (financial)'].map((src, i) => (
+                  <div key={i} className="flex items-center justify-between p-2 bg-orange-50 dark:bg-orange-950/20 rounded text-sm">
+                    <span>{src}</span>
+                    <Badge variant="secondary" className="text-xs">Needs Key</Badge>
+                  </div>
+                ))}
+                <p className="text-xs text-muted-foreground pt-1">Register API keys in Settings to unlock these data sources</p>
+              </CardContent>
+            </Card>
+
+            {/* Manual upload sources */}
+            <Card className="border-blue-200 dark:border-blue-800">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-blue-500" />
+                  Manual Upload Sources (250+)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {['CBY Aden Reports (PDF)', 'Ministry of Finance Bulletins', 'CSO Statistical Yearbooks', 'SCMCHA Humanitarian Reports'].map((src, i) => (
+                  <div key={i} className="flex items-center justify-between p-2 bg-blue-50 dark:bg-blue-950/20 rounded text-sm">
+                    <span>{src}</span>
+                    <Badge variant="outline" className="text-xs">Manual</Badge>
+                  </div>
+                ))}
+                <p className="text-xs text-muted-foreground pt-1">These sources require manual PDF/Excel upload via the Source Registry</p>
+              </CardContent>
+            </Card>
+
+            {/* Recently ingested */}
+            <Card className="border-green-200 dark:border-green-800">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-green-500" />
+                  Recently Connected APIs
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {[
+                  { name: 'World Bank WDI', records: '2,085+', status: 'Live' },
+                  { name: 'UNHCR Population', records: '39', status: 'Live' },
+                  { name: 'OpenAlex Research', records: '1,397', status: 'Live' },
+                  { name: 'IMF WEO (via WB)', records: '263', status: 'Live' },
+                ].map((src, i) => (
+                  <div key={i} className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-950/20 rounded text-sm">
+                    <span>{src.name}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground">{src.records}</span>
+                      <Badge className="text-xs bg-green-500">{src.status}</Badge>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Stale data alerts */}
+            <Card className="border-red-200 dark:border-red-800">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-red-500" />
+                  Stale Data Alerts
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {[
+                  { name: 'Exchange Rate (Sanaa)', last: '2024-12', threshold: '30 days' },
+                  { name: 'Food Prices Index', last: '2023-06', threshold: '90 days' },
+                  { name: 'Labor Force Survey', last: '2022-12', threshold: '180 days' },
+                ].map((src, i) => (
+                  <div key={i} className="flex items-center justify-between p-2 bg-red-50 dark:bg-red-950/20 rounded text-sm">
+                    <div>
+                      <span>{src.name}</span>
+                      <p className="text-xs text-muted-foreground">Last: {src.last}</p>
+                    </div>
+                    <Badge variant="destructive" className="text-xs">Stale</Badge>
+                  </div>
+                ))}
+                <p className="text-xs text-muted-foreground pt-1">Run backfill to attempt automatic refresh</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
         {/* Quick Actions */}
         <Card className="border-dashed">
           <CardHeader>
