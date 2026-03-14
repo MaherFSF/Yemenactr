@@ -10455,3 +10455,28 @@ Based on review of master design documents and data source register:
 - [ ] Rank by priority (Critical, High, Medium, Low)
 - [ ] Focus on data ingestion for every source in registry
 - [ ] Deliver report to user
+
+## Phase 89: World-Class Methodology Page Rebuild
+
+### Task 1 - Research & Audit
+- [x] Research IMF DQAF framework for methodology documentation standards
+- [x] Research World Bank DECDG data quality standards
+- [x] Audit current Methodology page (design, content, functionality)
+- [x] Identify all gaps and required sections
+
+### Task 2 - Complete Page Rebuild
+- [x] Redesign Methodology page with world-class layout
+- [x] Build interactive Source Registry showing all 292 sources (searchable, filterable by tier & status)
+- [x] Build Sector Coverage section with 16 sector methodology documents
+- [x] Build Data Quality Framework aligned with IMF DQAF (6 dimensions, 77% overall score)
+- [x] Build Provenance Rules (7 non-negotiable rules for data lineage)
+- [x] Build Confidence Grading System A-E with examples
+- [x] Create downloadable documents section (4 main docs + 16 sector docs)
+- [x] Wire backend tRPC procedures for dynamic data (sourceRegistry.getAll, getStats)
+- [x] Show every single source in the registry with tier, status, access method
+- [x] Show Access Method Distribution (Web Portal 56%, Manual 23%, REST API 17%)
+- [x] Show international standards alignment (SNA 2008, BPM6, GFSM 2014, IPC, ISIC Rev.4, SDDS)
+- [x] Ensure bilingual support (EN/AR)
+- [x] Browser test all 5 tabs (Source Registry, Quality Framework, Provenance, Confidence, Documents)
+- [x] Run vitest - 736/736 pass across 33 files
+- [ ] Save checkpoint and deliver
