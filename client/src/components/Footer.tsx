@@ -104,7 +104,7 @@ export default function Footer() {
                 </li>
               ))}
               <li>
-                <Link href="/data-repository" className="text-sm text-[#C0A030] hover:text-[#D4B440] transition-colors flex items-center gap-1">
+                <Link href="/sectors" className="text-sm text-[#C0A030] hover:text-[#D4B440] transition-colors flex items-center gap-1">
                   {language === "ar" ? "عرض جميع القطاعات" : "View All Sectors"}
                   <ExternalLink className="h-3 w-3" />
                 </Link>

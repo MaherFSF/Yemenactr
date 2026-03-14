@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import InsightsTicker from "@/components/InsightsTicker";
 import { WelcomeTour } from "@/components/onboarding/WelcomeTour";
@@ -13,7 +13,6 @@ import {
   Brain,
   Globe,
   DollarSign,
-  CheckCircle2,
   Zap,
   Building2,
   Users,
@@ -28,10 +27,12 @@ import {
   GraduationCap,
   Newspaper,
   LineChart,
-  Search,
   ChevronRight,
   Activity,
-  Eye
+  Eye,
+  Building,
+  Briefcase,
+  AlertTriangle
 } from "lucide-react";
 import { Link } from "wouter";
 import { AnimatedSection, StaggeredContainer } from "@/components/AnimatedSection";
@@ -52,38 +53,40 @@ export default function Home() {
   const { data: kpiData, isLoading: kpiLoading } = trpc.dashboard.getHeroKPIs.useQuery();
   const { data: platformStatsData } = trpc.platform.getStats.useQuery();
 
+  // 16 sectors — every image is unique, every link verified against App.tsx routes
   const sectors = useMemo(() => [
-    { icon: Banknote, nameEn: "Banking & Finance", nameAr: "القطاع المصرفي والمالي", href: "/sectors/banking", color: "#2e8b6e", img: `${CDN}/banking_65581ee9.png` },
-    { icon: TrendingUp, nameEn: "Macroeconomy", nameAr: "الاقتصاد الكلي", href: "/sectors/macroeconomy", color: "#1f5a47", img: `${CDN}/economy_66ec8c86.jpg` },
-    { icon: DollarSign, nameEn: "Currency & Exchange", nameAr: "العملة وسعر الصرف", href: "/sectors/currency", color: "#C9A961", img: `${CDN}/economy_66ec8c86.jpg` },
-    { icon: Globe, nameEn: "Trade & Exports", nameAr: "التجارة والصادرات", href: "/sectors/trade", color: "#2e8b6e", img: `${CDN}/trade_1b2ab09c.jpg` },
-    { icon: BarChart3, nameEn: "Consumer Prices", nameAr: "أسعار المستهلك", href: "/sectors/prices", color: "#d4a528", img: `${CDN}/consumer-prices_a112081b.png` },
-    { icon: Users, nameEn: "Labor Market", nameAr: "سوق العمل", href: "/sectors/labor", color: "#6b8e6b", img: `${CDN}/labor_00072783.jpg` },
-    { icon: Heart, nameEn: "Humanitarian", nameAr: "الوضع الإنساني", href: "/sectors/humanitarian", color: "#c0392b", img: `${CDN}/humanitarian_bdbf1206.jpg` },
-    { icon: Wheat, nameEn: "Food Security", nameAr: "الأمن الغذائي", href: "/sectors/food-security", color: "#8B6914", img: `${CDN}/food-security_2e0a7aff.jpg` },
-    { icon: Zap, nameEn: "Energy", nameAr: "الطاقة", href: "/sectors/energy", color: "#e67e22", img: `${CDN}/economy_66ec8c86.jpg` },
-    { icon: Landmark, nameEn: "Public Finance", nameAr: "المالية العامة", href: "/sectors/public-finance", color: "#1f5a47", img: `${CDN}/economy_66ec8c86.jpg` },
-    { icon: Scale, nameEn: "Poverty", nameAr: "الفقر", href: "/sectors/poverty", color: "#7f8c8d", img: `${CDN}/GDypaRhOTKgU_efb239d0.jpg` },
-    { icon: Factory, nameEn: "Infrastructure", nameAr: "البنية التحتية", href: "/sectors/infrastructure", color: "#34495e", img: `${CDN}/economy_66ec8c86.jpg` },
-    { icon: Wheat, nameEn: "Agriculture", nameAr: "الزراعة", href: "/sectors/agriculture", color: "#27ae60", img: `${CDN}/agriculture_2d0af715.jpg` },
-    { icon: Building2, nameEn: "Investment", nameAr: "الاستثمار", href: "/sectors/investment", color: "#2980b9", img: `${CDN}/economy_66ec8c86.jpg` },
-    { icon: Banknote, nameEn: "Microfinance", nameAr: "التمويل الأصغر", href: "/sectors/microfinance", color: "#16a085", img: `${CDN}/banking_65581ee9.png` },
-    { icon: ShieldCheck, nameEn: "Conflict Economy", nameAr: "اقتصاد النزاع", href: "/sectors/conflict-economy", color: "#c0392b", img: `${CDN}/humanitarian_bdbf1206.jpg` },
+    { icon: Banknote, nameEn: "Banking & Finance", nameAr: "القطاع المصرفي والمالي", href: "/sectors/banking", img: `${CDN}/banking-cby-aden_33c61e6f.jpg` },
+    { icon: TrendingUp, nameEn: "Macroeconomy", nameAr: "الاقتصاد الكلي", href: "/sectors/macroeconomy", img: `${CDN}/macroeconomy-sanaa_7207dd19.jpg` },
+    { icon: DollarSign, nameEn: "Currency & Exchange", nameAr: "العملة وسعر الصرف", href: "/sectors/currency", img: `${CDN}/currency-exchange_83402f96.jpg` },
+    { icon: Globe, nameEn: "Trade & Exports", nameAr: "التجارة والصادرات", href: "/sectors/trade", img: `${CDN}/trade_1b2ab09c.jpg` },
+    { icon: BarChart3, nameEn: "Consumer Prices", nameAr: "أسعار المستهلك", href: "/sectors/prices", img: `${CDN}/consumer-prices_a112081b.png` },
+    { icon: Briefcase, nameEn: "Labor Market", nameAr: "سوق العمل", href: "/sectors/labor-market", img: `${CDN}/labor_00072783.jpg` },
+    { icon: Heart, nameEn: "Aid Flows", nameAr: "تدفقات المساعدات", href: "/sectors/aid-flows", img: `${CDN}/humanitarian_bdbf1206.jpg` },
+    { icon: Wheat, nameEn: "Food Security", nameAr: "الأمن الغذائي", href: "/sectors/food-security", img: `${CDN}/food-security_2e0a7aff.jpg` },
+    { icon: Zap, nameEn: "Energy & Fuel", nameAr: "الطاقة والوقود", href: "/sectors/energy", img: `${CDN}/energy-solar_3e674ad5.jpg` },
+    { icon: Landmark, nameEn: "Public Finance", nameAr: "المالية العامة", href: "/sectors/public-finance", img: `${CDN}/public-finance-cby_de55a967.jpg` },
+    { icon: Scale, nameEn: "Poverty & Development", nameAr: "الفقر والتنمية", href: "/sectors/poverty", img: `${CDN}/poverty-daily-life_a2eb80f0.jpg` },
+    { icon: Building, nameEn: "Infrastructure", nameAr: "البنية التحتية", href: "/sectors/infrastructure", img: `${CDN}/infrastructure-roads_b94d19ea.webp` },
+    { icon: Wheat, nameEn: "Agriculture", nameAr: "الزراعة", href: "/sectors/agriculture", img: `${CDN}/agriculture_2d0af715.jpg` },
+    { icon: Building2, nameEn: "Investment", nameAr: "الاستثمار", href: "/sectors/investment", img: `${CDN}/investment-aden-port_e2f1b253.jpg` },
+    { icon: Users, nameEn: "Microfinance", nameAr: "التمويل الأصغر", href: "/sectors/microfinance", img: `${CDN}/microfinance-women_489de9ad.jpg` },
+    { icon: AlertTriangle, nameEn: "Conflict Economy", nameAr: "اقتصاد النزاع", href: "/sectors/conflict-economy", img: `${CDN}/conflict-economy_99c2e906.jpg` },
   ], []);
 
+  // Audience cards — all links verified against App.tsx routes
   const audiences = useMemo(() => [
-    { icon: Landmark, labelEn: "Government Officials", labelAr: "المسؤولون الحكوميون", descEn: "Policy briefs, fiscal analysis, and strategic intelligence for ministries and central bank leadership", descAr: "إحاطات سياسية وتحليل مالي واستخبارات استراتيجية للوزارات وقيادة البنك المركزي", href: "/vip-cockpit" },
+    { icon: Landmark, labelEn: "Government Officials", labelAr: "المسؤولون الحكوميون", descEn: "Policy briefs, fiscal analysis, and strategic intelligence for ministries and central bank leadership", descAr: "إحاطات سياسية وتحليل مالي واستخبارات استراتيجية للوزارات وقيادة البنك المركزي", href: "/vip/cockpit" },
     { icon: Globe, labelEn: "International Organizations", labelAr: "المنظمات الدولية", descEn: "Donor accountability, humanitarian data, and programme impact analysis for UN agencies and World Bank", descAr: "مساءلة المانحين وبيانات إنسانية وتحليل أثر البرامج لوكالات الأمم المتحدة والبنك الدولي", href: "/dashboard" },
-    { icon: GraduationCap, labelEn: "Researchers & Academics", labelAr: "الباحثون والأكاديميون", descEn: "1,767+ publications, time series since 2010, and advanced analytical tools for rigorous economic research", descAr: "أكثر من 1,767 منشور وسلاسل زمنية منذ 2010 وأدوات تحليلية متقدمة للبحث الاقتصادي", href: "/research" },
+    { icon: GraduationCap, labelEn: "Researchers & Academics", labelAr: "الباحثون والأكاديميون", descEn: "1,767+ publications, time series since 2010, and advanced analytical tools for rigorous economic research", descAr: "أكثر من 1,767 منشور وسلاسل زمنية منذ 2010 وأدوات تحليلية متقدمة للبحث الاقتصادي", href: "/research-hub" },
     { icon: Newspaper, labelEn: "Journalists & Media", labelAr: "الصحفيون والإعلام", descEn: "Verified data, real-time indicators, and visual tools for evidence-based economic reporting on Yemen", descAr: "بيانات موثقة ومؤشرات فورية وأدوات بصرية للتقارير الاقتصادية المبنية على الأدلة", href: "/live-data" },
-    { icon: Users, labelEn: "Citizens", labelAr: "المواطنون", descEn: "Understand how the economy affects your daily life — prices, jobs, currency, and food security explained simply", descAr: "افهم كيف يؤثر الاقتصاد على حياتك اليومية — الأسعار والوظائف والعملة والأمن الغذائي بشكل مبسط", href: "/ai-assistant" },
+    { icon: Users, labelEn: "Citizens & Civil Society", labelAr: "المواطنون والمجتمع المدني", descEn: "Understand how the economy affects daily life — prices, jobs, currency, and food security explained clearly", descAr: "افهم كيف يؤثر الاقتصاد على حياتك اليومية — الأسعار والوظائف والعملة والأمن الغذائي بشكل مبسط", href: "/ai-assistant" },
     { icon: Building2, labelEn: "Banks & Private Sector", labelAr: "البنوك والقطاع الخاص", descEn: "Banking sector intelligence, compliance monitoring, market analysis, and investment climate assessment", descAr: "استخبارات القطاع المصرفي ومراقبة الامتثال وتحليل السوق وتقييم مناخ الاستثمار", href: "/sectors/banking" },
   ], []);
 
   const capabilities = useMemo(() => [
     { icon: Database, titleEn: "7,868+ Data Points", titleAr: "أكثر من 7,868 نقطة بيانات", descEn: "Verified economic indicators from 292 sources with full provenance tracking since 2010", descAr: "مؤشرات اقتصادية موثقة من 292 مصدر مع تتبع كامل للمصادر منذ 2010", href: "/data-repository" },
     { icon: Brain, titleEn: "8 Expert AI Agents", titleAr: "8 وكلاء ذكاء اصطناعي", descEn: "Sector-specific AI analysts trained on the full knowledge base — ask anything about Yemen's economy", descAr: "محللون بالذكاء الاصطناعي متخصصون بالقطاعات ومدربون على قاعدة المعرفة الكاملة", href: "/ai-assistant" },
-    { icon: BookOpen, titleEn: "1,767+ Publications", titleAr: "أكثر من 1,767 منشور", descEn: "Academic papers, policy reports, and analysis from World Bank, IMF, UN, and leading think tanks", descAr: "أوراق أكاديمية وتقارير سياسية وتحليلات من البنك الدولي وصندوق النقد والأمم المتحدة", href: "/research" },
+    { icon: BookOpen, titleEn: "1,767+ Publications", titleAr: "أكثر من 1,767 منشور", descEn: "Academic papers, policy reports, and analysis from World Bank, IMF, UN, and leading think tanks", descAr: "أوراق أكاديمية وتقارير سياسية وتحليلات من البنك الدولي وصندوق النقد والأمم المتحدة", href: "/research-hub" },
     { icon: LineChart, titleEn: "Advanced Analytics", titleAr: "تحليلات متقدمة", descEn: "Interactive dashboards, scenario modeling, and regime-comparison tools for deep economic analysis", descAr: "لوحات معلومات تفاعلية ونمذجة سيناريوهات وأدوات مقارنة الأنظمة للتحليل الاقتصادي العميق", href: "/dashboard" },
     { icon: Activity, titleEn: "Real-Time Monitoring", titleAr: "مراقبة فورية", descEn: "Live data feeds from World Bank, UNHCR, and connected APIs with automatic daily refresh", descAr: "بيانات حية من البنك الدولي ومفوضية اللاجئين وواجهات برمجة متصلة مع تحديث يومي تلقائي", href: "/live-data" },
     { icon: Eye, titleEn: "Full Transparency", titleAr: "شفافية كاملة", descEn: "Every figure is sourced, dated, and confidence-rated — no black boxes, no assumptions", descAr: "كل رقم موثق ومؤرخ ومصنف الثقة — لا صناديق سوداء ولا افتراضات", href: "/data-coverage" },
@@ -115,21 +118,21 @@ export default function Home() {
               </span>
             </div>
 
-            {/* Opening Statement - The Hook */}
+            {/* Opening Statement */}
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.1] tracking-tight">
               {isAr ? (
                 <>
-                  <span className="text-white/40 block text-2xl md:text-3xl font-light mb-3">لعقود، صُنعت القرارات في الظلام</span>
-                  <span className="bg-gradient-to-r from-[#C9A961] via-[#e8d48b] to-[#C9A961] bg-clip-text text-transparent">شيء ما</span>
-                  <span className="text-white"> على وشك </span>
-                  <span className="bg-gradient-to-r from-[#C9A961] via-[#e8d48b] to-[#C9A961] bg-clip-text text-transparent">التغيير</span>
+                  <span className="text-white/40 block text-2xl md:text-3xl font-light mb-3">لعقود، صُنعت القرارات بدون بيانات</span>
+                  <span className="bg-gradient-to-r from-[#C9A961] via-[#e8d48b] to-[#C9A961] bg-clip-text text-transparent">الآن</span>
+                  <span className="text-white"> يمكنك أن </span>
+                  <span className="bg-gradient-to-r from-[#C9A961] via-[#e8d48b] to-[#C9A961] bg-clip-text text-transparent">ترى</span>
                 </>
               ) : (
                 <>
-                  <span className="text-white/40 block text-2xl md:text-3xl font-light mb-3">For years, decisions have been made in darkness</span>
-                  <span className="bg-gradient-to-r from-[#C9A961] via-[#e8d48b] to-[#C9A961] bg-clip-text text-transparent">Something</span>
-                  <span className="text-white"> is about to </span>
-                  <span className="bg-gradient-to-r from-[#C9A961] via-[#e8d48b] to-[#C9A961] bg-clip-text text-transparent">change</span>
+                  <span className="text-white/40 block text-2xl md:text-3xl font-light mb-3">For years, decisions were made without data</span>
+                  <span className="bg-gradient-to-r from-[#C9A961] via-[#e8d48b] to-[#C9A961] bg-clip-text text-transparent">Now</span>
+                  <span className="text-white"> you can </span>
+                  <span className="bg-gradient-to-r from-[#C9A961] via-[#e8d48b] to-[#C9A961] bg-clip-text text-transparent">see</span>
                 </>
               )}
             </h1>
@@ -137,7 +140,7 @@ export default function Home() {
             <p className="text-lg md:text-xl text-white/60 max-w-3xl leading-relaxed mb-10">
               {isAr
                 ? "أول مرصد اقتصادي شامل لليمن — يجمع بيانات 292 مصدراً عالمياً منذ 2010، مدعوماً بالذكاء الاصطناعي، لتمكين كل صانع قرار ومواطن وباحث من فهم الاقتصاد اليمني بعمق وشفافية غير مسبوقة."
-                : "The first comprehensive economic observatory for Yemen — aggregating data from 292 global sources since 2010, powered by AI, to empower every policymaker, citizen, and researcher with unprecedented depth and transparency into Yemen's economy."}
+                : "The first comprehensive economic observatory for Yemen — aggregating data from 292 global sources since 2010, powered by AI, to give every policymaker, citizen, and researcher unprecedented visibility into Yemen's economy."}
             </p>
 
             {/* CTA Buttons */}
@@ -302,7 +305,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              {isAr ? "قدرات لا مثيل لها" : "Unmatched Capabilities"}
+              {isAr ? "ما يميز المرصد" : "What Sets the Observatory Apart"}
             </h2>
             <p className="text-white/50 max-w-2xl mx-auto">
               {isAr ? "أول منصة تجمع كل مصادر البيانات الاقتصادية لليمن في مكان واحد مع ذكاء اصطناعي متقدم" : "The first platform to aggregate all Yemen economic data sources in one place with advanced AI intelligence"}
@@ -363,9 +366,9 @@ export default function Home() {
                     <div className="group relative overflow-hidden rounded-xl cursor-pointer h-32 md:h-40">
                       {/* Background image */}
                       <div className="absolute inset-0">
-                        <img src={sector.img} alt="" className="w-full h-full object-cover opacity-40 group-hover:opacity-50 group-hover:scale-105 transition-all duration-500" />
+                        <img src={sector.img} alt="" className="w-full h-full object-cover opacity-70 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500" />
                       </div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                       
                       {/* Content */}
                       <div className="relative z-10 h-full flex flex-col justify-end p-4">
@@ -381,6 +384,16 @@ export default function Home() {
                 </AnimatedSection>
               );
             })}
+          </div>
+
+          {/* View All Sectors CTA */}
+          <div className="text-center mt-8">
+            <Link href="/sectors">
+              <Button variant="outline" className="border-[#C9A961]/30 hover:border-[#C9A961] text-[#C9A961] hover:bg-[#C9A961]/10 gap-2">
+                {isAr ? "عرض جميع القطاعات" : "View All Sectors"}
+                <ArrowRight className={`h-4 w-4 ${isAr ? 'rotate-180' : ''}`} />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

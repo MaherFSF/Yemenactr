@@ -19,7 +19,7 @@
   <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react" alt="React">
   <img src="https://img.shields.io/badge/Tests-736_Passing-brightgreen?style=flat-square" alt="Tests">
   <img src="https://img.shields.io/badge/Data_Points-7%2C868%2B-blue?style=flat-square" alt="Data Points">
-  <img src="https://img.shields.io/badge/Publications-1%2C767%2B-teal?style=flat-square" alt="Publications">
+  <img src="https://img.shields.io/badge/Library_Documents-372-teal?style=flat-square" alt="Library Documents">
   <img src="https://img.shields.io/badge/AI_Agents-8_Specialized-purple?style=flat-square" alt="AI Agents">
   <img src="https://img.shields.io/badge/Sources-292_(234_Active)-orange?style=flat-square" alt="Sources">
   <img src="https://img.shields.io/badge/Tier_Classification-59%25_Complete-blue?style=flat-square" alt="Tier Classification">

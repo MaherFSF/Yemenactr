@@ -477,32 +477,32 @@ export async function searchDocuments(filters: SearchFilters): Promise<SearchRes
     }
 
     if (filters.docTypes && filters.docTypes.length > 0) {
-      whereConditions.push(`docType IN (${filters.docTypes.map(t => `'${t}'`).join(',')})`);
+      whereConditions.push(`doc_type IN (${filters.docTypes.map(t => `'${t}'`).join(',')})`);
     }
 
     if (filters.languages && filters.languages.length > 0) {
-      whereConditions.push(`languageOriginal IN (${filters.languages.map(l => `'${l}'`).join(',')})`);
+      whereConditions.push(`language_original IN (${filters.languages.map(l => `'${l}'`).join(',')})`);
     }
 
     if (filters.licenseFlags && filters.licenseFlags.length > 0) {
-      whereConditions.push(`licenseFlag IN (${filters.licenseFlags.map(l => `'${l}'`).join(',')})`);
+      whereConditions.push(`license_flag IN (${filters.licenseFlags.map(l => `'${l}'`).join(',')})`);
     }
 
     if (filters.regimeTags && filters.regimeTags.length > 0) {
-      whereConditions.push(`regimeTagApplicability IN (${filters.regimeTags.map(r => `'${r}'`).join(',')})`);
+      whereConditions.push(`regime_tag IN (${filters.regimeTags.map(r => `'${r}'`).join(',')})`);
     }
 
     if (filters.years && filters.years.length > 0) {
-      whereConditions.push(`YEAR(publishedAt) IN (${filters.years.join(',')})`);
+      whereConditions.push(`YEAR(publication_date) IN (${filters.years.join(',')})`);
     }
 
     if (filters.publishers && filters.publishers.length > 0) {
-      const publisherConditions = filters.publishers.map(p => `publisherName LIKE '%${p}%'`).join(' OR ');
+      const publisherConditions = filters.publishers.map(p => `publisher LIKE '%${p}%'`).join(' OR ');
       whereConditions.push(`(${publisherConditions})`);
     }
 
     if (filters.query) {
-      whereConditions.push(`(titleEn LIKE '%${filters.query}%' OR titleAr LIKE '%${filters.query}%' OR summaryEn LIKE '%${filters.query}%')`);
+      whereConditions.push(`(title LIKE '%${filters.query}%' OR title_ar LIKE '%${filters.query}%' OR summary_en LIKE '%${filters.query}%')`);
     }
 
     const whereClause = whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : '';
@@ -516,7 +516,7 @@ export async function searchDocuments(filters: SearchFilters): Promise<SearchRes
     // Get documents
     const docsResult = await db.execute(sql.raw(`
       SELECT * FROM library_documents ${whereClause}
-      ORDER BY publishedAt DESC, importanceScore DESC
+      ORDER BY publication_date DESC, importance_score DESC
       LIMIT ${limit} OFFSET ${offset}
     `));
 
@@ -545,7 +545,7 @@ export async function getDocumentsBySector(sectorCode: string, limit: number = 1
     const result = await db.execute(sql`
       SELECT * FROM library_documents 
       WHERE JSON_CONTAINS(sectors, ${JSON.stringify(sectorCode)}) AND status = 'published'
-      ORDER BY publishedAt DESC, importanceScore DESC
+      ORDER BY publication_date DESC, importance_score DESC
       LIMIT ${limit}
     `);
 
@@ -567,9 +567,9 @@ export async function getDocumentsByEntity(entityId: number, limit: number = 10)
   try {
     const result = await db.execute(sql`
       SELECT * FROM library_documents 
-      WHERE (JSON_CONTAINS(entityIds, ${JSON.stringify(entityId)}) OR publisherEntityId = ${entityId})
+      WHERE (JSON_CONTAINS(entity_ids, ${JSON.stringify(entityId)})) 
       AND status = 'published'
-      ORDER BY publishedAt DESC, importanceScore DESC
+      ORDER BY publication_date DESC, importance_score DESC
       LIMIT ${limit}
     `);
 
@@ -592,7 +592,7 @@ export async function getRecentDocuments(limit: number = 10): Promise<LibraryDoc
     const result = await db.execute(sql`
       SELECT * FROM library_documents 
       WHERE status = 'published'
-      ORDER BY retrievedAt DESC
+      ORDER BY updated_at DESC
       LIMIT ${limit}
     `);
 
@@ -633,7 +633,7 @@ export async function getDocumentStatistics(): Promise<{
 
     // By type
     const typeResult = await db.execute(sql`
-      SELECT docType, COUNT(*) as count FROM library_documents GROUP BY docType
+      SELECT doc_type as docType, COUNT(*) as count FROM library_documents GROUP BY doc_type
     `);
     const byType: Record<string, number> = {};
     for (const row of (typeResult as any)[0] || []) {
@@ -642,7 +642,7 @@ export async function getDocumentStatistics(): Promise<{
 
     // By license
     const licenseResult = await db.execute(sql`
-      SELECT licenseFlag, COUNT(*) as count FROM library_documents GROUP BY licenseFlag
+      SELECT license_flag as licenseFlag, COUNT(*) as count FROM library_documents GROUP BY license_flag
     `);
     const byLicense: Record<string, number> = {};
     for (const row of (licenseResult as any)[0] || []) {
@@ -651,8 +651,8 @@ export async function getDocumentStatistics(): Promise<{
 
     // By year
     const yearResult = await db.execute(sql`
-      SELECT YEAR(publishedAt) as year, COUNT(*) as count FROM library_documents 
-      WHERE publishedAt IS NOT NULL GROUP BY YEAR(publishedAt) ORDER BY year DESC
+      SELECT YEAR(publication_date) as year, COUNT(*) as count FROM library_documents 
+      WHERE publication_date IS NOT NULL GROUP BY YEAR(publication_date) ORDER BY year DESC
     `);
     const byYear: Record<number, number> = {};
     for (const row of (yearResult as any)[0] || []) {
@@ -670,32 +670,32 @@ export async function getDocumentStatistics(): Promise<{
 function mapRowToDocument(row: any): LibraryDocument {
   return {
     id: row.id,
-    docId: row.docId,
-    titleEn: row.titleEn,
-    titleAr: row.titleAr,
-    publisherName: row.publisherName,
+    docId: row.id, // Use id as docId since table uses UUID id
+    titleEn: row.title || row.titleEn || '',
+    titleAr: row.title_ar || row.titleAr,
+    publisherName: row.publisher || row.publisherName || 'Unknown',
     publisherEntityId: row.publisherEntityId,
     sourceId: row.sourceId,
-    canonicalUrl: row.canonicalUrl,
-    publishedAt: row.publishedAt ? new Date(row.publishedAt) : undefined,
-    retrievedAt: new Date(row.retrievedAt),
-    licenseFlag: row.licenseFlag,
+    canonicalUrl: row.canonical_url || row.canonicalUrl,
+    publishedAt: (row.publication_date || row.publishedAt) ? new Date(row.publication_date || row.publishedAt) : undefined,
+    retrievedAt: new Date(row.updated_at || row.retrievedAt || row.created_at),
+    licenseFlag: row.license_flag || row.licenseFlag || 'unknown_requires_review',
     licenseDetails: row.licenseDetails,
-    languageOriginal: row.languageOriginal,
-    docType: row.docType,
+    languageOriginal: row.language_original || row.languageOriginal || 'en',
+    docType: row.doc_type || row.docType || 'report',
     sectors: typeof row.sectors === 'string' ? JSON.parse(row.sectors) : (row.sectors || []),
-    entityIds: typeof row.entityIds === 'string' ? JSON.parse(row.entityIds) : (row.entityIds || []),
+    entityIds: typeof row.entity_ids === 'string' ? JSON.parse(row.entity_ids) : (row.entity_ids || row.entityIds || []),
     geographies: typeof row.geographies === 'string' ? JSON.parse(row.geographies) : (row.geographies || []),
-    regimeTagApplicability: row.regimeTagApplicability,
+    regimeTagApplicability: row.regime_tag || row.regimeTagApplicability || 'unknown',
     currentVersionId: row.currentVersionId,
-    status: row.status,
-    importanceScore: row.importanceScore || 50,
-    summaryEn: row.summaryEn,
-    summaryAr: row.summaryAr,
+    status: row.status || 'published',
+    importanceScore: row.importance_score || row.importanceScore || 50,
+    summaryEn: row.summary_en || row.summaryEn,
+    summaryAr: row.summary_ar || row.summaryAr,
     summaryIsAiGenerated: row.summaryIsAiGenerated || false,
     metadata: typeof row.metadata === 'string' ? JSON.parse(row.metadata) : (row.metadata || {}),
-    createdAt: new Date(row.createdAt),
-    updatedAt: new Date(row.updatedAt),
+    createdAt: new Date(row.created_at || row.createdAt),
+    updatedAt: new Date(row.updated_at || row.updatedAt),
     createdBy: row.createdBy
   };
 }

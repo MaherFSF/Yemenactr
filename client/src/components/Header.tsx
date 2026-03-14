@@ -76,13 +76,14 @@ export default function Header() {
     { nameEn: "Public Finance", nameAr: "المالية العامة", href: "/sectors/public-finance", icon: Building2 },
     { nameEn: "Energy & Fuel", nameAr: "الطاقة والوقود", href: "/sectors/energy", icon: Zap },
     { nameEn: "Food Security", nameAr: "الأمن الغذائي", href: "/sectors/food-security", icon: Wheat },
-    { nameEn: "Aid Flows", nameAr: "تدفقات المساعدات", href: "/sectors/aid-flows", icon: Heart },
+    { nameEn: "Aid & Humanitarian", nameAr: "المساعدات والإنسانية", href: "/sectors/aid-flows", icon: Heart },
     { nameEn: "Labor Market", nameAr: "سوق العمل", href: "/sectors/labor-market", icon: Briefcase },
     { nameEn: "Conflict Economy", nameAr: "اقتصاد الصراع", href: "/sectors/conflict-economy", icon: AlertTriangle },
     { nameEn: "Infrastructure", nameAr: "البنية التحتية", href: "/sectors/infrastructure", icon: Building },
     { nameEn: "Agriculture", nameAr: "الزراعة", href: "/sectors/agriculture", icon: TreePine },
     { nameEn: "Investment", nameAr: "الاستثمار", href: "/sectors/investment", icon: Factory },
     { nameEn: "Poverty & Development", nameAr: "الفقر والتنمية", href: "/sectors/poverty", icon: Users },
+    { nameEn: "Microfinance", nameAr: "التمويل الأصغر", href: "/sectors/microfinance", icon: Banknote },
     { nameEn: "Sanctions", nameAr: "العقوبات", href: "/sanctions", icon: ShieldAlert },
     { nameEn: "Remittances", nameAr: "التحويلات", href: "/remittances", icon: Send },
     { nameEn: "Public Debt", nameAr: "الدين العام", href: "/public-debt", icon: Landmark },
@@ -360,7 +361,7 @@ export default function Header() {
                 {language === "ar" ? "القطاعات" : "Sectors"}
               </p>
               <div className="grid grid-cols-2 gap-1">
-                {sectors.slice(0, 8).map((sector) => {
+                {sectors.slice(0, 16).map((sector) => {
                   const Icon = sector.icon;
                   return (
                     <Link 

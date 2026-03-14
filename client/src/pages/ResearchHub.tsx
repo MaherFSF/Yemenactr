@@ -66,7 +66,14 @@ const SECTOR_LABELS: Record<string, { en: string; ar: string }> = {
   aid_flows: { en: 'Aid Flows', ar: 'تدفقات المساعدات' },
   energy: { en: 'Energy', ar: 'الطاقة' },
   infrastructure: { en: 'Infrastructure', ar: 'البنية التحتية' },
-  environment: { en: 'Environment', ar: 'البيئة' }
+  environment: { en: 'Environment', ar: 'البيئة' },
+  labor_market: { en: 'Labor Market', ar: 'سوق العمل' },
+  poverty: { en: 'Poverty', ar: 'الفقر' },
+  conflict: { en: 'Conflict Economy', ar: 'اقتصاد الصراع' },
+  agriculture: { en: 'Agriculture', ar: 'الزراعة' },
+  health: { en: 'Health', ar: 'الصحة' },
+  education: { en: 'Education', ar: 'التعليم' },
+  governance: { en: 'Governance', ar: 'الحوكمة' }
 };
 
 // License flag labels
@@ -148,9 +155,15 @@ export default function ResearchHub() {
               </div>
             </div>
             <div className="bg-white/10 rounded-lg px-4 py-2">
-              <div className="text-2xl font-bold">{Object.keys(stats?.byYear || {}).length || 0}</div>
+              <div className="text-2xl font-bold">
+                {(() => {
+                  const years = Object.keys(stats?.byYear || {}).map(Number).sort();
+                  if (years.length === 0) return '0';
+                  return `${years[0]}–${years[years.length - 1]}`;
+                })()}
+              </div>
               <div className="text-sm text-emerald-100">
-                {language === 'ar' ? 'سنوات التغطية' : 'Years Covered'}
+                {language === 'ar' ? 'فترة التغطية' : 'Coverage Period'}
               </div>
             </div>
             <div className="bg-white/10 rounded-lg px-4 py-2">

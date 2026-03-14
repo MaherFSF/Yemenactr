@@ -10378,5 +10378,47 @@ Based on review of master design documents and data source register:
 - [x] Zero TypeScript errors (confirmed)
 - [x] All vitest tests pass (736/736 across 33 files)
 - [x] Update README with full documentation (7,868+ data points, 1,767 publications, 8 AI agents)
+- [x] Save checkpoint (version: 61cc820d)
+- [x] Deliver for publish
+
+## Phase 87: Comprehensive Site Overhaul - Unique Images, Landing Page Perfection, Navigation Audit (March 14, 2026)
+
+### RULE: Never use the same image more than once. Every word matters. Every link must work. Amaze.
+
+### Task 1 - Unique Sector Images (No Duplicates)
+- [x] Audit all current images used across the site (found 9 sectors using same economy image)
+- [x] Search and collect 16+ unique, high-quality Yemen-relevant images
+- [x] Upload all images to CDN
+- [x] Assign unique image to each sector card on landing page (all 16 unique)
+- [x] Assign unique banner to each sector page
+- [x] Verify zero image duplication across entire site (confirmed via grep)
+
+### Task 2 - Deep Landing Page Review
+- [x] Review every single word on the landing page
+- [x] Ensure messaging speaks powerfully to all audiences
+- [x] Fix any generic or weak copy (rewrote hero, audience cards, sector descriptions)
+- [x] Ensure all links point to correct destinations (fixed 3 broken links)
+- [x] Review layout, spacing, visual hierarchy
+- [x] Make first impression truly world-class
+- [x] Ensure KPIs are accurate and compelling
+- [x] Review audience cards - are they the right fit?
+- [x] Review sector grid - is it intuitive and inviting? (increased image opacity 40%→70%)
+
+### Task 3 - Navigation & Content Audit
+- [x] Test every navigation link and dropdown
+- [x] Check content on every page for accuracy
+- [x] Fix any broken links or dead ends (Labor Market, Aid Flows, VIP Cockpit)
+- [x] Ensure consistent branding across all pages
+- [x] Verify all pages have proper back navigation
+
+### Task 4 - Continue Data Backfill
+- [x] Run additional data ingestion from public APIs (World Bank extra indicators - all 463 already present)
+- [x] Ensure research library continues growing (372 documents, 2010-2026)
+- [x] Verify data freshness across all sectors (7,868 time series, 463 indicators)
+
+### Task 5 - Final Testing & Delivery
+- [x] Browser test all changes (landing page, sector grid, Research Hub, navigation)
+- [x] Fix literatureService.test.ts (2 failing → 0 failing)
+- [x] All 736 tests pass across 33 files
 - [ ] Save checkpoint
 - [ ] Deliver for publish
