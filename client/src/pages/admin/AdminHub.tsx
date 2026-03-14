@@ -1,14 +1,18 @@
 import { Link } from "wouter";
 import DashboardLayout from "@/components/DashboardLayout";
 import AdminGuard from "@/components/AdminGuard";
+import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   Activity,
   AlertTriangle,
   BarChart3,
   Bell,
   Brain,
+  CheckCircle2,
   Database,
   FileText,
   Globe,
@@ -18,12 +22,19 @@ import {
   LineChart,
   MessageSquare,
   Palette,
+  RefreshCw,
   Settings,
   Shield,
   Sliders,
   Users,
   Webhook,
-  Zap
+  Zap,
+  TrendingUp,
+  Server,
+  Radio,
+  XCircle,
+  Clock,
+  ArrowRight,
 } from "lucide-react";
 
 interface AdminPage {
@@ -37,202 +48,134 @@ interface AdminPage {
 }
 
 const adminPages: AdminPage[] = [
-  // Monitoring
-  {
-    title: "API Health Dashboard",
-    description: "Monitor connector status, view error rates, and trigger manual data refreshes",
-    href: "/admin/api-health",
-    icon: <Activity className="w-6 h-6" />,
-    category: "monitoring",
-    badge: "Live",
-    badgeVariant: "default",
-  },
-  {
-    title: "Alert History",
-    description: "View and manage system alerts, acknowledge issues, and track resolutions",
-    href: "/admin/alert-history",
-    icon: <Bell className="w-6 h-6" />,
-    category: "monitoring",
-  },
-  {
-    title: "Webhook Settings",
-    description: "Configure Slack, Discord, and custom webhook notifications",
-    href: "/admin/webhooks",
-    icon: <Webhook className="w-6 h-6" />,
-    category: "monitoring",
-    badge: "New",
-    badgeVariant: "secondary",
-  },
-  {
-    title: "Connector Thresholds",
-    description: "Customize stale data thresholds for each data connector",
-    href: "/admin/connector-thresholds",
-    icon: <Sliders className="w-6 h-6" />,
-    category: "monitoring",
-  },
-  // Reporting & Visualization
-  {
-    title: "Report Workflow",
-    description: "Manage report drafts, reviews, approvals, and publications",
-    href: "/admin/reports",
-    icon: <FileText className="w-6 h-6" />,
-    category: "data",
-    badge: "New",
-    badgeVariant: "secondary",
-  },
-  {
-    title: "Visualization Builder",
-    description: "Create and manage data visualizations with evidence packs",
-    href: "/admin/visualizations",
-    icon: <LineChart className="w-6 h-6" />,
-    category: "data",
-    badge: "New",
-    badgeVariant: "secondary",
-  },
-  {
-    title: "Insight Miner",
-    description: "AI-detected trends, anomalies, and storylines for editorial review",
-    href: "/admin/insights",
-    icon: <Brain className="w-6 h-6" />,
-    category: "data",
-    badge: "AI",
-    badgeVariant: "default",
-  },
-  // Data Management
-  {
-    title: "Data Quality",
-    description: "Review data quality scores, validation rules, and accuracy metrics",
-    href: "/admin/data-quality",
-    icon: <Shield className="w-6 h-6" />,
-    category: "data",
-  },
-  {
-    title: "Provenance Ledger",
-    description: "Track data lineage, source attribution, and transformation history",
-    href: "/admin/provenance",
-    icon: <History className="w-6 h-6" />,
-    category: "data",
-  },
-  {
-    title: "Signal Detection",
-    description: "View detected anomalies, trends, and economic signals",
-    href: "/admin/signals",
-    icon: <Zap className="w-6 h-6" />,
-    category: "data",
-  },
-  {
-    title: "Publications",
-    description: "Manage auto-generated reports, daily snapshots, and weekly digests",
-    href: "/admin/publications",
-    icon: <FileText className="w-6 h-6" />,
-    category: "data",
-  },
-  {
-    title: "Export Bundle",
-    description: "Create deployable packages for GitHub and AWS",
-    href: "/admin/export",
-    icon: <Database className="w-6 h-6" />,
-    category: "settings",
-    badge: "New",
-    badgeVariant: "secondary",
-  },
-  // Settings
-  {
-    title: "Platform Settings",
-    description: "Configure platform-wide settings, branding, and feature flags",
-    href: "/admin/settings",
-    icon: <Settings className="w-6 h-6" />,
-    category: "settings",
-  },
-  {
-    title: "API Keys",
-    description: "Manage API keys for external integrations and partner access",
-    href: "/admin/api-keys",
-    icon: <Key className="w-6 h-6" />,
-    category: "settings",
-  },
-  {
-    title: "Localization",
-    description: "Manage translations, RTL support, and regional settings",
-    href: "/admin/localization",
-    icon: <Globe className="w-6 h-6" />,
-    category: "settings",
-  },
-  // Users
-  {
-    title: "User Management",
-    description: "View users, manage roles, and configure access permissions",
-    href: "/admin/users",
-    icon: <Users className="w-6 h-6" />,
-    category: "users",
-  },
-  {
-    title: "Analytics",
-    description: "View platform usage, popular indicators, and user engagement",
-    href: "/admin/analytics",
-    icon: <BarChart3 className="w-6 h-6" />,
-    category: "users",
-  },
-  {
-    title: "Feedback",
-    description: "Review user feedback, feature requests, and bug reports",
-    href: "/admin/feedback",
-    icon: <MessageSquare className="w-6 h-6" />,
-    category: "users",
-  },
+  { title: "API Health Dashboard", description: "Monitor connector status, error rates, and trigger data refreshes", href: "/admin/api-health", icon: <Activity className="w-6 h-6" />, category: "monitoring", badge: "Live", badgeVariant: "default" },
+  { title: "Source Registry", description: "292 sources with tier classification, API URLs, and backfill status", href: "/admin/source-registry", icon: <Database className="w-6 h-6" />, category: "monitoring", badge: "292", badgeVariant: "secondary" },
+  { title: "Data Freshness", description: "Monitor data staleness, freshness SLAs, and auto-refresh schedules", href: "/admin/data-freshness", icon: <Clock className="w-6 h-6" />, category: "monitoring" },
+  { title: "Alert History", description: "View and manage system alerts, acknowledge issues, and track resolutions", href: "/admin/alert-history", icon: <Bell className="w-6 h-6" />, category: "monitoring" },
+  { title: "Webhook Settings", description: "Configure Slack, Discord, and custom webhook notifications", href: "/admin/webhooks", icon: <Webhook className="w-6 h-6" />, category: "monitoring" },
+  { title: "Connector Thresholds", description: "Customize stale data thresholds for each data connector", href: "/admin/connector-thresholds", icon: <Sliders className="w-6 h-6" />, category: "monitoring" },
+  { title: "Data Coverage", description: "Year-by-year heatmap showing indicator coverage and gaps", href: "/data-coverage", icon: <BarChart3 className="w-6 h-6" />, category: "data", badge: "New", badgeVariant: "secondary" },
+  { title: "Backfill Dashboard", description: "Run and monitor data backfill from World Bank, IMF, FAO, ILO, WHO", href: "/admin/backfill-dashboard", icon: <RefreshCw className="w-6 h-6" />, category: "data" },
+  { title: "Report Workflow", description: "Manage report drafts, reviews, approvals, and publications", href: "/admin/reports", icon: <FileText className="w-6 h-6" />, category: "data" },
+  { title: "Visualization Builder", description: "Create and manage data visualizations with evidence packs", href: "/admin/visualizations", icon: <LineChart className="w-6 h-6" />, category: "data" },
+  { title: "Insight Miner", description: "AI-detected trends, anomalies, and storylines for editorial review", href: "/admin/insights", icon: <Brain className="w-6 h-6" />, category: "data", badge: "AI", badgeVariant: "default" },
+  { title: "Data Quality", description: "Review data quality scores, validation rules, and accuracy metrics", href: "/admin/data-quality", icon: <Shield className="w-6 h-6" />, category: "data" },
+  { title: "Platform Settings", description: "Configure platform-wide settings, branding, and feature flags", href: "/admin/settings", icon: <Settings className="w-6 h-6" />, category: "settings" },
+  { title: "API Keys", description: "Manage API keys for external integrations and partner access", href: "/admin/api-keys", icon: <Key className="w-6 h-6" />, category: "settings" },
+  { title: "Export Bundle", description: "Create deployable packages for GitHub and AWS", href: "/admin/export", icon: <Database className="w-6 h-6" />, category: "settings" },
+  { title: "Localization", description: "Manage translations, RTL support, and regional settings", href: "/admin/localization", icon: <Globe className="w-6 h-6" />, category: "settings" },
+  { title: "User Management", description: "View users, manage roles, and configure access permissions", href: "/admin/users", icon: <Users className="w-6 h-6" />, category: "users" },
+  { title: "Analytics", description: "View platform usage, popular indicators, and user engagement", href: "/admin/analytics", icon: <BarChart3 className="w-6 h-6" />, category: "users" },
+  { title: "Feedback", description: "Review user feedback, feature requests, and bug reports", href: "/admin/feedback", icon: <MessageSquare className="w-6 h-6" />, category: "users" },
 ];
 
 const categories = [
-  { id: "monitoring", title: "Monitoring & Alerts", icon: <Activity className="w-5 h-5" /> },
-  { id: "data", title: "Data Management", icon: <Database className="w-5 h-5" /> },
+  { id: "monitoring", title: "Monitoring & Data Sources", icon: <Activity className="w-5 h-5" /> },
+  { id: "data", title: "Data Management & Analysis", icon: <Database className="w-5 h-5" /> },
   { id: "settings", title: "Platform Settings", icon: <Settings className="w-5 h-5" /> },
   { id: "users", title: "Users & Analytics", icon: <Users className="w-5 h-5" /> },
 ];
 
 export default function AdminHub() {
+  const { data: stats, isLoading: statsLoading } = trpc.admin.getSystemStats.useQuery();
+  const { data: connectors, isLoading: connectorsLoading } = trpc.admin.getConnectorStatus.useQuery();
+
+  const activeConnectors = connectors?.filter(c => c.status === "active").length || 0;
+  const totalConnectorRecords = connectors?.reduce((sum, c) => sum + (c.recordCount || 0), 0) || 0;
+
   return (
     <AdminGuard>
     <DashboardLayout>
       <div className="space-y-8">
-        {/* Header with impressive gradient */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8 text-white">
+        {/* Header with live stats */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0a2e1f] via-[#0d3b28] to-[#0a2e1f] p-8 text-white">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
           <div className="relative z-10">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="p-3 bg-white/10 rounded-xl backdrop-blur-sm border border-white/20">
-                <LayoutDashboard className="w-8 h-8" />
+            <div className="flex items-center gap-4 mb-6">
+              <div className="p-3 bg-[#d4a843]/20 rounded-xl backdrop-blur-sm border border-[#d4a843]/30">
+                <LayoutDashboard className="w-8 h-8 text-[#d4a843]" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Admin Control Center</h1>
-                <p className="text-white/70">Manage all aspects of the YETO platform</p>
+                <h1 className="text-3xl font-bold">YETO Admin Control Center</h1>
+                <p className="text-white/70">Yemen Economic Transparency Observatory — Platform Operations</p>
               </div>
             </div>
             
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/10">
-                <p className="text-white/60 text-sm">Active Connectors</p>
-                <p className="text-2xl font-bold">12</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/10">
-                <p className="text-white/60 text-sm">Data Points</p>
-                <p className="text-2xl font-bold">2,000+</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/10">
-                <p className="text-white/60 text-sm">Active Users</p>
-                <p className="text-2xl font-bold">150+</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/10">
-                <p className="text-white/60 text-sm">System Health</p>
-                <p className="text-2xl font-bold text-green-400">98%</p>
-              </div>
+            {/* Live Stats Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mt-4">
+              <StatCard label="Total Sources" value={stats?.totalSources} loading={statsLoading} icon={<Database className="w-4 h-4" />} />
+              <StatCard label="Active Sources" value={stats?.activeSources} loading={statsLoading} icon={<CheckCircle2 className="w-4 h-4 text-green-400" />} />
+              <StatCard label="API Connected" value={stats?.sourcesWithApi} loading={statsLoading} icon={<Radio className="w-4 h-4 text-blue-400" />} />
+              <StatCard label="Indicators" value={stats?.totalIndicators} loading={statsLoading} icon={<TrendingUp className="w-4 h-4 text-[#d4a843]" />} />
+              <StatCard label="Data Points" value={stats?.totalDataPoints} loading={statsLoading} icon={<Server className="w-4 h-4 text-purple-400" />} format="compact" />
+              <StatCard label="Needs API Key" value={stats?.sourcesNeedingKey} loading={statsLoading} icon={<Key className="w-4 h-4 text-orange-400" />} highlight={true} />
             </div>
           </div>
-          
-          {/* Decorative elements */}
-          <div className="absolute -right-20 -top-20 w-60 h-60 bg-purple-500/20 rounded-full blur-3xl" />
-          <div className="absolute -left-10 -bottom-20 w-40 h-40 bg-blue-500/20 rounded-full blur-2xl" />
+          <div className="absolute -right-20 -top-20 w-60 h-60 bg-[#d4a843]/10 rounded-full blur-3xl" />
+          <div className="absolute -left-10 -bottom-20 w-40 h-40 bg-[#107040]/20 rounded-full blur-2xl" />
         </div>
+
+        {/* Source Connection Status - Live from DB */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-lg font-semibold">
+              <span className="p-1.5 bg-primary/10 rounded-lg text-primary"><Radio className="w-5 h-5" /></span>
+              Live Data Source Status
+            </div>
+            <Link href="/admin/api-health">
+              <Button variant="outline" size="sm">View All <ArrowRight className="w-4 h-4 ml-1" /></Button>
+            </Link>
+          </div>
+          
+          {connectorsLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {[1,2,3,4,5,6].map(i => <Skeleton key={i} className="h-24 rounded-lg" />)}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {connectors?.map(conn => (
+                <div key={conn.id} className="flex items-center gap-3 p-4 rounded-lg border bg-card">
+                  <div className={`w-3 h-3 rounded-full flex-shrink-0 ${
+                    conn.status === 'active' ? 'bg-green-500' : 
+                    conn.status === 'auth_required' ? 'bg-yellow-500' : 'bg-red-500'
+                  }`} />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm truncate">{conn.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {conn.recordCount > 0 ? `${conn.recordCount.toLocaleString()} records` : 'No data'}
+                      {conn.latestYear ? ` · Latest: ${conn.latestYear}` : ''}
+                    </p>
+                  </div>
+                  <Badge variant={conn.status === 'active' ? 'default' : conn.status === 'auth_required' ? 'secondary' : 'destructive'} className="text-xs flex-shrink-0">
+                    {conn.status === 'active' ? 'Connected' : conn.status === 'auth_required' ? 'Needs Key' : 'Offline'}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Sector Coverage - Live from DB */}
+        {stats?.sectorCoverage && stats.sectorCoverage.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-lg font-semibold">
+              <span className="p-1.5 bg-primary/10 rounded-lg text-primary"><BarChart3 className="w-5 h-5" /></span>
+              Sector Data Coverage
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {stats.sectorCoverage.map(sec => (
+                <div key={sec.sector} className="p-4 rounded-lg border bg-card">
+                  <p className="font-medium text-sm capitalize">{sec.sector?.replace(/_/g, ' ') || 'Unknown'}</p>
+                  <div className="flex items-baseline gap-2 mt-1">
+                    <span className="text-2xl font-bold text-primary">{sec.indicators}</span>
+                    <span className="text-xs text-muted-foreground">indicators</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">{sec.dataPoints.toLocaleString()} data points</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Admin Pages by Category */}
         {categories.map((category) => (
@@ -286,27 +229,27 @@ export default function AdminHub() {
           <CardContent>
             <div className="flex flex-wrap gap-3">
               <Link href="/admin/api-health">
-                <button className="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors flex items-center gap-2">
+                <button className="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors flex items-center gap-2 dark:bg-green-900/30 dark:text-green-400">
                   <Activity className="w-4 h-4" />
                   Refresh All Data
                 </button>
               </Link>
-              <Link href="/admin/alert-history">
-                <button className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors flex items-center gap-2">
-                  <Bell className="w-4 h-4" />
-                  View Alerts
-                </button>
-              </Link>
-              <Link href="/admin/webhooks">
-                <button className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors flex items-center gap-2">
-                  <Webhook className="w-4 h-4" />
-                  Configure Webhooks
-                </button>
-              </Link>
-              <Link href="/data-repository">
-                <button className="px-4 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors flex items-center gap-2">
+              <Link href="/admin/source-registry">
+                <button className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors flex items-center gap-2 dark:bg-blue-900/30 dark:text-blue-400">
                   <Database className="w-4 h-4" />
-                  Browse Data
+                  Source Registry
+                </button>
+              </Link>
+              <Link href="/data-coverage">
+                <button className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors flex items-center gap-2 dark:bg-purple-900/30 dark:text-purple-400">
+                  <BarChart3 className="w-4 h-4" />
+                  Coverage Dashboard
+                </button>
+              </Link>
+              <Link href="/admin/backfill-dashboard">
+                <button className="px-4 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors flex items-center gap-2 dark:bg-orange-900/30 dark:text-orange-400">
+                  <RefreshCw className="w-4 h-4" />
+                  Run Backfill
                 </button>
               </Link>
             </div>
@@ -315,5 +258,33 @@ export default function AdminHub() {
       </div>
     </DashboardLayout>
     </AdminGuard>
+  );
+}
+
+function StatCard({ label, value, loading, icon, format, highlight }: { 
+  label: string; value?: number; loading: boolean; icon: React.ReactNode; format?: string; highlight?: boolean 
+}) {
+  const formatValue = (v: number) => {
+    if (format === 'compact') {
+      if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`;
+      if (v >= 1000) return `${(v / 1000).toFixed(1)}K`;
+    }
+    return v.toLocaleString();
+  };
+
+  return (
+    <div className={`backdrop-blur-sm rounded-lg p-3 border ${highlight ? 'bg-orange-500/10 border-orange-500/20' : 'bg-white/10 border-white/10'}`}>
+      <div className="flex items-center gap-1.5 mb-1">
+        {icon}
+        <p className="text-white/60 text-xs">{label}</p>
+      </div>
+      {loading ? (
+        <Skeleton className="h-7 w-16 bg-white/10" />
+      ) : (
+        <p className={`text-xl font-bold ${highlight ? 'text-orange-400' : 'text-white'}`}>
+          {value !== undefined ? formatValue(value) : '—'}
+        </p>
+      )}
+    </div>
   );
 }

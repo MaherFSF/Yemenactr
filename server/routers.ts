@@ -1389,14 +1389,56 @@ Answer the user's question based on this research. Be specific and cite sources 
     // Get system stats (admin only)
     getSystemStats: adminProcedure
       .query(async () => {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+        
+        // Real database queries for system stats
+        const tsCount = (await db.execute(sql`SELECT COUNT(*) as c FROM time_series`) as unknown as any[][])[0];
+        const indCount = (await db.execute(sql`SELECT COUNT(*) as c FROM indicators WHERE isActive = 1`) as unknown as any[][])[0];
+        const srcCount = (await db.execute(sql`SELECT COUNT(*) as c FROM source_registry WHERE status = 'ACTIVE'`) as unknown as any[][])[0];
+        const userCount = (await db.execute(sql`SELECT COUNT(*) as c FROM users`) as unknown as any[][])[0];
+        const lastUpdate = (await db.execute(sql`SELECT MAX(updatedAt) as lu FROM time_series`) as unknown as any[][])[0];
+        let alertCountVal = 0;
+        try {
+          const alertCount = (await db.execute(sql`SELECT COUNT(*) as c FROM alerts WHERE status != 'resolved'`) as unknown as any[][])[0];
+          alertCountVal = Number(alertCount?.[0]?.c) || 0;
+        } catch { /* alerts table may not exist */ }
+        const srcWithApi = (await db.execute(sql`SELECT COUNT(*) as c FROM source_registry WHERE apiUrl IS NOT NULL AND apiUrl != ''`) as unknown as any[][])[0];
+        let srcBackfilledVal = 0;
+        try {
+          const srcBackfilled = (await db.execute(sql`SELECT COUNT(*) as c FROM source_registry WHERE backfillStatus = 'COMPLETED'`) as unknown as any[][])[0];
+          srcBackfilledVal = Number(srcBackfilled?.[0]?.c) || 0;
+        } catch { /* backfillStatus column may not exist */ }
+        const totalSources = (await db.execute(sql`SELECT COUNT(*) as c FROM source_registry`) as unknown as any[][])[0];
+        const needsKey = (await db.execute(sql`SELECT COUNT(*) as c FROM source_registry WHERE status = 'NEEDS_KEY'`) as unknown as any[][])[0];
+        
+        // Sector coverage
+        const sectorCov = (await db.execute(sql`
+          SELECT sector, COUNT(DISTINCT indicatorCode) as indicators, COUNT(*) as dataPoints
+          FROM time_series ts
+          JOIN indicators i ON ts.indicatorCode = i.code
+          WHERE i.isActive = 1
+          GROUP BY sector
+          ORDER BY dataPoints DESC
+        `) as unknown as any[][])[0] || [];
+        
         return {
-          totalUsers: 850,
-          activeToday: 124,
-          totalIndicators: 500,
-          totalDataPoints: 1200000,
-          pendingSubmissions: 12,
-          openGapTickets: 8,
-          lastDataUpdate: new Date().toISOString(),
+          totalUsers: Number(userCount?.[0]?.c) || 0,
+          activeToday: Number(userCount?.[0]?.c) || 0,
+          totalIndicators: Number(indCount?.[0]?.c) || 0,
+          totalDataPoints: Number(tsCount?.[0]?.c) || 0,
+          totalSources: Number(totalSources?.[0]?.c) || 0,
+          activeSources: Number(srcCount?.[0]?.c) || 0,
+          sourcesWithApi: Number(srcWithApi?.[0]?.c) || 0,
+          sourcesBackfilled: srcBackfilledVal,
+          sourcesNeedingKey: Number(needsKey?.[0]?.c) || 0,
+          openAlerts: alertCountVal,
+          lastDataUpdate: lastUpdate?.[0]?.lu ? new Date(lastUpdate[0].lu).toISOString() : new Date().toISOString(),
+          sectorCoverage: (sectorCov as any[]).map((s: any) => ({
+            sector: s.sector,
+            indicators: Number(s.indicators),
+            dataPoints: Number(s.dataPoints),
+          })),
         };
       }),
 

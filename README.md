@@ -18,7 +18,8 @@
   <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript" alt="TypeScript">
   <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react" alt="React">
   <img src="https://img.shields.io/badge/Tests-750%2B_Passing-brightgreen?style=flat-square" alt="Tests">
-  <img src="https://img.shields.io/badge/Data_Points-5%2C500%2B-blue?style=flat-square" alt="Data Points">
+  <img src="https://img.shields.io/badge/Data_Points-7%2C158%2B-blue?style=flat-square" alt="Data Points">
+  <img src="https://img.shields.io/badge/AI_Agents-8_Specialized-purple?style=flat-square" alt="AI Agents">
   <img src="https://img.shields.io/badge/Sources-292_(234_Active)-orange?style=flat-square" alt="Sources">
   <img src="https://img.shields.io/badge/Tier_Classification-59%25_Complete-blue?style=flat-square" alt="Tier Classification">
   <img src="https://img.shields.io/badge/Release_Gate-✅_PASSING-brightgreen?style=flat-square" alt="Release Gate">
@@ -100,13 +101,25 @@ YETO is not just a data portal—it is an **Economic Intelligence Platform** tha
 
 ### The "One Brain" AI System
 
-YETO's AI assistant operates under strict governance rules:
+YETO's AI system features **8 specialized agents**, each with deep expert knowledge of Yemen's economy, real-time database access, and streaming responses via SSE:
 
-1. **Zero Fabrication**: Every claim must link to evidence
-2. **Confidence Scoring**: A-D grades with transparent methodology
-3. **Contradiction Detection**: Identifies discrepancies between sources
-4. **Data Gap Tickets**: Auto-creates tickets when data is missing
-5. **Role-Aware Intelligence**: 7 specialized modes for different user types
+| Agent | Expertise | Key Knowledge |
+|-------|-----------|---------------|
+| **Citizen Explainer** | Simplifies economics for citizens | GDP collapse, dual exchange rates, remittance dependency |
+| **Policymaker Brief Writer** | IMF/World Bank caliber analysis | Fiscal space, CBY split, Saudi deposit, peace dividend modeling |
+| **Bank Compliance Analyst** | Sanctions & regulatory compliance | OFAC/UN/EU sanctions, FATF, CBY directives, AML/CFT |
+| **Donor Accountability Analyst** | Humanitarian finance tracking | OCHA FTS, $4.3B HRP, commitment vs disbursement gaps |
+| **Research Librarian** | Source discovery & quality hierarchy | 4-tier source reliability system, 10+ institutional sources |
+| **Data Steward** | Data governance & methodology | A-E confidence ratings, CSO limitations, source contradictions |
+| **Translation Agent** | Arabic-English economic terminology | 20+ key terms, Yemen-specific vocabulary, dual-dialect support |
+| **Scenario Modeler** | What-if analysis & forecasting | Oil price sensitivity, peace scenarios, historical precedents |
+
+**Governance Rules:**
+1. **Zero Fabrication**: Every claim links to real database evidence
+2. **Confidence Scoring**: A-E grades with transparent methodology
+3. **Real-Time Data**: Agents query 7,158+ time series records live
+4. **Streaming Responses**: Token-by-token SSE delivery with abort support
+5. **Source Citations**: Every response includes provenance metadata
 
 ---
 
@@ -186,7 +199,7 @@ YETO's AI assistant operates under strict governance rules:
 
 | Metric | Coverage |
 |--------|----------|
-| **Time Series** | 2010 → Present (15+ years, 5,513 data points) |
+| **Time Series** | 2010 → Present (15+ years, 7,158+ data points) |
 | **Exchange Rates** | Daily granularity since 2016 split |
 | **Economic Events** | 83+ documented with indicator linkages |
 | **Research Library** | 370+ publications from 38 organizations |
