@@ -21,8 +21,13 @@ import EvidencePackButton from "@/components/EvidencePackButton";
 import ContradictionBadge from "@/components/ContradictionBadge";
 import { SourcesUsedPanel } from "@/components/SourcesUsedPanel";
 import { trpc } from "@/lib/trpc";
+import { useSectorData, formatIndicatorValue } from "@/hooks/useSectorData";
+
 
 export default function Currency() {
+  // Live database indicators
+  const { indicators: liveIndicators, latestValues, isLoading: liveLoading } = useSectorData("currency");
+
   const { language } = useLanguage();
   const sectorCode = "currency";
 
@@ -452,6 +457,35 @@ export default function Currency() {
             </Card>
           </TabsContent>
         </Tabs>
+        {/* Live Database Indicators */}
+        {Object.keys(latestValues).length > 0 && (
+          <div className="mb-8 p-6 rounded-xl border border-[#0ea5e9]/20 bg-[#0ea5e9]/5">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              Live World Bank Indicators
+            </h3>
+            <div className="grid md:grid-cols-3 gap-4">
+              {Object.entries(latestValues).slice(0, 6).map(([code, regimes]: [string, any]) => {
+                const regime = regimes.aden || regimes.sanaa;
+                if (!regime) return null;
+                const ind = liveIndicators.find((i: any) => i.code === code);
+                return (
+                  <div key={code} className="p-4 rounded-lg bg-white dark:bg-gray-800 border">
+                    <div className="text-sm text-muted-foreground mb-1">{ind?.nameEn || code}</div>
+                    <div className="text-2xl font-bold" style={{ color: '#0ea5e9' }}>
+                      {formatIndicatorValue(regime.value, ind?.unit || "")}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {regime.year} · {regime.source}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+
 
         {/* Sources Used Panel */}
         <div className="mt-8">

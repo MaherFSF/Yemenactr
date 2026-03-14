@@ -128,7 +128,7 @@ export default function Header() {
         <Link href="/home" className="flex items-center gap-3 group transition-all duration-300">
           <div className="relative">
             <div className="absolute -inset-1 bg-gradient-to-r from-[#C9A961]/20 to-transparent rounded-lg opacity-0 group-hover:opacity-100 blur transition-opacity duration-300" />
-            <img src="/causeway-logo.png" alt="CauseWay" className="relative h-12 w-auto drop-shadow-md" />
+            <img src="https://d2xsxph8kpxj0f.cloudfront.net/310419663029421755/XodoyKMzPdFiKkVj3QFTGK/causeway-logo_ef0d3f96.jpeg" alt="CauseWay" className="relative h-12 w-auto drop-shadow-md" />
           </div>
           <div className="flex flex-col leading-tight">
             <span className="text-xs uppercase tracking-[0.25em] text-[#2C3424] font-semibold">

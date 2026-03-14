@@ -28,14 +28,46 @@ import {
 } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, ComposedChart } from 'recharts';
 import { Sparkline, RegimeHeatmap, InsightsTicker } from "@/components/charts/EnhancedVisualizations";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { SourcesUsedPanel } from "@/components/SourcesUsedPanel";
 import { Link } from "wouter";
+import { useSectorData, formatIndicatorValue } from "@/hooks/useSectorData";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Trade() {
   const { language } = useLanguage();
   const [selectedPort, setSelectedPort] = useState<"all" | "aden" | "hodeidah" | "mukalla">("all");
   const [timeRange, setTimeRange] = useState<"6m" | "1y" | "5y">("1y");
+
+  // Fetch live trade data from database
+  const { indicators, latestValues, chartData, isLoading: liveDataLoading } = useSectorData("trade");
+
+  // Build live KPI cards from database
+  const liveKPIs = useMemo(() => {
+    const kpis: Array<{ label: string; labelAr: string; value: string; source: string; code: string }> = [];
+    const tryAdd = (code: string, label: string, labelAr: string) => {
+      const latest = latestValues[code];
+      if (latest) {
+        const regime = latest.aden || latest.sanaa;
+        if (regime) {
+          const ind = indicators.find((i: any) => i.code === code);
+          kpis.push({
+            label, labelAr,
+            value: formatIndicatorValue(regime.value, ind?.unit || ""),
+            source: regime.source,
+            code,
+          });
+        }
+      }
+    };
+    tryAdd("WB_EXPORTS_GDP", "Exports (% of GDP)", "الصادرات (% من الناتج المحلي)");
+    tryAdd("WB_IMPORTS_GDP", "Imports (% of GDP)", "الواردات (% من الناتج المحلي)");
+    tryAdd("WB_TRADE_GDP", "Trade (% of GDP)", "التجارة (% من الناتج المحلي)");
+    tryAdd("WB_FDI_INFLOWS", "FDI Net Inflows", "صافي الاستثمار الأجنبي المباشر");
+    tryAdd("WB_REMITTANCES", "Remittances Received", "التحويلات المالية");
+    tryAdd("WB_CURRENT_ACCOUNT", "Current Account Balance", "ميزان الحساب الجاري");
+    return kpis;
+  }, [latestValues, indicators]);
 
   // Real Yemen images
   const images = {
@@ -1012,6 +1044,36 @@ export default function Trade() {
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Live Database Indicators */}
+        {liveKPIs.length > 0 && (
+          <Card className="mb-8 border-[#2e8b6e]/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="h-5 w-5 text-[#2e8b6e]" />
+                {language === "ar" ? "مؤشرات البنك الدولي (بيانات حية)" : "World Bank Indicators (Live Data)"}
+              </CardTitle>
+              <CardDescription>
+                {language === "ar" ? "بيانات محدثة من قاعدة بيانات البنك الدولي" : "Updated data from the World Bank database"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-3 gap-4">
+                {liveKPIs.map((kpi) => (
+                  <div key={kpi.code} className="p-4 rounded-lg bg-[#2e8b6e]/5 dark:bg-[#2e8b6e]/10 border border-[#2e8b6e]/20">
+                    <div className="text-sm text-muted-foreground mb-1">
+                      {language === "ar" ? kpi.labelAr : kpi.label}
+                    </div>
+                    <div className="text-2xl font-bold text-[#2e8b6e]">{kpi.value}</div>
+                    <div className="text-xs text-muted-foreground mt-2">
+                      {language === "ar" ? "المصدر: " : "Source: "}{kpi.source}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Data Sources */}
         <Card className="bg-gray-50 dark:bg-gray-800">

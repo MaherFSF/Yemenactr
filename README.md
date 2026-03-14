@@ -17,8 +17,9 @@
 <p align="center">
   <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript" alt="TypeScript">
   <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react" alt="React">
-  <img src="https://img.shields.io/badge/Tests-750%2B_Passing-brightgreen?style=flat-square" alt="Tests">
-  <img src="https://img.shields.io/badge/Data_Points-7%2C158%2B-blue?style=flat-square" alt="Data Points">
+  <img src="https://img.shields.io/badge/Tests-736_Passing-brightgreen?style=flat-square" alt="Tests">
+  <img src="https://img.shields.io/badge/Data_Points-7%2C868%2B-blue?style=flat-square" alt="Data Points">
+  <img src="https://img.shields.io/badge/Publications-1%2C767%2B-teal?style=flat-square" alt="Publications">
   <img src="https://img.shields.io/badge/AI_Agents-8_Specialized-purple?style=flat-square" alt="AI Agents">
   <img src="https://img.shields.io/badge/Sources-292_(234_Active)-orange?style=flat-square" alt="Sources">
   <img src="https://img.shields.io/badge/Tier_Classification-59%25_Complete-blue?style=flat-square" alt="Tier Classification">
@@ -117,7 +118,7 @@ YETO's AI system features **8 specialized agents**, each with deep expert knowle
 **Governance Rules:**
 1. **Zero Fabrication**: Every claim links to real database evidence
 2. **Confidence Scoring**: A-E grades with transparent methodology
-3. **Real-Time Data**: Agents query 7,158+ time series records live
+3. **Real-Time Data**: Agents query 7,868+ time series records and 1,767 publications live
 4. **Streaming Responses**: Token-by-token SSE delivery with abort support
 5. **Source Citations**: Every response includes provenance metadata
 
@@ -186,23 +187,26 @@ YETO's AI system features **8 specialized agents**, each with deep expert knowle
 </tr>
 </table>
 
-| **Data Sources (225+ Integrated)**| Category | Sources | Update Frequency |
-|----------|---------|------------------|
-| **International Financial** | World Bank WDI, IMF WEO, IFS | Monthly/Quarterly |
-| **UN Agencies** | OCHA FTS, UNHCR, WFP, UNICEF, WHO | Weekly/Monthly |
-| **Humanitarian** | HDX, FEWS NET, IPC, ReliefWeb | Daily/Weekly |
-| **Central Banks** | CBY Aden, CBY Sana'a | Weekly |
-| **Sanctions** | OFAC, EU, UK Treasury | Daily |
-| **Conflict Data** | ACLED, UCDP | Weekly |
+| Category | Sources | Records | Update Frequency |
+|----------|---------|---------|------------------|
+| **World Bank WDI** | 295 indicators (GDP, inflation, trade, health, education) | 402 | Quarterly |
+| **IMF WEO** | Exchange rates, monetary aggregates, fiscal indicators, BOP | 263 | Biannual |
+| **UNHCR** | Refugee populations, displacement, asylum seekers | 39 | Monthly |
+| **OpenAlex** | Academic publications on Yemen economy (11 topic areas) | 1,397 | On-demand |
+| **UN Agencies** | OCHA FTS, WFP, UNICEF, WHO | Pending API keys | Weekly/Monthly |
+| **Humanitarian** | HDX, FEWS NET, IPC, ReliefWeb | Pending API keys | Daily/Weekly |
+| **Central Banks** | CBY Aden, CBY Sana'a | Manual entry | Weekly |
+| **Sanctions** | OFAC, EU, UK Treasury | Pending API keys | Daily |
+| **Conflict Data** | ACLED, UCDP | Pending API keys | Weekly |
 
 ### Historical Coverage
 
 | Metric | Coverage |
 |--------|----------|
-| **Time Series** | 2010 → Present (15+ years, 7,158+ data points) |
+| **Time Series** | 2010 → Present (15+ years, 7,868+ data points) |
 | **Exchange Rates** | Daily granularity since 2016 split |
 | **Economic Events** | 83+ documented with indicator linkages |
-| **Research Library** | 370+ publications from 38 organizations |
+| **Research Library** | 1,767+ publications from OpenAlex, World Bank, IMF, and 38+ organizations |
 | **Sector Pages** | 16 sectors with Sources Used panels |
 | **Commercial Banks** | 31 banks with $18.7B total assets |
 
@@ -245,6 +249,28 @@ fx_rates                    fx_source_registry          fx_gap_tickets
 | **AI Safety** | Truth Layer + Evidence Tribunal | Zero fabrication guarantee |
 | **Bilingual** | i18n with RTL support | Full Arabic experience |
 | **Export Pipeline** | CSV/JSON/XLSX/PDF with metadata | Data portability |
+
+### Data Ingestion Engine (megaIngest)
+
+YETO includes a comprehensive multi-source data ingestion engine (`server/scripts/megaIngest.ts`) that connects to public APIs and backfills data since 2010:
+
+```bash
+# Run full ingestion pipeline
+npx tsx server/scripts/megaIngest.ts
+
+# Pipeline stages:
+# 1. World Bank WDI → 295 indicators for Yemen (GDP, inflation, trade, health, education)
+# 2. UNHCR Population Statistics → Refugee and displacement data
+# 3. IMF WEO → Exchange rates, monetary aggregates, fiscal indicators
+# 4. OpenAlex Academic Search → 1,397+ publications across 11 Yemen economic topics
+```
+
+The engine features:
+- **Automatic deduplication**: Skips records already in the database
+- **Source provenance**: Every record links to its source API and indicator code
+- **Error resilience**: Continues processing even if individual API calls fail
+- **Sector mapping**: Automatically maps indicators to YETO's 16-sector codebook
+- **Publication enrichment**: Extracts authors, DOIs, citations, and open access URLs
 
 ---
 
@@ -295,7 +321,7 @@ pnpm dev
 ```bash
 pnpm dev          # Start development server
 pnpm build        # Build for production
-pnpm test         # Run unit tests (432+ tests)
+pnpm test         # Run unit tests (736 tests across 33 files)
 pnpm test:e2e     # Run E2E tests
 pnpm typecheck    # TypeScript type checking
 pnpm lint         # ESLint code linting
@@ -358,7 +384,7 @@ yeto/
 
 | Document | Description |
 |----------|-------------|
-| [**docs/DATA_SOURCE_REGISTER.md**](./docs/DATA_SOURCE_REGISTER.md) | All 47+ data sources |
+| [**docs/DATA_SOURCE_REGISTER.md**](./docs/DATA_SOURCE_REGISTER.md) | All 292 data sources |
 | [**docs/INVENTORY_RUNTIME_WIRING.md**](./docs/INVENTORY_RUNTIME_WIRING.md) | System wiring audit |
 | [**docs/SECURITY.md**](./docs/SECURITY.md) | Security policies and practices |
 | [**CONTRIBUTING.md**](./CONTRIBUTING.md) | Development guidelines |
