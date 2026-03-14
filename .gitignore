@@ -143,3 +143,13 @@ client/public/images/letterhead-en.png
 client/public/documents/
 cby-publications/
 data/research_files/
+
+# Archive (development audit notes)
+docs/archive/
+
+# Large document collections (should be uploaded to S3)
+client/public/documents/cby/
+cby-publications/
+
+# Temporary data files
+data/research_files/
