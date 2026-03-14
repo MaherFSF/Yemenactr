@@ -98,7 +98,7 @@ import InsightMiner from "./pages/admin/InsightMiner";
 import ExportBundle from "./pages/admin/ExportBundle";
 import CoverageMap from "./pages/admin/CoverageMap";
 import BackfillDashboard from "./pages/admin/BackfillDashboardPage";
-import ApiKeysPage from "./pages/admin/ApiKeysPage";
+// import ApiKeysPage from "./pages/admin/ApiKeysPage"; // Disabled - apiKeys router not active
 import ReleaseGate from "./pages/admin/ReleaseGate";
 import ReportsDashboard from "./pages/admin/ReportsDashboard";
 import Sitemap from "./pages/Sitemap";
@@ -229,7 +229,7 @@ function MainRouter() {
           <Route path="/admin/autopilot" component={AutopilotControlRoom} />
           <Route path="/admin/coverage-map" component={CoverageMap} />
           <Route path="/admin/backfill" component={BackfillDashboard} />
-        <Route path="/admin/api-keys" component={ApiKeysPage} />
+        {/* <Route path="/admin/api-keys" component={ApiKeysPage} /> */}
         <Route path="/admin/release-gate" component={ReleaseGate} />
           <Route path="/admin/reports" component={ReportWorkflow} />
           <Route path="/admin/reports-dashboard" component={ReportsDashboard} />
@@ -303,7 +303,7 @@ function Router() {
     const targetPath = langPrefixMatch[2] || '/home';
     // Set language preference based on URL prefix
     const lang = langPrefixMatch[1];
-    localStorage.setItem('yeto-language', lang);
+    try { localStorage.setItem('yeto-language', lang); } catch { /* ignore */ }
     // Redirect to path without language prefix
     setTimeout(() => setLocation(targetPath), 0);
     return null;
@@ -311,7 +311,8 @@ function Router() {
   
   // Handle root path - check if splash was seen
   if (location === "/") {
-    const splashSeen = localStorage.getItem("yeto-splash-seen");
+    let splashSeen: string | null = null;
+    try { splashSeen = localStorage.getItem("yeto-splash-seen"); } catch { /* ignore */ }
     if (!splashSeen) {
       // First time visitor - show splash
       return <Splash />;

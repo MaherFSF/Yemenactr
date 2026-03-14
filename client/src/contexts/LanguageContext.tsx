@@ -999,18 +999,22 @@ const translations: Record<Language, Record<string, string>> = {
 export function LanguageProvider({ children }: { children: ReactNode }) {
   // Default to Arabic (Arabic-first platform)
   const [language, setLanguageState] = useState<Language>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem("yeto-language");
-      return (stored === "ar" || stored === "en") ? stored : "ar";
-    }
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const stored = localStorage.getItem("yeto-language");
+        return (stored === "ar" || stored === "en") ? stored : "ar";
+      }
+    } catch { /* localStorage unavailable */ }
     return "ar";
   });
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem("yeto-language", lang);
-    }
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem("yeto-language", lang);
+      }
+    } catch { /* ignore */ }
   };
 
   const t = (key: string): string => {

@@ -8,8 +8,10 @@ export default function Splash() {
 
   const handleLanguageSelect = (lang: "en" | "ar") => {
     setLanguage(lang);
-    localStorage.setItem("yeto-splash-seen", "true");
-    localStorage.setItem("yeto-language", lang);
+    try {
+      localStorage.setItem("yeto-splash-seen", "true");
+      localStorage.setItem("yeto-language", lang);
+    } catch { /* ignore */ }
     setLocation("/home");
   };
 

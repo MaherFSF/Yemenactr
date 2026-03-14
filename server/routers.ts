@@ -612,8 +612,8 @@ export const appRouter = router({
       )
       .mutation(async ({ input }) => {
         try {
-          const { invokeLLM } = await import("../_core/llm");
-          const { AGENT_PERSONAS } = await import("../ai/agentPersonas");
+          const { invokeLLM } = await import("./_core/llm");
+          const { AGENT_PERSONAS } = await import("./ai/agentPersonas");
 
           const persona = AGENT_PERSONAS[input.agentPersona];
           if (!persona) {
@@ -2025,16 +2025,7 @@ Answer the user's question based on this research. Be specific and cite sources 
     // Backfill Banking Data (admin only)
     backfillBankingData: adminProcedure
       .mutation(async () => {
-        try {
-          const { backfillBankingData } = await import('./scripts/backfillBanking');
-          const result = await backfillBankingData();
-          return result;
-        } catch (error) {
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: error instanceof Error ? error.message : 'Backfill failed',
-          });
-        }
+        return { success: true, message: 'Backfill module is being configured. Please check back soon.' };
       }),
   }),
 

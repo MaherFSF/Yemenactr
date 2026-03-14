@@ -282,7 +282,12 @@ export default function Home() {
                 <KpiCardSkeleton />
               </>
             ) : (
-              kpiData?.map((kpi, idx) => (
+              kpiData && [
+                { label: 'GDP Growth', value: kpiData.gdpGrowth?.value, change: kpiData.gdpGrowth?.subtext },
+                { label: 'Inflation (Aden)', value: kpiData.inflation?.value, change: kpiData.inflation?.subtext },
+                { label: 'Exchange Rate (Aden)', value: kpiData.exchangeRateAden?.value, change: kpiData.exchangeRateAden?.subtext },
+                { label: 'Foreign Reserves', value: kpiData.foreignReserves?.value, change: kpiData.foreignReserves?.subtext },
+              ].map((kpi, idx) => (
                 <AnimatedSection key={idx} delay={idx * 0.1}>
                   <Card className="relative overflow-hidden bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10">
                     <CardContent className="p-6">

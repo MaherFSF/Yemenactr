@@ -59,8 +59,13 @@ const TourContext = createContext<TourContextType | undefined>(undefined);
 export const TourProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [keyboardShortcutsEnabled, setKeyboardShortcutsEnabled] = useState(true);
   const [state, setState] = useState<TourState>(() => {
-    // Load from localStorage
-    const saved = localStorage.getItem('yeto_tour_state');
+    // Load from localStorage (with safety guard)
+    let saved: string | null = null;
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        saved = localStorage.getItem('yeto_tour_state');
+      }
+    } catch { /* localStorage unavailable */ }
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -89,14 +94,18 @@ export const TourProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   });
 
-  // Persist to localStorage
+  // Persist to localStorage (with safety guard)
   useEffect(() => {
-    const toSave = {
-      ...state,
-      completedSteps: Array.from(state.completedSteps),
-      featureDiscoveries: Array.from(state.featureDiscoveries),
-    };
-    localStorage.setItem('yeto_tour_state', JSON.stringify(toSave));
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const toSave = {
+          ...state,
+          completedSteps: Array.from(state.completedSteps),
+          featureDiscoveries: Array.from(state.featureDiscoveries),
+        };
+        localStorage.setItem('yeto_tour_state', JSON.stringify(toSave));
+      }
+    } catch { /* localStorage unavailable */ }
   }, [state]);
 
   // Keyboard shortcuts handler
@@ -282,7 +291,7 @@ export const TourProvider: React.FC<{ children: React.ReactNode }> = ({ children
       featureDiscoveries: new Set(),
       language: 'en',
     });
-    localStorage.removeItem('yeto_tour_state');
+    try { localStorage.removeItem('yeto_tour_state'); } catch { /* ignore */ }
   }, []);
 
   const setLanguage = useCallback((language: 'en' | 'ar') => {

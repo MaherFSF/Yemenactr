@@ -70,7 +70,7 @@ export function SectorAgentChat({
       const assistantMessage: Message = {
         id: Date.now().toString(),
         role: 'assistant',
-        content: response.content,
+        content: typeof response.content === 'string' ? response.content : JSON.stringify(response.content),
         timestamp: new Date(),
         sources: response.sources,
         confidence: response.confidence,
@@ -112,7 +112,7 @@ export function SectorAgentChat({
       sectorId,
       message: input,
       conversationHistory: messages,
-      agentPersona,
+      agentPersona: agentPersona as any,
       language,
     });
   };

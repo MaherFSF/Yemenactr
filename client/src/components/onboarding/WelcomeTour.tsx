@@ -162,7 +162,8 @@ export function WelcomeTour({ onComplete, forceShow = false, isOpen: externalIsO
   useEffect(() => {
     if (externalIsOpen !== undefined) return; // Skip auto-open if externally controlled
     
-    const seen = localStorage.getItem('yeto_tour_completed');
+    let seen: string | null = null;
+    try { seen = localStorage.getItem('yeto_tour_completed'); } catch { /* ignore */ }
     if (!seen && !hasSeenTour) {
       const timer = setTimeout(() => {
         setInternalIsOpen(true);
@@ -176,14 +177,14 @@ export function WelcomeTour({ onComplete, forceShow = false, isOpen: externalIsO
   }, [forceShow, hasSeenTour, externalIsOpen]);
   
   const handleComplete = () => {
-    localStorage.setItem('yeto_tour_completed', 'true');
+    try { localStorage.setItem('yeto_tour_completed', 'true'); } catch { /* ignore */ }
     setHasSeenTour(true);
     setIsOpen(false);
     onComplete?.();
   };
   
   const handleSkip = () => {
-    localStorage.setItem('yeto_tour_completed', 'true');
+    try { localStorage.setItem('yeto_tour_completed', 'true'); } catch { /* ignore */ }
     setHasSeenTour(true);
     setIsOpen(false);
   };
