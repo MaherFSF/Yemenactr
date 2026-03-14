@@ -346,13 +346,17 @@ export const appRouter = router({
     getHeroKPIs: publicProcedure
       .query(async () => {
         // Fetch latest values using correct indicator codes from database
-        const [inflationAden, fxAden, fxSanaa, gdpGrowth, idpData, foreignReserves] = await Promise.all([
+        const [inflationAden, fxAden, fxSanaa, gdpGrowth, idpData, foreignReserves, wbGdpGrowth, wbInflation, wbReserves, wbPopulation] = await Promise.all([
           getLatestTimeSeriesValue("inflation_cpi_aden", "aden_irg"),
           getLatestTimeSeriesValue("fx_rate_aden_parallel", "aden_irg"),
           getLatestTimeSeriesValue("fx_rate_sanaa", "sanaa_defacto"),
           getLatestTimeSeriesValue("gdp_growth_annual", "mixed"),
           getLatestTimeSeriesValue("IDPS", "mixed"),
           getLatestTimeSeriesValue("FOREIGN_RESERVES", "aden_irg"),
+          getLatestTimeSeriesValue("WB_GDP_GROWTH", "mixed"),
+          getLatestTimeSeriesValue("WB_CPI_INFLATION", "mixed"),
+          getLatestTimeSeriesValue("WB_RESERVES", "mixed"),
+          getLatestTimeSeriesValue("WB_POPULATION", "mixed"),
         ]);
 
         // Calculate YoY change for exchange rate using actual data
@@ -423,6 +427,13 @@ export const appRouter = router({
             trend: [80, 75, 70, 65, 60, 55, 50, 48, 45, 42, 40, 38],
             source: "IMF/CBY Estimates",
             confidence: "C",
+          },
+          // World Bank verified data for cross-referencing
+          wbData: {
+            gdpGrowth: wbGdpGrowth ? { value: parseFloat(wbGdpGrowth.value).toFixed(2), year: new Date(wbGdpGrowth.date).getFullYear() } : null,
+            inflation: wbInflation ? { value: parseFloat(wbInflation.value).toFixed(2), year: new Date(wbInflation.date).getFullYear() } : null,
+            reserves: wbReserves ? { value: (parseFloat(wbReserves.value) / 1e9).toFixed(2), year: new Date(wbReserves.date).getFullYear() } : null,
+            population: wbPopulation ? { value: (parseFloat(wbPopulation.value) / 1e6).toFixed(1), year: new Date(wbPopulation.date).getFullYear() } : null,
           },
           lastUpdated: new Date().toISOString(),
           dataFreshness: {
@@ -614,10 +625,49 @@ export const appRouter = router({
         try {
           const { invokeLLM } = await import("./_core/llm");
           const { AGENT_PERSONAS } = await import("./ai/agentPersonas");
+          const { getSectorDataContext } = await import("./services/sectorDataService");
 
           const persona = AGENT_PERSONAS[input.agentPersona];
           if (!persona) {
             throw new Error(`Unknown agent persona: ${input.agentPersona}`);
+          }
+
+          // Fetch real sector data from database
+          const sectorData = await getSectorDataContext(input.sectorId);
+          let dataContext = '';
+          const sourcesUsed: Array<{ title: string; url: string; type: 'data' | 'research'; confidence: 'high' | 'medium' | 'low' }> = [];
+
+          if (sectorData && sectorData.indicators.length > 0) {
+            dataContext = `\n\n=== REAL YEMEN ECONOMIC DATA (from YETO Database) ===\n`;
+            dataContext += `Sector: ${sectorData.sectorName}\n`;
+            dataContext += `Total data points: ${sectorData.dataPoints}\n`;
+            dataContext += `Data range: ${sectorData.dateRange.from} to ${sectorData.dateRange.to}\n\n`;
+            
+            for (const ind of sectorData.indicators) {
+              if (ind.latestValue !== null) {
+                dataContext += `📊 ${ind.name} (${ind.nameAr}):\n`;
+                dataContext += `   Latest: ${ind.latestValue.toLocaleString()} ${ind.unit} (${ind.latestDate})\n`;
+                if (ind.previousValue !== null) {
+                  dataContext += `   Previous: ${ind.previousValue.toLocaleString()} ${ind.unit} (${ind.previousDate})\n`;
+                }
+                if (ind.changePercent !== null) {
+                  dataContext += `   Change: ${ind.changePercent > 0 ? '+' : ''}${ind.changePercent}% (${ind.trend})\n`;
+                }
+                if (ind.historicalData.length > 0) {
+                  const recentHistory = ind.historicalData.slice(-8);
+                  dataContext += `   Historical: ${recentHistory.map(h => `${h.year}: ${h.value.toLocaleString()}`).join(', ')}\n`;
+                }
+                dataContext += `\n`;
+                
+                sourcesUsed.push({
+                  title: `${ind.name} - YETO Database (World Bank/IMF)`,
+                  url: `https://data.worldbank.org/indicator?locations=YE`,
+                  type: 'data',
+                  confidence: 'high',
+                });
+              }
+            }
+            dataContext += `=== END OF REAL DATA ===\n`;
           }
 
           const systemPrompt = `You are an expert AI assistant for the YETO (Yemen Economic Transparency Observatory) platform.
@@ -628,21 +678,24 @@ Context:
 - Sector: ${input.sectorId}
 - User Language: ${input.language === "ar" ? "Arabic" : "English"}
 - Agent Persona: ${persona.nameEn}
+${dataContext}
 
-Important Guidelines:
-1. Always cite your sources when making claims
-2. Be transparent about confidence levels
-3. If you don't have reliable data, say so clearly
-4. For Yemen-specific economic data, use YETO's knowledge base
-5. Provide evidence-backed answers with citations
-6. Consider both Aden and Sanaa economic dynamics when relevant`;
+CRITICAL INSTRUCTIONS:
+1. USE THE REAL DATA PROVIDED ABOVE to answer questions. Reference specific numbers, dates, and trends.
+2. Always cite "YETO Database" or "World Bank" as your source when using the data above.
+3. Be transparent about confidence levels - the data above is verified from official sources.
+4. If the user asks about something not covered by the data above, clearly state that.
+5. For Yemen-specific analysis, consider the conflict context (2015-present) and dual-authority dynamics.
+6. Respond in ${input.language === "ar" ? "Arabic" : "English"} as requested.
+7. Provide specific numbers and year-over-year comparisons when available.
+8. Format responses with clear structure: key findings, data points, analysis, and caveats.`;
 
           const messages: any[] = [
             { role: "system", content: systemPrompt },
           ];
 
           if (input.conversationHistory && input.conversationHistory.length > 0) {
-            messages.push(...input.conversationHistory);
+            messages.push(...input.conversationHistory.slice(-10)); // Keep last 10 messages for context
           }
 
           messages.push({ role: "user", content: input.message });
@@ -650,10 +703,13 @@ Important Guidelines:
           const response = await invokeLLM({ messages });
           const assistantContent = response.choices[0]?.message?.content || "No response generated";
 
+          // Determine confidence based on data availability
+          const confidence = sectorData && sectorData.dataPoints > 50 ? 'high' : sectorData && sectorData.dataPoints > 10 ? 'medium' : 'low';
+
           return {
             content: assistantContent,
-            sources: [],
-            confidence: "high" as const,
+            sources: sourcesUsed.slice(0, 5), // Top 5 sources
+            confidence: confidence as 'high' | 'medium' | 'low',
           };
         } catch (error) {
           console.error("Agent chat error:", error);

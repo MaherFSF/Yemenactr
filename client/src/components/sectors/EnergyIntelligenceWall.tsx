@@ -51,6 +51,7 @@ import { Link } from "wouter";
 import EvidencePackButton from "@/components/EvidencePackButton";
 import ContradictionBadge from "@/components/ContradictionBadge";
 import { RelatedInsightsPanel } from "@/components/RelatedInsights";
+import { SectorAgentChat } from "@/components/SectorAgentChat";
 
 interface EnergyIntelligenceWallProps {
   regime?: 'both' | 'aden_irg' | 'sanaa_dfa';
@@ -592,6 +593,27 @@ export function EnergyIntelligenceWall({ regime = 'both', isVip = false }: Energ
       
       {/* Row 4: Connected Intelligence */}
       <ConnectedIntelligencePanel isArabic={isArabic} />
+
+      {/* AI Agent Chat Section */}
+      <div className="mt-8 border-t pt-8">
+        <h2 className="text-2xl font-bold mb-6 text-[#2C3424]">
+          {isArabic ? 'استشر وكيل الطاقة' : 'Ask the Energy Agent'}
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <SectorAgentChat
+            sectorId="energy"
+            sectorName="Energy Sector"
+            sectorNameAr="قطاع الطاقة"
+            agentPersona="policymaker_brief"
+          />
+          <SectorAgentChat
+            sectorId="energy"
+            sectorName="Energy Sector"
+            sectorNameAr="قطاع الطاقة"
+            agentPersona="citizen_explainer"
+          />
+        </div>
+      </div>
     </div>
   );
 }

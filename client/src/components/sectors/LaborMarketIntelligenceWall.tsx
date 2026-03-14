@@ -39,6 +39,7 @@ import {
 } from "lucide-react";
 import EvidencePackButton from "@/components/EvidencePackButton";
 import { RelatedInsightsPanel } from "@/components/RelatedInsights";
+import { SectorAgentChat } from "@/components/SectorAgentChat";
 
 interface LaborMarketIntelligenceWallProps {
   regime?: 'both' | 'aden_irg' | 'sanaa_dfa';
@@ -576,6 +577,27 @@ export function LaborMarketIntelligenceWall({ regime = 'both', isVip = false }: 
       </div>
       
       <ConnectedIntelligencePanel isArabic={isArabic} />
+
+      {/* AI Agent Chat Section */}
+      <div className="mt-8 border-t pt-8">
+        <h2 className="text-2xl font-bold mb-6 text-[#2C3424]">
+          {isArabic ? 'استشر وكيل سوق العمل' : 'Ask the Labor Market Agent'}
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <SectorAgentChat
+            sectorId="labor"
+            sectorName="Labor Market"
+            sectorNameAr="سوق العمل"
+            agentPersona="policymaker_brief"
+          />
+          <SectorAgentChat
+            sectorId="labor"
+            sectorName="Labor Market"
+            sectorNameAr="سوق العمل"
+            agentPersona="citizen_explainer"
+          />
+        </div>
+      </div>
     </div>
   );
 }

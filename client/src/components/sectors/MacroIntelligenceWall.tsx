@@ -53,6 +53,7 @@ import ContradictionBadge from "@/components/ContradictionBadge";
 import { SectorKpiCard } from "./SectorKpiCard";
 import { SectorChart } from "./SectorChart";
 import { RelatedInsightsPanel } from "@/components/RelatedInsights";
+import { SectorAgentChat } from "@/components/SectorAgentChat";
 import { SourcesUsedPanel } from "@/components/SourcesUsedPanel";
 
 interface MacroIntelligenceWallProps {
@@ -1053,6 +1054,27 @@ export function MacroIntelligenceWall({ regime = 'both', isVip = false }: MacroI
 
       {/* Row 5: Connected Intelligence */}
       <ConnectedIntelligencePanel isArabic={isArabic} sectorCode="macro" />
+
+      {/* AI Agent Chat Section */}
+      <div className="mt-8 border-t pt-8">
+        <h2 className="text-2xl font-bold mb-6 text-[#2C3424]">
+          {isArabic ? 'استشر وكيل الاقتصاد الكلي' : 'Ask the Macroeconomy Agent'}
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <SectorAgentChat
+            sectorId="macroeconomy"
+            sectorName="Macroeconomy"
+            sectorNameAr="الاقتصاد الكلي"
+            agentPersona="policymaker_brief"
+          />
+          <SectorAgentChat
+            sectorId="macroeconomy"
+            sectorName="Macroeconomy"
+            sectorNameAr="الاقتصاد الكلي"
+            agentPersona="citizen_explainer"
+          />
+        </div>
+      </div>
     </div>
   );
 }

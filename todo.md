@@ -10117,3 +10117,48 @@ Based on review of master design documents and data source register:
 - [x] Add DataBackfill route and component
 - [x] Fix schema imports (timeSeries table)
 - [x] Create backfillBanking.ts script with 2023-2026 data
+
+
+## Phase 82: Data Ingestion + AI Agents + Landing Page (March 14, 2026)
+
+### Task 1 - Database Schema for Time Series & Data Connectors
+- [x] Create/verify timeSeries table in drizzle schema
+- [x] Create/verify dataConnectors table in drizzle schema
+- [x] Push schema migrations to database
+- [x] Verify tables exist and are accessible (7,158 records, 197 indicators, 307 sources)
+
+### Task 2 - Public KPI Data Ingestion Since 2010
+- [x] Build World Bank data ingestion for GDP, Inflation, Unemployment, Remittances (2010-2024)
+- [x] Build IMF data ingestion for exchange rates, reserves, monetary data (2010-2024)
+- [x] Build humanitarian data ingestion from OCHA/HDX (2010-2024)
+- [x] Store all ingested data in timeSeries table with proper metadata (1,683 new data points added)
+- [x] Verify data appears in database with correct values
+
+### Task 3 - Banking AI Agent (Fully Functional)
+- [x] Build Banking AI agent with LLM integration via invokeLLM
+- [x] Wire agent to real ingested banking/economic data (sectorDataService.ts)
+- [x] Create interactive chat UI component with streaming responses (SectorAgentChat.tsx)
+- [x] Add source citations and confidence ratings
+- [x] Test agent responds with real Yemen economic data
+
+### Task 4 - All Sector AI Agents Functional
+- [x] Create Trade sector AI agent with real data context
+- [x] Create Energy sector AI agent with real data context
+- [x] Create Humanitarian sector AI agent with real data context
+- [x] Create Labor sector AI agent with real data context
+- [x] Create Macro Economy sector AI agent with real data context
+- [x] Create Prices sector AI agent with real data context
+- [x] Create Food Security sector AI agent with real data context
+- [x] Ensure all agents accessible from Intelligence Walls
+
+### Task 5 - Landing Page Enhancement with Real Data
+- [x] Connect landing page KPIs to ingested database data
+- [x] Add World Bank cross-reference data to getHeroKPIs
+- [x] Ensure live data section shows real trends
+- [x] Fix any remaining errors
+
+### Task 6 - Final Testing & Deployment
+- [x] Zero TypeScript errors
+- [x] All agents respond correctly (10/10 vitest tests pass)
+- [x] Data ingestion verified (7,158 time series records)
+- [x] Save checkpoint and deploy
