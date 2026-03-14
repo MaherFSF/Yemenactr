@@ -10162,3 +10162,33 @@ Based on review of master design documents and data source register:
 - [x] All agents respond correctly (10/10 vitest tests pass)
 - [x] Data ingestion verified (7,158 time series records)
 - [x] Save checkpoint and deploy
+
+## Phase 83: Three Enhancements (March 14, 2026)
+
+### Enhancement 1 - IMF SDMX Data Ingestion
+- [x] Build IMF SDMX API connector for Yemen exchange rate data (via WB cross-listed + WEO curated)
+- [x] Ingest monetary indicators (broad money, credit, interest rates) - 17 WB-IMF indicators
+- [x] Ingest fiscal indicators (revenue, expenditure, debt) - 13 WEO indicators
+- [x] Ingest balance of payments data (current account, FDI, remittances)
+- [x] Store all data in timeSeries table with proper metadata (263 new records)
+- [x] Verify ingested data in database
+
+### Enhancement 2 - Streaming Responses for AI Agents
+- [x] Add streaming SSE endpoint (/api/agent-stream) to Express server
+- [x] Update SectorAgentChat component to support streaming via EventSource
+- [x] Show real-time token-by-token response rendering with Streamdown
+- [x] Add typing indicator and smooth scroll during streaming
+- [x] Add abort/cancel support for in-progress streams
+
+### Enhancement 3 - Data Coverage Dashboard
+- [x] Create 5 coverage analysis tRPC endpoints (getSectorCoverage, getIndicatorGaps, getSourceStats, triggerBackfill, getYearHeatmap)
+- [x] Build DataCoverageDashboard page with sector coverage table + summary cards
+- [x] Add year-by-year heatmap visualization with color-coded density
+- [x] Show indicator gap detection with missing years display
+- [x] Add one-click backfill triggers for World Bank and IMF sources
+- [x] Register route /data-coverage in App.tsx
+
+### Testing & Deployment
+- [x] Write vitest tests for IMF ingestion, coverage analysis, sector data service, agent personas (12/12 passing)
+- [x] Zero TypeScript errors
+- [x] Save checkpoint

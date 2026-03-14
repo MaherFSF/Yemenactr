@@ -137,6 +137,7 @@ import Updates from "./pages/Updates";
 import UpdateDetail from "./pages/UpdateDetail";
 import ResearchHub from "./pages/ResearchHub";
 import DocumentDetail from "./pages/DocumentDetail";
+import DataCoverageDashboard from "./pages/DataCoverageDashboard";
 
 // Main app router with header/footer
 function MainRouter() {
@@ -199,6 +200,7 @@ function MainRouter() {
       <Route path={"/publications"} component={Publications} />
       <Route path={"/reports"} component={Reports} />
       <Route path={"/coverage"} component={CoverageScorecard} />
+      <Route path="/data-coverage" component={DataCoverageDashboard} />
       <Route path={"/compliance"} component={Compliance} />
       <Route path={"/my-dashboard"} component={UserDashboard} />
       <Route path={"/dashboards/fx"} component={FXDashboard} />

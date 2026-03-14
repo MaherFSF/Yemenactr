@@ -5,27 +5,23 @@
  * Features: streaming responses, source citations, confidence ratings, export
  */
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Skeleton } from '@/components/ui/skeleton';
 import {
   Send,
   Loader2,
-  Copy,
   Download,
   RotateCcw,
   Zap,
   BookOpen,
   AlertCircle,
-  CheckCircle2,
-  Clock,
   Eye,
+  Sparkles,
 } from 'lucide-react';
 import { Streamdown } from 'streamdown';
 
@@ -37,17 +33,18 @@ interface Message {
   sources?: Array<{
     title: string;
     url: string;
-    type: 'research' | 'data' | 'news' | 'policy';
-    confidence: 'high' | 'medium' | 'low';
+    type: string;
+    confidence: string;
   }>;
   confidence?: 'high' | 'medium' | 'low';
+  isStreaming?: boolean;
 }
 
 interface SectorAgentChatProps {
   sectorId: string;
   sectorName: string;
   sectorNameAr: string;
-  agentPersona?: string; // e.g., 'policymaker_brief', 'citizen_explainer'
+  agentPersona?: string;
 }
 
 export function SectorAgentChat({
@@ -63,26 +60,7 @@ export function SectorAgentChat({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  // tRPC mutation for agent chat
-  const agentChatMutation = trpc.sectors.agentChat.useMutation({
-    onSuccess: (response) => {
-      const assistantMessage: Message = {
-        id: Date.now().toString(),
-        role: 'assistant',
-        content: typeof response.content === 'string' ? response.content : JSON.stringify(response.content),
-        timestamp: new Date(),
-        sources: response.sources,
-        confidence: response.confidence,
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
-      setIsLoading(false);
-    },
-    onError: (error) => {
-      setError(error.message || 'Failed to get response from agent');
-      setIsLoading(false);
-    },
-  });
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -91,40 +69,145 @@ export function SectorAgentChat({
     }
   }, [messages]);
 
+  const handleStreamingChat = useCallback(async (userMessage: string) => {
+    setIsLoading(true);
+    setError(null);
+
+    // Create placeholder for assistant message
+    const assistantMsgId = (Date.now() + 1).toString();
+    setMessages(prev => [...prev, {
+      id: assistantMsgId,
+      role: 'assistant',
+      content: '',
+      timestamp: new Date(),
+      isStreaming: true,
+    }]);
+
+    try {
+      abortControllerRef.current = new AbortController();
+      
+      const response = await fetch('/api/agent-stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sectorId,
+          message: userMessage,
+          conversationHistory: messages.filter(m => !m.isStreaming).map(m => ({
+            role: m.role,
+            content: m.content,
+          })),
+          agentPersona,
+          language,
+        }),
+        signal: abortControllerRef.current.signal,
+      });
+
+      if (!response.ok || !response.body) {
+        throw new Error('Failed to connect to agent');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let fullContent = '';
+      let meta: { confidence?: string; sources?: any[] } = {};
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              
+              if (data.type === 'meta') {
+                meta = { confidence: data.confidence, sources: data.sources };
+                // Update message with metadata
+                setMessages(prev => prev.map(m => 
+                  m.id === assistantMsgId 
+                    ? { ...m, confidence: data.confidence, sources: data.sources }
+                    : m
+                ));
+              } else if (data.type === 'token') {
+                fullContent += data.content;
+                setMessages(prev => prev.map(m => 
+                  m.id === assistantMsgId 
+                    ? { ...m, content: fullContent }
+                    : m
+                ));
+              } else if (data.type === 'done') {
+                setMessages(prev => prev.map(m => 
+                  m.id === assistantMsgId 
+                    ? { ...m, isStreaming: false }
+                    : m
+                ));
+              } else if (data.type === 'error') {
+                throw new Error(data.content);
+              }
+            } catch (e) {
+              // Skip malformed JSON
+              if (e instanceof Error && e.message !== 'Failed to connect to agent') {
+                // Only skip parse errors, not our thrown errors
+                if (!(e instanceof SyntaxError)) throw e;
+              }
+            }
+          }
+        }
+      }
+
+      // Ensure streaming is marked as done
+      setMessages(prev => prev.map(m => 
+        m.id === assistantMsgId 
+          ? { ...m, isStreaming: false, confidence: meta.confidence as any, sources: meta.sources }
+          : m
+      ));
+    } catch (err: any) {
+      if (err.name === 'AbortError') return;
+      
+      setError(err.message || 'Failed to get response');
+      // Remove the empty assistant message on error
+      setMessages(prev => prev.filter(m => m.id !== assistantMsgId));
+    } finally {
+      setIsLoading(false);
+      abortControllerRef.current = null;
+    }
+  }, [sectorId, messages, agentPersona, language]);
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
-    // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
       content: input,
       timestamp: new Date(),
     };
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
+    const msg = input;
     setInput('');
-    setError(null);
-    setIsLoading(true);
-
-    // Send to agent
-    agentChatMutation.mutate({
-      sectorId,
-      message: input,
-      conversationHistory: messages,
-      agentPersona: agentPersona as any,
-      language,
-    });
+    
+    await handleStreamingChat(msg);
   };
 
   const handleClearChat = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
     setMessages([]);
     setError(null);
+    setIsLoading(false);
   };
 
   const handleExportConversation = () => {
     const text = messages
-      .map((m) => `${m.role.toUpperCase()}: ${m.content}`)
+      .filter(m => !m.isStreaming || m.content)
+      .map(m => `${m.role.toUpperCase()}: ${m.content}`)
       .join('\n\n');
     const blob = new Blob([text], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -136,49 +219,49 @@ export function SectorAgentChat({
 
   const getConfidenceColor = (confidence?: string) => {
     switch (confidence) {
-      case 'high':
-        return 'bg-green-100 text-green-800';
-      case 'medium':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'low':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+      case 'high': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+      case 'medium': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
+      case 'low': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
+
+  const suggestedQuestions = isArabic ? [
+    'ما هي أحدث المؤشرات الاقتصادية؟',
+    'كيف تغيرت البيانات منذ 2015؟',
+    'ما هي التوقعات المستقبلية؟',
+  ] : [
+    `What are the latest ${sectorName.toLowerCase()} indicators?`,
+    `How has ${sectorName.toLowerCase()} changed since 2015?`,
+    `What are the key trends and risks?`,
+  ];
 
   return (
     <Card className="h-full flex flex-col border-2 border-[#2C3424]/20">
       {/* Header */}
-      <CardHeader className="border-b bg-gradient-to-r from-[#2C3424]/5 to-[#C9A961]/5">
+      <CardHeader className="border-b bg-gradient-to-r from-[#2C3424]/5 to-[#C9A961]/5 py-3">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="flex items-center gap-2">
-              <Zap className="w-5 h-5 text-[#C9A961]" />
-              {isArabic ? sectorNameAr : sectorName} Agent
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Zap className="w-4 h-4 text-[#C9A961]" />
+              {isArabic ? sectorNameAr : sectorName} {isArabic ? 'وكيل' : 'Agent'}
+              <Badge variant="outline" className="text-xs font-normal ml-1">
+                <Sparkles className="w-3 h-3 mr-1" />
+                {isArabic ? 'بث مباشر' : 'Streaming'}
+              </Badge>
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-xs mt-0.5">
               {isArabic
-                ? 'تحدث مع وكيل متخصص في هذا القطاع'
-                : 'Chat with a specialized sector expert'}
+                ? 'تحدث مع وكيل متخصص - إجابات فورية مع بيانات حقيقية'
+                : 'Chat with a specialized expert - real-time responses with live data'}
             </CardDescription>
           </div>
-          <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleClearChat}
-              disabled={messages.length === 0}
-            >
-              <RotateCcw className="w-4 h-4" />
+          <div className="flex gap-1">
+            <Button variant="ghost" size="sm" onClick={handleClearChat} disabled={messages.length === 0}>
+              <RotateCcw className="w-3.5 h-3.5" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleExportConversation}
-              disabled={messages.length === 0}
-            >
-              <Download className="w-4 h-4" />
+            <Button variant="ghost" size="sm" onClick={handleExportConversation} disabled={messages.length === 0}>
+              <Download className="w-3.5 h-3.5" />
             </Button>
           </div>
         </div>
@@ -188,99 +271,106 @@ export function SectorAgentChat({
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
           {messages.length === 0 && !isLoading && (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <BookOpen className="w-12 h-12 text-[#C9A961]/30 mb-4" />
-              <p className="text-sm text-gray-500">
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <BookOpen className="w-10 h-10 text-[#C9A961]/30 mb-3" />
+              <p className="text-sm text-gray-500 mb-4">
                 {isArabic
                   ? 'ابدأ محادثة مع الوكيل المتخصص'
                   : 'Start a conversation with the sector expert'}
               </p>
+              {/* Suggested questions */}
+              <div className="flex flex-wrap gap-2 justify-center max-w-sm">
+                {suggestedQuestions.map((q, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setInput(q);
+                    }}
+                    className="text-xs px-3 py-1.5 rounded-full border border-[#C9A961]/30 text-[#C9A961] hover:bg-[#C9A961]/10 transition-colors"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex gap-3 ${
-                message.role === 'user' ? 'justify-end' : 'justify-start'
-              }`}
+              className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-xs lg:max-w-md px-4 py-3 rounded-lg ${
+                className={`max-w-xs lg:max-w-md xl:max-w-lg px-4 py-3 rounded-lg ${
                   message.role === 'user'
                     ? 'bg-[#2C3424] text-white rounded-br-none'
-                    : 'bg-gray-100 text-gray-900 rounded-bl-none'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-bl-none'
                 }`}
               >
                 {message.role === 'assistant' ? (
-                  <Streamdown>{message.content}</Streamdown>
+                  <div className="text-sm prose prose-sm dark:prose-invert max-w-none">
+                    <Streamdown>{message.content || (message.isStreaming ? '' : 'No response')}</Streamdown>
+                    {message.isStreaming && !message.content && (
+                      <div className="flex items-center gap-2 text-gray-400">
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                        <span className="text-xs">{isArabic ? 'جارٍ التحليل...' : 'Analyzing data...'}</span>
+                      </div>
+                    )}
+                    {message.isStreaming && message.content && (
+                      <span className="inline-block w-1.5 h-4 bg-[#C9A961] animate-pulse ml-0.5 align-text-bottom" />
+                    )}
+                  </div>
                 ) : (
                   <p className="text-sm">{message.content}</p>
                 )}
 
                 {/* Sources */}
-                {message.sources && message.sources.length > 0 && (
-                  <div className="mt-3 pt-3 border-t border-gray-300 space-y-2">
-                    <p className="text-xs font-semibold text-gray-600">
+                {message.sources && message.sources.length > 0 && !message.isStreaming && (
+                  <div className="mt-3 pt-3 border-t border-gray-300 dark:border-gray-600 space-y-1.5">
+                    <p className="text-xs font-semibold text-gray-500">
                       {isArabic ? 'المصادر' : 'Sources'}:
                     </p>
-                    {message.sources.map((source, idx) => (
+                    {message.sources.slice(0, 3).map((source, idx) => (
                       <a
                         key={idx}
                         href={source.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-start gap-2 text-xs text-blue-600 hover:underline"
+                        className="flex items-start gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:underline"
                       >
                         <Eye className="w-3 h-3 mt-0.5 flex-shrink-0" />
-                        <span className="line-clamp-2">{source.title}</span>
+                        <span className="line-clamp-1">{source.title}</span>
                       </a>
                     ))}
                   </div>
                 )}
 
                 {/* Confidence */}
-                {message.confidence && (
+                {message.confidence && !message.isStreaming && (
                   <div className="mt-2 flex gap-2">
                     <Badge className={`text-xs ${getConfidenceColor(message.confidence)}`}>
                       {message.confidence === 'high'
-                        ? isArabic
-                          ? 'عالي'
-                          : 'High'
+                        ? isArabic ? 'ثقة عالية' : 'High Confidence'
                         : message.confidence === 'medium'
-                          ? isArabic
-                            ? 'متوسط'
-                            : 'Medium'
-                          : isArabic
-                            ? 'منخفض'
-                            : 'Low'}{' '}
-                      Confidence
+                          ? isArabic ? 'ثقة متوسطة' : 'Medium Confidence'
+                          : isArabic ? 'ثقة منخفضة' : 'Low Confidence'}
                     </Badge>
                   </div>
                 )}
 
-                <p className="text-xs text-gray-500 mt-2 opacity-70">
+                <p className="text-xs text-gray-400 mt-1.5 opacity-60">
                   {message.timestamp.toLocaleTimeString()}
                 </p>
               </div>
             </div>
           ))}
 
-          {isLoading && (
-            <div className="flex gap-3">
-              <div className="bg-gray-100 rounded-lg rounded-bl-none p-4 max-w-xs lg:max-w-md">
-                <Skeleton className="h-4 w-full mb-2" />
-                <Skeleton className="h-4 w-3/4" />
-              </div>
-            </div>
-          )}
-
           {error && (
             <div className="flex gap-3 justify-start">
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3 max-w-xs lg:max-w-md">
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 max-w-xs lg:max-w-md">
                 <div className="flex gap-2">
-                  <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-red-700">{error}</p>
+                  <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
                 </div>
               </div>
             </div>
@@ -291,22 +381,19 @@ export function SectorAgentChat({
       </ScrollArea>
 
       {/* Input */}
-      <CardContent className="border-t p-4">
+      <CardContent className="border-t p-3">
         <form onSubmit={handleSendMessage} className="flex gap-2">
           <Input
-            placeholder={
-              isArabic
-                ? 'اسأل الوكيل المتخصص...'
-                : 'Ask the sector expert...'
-            }
+            placeholder={isArabic ? 'اسأل الوكيل المتخصص...' : 'Ask the sector expert...'}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={isLoading}
-            className="flex-1"
+            className="flex-1 text-sm"
           />
           <Button
             type="submit"
             disabled={isLoading || !input.trim()}
+            size="sm"
             className="bg-[#2C3424] hover:bg-[#2C3424]/90"
           >
             {isLoading ? (

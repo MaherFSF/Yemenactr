@@ -3756,6 +3756,208 @@ Answer the user's question based on this research. Be specific and cite sources 
         return { success: true };
       }),
   }),
+
+  // ============================================================================
+  // DATA COVERAGE DASHBOARD
+  // ============================================================================
+  
+  dataCoverage: router({
+    // Get comprehensive coverage statistics by sector
+    getSectorCoverage: publicProcedure
+      .query(async () => {
+        const db = await getDb();
+        if (!db) return { sectors: [], summary: { totalIndicators: 0, totalDataPoints: 0, avgCoverage: 0, gapCount: 0 } };
+        try {
+          // Get indicator counts and data points per sector
+          const [sectorStats] = await db.execute(sql`
+            SELECT 
+              i.sector,
+              COUNT(DISTINCT i.code) as indicatorCount,
+              COUNT(DISTINCT ts.id) as dataPoints,
+              MIN(ts.date) as earliestDate,
+              MAX(ts.date) as latestDate,
+              COUNT(DISTINCT YEAR(ts.date)) as yearsCovered
+            FROM indicators i
+            LEFT JOIN time_series ts ON ts.indicatorCode = i.code
+            WHERE i.isActive = 1
+            GROUP BY i.sector
+            ORDER BY i.sector
+          `);
+          const stats = sectorStats as unknown as any[];
+          
+          // Expected years: 2010-2025 = 16 years
+          const expectedYears = 16;
+          const sectors = stats.map((s: any) => ({
+            sector: s.sector || 'unknown',
+            indicatorCount: Number(s.indicatorCount) || 0,
+            dataPoints: Number(s.dataPoints) || 0,
+            earliestDate: s.earliestDate,
+            latestDate: s.latestDate,
+            yearsCovered: Number(s.yearsCovered) || 0,
+            coveragePercent: Math.min(100, Math.round((Number(s.yearsCovered) / expectedYears) * 100)),
+            gapYears: expectedYears - (Number(s.yearsCovered) || 0),
+          }));
+
+          const totalIndicators = sectors.reduce((s: number, x: any) => s + x.indicatorCount, 0);
+          const totalDataPoints = sectors.reduce((s: number, x: any) => s + x.dataPoints, 0);
+          const avgCoverage = sectors.length > 0 ? Math.round(sectors.reduce((s: number, x: any) => s + x.coveragePercent, 0) / sectors.length) : 0;
+          const gapCount = sectors.reduce((s: number, x: any) => s + x.gapYears, 0);
+
+          return { sectors, summary: { totalIndicators, totalDataPoints, avgCoverage, gapCount } };
+        } catch (error) {
+          console.error('[Coverage] Error:', error);
+          return { sectors: [], summary: { totalIndicators: 0, totalDataPoints: 0, avgCoverage: 0, gapCount: 0 } };
+        }
+      }),
+
+    // Get detailed indicator-level coverage with gap detection
+    getIndicatorGaps: publicProcedure
+      .input(z.object({
+        sector: z.string().optional(),
+        limit: z.number().default(50),
+      }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+        try {
+          const sectorFilter = input.sector ? sql`AND i.sector = ${input.sector}` : sql``;
+          const [rows] = await db.execute(sql`
+            SELECT 
+              i.code,
+              i.nameEn,
+              i.nameAr,
+              i.sector,
+              i.unit,
+              i.frequency,
+              COUNT(ts.id) as dataPoints,
+              MIN(ts.date) as firstDate,
+              MAX(ts.date) as lastDate,
+              GROUP_CONCAT(DISTINCT YEAR(ts.date) ORDER BY YEAR(ts.date)) as yearsWithData,
+              s.publisher as sourceName
+            FROM indicators i
+            LEFT JOIN time_series ts ON ts.indicatorCode = i.code
+            LEFT JOIN sources s ON i.primarySourceId = s.id
+            WHERE i.isActive = 1 ${sectorFilter}
+            GROUP BY i.code, i.nameEn, i.nameAr, i.sector, i.unit, i.frequency, s.publisher
+            ORDER BY COUNT(ts.id) ASC
+            LIMIT ${input.limit}
+          `);
+          const indicators = rows as unknown as any[];
+          
+          const allYears = Array.from({ length: 16 }, (_, i) => 2010 + i);
+          return indicators.map((ind: any) => {
+            const yearsWithData = (ind.yearsWithData || '').split(',').filter(Boolean).map(Number);
+            const missingYears = allYears.filter(y => !yearsWithData.includes(y));
+            return {
+              code: ind.code,
+              name: ind.nameEn,
+              nameAr: ind.nameAr,
+              sector: ind.sector,
+              unit: ind.unit,
+              frequency: ind.frequency,
+              dataPoints: Number(ind.dataPoints) || 0,
+              firstDate: ind.firstDate,
+              lastDate: ind.lastDate,
+              yearsWithData,
+              missingYears,
+              coveragePercent: Math.round((yearsWithData.length / allYears.length) * 100),
+              source: ind.sourceName || 'Unknown',
+              canBackfill: ['World Bank', 'International Monetary Fund'].includes(ind.sourceName),
+            };
+          });
+        } catch (error) {
+          console.error('[Coverage] Indicator gaps error:', error);
+          return [];
+        }
+      }),
+
+    // Get data source statistics
+    getSourceStats: publicProcedure
+      .query(async () => {
+        const db = await getDb();
+        if (!db) return [];
+        try {
+          const [rows] = await db.execute(sql`
+            SELECT 
+              s.id,
+              s.publisher,
+              s.url,
+              COUNT(DISTINCT ts.indicatorCode) as indicatorCount,
+              COUNT(ts.id) as dataPoints,
+              MAX(ts.date) as latestData,
+              s.retrievalDate as lastIngestion
+            FROM sources s
+            LEFT JOIN time_series ts ON ts.sourceId = s.id
+            GROUP BY s.id, s.publisher, s.url, s.retrievalDate
+            HAVING COUNT(ts.id) > 0
+            ORDER BY COUNT(ts.id) DESC
+          `);
+          return (rows as unknown as any[]).map((r: any) => ({
+            id: Number(r.id),
+            publisher: r.publisher,
+            url: r.url,
+            indicatorCount: Number(r.indicatorCount) || 0,
+            dataPoints: Number(r.dataPoints) || 0,
+            latestData: r.latestData,
+            lastIngestion: r.lastIngestion,
+          }));
+        } catch (error) {
+          return [];
+        }
+      }),
+
+    // Trigger backfill for a specific sector from World Bank
+    triggerBackfill: adminProcedure
+      .input(z.object({
+        source: z.enum(['worldbank', 'imf']),
+        sector: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        try {
+          if (input.source === 'worldbank') {
+            const { runWorldBankIngestion } = await import('./scripts/ingestWorldBankData');
+            const result = await runWorldBankIngestion();
+            return { ...result, backfillSuccess: true };
+          } else if (input.source === 'imf') {
+            const { runIMFIngestion } = await import('./scripts/ingestIMFData');
+            const result = await runIMFIngestion();
+            return { ...result, backfillSuccess: true };
+          }
+          return { success: false, error: 'Unknown source' };
+        } catch (error: any) {
+          return { success: false, error: error.message };
+        }
+      }),
+
+    // Get year-by-year heatmap data
+    getYearHeatmap: publicProcedure
+      .query(async () => {
+        const db = await getDb();
+        if (!db) return [];
+        try {
+          const [rows] = await db.execute(sql`
+            SELECT 
+              i.sector,
+              YEAR(ts.date) as year,
+              COUNT(DISTINCT ts.indicatorCode) as indicatorCount,
+              COUNT(ts.id) as dataPoints
+            FROM time_series ts
+            JOIN indicators i ON i.code = ts.indicatorCode
+            WHERE YEAR(ts.date) >= 2010 AND YEAR(ts.date) <= 2025
+            GROUP BY i.sector, YEAR(ts.date)
+            ORDER BY i.sector, YEAR(ts.date)
+          `);
+          return (rows as unknown as any[]).map((r: any) => ({
+            sector: r.sector,
+            year: Number(r.year),
+            indicatorCount: Number(r.indicatorCount) || 0,
+            dataPoints: Number(r.dataPoints) || 0,
+          }));
+        } catch (error) {
+          return [];
+        }
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;
