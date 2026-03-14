@@ -20,6 +20,7 @@
   <img src="https://img.shields.io/badge/tRPC-11-2596BE?style=flat-square" alt="tRPC">
   <img src="https://img.shields.io/badge/Drizzle_ORM-0.44-C5F74F?style=flat-square" alt="Drizzle">
   <img src="https://img.shields.io/badge/Tests-736_Passing-brightgreen?style=flat-square" alt="Tests">
+  <img src="https://img.shields.io/badge/Sources_Classified-292%2F292-brightgreen?style=flat-square" alt="Sources Classified">
   <img src="https://img.shields.io/badge/Schema_Tables-183-blue?style=flat-square" alt="Schema Tables">
   <img src="https://img.shields.io/badge/Time_Series-7%2C868-blue?style=flat-square" alt="Time Series">
   <img src="https://img.shields.io/badge/Library_Documents-372-teal?style=flat-square" alt="Library Documents">
@@ -100,7 +101,7 @@ YETO is a **full-stack economic intelligence platform** that aggregates data fro
 | **Client Pages** | 83 |
 | **Server Services** | 82 |
 | **tRPC Routers** | 32 |
-| **Passing Tests** | 736 across 34 files |
+| **Passing Tests** | 736 across 33 files |
 | **Entities Tracked** | 79 organizations |
 | **Evidence Packs** | 898 |
 | **Economic Events** | 237 |
@@ -153,7 +154,7 @@ YETO is a **full-stack economic intelligence platform** that aggregates data fro
 | **AWS S3** | File storage for reports, exports, evidence packs |
 | **Manus OAuth** | Authentication and session management |
 | **Vite** | Build tool with HMR for development |
-| **Vitest** | 736 tests across 34 test files |
+| **Vitest** | 736 tests across 33 test files |
 | **Playwright** | End-to-end browser testing |
 | **pnpm** | Package management |
 
@@ -358,11 +359,11 @@ YETO maintains a **Source Registry** of 292 data sources, classified by tier, ac
 
 | Tier | Count | Description | Examples |
 |------|-------|-------------|----------|
-| **T0 — Flagship** | 16 | Gold-standard international methodology sources | IMF DQAF, World Bank PIP, WTO Data Portal |
-| **T1 — Core** | 117 | Primary data providers with regular updates | World Bank WDI, IMF WEO, UNHCR, OCHA FTS, FAO |
-| **T2 — Supplementary** | 22 | Specialized or regional sources | ACLED, IPC, FEWS NET, Yemen CSO |
-| **T3 — Contextual** | 18 | Commercial, academic, or restricted sources | Oxford Economics, EIU, Bloomberg |
-| **Unclassified** | 119 | Pending tier classification | Various media, NGO reports |
+| **T0 — Flagship** | 20 | Gold-standard international methodology sources | IMF DQAF, World Bank PIP, WTO Data Portal, UN DESA |
+| **T1 — Core** | 141 | Primary data providers with regular updates | World Bank WDI, IMF WEO, UNHCR, OCHA FTS, FAO, ILO, UNESCO |
+| **T2 — Supplementary** | 103 | Specialized or regional sources | ACLED, IPC, FEWS NET, Yemen CSO, V-Dem, SIPRI |
+| **T3 — Contextual** | 28 | Commercial, academic, or restricted sources | Oxford Economics, EIU, Bloomberg, local media |
+| **Unclassified** | 0 | All sources now classified | — |
 
 | Access Method | Count | Description |
 |--------------|-------|-------------|
@@ -379,6 +380,24 @@ YETO maintains a **Source Registry** of 292 data sources, classified by tier, ac
 | **Active** | 239 |
 | **Pending Review** | 39 |
 | **Needs API Key** | 14 |
+
+### Source Classification Methodology
+
+All 292 sources have been classified into tiers using a **rule-based classification engine** with domain-specific knowledge:
+
+**Classification Rules:**
+
+1. **T0 — Flagship (20 sources):** International organizations with gold-standard methodology frameworks (IMF, World Bank, WTO, UN DESA, ILO, FAO, WHO, UNESCO, UNCTAD, UNIDO). These sources follow internationally recognized statistical standards (DQAF, SDDS, SNA 2008).
+
+2. **T1 — Core (141 sources):** Primary data providers including UN agencies (UNHCR, UNICEF, OCHA, WFP, UNDP), bilateral donors (USAID, DFID/FCDO, GIZ, JICA), development banks (AfDB, IsDB, AIIB), and Yemeni government institutions (Central Bank, Ministry of Finance, Central Statistical Organization).
+
+3. **T2 — Supplementary (103 sources):** Specialized research institutions (Brookings, Chatham House, SIPRI, V-Dem), regional organizations (GCC, Arab Monetary Fund), sector-specific bodies (OPEC, IATA), and Yemeni civil society organizations.
+
+4. **T3 — Contextual (28 sources):** Commercial data providers (Oxford Economics, EIU, Bloomberg), local media outlets, social media monitoring, and unstructured data sources.
+
+**Classification Confidence:** Each classification carries a confidence score (0.70–0.95) based on the specificity of the matching rule. Sources matched by exact organizational name receive higher confidence than keyword-based matches.
+
+**Sector Assignment:** Each source is mapped to one or more of the 16 economic sectors based on its primary data domain. Cross-cutting sources (e.g., World Bank WDI) are assigned to multiple sectors.
 
 ### Data Connectors (20+ Automated)
 
@@ -483,6 +502,33 @@ The ingestion pipeline processes data through 7 stages:
 5. **Store** — Insert into appropriate database table with provenance logging
 6. **Evidence Pack** — Create evidence record linking data point to source citation
 7. **Route** — Routing engine assigns data to relevant sector pages and dashboards
+
+### Document Exports
+
+YETO provides **4 live document exports** generated dynamically from the database via the `documentExports` tRPC router:
+
+| Document | Format | Content |
+|----------|--------|--------|
+| **Full Methodology Guide** | Markdown | Platform overview, DQAF alignment, source tier breakdown, ingestion pipeline, quality gates, AI agent methodology |
+| **Data Dictionary** | JSON | All 295 indicators with codes, names, units, sources, frequencies, and sector assignments |
+| **Source Registry Export** | CSV | All 292 sources with tiers, sectors, access methods, status, and classification confidence |
+| **Indicator Catalog** | CSV | All 295 indicators with source names, tier levels, update frequencies, and data freshness |
+
+These documents are accessible from the **Methodology** page (`/methodology`) under the Documents tab, and are regenerated on each request to ensure they always reflect the latest database state.
+
+### Methodology Page
+
+The Methodology page (`/methodology`) is the **trust anchor** of the platform, built to international standards:
+
+| Tab | Content |
+|-----|--------|
+| **Source Registry** | All 292 sources displayed with tier groupings (T0–T3), searchable by name, filterable by status, with access method distribution chart |
+| **Quality Framework** | IMF DQAF 6-dimension alignment (Prerequisites, Integrity, Methodological Soundness, Accuracy/Reliability, Serviceability, Accessibility) scored at 77% overall |
+| **Provenance Rules** | 7 non-negotiable data lineage rules: Source Citation, Temporal Stamping, Methodology Disclosure, Contradiction Flagging, Confidence Rating, Audit Trail, Version Control |
+| **Confidence System** | A–E grading scale with examples: A (multiple T0/T1 sources agree), B (single T0/T1 source), C (T2 source), D (T3 or single source), E (unverified) |
+| **Documents** | 4 downloadable methodology documents + 16 sector-specific methodology documents |
+
+International standards adopted: **SNA 2008**, **BPM6**, **GFSM 2014**, **IPC Phase Classification**, **ISIC Rev.4**, **SDDS**.
 
 ### Backfill System
 
@@ -938,7 +984,7 @@ The database contains **183 tables** organized into functional domains:
 
 ```bash
 # Clone the repository
-git clone https://github.com/YourOrg/yeto-platform.git
+git clone https://github.com/MaherFSF/Yemenactr.git yeto-platform
 cd yeto-platform
 
 # Install dependencies
@@ -1054,6 +1100,7 @@ All API calls go through `/api/trpc` using tRPC with SuperJSON serialization:
 | `bulkClassification` | `classify`, `getResults` | Admin |
 | `dataInfra` | `getHealth`, `getMetrics` | Admin |
 | `methodologyDownloads` | `getMethodology`, `download` | Public |
+| `documentExports` | `methodologyGuide`, `dataDictionary`, `sourceRegistryExport`, `indicatorCatalog` | Public |
 
 ---
 
@@ -1118,7 +1165,7 @@ The **Daily Scheduler** (`dailyScheduler.ts`) manages 36 cron jobs:
 
 ## 🧪 Testing
 
-**736 tests** across **34 test files** covering:
+**736 tests** across **33 test files** covering:
 
 | Test Category | Files | Tests | Description |
 |--------------|-------|-------|-------------|
@@ -1135,6 +1182,18 @@ Key test files:
 - `server/services/entityServices.test.ts` — Entity resolution and relationships
 - `server/services/knowledgeGraph.test.ts` — Knowledge graph operations
 - `client/src/hooks/useEvidenceGuard.test.ts` — Evidence verification hooks
+
+---
+
+## 📅 Changelog
+
+| Version | Date | Changes |
+|---------|------|---------|
+| **e7202994** | 2026-03-15 | Classified all 119 UNKNOWN sources (T0:20, T1:141, T2:103, T3:28). Built 4 real document export endpoints. Comprehensive site-wide testing. 736/736 tests. |
+| **c6faf730** | 2026-03-14 | Rebuilt Methodology page with 5 interactive tabs, IMF DQAF alignment, all 292 sources displayed. |
+| **e76b79ba** | 2026-03-14 | Comprehensive README (700+ lines), repository cleanup, .gitignore updated. |
+| **793d9a38** | 2026-03-14 | 16 unique sector images (zero duplicates), landing page overhaul, Research Hub fix (372 documents), navigation fixes. |
+| **61cc820d** | 2026-03-14 | MegaIngest data pipeline, 7,868 time series, 1,767 publications, 8 AI agents fully operational. |
 
 ---
 
@@ -1158,7 +1217,7 @@ This project is licensed under the **MIT License**.
 
 - **Website:** [causewaygrp.com](https://causewaygrp.com)
 - **Email:** info@causewaygrp.com
-- **Platform:** [yetoecon-xodoykmz.manus.space](https://yetoecon-xodoykmz.manus.space)
+- **Platform:** [yteocauseway.manus.space](https://yteocauseway.manus.space)
 
 ---
 
