@@ -10479,4 +10479,36 @@ Based on review of master design documents and data source register:
 - [x] Ensure bilingual support (EN/AR)
 - [x] Browser test all 5 tabs (Source Registry, Quality Framework, Provenance, Confidence, Documents)
 - [x] Run vitest - 736/736 pass across 33 files
-- [ ] Save checkpoint and deliver
+- [x] Save checkpoint (version: c6faf730) and pushed to GitHub
+
+## Phase 90: Source Classification + Real PDF Documents + Full Site Testing
+
+### Task 1 - Classify 119 Unclassified Sources
+- [x] Audit all 119 unclassified sources from database
+- [x] Define classification criteria (tier assignment rules, sector mapping)
+- [x] Build classification script using domain knowledge (rule-based + keyword matching)
+- [x] Assign proper tiers (T0-T3) to all 119 sources → T0:20, T1:141, T2:103, T3:28
+- [x] Assign sector coverage to all 119 sources
+- [x] Update database with classifications (0 UNKNOWN remaining)
+- [x] Verify Source Registry page reflects updated classifications
+
+### Task 2 - Real PDF Document Generation
+- [x] Build Full Methodology Guide (live Markdown from DB - 11,789 chars)
+- [x] Build Data Dictionary (295 indicators with metadata as JSON)
+- [x] Build Source Registry Export (292 sources as CSV)
+- [x] Build Indicator Catalog (295 indicators with sources, tiers, freshness as CSV)
+- [x] Wire download endpoints via documentExports tRPC router
+- [x] Test all 4 downloads work correctly (verified in browser)
+
+### Task 3 - Comprehensive Site-Wide Testing
+- [x] Test landing page (all links, images, navigation)
+- [x] Test Banking sector page (KPIs, alerts, resources)
+- [x] Test Trade sector page (data, charts, alerts)
+- [x] Test Research Hub (372 documents, search, filters)
+- [x] Test Methodology page (all 5 tabs, downloads working)
+- [x] Test VIP Cockpit (National Situation Room loads)
+- [x] Test Data Repository (16 datasets, search, download)
+- [x] Test Dashboard (live data, indicators, time-travel)
+- [x] All navigation links verified correct (header, footer, home)
+- [x] Run vitest - 736/736 pass across 33 files
+- [ ] Save checkpoint and push to GitHub

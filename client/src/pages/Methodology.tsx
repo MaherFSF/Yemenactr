@@ -222,6 +222,7 @@ export default function Methodology() {
   const [expandedDqaf, setExpandedDqaf] = useState<string | null>(null);
 
   // Data fetching
+  const utils = trpc.useUtils();
   const statsQuery = trpc.sourceRegistry.getStats.useQuery();
   const sourcesQuery = trpc.sourceRegistry.getAll.useQuery({
     tier: selectedTier || undefined,
@@ -888,28 +889,28 @@ export default function Methodology() {
                       titleEn: "Full Methodology Guide", titleAr: "دليل المنهجية الكامل",
                       descEn: "Complete documentation of data collection, verification, quality standards, and presentation methodology across all 16 sectors",
                       descAr: "توثيق كامل لمعايير جمع البيانات والتحقق والجودة ومنهجية العرض عبر جميع القطاعات الـ 16",
-                      format: "PDF", size: "2.4 MB", icon: FileText,
+                      format: "MD", size: "Live", icon: FileText, key: "methodologyGuide" as const,
                       color: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-900 hover:bg-red-100 dark:hover:bg-red-950/50",
                     },
                     {
                       titleEn: "Data Dictionary", titleAr: "قاموس البيانات",
-                      descEn: "Definitions, units, calculation methods, and metadata for all 463 indicators tracked on the platform",
-                      descAr: "التعريفات والوحدات وطرق الحساب والبيانات الوصفية لجميع المؤشرات الـ 463 المتتبعة على المنصة",
-                      format: "PDF", size: "1.1 MB", icon: Database,
+                      descEn: "Definitions, units, calculation methods, and metadata for all indicators tracked on the platform",
+                      descAr: "التعريفات والوحدات وطرق الحساب والبيانات الوصفية لجميع المؤشرات المتتبعة على المنصة",
+                      format: "CSV", size: "Live", icon: Database, key: "dataDictionary" as const,
                       color: "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900 hover:bg-blue-100 dark:hover:bg-blue-950/50",
                     },
                     {
                       titleEn: "Source Registry Export", titleAr: "تصدير سجل المصادر",
                       descEn: "Complete list of all 292 registered data sources with tier classifications, access methods, and status",
                       descAr: "قائمة كاملة بجميع المصادر الـ 292 المسجلة مع تصنيفات المستوى وطرق الوصول والحالة",
-                      format: "CSV", size: "180 KB", icon: FileSpreadsheet,
+                      format: "CSV", size: "Live", icon: FileSpreadsheet, key: "sourceRegistryExport" as const,
                       color: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900 hover:bg-emerald-100 dark:hover:bg-emerald-950/50",
                     },
                     {
                       titleEn: "Indicator Catalog", titleAr: "كتالوج المؤشرات",
                       descEn: "All economic indicators with sources, update frequencies, confidence grades, and sector mappings",
                       descAr: "جميع المؤشرات الاقتصادية مع المصادر وتكرار التحديث ودرجات الثقة وتصنيفات القطاع",
-                      format: "XLSX", size: "890 KB", icon: FileSpreadsheet,
+                      format: "CSV", size: "Live", icon: FileSpreadsheet, key: "indicatorCatalog" as const,
                       color: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900 hover:bg-amber-100 dark:hover:bg-amber-950/50",
                     },
                   ].map((doc, index) => {
@@ -917,7 +918,25 @@ export default function Methodology() {
                     return (
                       <button
                         key={index}
-                        onClick={() => alert(isAr ? "سيتوفر هذا المستند قريباً للتحميل" : "This document will be available for download soon")}
+                        onClick={async () => {
+                          try {
+                            const fetcher = utils.documentExports[doc.key as keyof typeof utils.documentExports] as any;
+                            const result = await fetcher.fetch();
+                            if (!result) return;
+                            const blob = new Blob([result.content], { type: result.mimeType || 'text/plain' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = result.filename;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                          } catch (err) {
+                            console.error('Download error:', err);
+                            alert(isAr ? 'حدث خطأ أثناء التحميل' : 'Download error, please try again');
+                          }
+                        }}
                         className={`group p-5 rounded-xl border-2 transition-all duration-200 text-start block w-full ${doc.color}`}
                       >
                         <div className="flex items-start gap-4">
@@ -984,7 +1003,31 @@ export default function Methodology() {
                         <div className="font-medium text-sm">{isAr ? sector.ar : sector.en}</div>
                         <div className="text-xs text-muted-foreground">v2.0 — March 2026</div>
                       </div>
-                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0 flex-shrink-0">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 w-7 p-0 flex-shrink-0"
+                        onClick={async () => {
+                          try {
+                            const result = await (utils.methodologyDownloads.downloadMarkdown as any).fetch({ sectorCode: sector.code });
+                            if (!result) {
+                              alert(isAr ? 'الوثيقة غير متوفرة بعد' : 'Document not yet available for this sector');
+                              return;
+                            }
+                            const blob = new Blob([result.content], { type: 'text/markdown' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = result.filename;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                          } catch {
+                            alert(isAr ? 'الوثيقة غير متوفرة بعد' : 'Document not yet available for this sector');
+                          }
+                        }}
+                      >
                         <Download className="h-3.5 w-3.5" />
                       </Button>
                     </div>
