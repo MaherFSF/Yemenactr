@@ -226,11 +226,44 @@ export const documents = mysqlTable("documents", {
   uploaderId: int("uploaderId").references(() => users.id),
   category: varchar("category", { length: 100 }), // e.g., "report", "policy_brief", "dataset"
   tags: json("tags").$type<string[]>(), // Searchable tags
+  
+  // Document Vault extensions
+  sourceProductId: int("sourceProductId"), // Link to source_products for automatic ingestion
+  author: varchar("author", { length: 255 }),
+  organization: varchar("organization", { length: 255 }),
+  language: mysqlEnum("language", ["en", "ar", "mixed"]).default("en").notNull(),
+  pageCount: int("pageCount"),
+  wordCount: int("wordCount"),
+  regimeTag: mysqlEnum("regimeTag", ["aden", "sanaa", "both", "international"]),
+  sectorTags: json("sectorTags").$type<string[]>(),
+  visibility: mysqlEnum("visibility", ["public", "restricted", "internal"]).default("public").notNull(),
+  
+  // Processing status
+  processingStatus: mysqlEnum("processingStatus", [
+    "pending", "extracting", "translating", "chunking", "indexing", "completed", "failed"
+  ]).default("pending").notNull(),
+  ocrStatus: mysqlEnum("ocrStatus", ["not_needed", "pending", "processing", "completed", "failed"]),
+  translationStatus: mysqlEnum("translationStatus", ["not_needed", "pending", "processing", "completed", "failed"]),
+  indexingStatus: mysqlEnum("indexingStatus", ["pending", "processing", "completed", "failed"]).default("pending").notNull(),
+  
+  // Evidence pack reference
+  evidencePackId: int("evidencePackId"),
+  
+  // Metadata
+  sha256Hash: varchar("sha256Hash", { length: 64 }),
+  retrievalUrl: text("retrievalUrl"),
+  retrievalTimestamp: timestamp("retrievalTimestamp"),
+  
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => ({
   categoryIdx: index("category_idx").on(table.category),
   uploadDateIdx: index("upload_date_idx").on(table.uploadDate),
+  sourceProductIdx: index("source_product_idx").on(table.sourceProductId),
+  processingStatusIdx: index("processing_status_idx").on(table.processingStatus),
+  visibilityIdx: index("visibility_idx").on(table.visibility),
+  regimeTagIdx: index("regime_tag_idx").on(table.regimeTag),
+  publicationDateIdx: index("publication_date_idx").on(table.publicationDate),
 }));
 
 export type Document = typeof documents.$inferSelect;
@@ -8032,3 +8065,307 @@ export const insightMinerProposals = mysqlTable("insight_miner_proposals", {
 
 export type InsightMinerProposal = typeof insightMinerProposals.$inferSelect;
 export type InsertInsightMinerProposal = typeof insightMinerProposals.$inferInsert;
+
+// ============================================================================
+// DOCUMENT VAULT - Knowledge Base & Literature Repository
+// ============================================================================
+
+// SOURCE_PRODUCTS - Tracks all products (reports, datasets, circulars) from each source
+export const sourceProducts = mysqlTable("source_products", {
+  id: int("id").autoincrement().primaryKey(),
+  sourceId: int("sourceId").notNull().references(() => sources.id),
+  productType: mysqlEnum("productType", [
+    "annual_report", "quarterly_report", "monthly_report", "weekly_report",
+    "statistical_bulletin", "economic_review", "technical_paper", "working_paper",
+    "policy_brief", "press_release", "circular", "regulation", "dataset",
+    "news_article", "speech", "presentation", "other"
+  ]).notNull(),
+  productName: varchar("productName", { length: 500 }).notNull(),
+  productNameAr: varchar("productNameAr", { length: 500 }),
+  
+  // Allowed use determines ingestion pipeline
+  allowedUse: json("allowedUse").$type<string[]>().notNull(), // ["DATA_NUMERIC", "DOC_PDF", "DOC_NARRATIVE", "EVENT_DETECTION", "NEWS_MEDIA"]
+  
+  // Publication details
+  publishingFrequency: mysqlEnum("publishingFrequency", [
+    "realtime", "daily", "weekly", "monthly", "quarterly", "annual", "irregular", "one_time"
+  ]).notNull(),
+  expectedDayOfMonth: int("expectedDayOfMonth"), // e.g., 15 for monthly reports on the 15th
+  expectedMonthOfYear: int("expectedMonthOfYear"), // e.g., 3 for annual reports in March
+  
+  // Backfill planning
+  historicalStartYear: int("historicalStartYear"), // Earliest year available
+  historicalEndYear: int("historicalEndYear"), // Latest year or NULL for ongoing
+  
+  // Metadata
+  sectorTags: json("sectorTags").$type<string[]>(),
+  regimeTag: mysqlEnum("regimeTag", ["aden", "sanaa", "both", "international"]),
+  license: varchar("license", { length: 100 }),
+  visibility: mysqlEnum("visibility", ["public", "restricted", "internal"]).default("public").notNull(),
+  
+  // Tracking
+  lastCheckDate: timestamp("lastCheckDate"),
+  nextCheckDate: timestamp("nextCheckDate"),
+  checkStatus: mysqlEnum("checkStatus", ["pending", "checking", "found", "missing", "error"]).default("pending").notNull(),
+  
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  sourceIdx: index("sp_source_idx").on(table.sourceId),
+  productTypeIdx: index("sp_product_type_idx").on(table.productType),
+  checkStatusIdx: index("sp_check_status_idx").on(table.checkStatus),
+}));
+
+export type SourceProduct = typeof sourceProducts.$inferSelect;
+export type InsertSourceProduct = typeof sourceProducts.$inferInsert;
+
+// DOCUMENT_BACKFILL_PLANS - Year-by-year capture planning for each source product
+export const documentBackfillPlans = mysqlTable("document_backfill_plans", {
+  id: int("id").autoincrement().primaryKey(),
+  sourceProductId: int("sourceProductId").notNull().references(() => sourceProducts.id),
+  targetYear: int("targetYear").notNull(),
+  targetMonth: int("targetMonth"), // NULL for annual products
+  
+  // Backfill priority
+  priority: mysqlEnum("priority", ["critical", "high", "medium", "low"]).default("medium").notNull(),
+  priorityReason: text("priorityReason"),
+  
+  // Status tracking
+  status: mysqlEnum("status", [
+    "planned", "in_progress", "found", "ingested", "not_found", "not_published", "skipped", "failed"
+  ]).default("planned").notNull(),
+  
+  // Ingestion details
+  attemptCount: int("attemptCount").default(0).notNull(),
+  lastAttemptDate: timestamp("lastAttemptDate"),
+  nextAttemptDate: timestamp("nextAttemptDate"),
+  
+  // Document reference (once ingested)
+  documentId: int("documentId").references(() => documents.id),
+  
+  // Metadata
+  expectedUrl: text("expectedUrl"),
+  actualUrl: text("actualUrl"),
+  checkMethod: varchar("checkMethod", { length: 100 }), // "web_scrape", "api", "manual", "partner_feed"
+  errorLog: text("errorLog"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  productIdx: index("dbp_product_idx").on(table.sourceProductId),
+  yearIdx: index("dbp_year_idx").on(table.targetYear),
+  statusIdx: index("dbp_status_idx").on(table.status),
+  priorityIdx: index("dbp_priority_idx").on(table.priority),
+  uniqueProductYearMonth: unique("dbp_unique_product_year_month").on(
+    table.sourceProductId, table.targetYear, table.targetMonth
+  ),
+}));
+
+export type DocumentBackfillPlan = typeof documentBackfillPlans.$inferSelect;
+export type InsertDocumentBackfillPlan = typeof documentBackfillPlans.$inferInsert;
+
+// DOCUMENT_ARTIFACTS - Raw document storage with versioning
+export const documentArtifacts = mysqlTable("document_artifacts", {
+  id: int("id").autoincrement().primaryKey(),
+  documentId: int("documentId").notNull().references(() => documents.id),
+  
+  // Storage
+  storageKey: varchar("storageKey", { length: 500 }).notNull(), // S3/storage key
+  storageUrl: text("storageUrl").notNull(),
+  sha256Hash: varchar("sha256Hash", { length: 64 }).notNull(),
+  
+  // Metadata
+  artifactType: mysqlEnum("artifactType", [
+    "raw_original", "ocr_extracted", "translated_ar", "translated_en", "processed_text"
+  ]).notNull(),
+  mimeType: varchar("mimeType", { length: 100 }).notNull(),
+  fileSize: int("fileSize").notNull(),
+  
+  // Retrieval tracking
+  retrievalTimestamp: timestamp("retrievalTimestamp").notNull(),
+  retrievalMethod: varchar("retrievalMethod", { length: 100 }), // "download", "api", "upload"
+  retrievalUrl: text("retrievalUrl"),
+  
+  // Processing metadata
+  processingStatus: mysqlEnum("processingStatus", [
+    "pending", "processing", "completed", "failed"
+  ]).default("pending").notNull(),
+  processingLog: text("processingLog"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  documentIdx: index("da_document_idx").on(table.documentId),
+  artifactTypeIdx: index("da_artifact_type_idx").on(table.artifactType),
+  hashIdx: index("da_hash_idx").on(table.sha256Hash),
+}));
+
+export type DocumentArtifact = typeof documentArtifacts.$inferSelect;
+export type InsertDocumentArtifact = typeof documentArtifacts.$inferInsert;
+
+// DOCUMENT_CHUNKS - Text chunks for hybrid search (keyword + embedding)
+export const documentChunks = mysqlTable("document_chunks", {
+  id: int("id").autoincrement().primaryKey(),
+  documentId: int("documentId").notNull().references(() => documents.id),
+  
+  // Chunk content
+  chunkIndex: int("chunkIndex").notNull(), // Order within document
+  chunkText: text("chunkText").notNull(),
+  chunkTextAr: text("chunkTextAr"),
+  
+  // Citation anchor
+  anchorId: varchar("anchorId", { length: 100 }).notNull(),
+  anchorType: mysqlEnum("anchorType", [
+    "page", "section", "paragraph", "table", "figure", "footnote"
+  ]).notNull(),
+  pageNumber: int("pageNumber"),
+  sectionTitle: varchar("sectionTitle", { length: 500 }),
+  
+  // Metadata
+  tokenCount: int("tokenCount"),
+  language: mysqlEnum("language", ["en", "ar", "mixed"]).notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  documentIdx: index("dc_document_idx").on(table.documentId),
+  anchorIdx: index("dc_anchor_idx").on(table.anchorId),
+  // Full-text search index on chunkText (MySQL FULLTEXT)
+  fulltextIdx: index("dc_fulltext_idx").on(table.chunkText),
+}));
+
+export type DocumentChunk = typeof documentChunks.$inferSelect;
+export type InsertDocumentChunk = typeof documentChunks.$inferInsert;
+
+// DOCUMENT_EMBEDDINGS - Vector embeddings for semantic search
+export const documentEmbeddings = mysqlTable("document_embeddings", {
+  id: int("id").autoincrement().primaryKey(),
+  chunkId: int("chunkId").notNull().references(() => documentChunks.id),
+  
+  // Embedding vector (stored as JSON array for now; migrate to vector type later)
+  embedding: json("embedding").$type<number[]>().notNull(),
+  embeddingModel: varchar("embeddingModel", { length: 100 }).notNull(), // e.g., "text-embedding-3-small"
+  embeddingDimension: int("embeddingDimension").notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  chunkIdx: index("de_chunk_idx").on(table.chunkId),
+}));
+
+export type DocumentEmbedding = typeof documentEmbeddings.$inferSelect;
+export type InsertDocumentEmbedding = typeof documentEmbeddings.$inferInsert;
+
+// DOCUMENT_SEARCH_INDEX - Hybrid search index (keyword + semantic)
+export const documentSearchIndex = mysqlTable("document_search_index", {
+  id: int("id").autoincrement().primaryKey(),
+  documentId: int("documentId").notNull().references(() => documents.id),
+  
+  // Indexed fields
+  title: varchar("title", { length: 500 }).notNull(),
+  titleAr: varchar("titleAr", { length: 500 }),
+  fullText: text("fullText").notNull(),
+  fullTextAr: text("fullTextAr"),
+  
+  // Metadata for filtering
+  sourceId: int("sourceId").references(() => sources.id),
+  sourceProductId: int("sourceProductId").references(() => sourceProducts.id),
+  publicationYear: int("publicationYear"),
+  sectorTags: json("sectorTags").$type<string[]>(),
+  regimeTag: varchar("regimeTag", { length: 50 }),
+  language: mysqlEnum("language", ["en", "ar", "mixed"]).notNull(),
+  visibility: mysqlEnum("visibility", ["public", "restricted", "internal"]).default("public").notNull(),
+  
+  // Search metrics
+  searchRank: decimal("searchRank", { precision: 10, scale: 4 }).default("1.0"),
+  viewCount: int("viewCount").default(0),
+  citationCount: int("citationCount").default(0),
+  
+  lastIndexedAt: timestamp("lastIndexedAt").defaultNow().notNull(),
+}, (table) => ({
+  documentIdx: index("dsi_document_idx").on(table.documentId),
+  sourceIdx: index("dsi_source_idx").on(table.sourceId),
+  yearIdx: index("dsi_year_idx").on(table.publicationYear),
+  visibilityIdx: index("dsi_visibility_idx").on(table.visibility),
+  // Full-text search indexes
+  fulltextTitleIdx: index("dsi_fulltext_title_idx").on(table.title),
+  fulltextTextIdx: index("dsi_fulltext_text_idx").on(table.fullText),
+}));
+
+export type DocumentSearchIndex = typeof documentSearchIndex.$inferSelect;
+export type InsertDocumentSearchIndex = typeof documentSearchIndex.$inferInsert;
+
+// DOCUMENT_CITATIONS - Track citations from AI responses and reports
+export const documentCitations = mysqlTable("document_citations", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Citation source (what cited this document)
+  citingType: mysqlEnum("citingType", [
+    "ai_response", "report", "insight", "alert", "user_query"
+  ]).notNull(),
+  citingId: varchar("citingId", { length: 255 }), // ID of the citing entity
+  
+  // Citation target
+  documentId: int("documentId").notNull().references(() => documents.id),
+  chunkId: int("chunkId").references(() => documentChunks.id),
+  anchorId: varchar("anchorId", { length: 100 }),
+  
+  // Citation quality
+  relevanceScore: decimal("relevanceScore", { precision: 5, scale: 2 }), // 0-100
+  confidenceScore: decimal("confidenceScore", { precision: 5, scale: 2 }), // 0-100
+  
+  // Context
+  queryText: text("queryText"),
+  responseText: text("responseText"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  documentIdx: index("dcit_document_idx").on(table.documentId),
+  citingIdx: index("dcit_citing_idx").on(table.citingType, table.citingId),
+  chunkIdx: index("dcit_chunk_idx").on(table.chunkId),
+}));
+
+export type DocumentCitation = typeof documentCitations.$inferSelect;
+export type InsertDocumentCitation = typeof documentCitations.$inferInsert;
+
+// DOCUMENT_VAULT_JOBS - Background jobs for ingestion and processing
+export const documentVaultJobs = mysqlTable("document_vault_jobs", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Job details
+  jobType: mysqlEnum("jobType", [
+    "backfill_scan", "document_ingest", "document_process", "ocr_extract",
+    "translate", "chunk_index", "embedding_generate", "search_index_rebuild"
+  ]).notNull(),
+  jobStatus: mysqlEnum("jobStatus", [
+    "pending", "running", "completed", "failed", "cancelled"
+  ]).default("pending").notNull(),
+  
+  // Job parameters
+  parameters: json("parameters").$type<Record<string, any>>(),
+  
+  // Progress tracking
+  totalItems: int("totalItems"),
+  processedItems: int("processedItems").default(0),
+  successItems: int("successItems").default(0),
+  failedItems: int("failedItems").default(0),
+  
+  // Execution details
+  startedAt: timestamp("startedAt"),
+  completedAt: timestamp("completedAt"),
+  errorLog: text("errorLog"),
+  resultSummary: json("resultSummary").$type<Record<string, any>>(),
+  
+  // Scheduling
+  scheduledAt: timestamp("scheduledAt"),
+  priority: int("priority").default(5).notNull(), // 1=highest, 10=lowest
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  jobTypeIdx: index("dvj_job_type_idx").on(table.jobType),
+  jobStatusIdx: index("dvj_job_status_idx").on(table.jobStatus),
+  scheduledIdx: index("dvj_scheduled_idx").on(table.scheduledAt),
+  priorityIdx: index("dvj_priority_idx").on(table.priority),
+}));
+
+export type DocumentVaultJob = typeof documentVaultJobs.$inferSelect;
+export type InsertDocumentVaultJob = typeof documentVaultJobs.$inferInsert;
