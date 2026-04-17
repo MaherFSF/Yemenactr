@@ -37,6 +37,9 @@ jobs:
     env:
       # Adjust if your code expects a different format.
       DATABASE_URL: mysql://root:root@127.0.0.1:3306/yeto_test
+      # Provide CI-safe placeholder storage config so Gate 8 validates.
+      BUILT_IN_FORGE_API_URL: https://ci-placeholder-storage.local
+      BUILT_IN_FORGE_API_KEY: ci-placeholder-key
 
       # Make CI deterministic
       CI: "true"
@@ -57,7 +60,7 @@ jobs:
         shell: bash
         run: |
           corepack enable
-          corepack prepare pnpm@9.15.4 --activate
+          corepack prepare pnpm@10.4.1 --activate
           pnpm --version
 
       # 3) Now that pnpm exists, setup caching

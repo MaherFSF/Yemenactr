@@ -79,16 +79,21 @@ async function seedCI() {
     
     const tiers = ['T0', 'T1', 'T2', 'T3', 'T4'];
     const accessTypes = ['API', 'WEB', 'MANUAL', 'PARTNER'];
-    const statuses = ['ACTIVE', 'PENDING_REVIEW'];
     
-    for (let i = 1; i <= 150; i++) {
+    for (let i = 1; i <= 320; i++) {
       const tier = tiers[i % 5];
       const accessType = accessTypes[i % 4];
-      const status = statuses[i % 2];
+      const status = i <= 240 ? 'ACTIVE' : 'PENDING_REVIEW';
+      const sourceType = i % 3 === 0 ? 'official' : i % 3 === 1 ? 'research' : 'media';
+      const sectorsFed = JSON.stringify(
+        i % 5 === 0
+          ? []
+          : [i % 2 === 0 ? 'banking' : 'macroeconomy', i % 3 === 0 ? 'trade' : 'prices']
+      );
       await connection.execute(
         `INSERT IGNORE INTO source_registry 
-         (sourceId, name, tier, accessType, status, description, confidenceRating) 
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+         (sourceId, name, tier, accessType, status, description, confidenceRating, sourceType, sectorsFed) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           `src_${i}`,
           `Test Source ${i}`,
@@ -96,11 +101,68 @@ async function seedCI() {
           accessType,
           status,
           `Auto-classified as ${tier} based on publisher type`,
-          ['A', 'B', 'C', 'D'][i % 4]
+          ['A', 'B', 'C', 'D'][i % 4],
+          sourceType,
+          sectorsFed,
         ]
       );
     }
-    console.log(`  ✅ Seeded 150 source_registry entries\n`);
+    console.log(`  ✅ Seeded 320 source_registry entries (240 ACTIVE)\n`);
+
+    // ========================================================================
+    // 2.1 SEED SECTOR_CODEBOOK (required by release gate)
+    // ========================================================================
+    console.log('🧭 Seeding sector_codebook...');
+    const sectorCodebookRows = [
+      ['S01', 'Macroeconomy', 'الاقتصاد الكلي'],
+      ['S02', 'Banking', 'القطاع المصرفي'],
+      ['S03', 'Prices & Inflation', 'الأسعار والتضخم'],
+      ['S04', 'Trade & External', 'التجارة والقطاع الخارجي'],
+      ['S05', 'Currency & FX', 'العملة وسعر الصرف'],
+      ['S06', 'Public Finance', 'المالية العامة'],
+      ['S07', 'Energy', 'الطاقة'],
+      ['S08', 'Labor Market', 'سوق العمل'],
+      ['S09', 'Food Security', 'الأمن الغذائي'],
+      ['S10', 'Poverty', 'الفقر'],
+      ['S11', 'Humanitarian', 'القطاع الإنساني'],
+      ['S12', 'Infrastructure', 'البنية التحتية'],
+      ['S13', 'Agriculture', 'الزراعة'],
+      ['S14', 'Conflict Economics', 'اقتصاد الصراع'],
+      ['S15', 'Private Sector', 'القطاع الخاص'],
+      ['S16', 'Governance', 'الحوكمة'],
+    ];
+    for (const [sectorCode, sectorName, sectorNameAr] of sectorCodebookRows) {
+      await connection.execute(
+        `INSERT IGNORE INTO sector_codebook (sectorCode, sectorName, sectorNameAr, displayOrder, isActive)
+         VALUES (?, ?, ?, ?, 1)`,
+        [sectorCode, sectorName, sectorNameAr, Number(sectorCode.replace('S', ''))]
+      );
+    }
+    console.log(`  ✅ Seeded ${sectorCodebookRows.length} sector codebook entries\n`);
+
+    // ========================================================================
+    // 2.2 SEED INDICATORS for sector data service tests
+    // ========================================================================
+    console.log('🧮 Seeding indicators...');
+    const indicatorCatalog = [
+      { code: 'IMF_CREDIT_TO_PRIVATE_SECTOR', nameEn: 'Credit to Private Sector', nameAr: 'الائتمان للقطاع الخاص', unit: 'YER bn', sector: 'banking' },
+      { code: 'WB_BANK_BRANCHES_PER_100K', nameEn: 'Bank Branches per 100k Adults', nameAr: 'فروع البنوك لكل 100 ألف بالغ', unit: 'branches', sector: 'banking' },
+      { code: 'IMF_GDP_GROWTH_REAL', nameEn: 'Real GDP Growth', nameAr: 'نمو الناتج المحلي الحقيقي', unit: 'percent', sector: 'macroeconomy' },
+      { code: 'WB_GDP_PER_CAPITA_USD', nameEn: 'GDP per Capita', nameAr: 'الناتج المحلي للفرد', unit: 'USD', sector: 'macroeconomy' },
+      { code: 'IMF_CPI_YOY', nameEn: 'Consumer Price Index YoY', nameAr: 'التضخم السنوي لأسعار المستهلك', unit: 'percent', sector: 'prices' },
+      { code: 'WB_FOOD_PRICE_INDEX', nameEn: 'Food Price Index', nameAr: 'مؤشر أسعار الغذاء', unit: 'index', sector: 'prices' },
+      { code: 'IMF_EXPORTS_GOODS_SERVICES', nameEn: 'Exports of Goods and Services', nameAr: 'صادرات السلع والخدمات', unit: 'USD mn', sector: 'trade' },
+      { code: 'WB_IMPORTS_GOODS_SERVICES', nameEn: 'Imports of Goods and Services', nameAr: 'واردات السلع والخدمات', unit: 'USD mn', sector: 'trade' },
+    ];
+    for (const indicator of indicatorCatalog) {
+      await connection.execute(
+        `INSERT IGNORE INTO indicators
+         (code, nameEn, nameAr, unit, sector, frequency, isActive)
+         VALUES (?, ?, ?, ?, ?, 'monthly', 1)`,
+        [indicator.code, indicator.nameEn, indicator.nameAr, indicator.unit, indicator.sector]
+      );
+    }
+    console.log(`  ✅ Seeded ${indicatorCatalog.length} indicators\n`);
     
     // ========================================================================
     // 3. SEED TIME_SERIES with 600+ records
@@ -108,12 +170,14 @@ async function seedCI() {
     console.log('📈 Seeding time_series data...');
     
     const indicators = [
-      { code: 'FX_RATE_PARALLEL', unit: 'YER/USD' },
-      { code: 'INFLATION_CPI', unit: 'percent' },
-      { code: 'GDP_GROWTH', unit: 'percent' },
-      { code: 'UNEMPLOYMENT_RATE', unit: 'percent' },
-      { code: 'FOOD_PRICE_INDEX', unit: 'index' },
-      { code: 'OIL_PRODUCTION', unit: 'bpd' },
+      { code: 'IMF_CREDIT_TO_PRIVATE_SECTOR', unit: 'YER bn' },
+      { code: 'WB_BANK_BRANCHES_PER_100K', unit: 'branches' },
+      { code: 'IMF_GDP_GROWTH_REAL', unit: 'percent' },
+      { code: 'WB_GDP_PER_CAPITA_USD', unit: 'USD' },
+      { code: 'IMF_CPI_YOY', unit: 'percent' },
+      { code: 'WB_FOOD_PRICE_INDEX', unit: 'index' },
+      { code: 'IMF_EXPORTS_GOODS_SERVICES', unit: 'USD mn' },
+      { code: 'WB_IMPORTS_GOODS_SERVICES', unit: 'USD mn' },
     ];
     
     const regimes = ['aden_irg', 'sanaa_defacto', 'mixed'];
@@ -122,9 +186,9 @@ async function seedCI() {
     let timeSeriesCount = 0;
     for (const indicator of indicators) {
       for (const regime of regimes) {
-        // Generate 40 data points per indicator/regime combination
-        for (let month = 1; month <= 40; month++) {
-          const year = 2020 + Math.floor((month - 1) / 12);
+        // Generate 180 data points per indicator/regime combination (2010+ coverage)
+        for (let month = 1; month <= 180; month++) {
+          const year = 2010 + Math.floor((month - 1) / 12);
           const monthNum = ((month - 1) % 12) + 1;
           const date = `${year}-${String(monthNum).padStart(2, '0')}-15`;
           const value = (100 + Math.random() * 50).toFixed(2);
