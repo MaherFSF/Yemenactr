@@ -63,7 +63,7 @@ async function startServer() {
       let dataContext = '';
       const sourcesUsed: Array<{ title: string; url: string; type: string; confidence: string }> = [];
 
-      if (sectorData && sectorData.indicators.length > 0) {
+      if (sectorData?.contextSource === 'database' && sectorData.indicators.length > 0) {
         dataContext = `\n\n=== REAL YEMEN ECONOMIC DATA (from YETO Database) ===\n`;
         dataContext += `Sector: ${sectorData.sectorName}\nTotal data points: ${sectorData.dataPoints}\n`;
         dataContext += `Data range: ${sectorData.dateRange.from} to ${sectorData.dateRange.to}\n\n`;
@@ -116,7 +116,11 @@ async function startServer() {
       }
 
       // Send metadata first
-      const confidence = sectorData && sectorData.dataPoints > 50 ? 'high' : sectorData && sectorData.dataPoints > 10 ? 'medium' : 'low';
+      const confidence = sectorData?.contextSource === 'database' && sectorData.dataPoints > 50
+        ? 'high'
+        : sectorData?.contextSource === 'database' && sectorData.dataPoints > 10
+          ? 'medium'
+          : 'low';
       res.write(`data: ${JSON.stringify({ type: 'meta', confidence, sources: sourcesUsed.slice(0, 5) })}\n\n`);
 
       // Stream the LLM response
