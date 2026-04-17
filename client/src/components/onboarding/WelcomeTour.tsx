@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { 
   ChevronLeft, ChevronRight, X,
@@ -228,6 +229,9 @@ export function WelcomeTour({ onComplete, forceShow = false, isOpen: externalIsO
         className="max-w-md p-0 overflow-hidden border-0 shadow-2xl rounded-2xl bg-white"
         dir={isRTL ? 'rtl' : 'ltr'}
       >
+        <DialogTitle className="sr-only">
+          {isRTL ? "جولة تعريفية بمنصة يتو" : "YETO onboarding tour"}
+        </DialogTitle>
         {/* Clean Header */}
         <div className="relative bg-white border-b border-gray-100 px-6 py-4">
           <div className="flex items-center justify-between">
