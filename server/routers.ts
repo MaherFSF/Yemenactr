@@ -639,7 +639,7 @@ export const appRouter = router({
           let dataContext = '';
           const sourcesUsed: Array<{ title: string; url: string; type: 'data' | 'research'; confidence: 'high' | 'medium' | 'low' }> = [];
 
-          if (sectorData && sectorData.indicators.length > 0) {
+          if (sectorData && sectorData.indicators.length > 0 && !sectorData.isFallback) {
             dataContext = `\n\n=== REAL YEMEN ECONOMIC DATA (from YETO Database) ===\n`;
             dataContext += `Sector: ${sectorData.sectorName}\n`;
             dataContext += `Total data points: ${sectorData.dataPoints}\n`;

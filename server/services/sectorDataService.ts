@@ -24,6 +24,7 @@ export interface SectorDataContext {
   summary: string;
   dataPoints: number;
   dateRange: { from: string; to: string };
+  isFallback?: boolean;
 }
 
 // Map sector IDs to their database sector codes
@@ -155,11 +156,12 @@ function getFallbackSectorDataContext(sectorId: string): SectorDataContext {
       summary: `Fallback context: no baseline indicators are configured for sector ${sectorId}.`,
       dataPoints: 0,
       dateRange: { from: 'N/A', to: 'N/A' },
-    } satisfies Omit<SectorDataContext, 'sectorName'>);
+    } satisfies Omit<SectorDataContext, 'sectorName' | 'isFallback'>);
 
   return {
     sectorName: sectorId,
     ...fallback,
+    isFallback: true,
   };
 }
 
@@ -376,7 +378,7 @@ export async function getFullSectorBriefing(sectorId: string): Promise<string> {
 
   const parts: string[] = [];
 
-  if (dataContext) {
+  if (dataContext && !dataContext.isFallback) {
     parts.push('=== REAL-TIME DATA ===');
     parts.push(dataContext.summary);
     parts.push(`Data coverage: ${dataContext.dataPoints} data points from ${dataContext.dateRange.from} to ${dataContext.dateRange.to}`);

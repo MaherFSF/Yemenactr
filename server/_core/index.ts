@@ -63,7 +63,7 @@ async function startServer() {
       let dataContext = '';
       const sourcesUsed: Array<{ title: string; url: string; type: string; confidence: string }> = [];
 
-      if (sectorData && sectorData.indicators.length > 0) {
+      if (sectorData && sectorData.indicators.length > 0 && !sectorData.isFallback) {
         dataContext = `\n\n=== REAL YEMEN ECONOMIC DATA (from YETO Database) ===\n`;
         dataContext += `Sector: ${sectorData.sectorName}\nTotal data points: ${sectorData.dataPoints}\n`;
         dataContext += `Data range: ${sectorData.dateRange.from} to ${sectorData.dateRange.to}\n\n`;
