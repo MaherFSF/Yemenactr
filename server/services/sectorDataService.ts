@@ -7,6 +7,7 @@ import { getDb } from '../db';
 import { sql } from 'drizzle-orm';
 
 export interface SectorDataContext {
+  contextSource: 'database' | 'fallback';
   sectorName: string;
   indicators: Array<{
     code: string;
@@ -60,6 +61,7 @@ export async function getSectorDataContext(sectorId: string): Promise<SectorData
 
     if (indicators.length === 0) {
       return {
+        contextSource: 'database',
         sectorName: sectorId,
         indicators: [],
         summary: `No indicators found for sector ${sectorId}`,
@@ -128,6 +130,7 @@ export async function getSectorDataContext(sectorId: string): Promise<SectorData
     const summary = generateSectorSummary(sectorId, enrichedIndicators);
 
     return {
+      contextSource: 'database',
       sectorName: sectorId,
       indicators: enrichedIndicators,
       summary,

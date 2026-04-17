@@ -639,7 +639,7 @@ export const appRouter = router({
           let dataContext = '';
           const sourcesUsed: Array<{ title: string; url: string; type: 'data' | 'research'; confidence: 'high' | 'medium' | 'low' }> = [];
 
-          if (sectorData && sectorData.indicators.length > 0) {
+          if (sectorData?.contextSource === 'database' && sectorData.indicators.length > 0) {
             dataContext = `\n\n=== REAL YEMEN ECONOMIC DATA (from YETO Database) ===\n`;
             dataContext += `Sector: ${sectorData.sectorName}\n`;
             dataContext += `Total data points: ${sectorData.dataPoints}\n`;
@@ -720,7 +720,11 @@ CRITICAL INSTRUCTIONS:
           const assistantContent = response.choices[0]?.message?.content || "No response generated";
 
           // Determine confidence based on data availability
-          const confidence = sectorData && sectorData.dataPoints > 50 ? 'high' : sectorData && sectorData.dataPoints > 10 ? 'medium' : 'low';
+          const confidence = sectorData?.contextSource === 'database' && sectorData.dataPoints > 50
+            ? 'high'
+            : sectorData?.contextSource === 'database' && sectorData.dataPoints > 10
+              ? 'medium'
+              : 'low';
 
           return {
             content: assistantContent,
