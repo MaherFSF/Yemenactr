@@ -81,14 +81,26 @@ async function seedCI() {
     const accessTypes = ['API', 'WEB', 'MANUAL', 'PARTNER'];
     const statuses = ['ACTIVE', 'PENDING_REVIEW'];
     
+    // Keep this insert compatible with the migration-backed CI schema.
+    // NOTE: source_registry in current migrations (e.g. 0024) does not
+    // include a `sourceType` column.
+    const sourceRegistryInsertColumns = [
+      'sourceId',
+      'name',
+      'tier',
+      'accessType',
+      'status',
+      'description',
+      'confidenceRating',
+    ];
+    const sourceRegistryInsertSql = `INSERT IGNORE INTO source_registry (${sourceRegistryInsertColumns.join(', ')}) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
     for (let i = 1; i <= 150; i++) {
       const tier = tiers[i % 5];
       const accessType = accessTypes[i % 4];
       const status = statuses[i % 2];
       await connection.execute(
-        `INSERT IGNORE INTO source_registry 
-         (sourceId, name, tier, accessType, status, description, confidenceRating) 
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        sourceRegistryInsertSql,
         [
           `src_${i}`,
           `Test Source ${i}`,
