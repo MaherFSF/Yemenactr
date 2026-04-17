@@ -23,6 +23,7 @@ export const bankLogos: Record<string, string> = {
   "كاك بنك": "/images/banks/cac-bank.jpg",
   "CAC Bank": "/images/banks/cac-bank.jpg",
   "Cooperative & Agricultural Credit Bank": "/images/banks/cac-bank.jpg",
+  "Cooperative and Agricultural Credit Bank": "/images/banks/cac-bank.jpg",
   
   "YKB": "/images/banks/ykb.jpg",
   "ykb": "/images/banks/ykb.jpg",
