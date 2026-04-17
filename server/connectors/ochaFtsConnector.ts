@@ -255,7 +255,8 @@ export async function fetchOchaFtsData(startYear?: number, endYear?: number): Pr
   recordsIngested: number;
   errors: string[];
 }> {
-  const currentYear = new Date().getFullYear();
+  const today = new Date();
+  const currentYear = today.getFullYear();
   const fromYear = startYear || 2015;
   const toYear = endYear || currentYear;
   
@@ -280,7 +281,9 @@ export async function fetchOchaFtsData(startYear?: number, endYear?: number): Pr
   for (let year = fromYear; year <= toYear; year++) {
     try {
       const yearlyData = await fetchYearlyFunding(year);
-      const dateForYear = new Date(year, 11, 31);
+      // Use a non-future timestamp for in-progress/current year values.
+      // Historical annual values remain stamped at year-end.
+      const dateForYear = year >= currentYear ? new Date(today) : new Date(year, 11, 31);
       
       // Store requirements
       if (yearlyData.requirements > 0) {
