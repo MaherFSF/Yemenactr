@@ -122,14 +122,14 @@ export default function Home() {
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-8 leading-[1.1] tracking-tight">
               {isAr ? (
                 <>
-                  <span className="text-white/40 block text-2xl md:text-3xl font-light mb-3">لعقود، صُنعت القرارات بدون بيانات</span>
+                  <span className="text-white/40 block text-2xl md:text-3xl font-light mb-3">لعقود، كانت القرارات في الظلام، شيء ما على وشك أن يتغير</span>
                   <span className="bg-gradient-to-r from-[#C9A961] via-[#e8d48b] to-[#C9A961] bg-clip-text text-transparent">الآن</span>
                   <span className="text-white"> يمكنك أن </span>
                   <span className="bg-gradient-to-r from-[#C9A961] via-[#e8d48b] to-[#C9A961] bg-clip-text text-transparent">ترى</span>
                 </>
               ) : (
                 <>
-                  <span className="text-white/40 block text-2xl md:text-3xl font-light mb-3">For years, decisions were made without data</span>
+                  <span className="text-white/40 block text-2xl md:text-3xl font-light mb-3">for decades, decision have been in the darkness , something about to change</span>
                   <span className="bg-gradient-to-r from-[#C9A961] via-[#e8d48b] to-[#C9A961] bg-clip-text text-transparent">Now</span>
                   <span className="text-white"> you can </span>
                   <span className="bg-gradient-to-r from-[#C9A961] via-[#e8d48b] to-[#C9A961] bg-clip-text text-transparent">see</span>
