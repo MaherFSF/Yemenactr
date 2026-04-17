@@ -259,7 +259,7 @@ const allBanks: BankData[] = [
     employeeCount: 1100,
     headquarters: "Seera Street, Crater, Aden",
     foundedYear: 1982,
-    website: "https://www.cacbankyc.com",
+    website: "https://www.cacbank.com.ye",
     email: "info@cacbankyemen.com",
     isUnderWatch: true,
     watchReason: "OFAC designated. High NPL ratio (55%). Severe liquidity constraints.",

@@ -7,8 +7,11 @@ import superjson from "superjson";
 import App from "./App";
 import { getLoginUrl } from "./const";
 import "./index.css";
+import { initializeAnalytics } from "./lib/analytics";
 
 const queryClient = new QueryClient();
+
+initializeAnalytics();
 
 const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;

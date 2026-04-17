@@ -73,7 +73,7 @@ UPDATE commercial_banks SET
 WHERE name LIKE '%Yemen Gulf Bank%';
 
 UPDATE commercial_banks SET 
-  website = 'https://www.cacbankyc.com',
+  website = 'https://www.cacbank.com.ye',
   foundedYear = 1982,
   notes = 'Specialized in agricultural and cooperative lending. Key role in rural finance.'
 WHERE name LIKE '%Cooperative%Agricultural%';
